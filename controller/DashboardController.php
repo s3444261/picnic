@@ -1,6 +1,5 @@
 <?php
-
-/* 
+/*
  * Authors: 
  * Derrick, Troy - s3202752@student.rmit.edu.au
  * Foster, Diane - s3387562@student.rmit.edu.au
@@ -9,15 +8,12 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-include_once 'config/config.php';
+class DashboardController {
+	
+	// Displays the Dashboard Page.
+	public function display()
+	{
+		include 'view/layout/dashboard.php';
+	}
+}
 ?>
-
-<h1>CreateDB</h1>
-<div class="testHarness">
-<h2>Database Creation</h2>
-<?php
-include 'createdb.php';
-include 'admin/seedDB/seed.php';
-
-?>
-</div>

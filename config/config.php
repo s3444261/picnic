@@ -14,7 +14,9 @@ ini_set ( 'display_errors', 1 );
 
 date_default_timezone_set('Australia/Melbourne');
 define('MODULE', 'picnic');
-define('BASE', '/' . MODULE . '/');
+//define('BASE', '/' . MODULE . '/');
+define('BASE', '/');
+define('DOMAIN', 'www.humphree.org');
 define('SALT', 'TooMuchSalt');
 
 if($_SERVER['SERVER_NAME'] == 'localhost'){
@@ -23,14 +25,14 @@ if($_SERVER['SERVER_NAME'] == 'localhost'){
 } elseif($_SERVER['SERVER_NAME'] == '52.62.222.222'){
 	define('SERVER', 'http://' . $_SERVER['SERVER_NAME']);
 	define('PATH', SERVER . '/picnic/');
-} elseif($_SERVER['SERVER_NAME'] == 'www.toberegistered.org'){
+} elseif($_SERVER['SERVER_NAME'] == DOMAIN){
 	define('SERVER', 'http://' . $_SERVER['SERVER_NAME']);
 	define('PATH', SERVER . '/');
 } else {
 	define('SERVER', 'http://' . $_SERVER['SERVER_NAME']);
 	define('PATH', SERVER . '/');
 }
-define('DOMAIN', 'www.toberegistered.org');
+
 
 function __autoload($class) {
 	$dir = array (

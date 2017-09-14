@@ -60,9 +60,10 @@ class Driver {
 	public function pageContent(){
 		$routes = Routes::getInstance();
 		$home = new HomeController ();
-		$about = new AboutController ();
-		$contact = new ContactController ();
-		$settings = new SettingsController ();
+		$dashboard = new DashboardController ();
+		$administration = new AdministrationController ();
+		$signin = new SigninController ();
+		$signup = new SignupController ();
 		$changePassword = new ChangePasswordController ();
 		$login = new LoginController ();
 		$logout = new LoginController ();
@@ -73,15 +74,16 @@ class Driver {
 			case 'Home' :
 				$home->display ();
 				break;
-			case 'About' :
-				$about->display ();
-				break;
-			case 'Contact' :
-				$contact->display ();
-				break;
-			case 'Settings' :
+			case 'Dashboard' :
 				if($this->auth()){
-					$settings->display ();
+					$dashboard->display ();
+				} else {
+					$home->display ();
+				}
+				break;
+			case 'Administration' :
+				if($this->auth()){ 
+					$administration->display ();
 				} else {
 					$home->display ();
 				}
@@ -93,26 +95,34 @@ class Driver {
 					$home->display ();
 				}
 				break;
+			case 'Sign-in' :
+				$signin->display ();
+				break;
+			case 'Sign-up' :
+				$signup->display ();
+				break;
 			case 'Login' :
 				$login->login ();
 				break;
 			case 'Logout' :
 				$logout->logout ();
 				break;
+			// Remove Test from Production Server
 			case 'Test' :
 				if($this->auth()){
 					$test->display ();
 				} else {
+					//$home->display ();  
 					$test->display ();
-					//$home->display ();
 				}
 				break;
+				// Remove CreateDB from Production Server
 			case 'CreateDB' :
 				if($this->auth()){
 					$createDB->display ();
 				} else {
-					$createDB->display ();
 					//$home->display ();
+					$createDB->display ();
 				}
 				break;
 			default :

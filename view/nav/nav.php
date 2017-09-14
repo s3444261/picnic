@@ -1,6 +1,6 @@
 <?php
 /*
- * Authors: 
+ * Authors:
  * Derrick, Troy - s3202752@student.rmit.edu.au
  * Foster, Diane - s3387562@student.rmit.edu.au
  * Goodreds, Allen - s3492264@student.rmit.edu.au
@@ -19,33 +19,50 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand hidden-xs" href="<?php echo PATH; ?>Home">Picnic</a>
+			<a class="navbar-brand hidden-xs" href="<?php echo PATH; ?>Home">Humphree</a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse"
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li><a href="<?php echo PATH; ?>About">About</a></li>
-				<li><a href="<?php echo PATH; ?>Contact">Contact</a></li>
+<?php
+if (isset ( $_SESSION [MODULE] )) {
+	echo '<li><a href="' . PATH . 'Dashboard">Dashboard</a></li>';
+}
+?> 
+				
 <?php
 if (isset ( $_SESSION ['status'] )) {
-	if( $_SESSION ['status'] == 'admin' ){
-		echo '<li><a href="' . PATH . 'Settings">Settings</a></li>';
+	if ($_SESSION ['status'] == 'admin') {
+		echo '<li><a href="' . PATH . 'Administration">Admin</a></li>';
 	}
 }
 ?> 
 			</ul>
-			<!--  Note:  To obtain easy access to CreateDB, uncomment this link while testing to reset and reseed the database. 
+			<!--  Note:  To obtain easy access to CreateDB, uncomment this link while testing to reset and reseed the database. -->
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="<?php echo PATH; ?>Test">Test</a></li>
-				<li><a href="<?php echo PATH; ?>CreateDB">Create DB</a></li>
-			</ul>  -->
+<?php
+if (isset ( $_SESSION [MODULE] )) {
+	echo '<li><a href="' . PATH . 'Test">Test</a></li>
+		<li><a href="' . PATH . 'CreateDB">Create DB</a></li>';
+} else {
+	// Remove this on the Production Server
+	echo '<li><a href="' . PATH . 'Test">Test</a></li>
+		<li><a href="' . PATH . 'CreateDB">Create DB</a></li>';
+}
+?>			
+			</ul>  
 <?php
 if (isset ( $_SESSION [MODULE] )) {
 	echo '<ul class="nav navbar-nav navbar-right">
 		<li><a href="' . PATH . 'ChangePassword">Change Password</a></li>
 		<li><a href="' . PATH . 'Logout">Logout</a></li>
+      </ul>';
+} else {
+	echo '<ul class="nav navbar-nav navbar-right">
+		<li><a href="' . PATH . 'Sign-up">Sign-up</a></li>
+		<li><a href="' . PATH . 'Sign-in">Sign-in</a></li>
       </ul>';
 }
 ?> 

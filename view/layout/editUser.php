@@ -12,7 +12,7 @@
 	<h1>Edit User</h1>
 	<div class="editUser">
 		<form data-toggle="validator" role="form" class="form-inline"
-			method="post" action="<?php echo PATH . 'Settings'; ?>">
+			method="post" action="<?php echo PATH . 'Administration'; ?>">
 			<div class="row">
 				<div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
 				<div class="col-xs-8 col-sm-8 col-md-4 col-lg-4 text-center">
@@ -77,7 +77,7 @@
 
 
 		<form data-toggle="validator" role="form" class="form-inline"
-			method="post" action="<?php echo PATH . 'Settings'; ?>">
+			method="post" action="<?php echo PATH . 'Administration'; ?>">
 			<div class="row">
 				<div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
 				<div class="col-xs-8 col-sm-8 col-md-4 col-lg-4 text-center">

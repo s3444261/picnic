@@ -1,15 +1,28 @@
 <?php 
-include_once 'config/config.php';
-
 /*
- * Authors: 
+ * Authors:
  * Derrick, Troy - s3202752@student.rmit.edu.au
  * Foster, Diane - s3387562@student.rmit.edu.au
  * Goodreds, Allen - s3492264@student.rmit.edu.au
  * Kinkead, Grant - s3444261@student.rmit.edu.au
  * Putro, Edwan - edwanhp@gmail.com
- * 
- * 
+ */
+
+include_once 'config/config.php';
+
+define('ATTA', 'itemID');
+define('ATTB', 'userID');
+define('ATTC', 'categoryID');
+define('ATTD', 'title');
+define('ATTE', 'description');
+define('ATTF', 'quantity');
+define('ATTG', 'condition');
+define('ATTH', 'price');
+define('ATTI', 'status');
+define('ATTJ', 'title');
+
+
+/* 
  * TEST FUNCTIONS
  */
 
@@ -67,15 +80,29 @@ function compareAttributes($obj, $arr, $attr){
 
 <h1>Test Harness</h1>
 <div class="testHarness">
+<h2>Create Database</h2>
+<?php 
+include 'admin/createDB/createdb.php';
+?>
 <h2>Unit Tests</h2>
 
 <h3>Test Users</h3>
 <?php 
-include 'admin/createDB/createdb.php';
 include 'unit/test.users.php';
+?>
+<h3>Test Item</h3>
+<?php 
+//include 'unit/test.item.php';
+?>
+<h3>Test Validation</h3>
+<?php 
 include 'unit/test.validation.php';
+?>
+<h2>Create &amp; Seed Database</h2>
+<?php 
 include 'admin/createDB/createdb.php';
 include 'admin/seedDB/seed.php';
+
 ?>
 </div>
 
