@@ -13,10 +13,15 @@ error_reporting ( E_ALL );
 ini_set ( 'display_errors', 1 );
 
 date_default_timezone_set('Australia/Melbourne');
-define('MODULE', 'picnic');
-//define('BASE', '/' . MODULE . '/');
-define('BASE', '/');
 define('DOMAIN', 'www.humphree.org');
+define('MODULE', 'picnic');
+
+if($_SERVER['SERVER_NAME'] == DOMAIN){
+	define('BASE', '/');
+} else {
+	define('BASE', '/' . MODULE . '/');
+}
+
 define('SALT', 'TooMuchSalt');
 
 if($_SERVER['SERVER_NAME'] == 'localhost'){
