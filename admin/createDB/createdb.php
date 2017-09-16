@@ -13,7 +13,15 @@ $driver = Driver::getInstance ();
 
 $db = Picnic::getInstance();
 
+$query = "DROP TABLE IF EXISTS `Item_notes`";
+$stmt = $db->prepare($query);
+$stmt->execute();
+
 $query = "DROP TABLE IF EXISTS `Notes`";
+$stmt = $db->prepare($query);
+$stmt->execute();
+
+$query = "DROP TABLE IF EXISTS `Item_comments`";
 $stmt = $db->prepare($query);
 $stmt->execute();
 
@@ -21,7 +29,11 @@ $query = "DROP TABLE IF EXISTS `Comments`";
 $stmt = $db->prepare($query);
 $stmt->execute();
 
-$query = "DROP TABLE IF EXISTS `Item_users`";
+$query = "DROP TABLE IF EXISTS `User_items`";
+$stmt = $db->prepare($query);
+$stmt->execute();
+
+$query = "DROP TABLE IF EXISTS `Category_items`";
 $stmt = $db->prepare($query);
 $stmt->execute();
 
@@ -36,6 +48,8 @@ $stmt->execute();
 $query = "DROP TABLE IF EXISTS `Categories`";
 $stmt = $db->prepare($query);
 $stmt->execute();
+
+echo 'Tables Created: ';
 
 $query = "CREATE TABLE `Users` (
   `userID` int(11) NOT NULL AUTO_INCREMENT,
@@ -53,7 +67,7 @@ $query = "CREATE TABLE `Users` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Users Table created.<br />';
+echo 'Users, ';
 
 $query = "CREATE TABLE `Categories` (
 		`categoryID` int(11) NOT NULL AUTO_INCREMENT,
@@ -66,12 +80,10 @@ $query = "CREATE TABLE `Categories` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Categories Table created.<br />';
+echo 'Categories, ';
 
 $query = "CREATE TABLE `Items` (
 		`itemID` int(11) NOT NULL AUTO_INCREMENT,
-		`userID` int(11) NOT NULL,
-		`categoryID` int(11) NOT NULL,
 		`title` varchar(90) NOT NULL,
 		`description` text NOT NULL,
 		`quantity` varchar(10) NOT NULL,
@@ -80,68 +92,104 @@ $query = "CREATE TABLE `Items` (
 		`status` varchar(10) NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
         `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		PRIMARY KEY (`itemID`),
-		KEY `FK _Items_Users_idx` (`userID`),
-		KEY `FK_Items_Categories_idx` (`categoryID`),
-		CONSTRAINT `FK _Items_Users` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_Items_Categories` FOREIGN KEY (`categoryID`) REFERENCES `Categories` (`categoryID`) ON DELETE CASCADE ON UPDATE CASCADE
+		PRIMARY KEY (`itemID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Items Table created.<br />';
+echo 'Items, ';
 
-$query = "CREATE TABLE `Item_users` (
-		`item_usersID` int(11) NOT NULL AUTO_INCREMENT,
-		`itemID` int(11) NOT NULL,
+$query = "CREATE TABLE `User_items` (
+		`user_itemID` int(11) NOT NULL AUTO_INCREMENT,
 		`userID` int(11) NOT NULL,
-		PRIMARY KEY (`item_usersID`),
-		KEY `FK_Item_users_Users_idx` (`userID`),
-		KEY `FK_Item_users_Items_idx` (`itemID`),
-		CONSTRAINT `FK_Item_users_Users` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_Item_users_Items` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `UQ_itemID_userID` UNIQUE (`itemID`, `userID`)
+		`itemID` int(11) NOT NULL,
+		PRIMARY KEY (`user_itemID`),
+		KEY `FK_User_items_Users_idx` (`userID`),
+		KEY `FK_User_items_Items_idx` (`itemID`),
+		CONSTRAINT `FK_User_items_Users` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `FK_User_items_Items` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `UQ_userID_itemID` UNIQUE (`userID`, `itemID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Item_users Table created.<br />';
+echo 'User_items, ';
+
+$query = "CREATE TABLE `Category_items` (
+		`category_itemID` int(11) NOT NULL AUTO_INCREMENT,
+		`categoryID` int(11) NOT NULL,
+		`itemID` int(11) NOT NULL,
+		PRIMARY KEY (`category_itemID`),
+		KEY `FK_Category_idx` (`categoryID`),
+		KEY `FK_Item_idx` (`itemID`),
+		CONSTRAINT `FK_Category` FOREIGN KEY (`categoryID`) REFERENCES `Categories` (`categoryID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `FK_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `UQ_categoryID_itemID` UNIQUE (`categoryID`, `itemID`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+
+$stmt = $db->prepare($query);
+$stmt->execute();
+echo 'Category_items, ';
 
 $query = "CREATE TABLE `Comments` (
 		`commentID` int(11) NOT NULL AUTO_INCREMENT,
-		`itemID` int(11) NOT NULL,
-		`toID` int(11) NOT NULL,
-		`fromID` int(11) NOT NULL,
+		`userID` int(11) NOT NULL,
 		`comment` text NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
         `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`commentID`),
-		KEY `FK _Comments_Items_idx` (`itemID`),
-		KEY `FK_Comments_To_User_idx` (`toID`),
-		KEY `FK_Comments_From_User_idx` (`fromID`),
-		CONSTRAINT `FK _Comments_Items` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_Comments_To_User` FOREIGN KEY (`toID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_Comments_From_User` FOREIGN KEY (`fromID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
+		KEY `FK_Comments_User_idx` (`userID`),
+		CONSTRAINT `FK_Comments_User` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Comments Table created.<br />';
+echo 'Comments, ';
+
+$query = "CREATE TABLE `Item_comments` (
+		`item_commentsID` int(11) NOT NULL AUTO_INCREMENT,
+		`itemID` int(11) NOT NULL,
+		`commentID` int(11) NOT NULL,
+		PRIMARY KEY (`item_commentsID`),
+		KEY `FK_Item_comments_Item_idx` (`itemID`),
+		KEY `FK_Item_comments_Comment_idx` (`commentID`),
+		CONSTRAINT `FK_Item_comments_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `FK_Item_comments_Comment` FOREIGN KEY (`commentID`) REFERENCES `Comments` (`commentID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `UQ_itemID_commentID` UNIQUE (`itemID`, `commentID`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+
+$stmt = $db->prepare($query);
+$stmt->execute();
+echo 'Item_comments, ';
+
 
 $query = "CREATE TABLE `Notes` (
 		`noteID` int(11) NOT NULL AUTO_INCREMENT,
-		`itemID` int(11) NOT NULL,
 		`note` text NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
         `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		PRIMARY KEY (`noteID`),
-		KEY `FK _Notes_Items_idx` (`itemID`),
-		CONSTRAINT `FK _Notes_Items` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE
+		PRIMARY KEY (`noteID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Notes Table created.<br />';
+echo 'Notes.';
+
+$query = "CREATE TABLE `Item_notes` (
+		`item_notesID` int(11) NOT NULL AUTO_INCREMENT,
+		`itemID` int(11) NOT NULL,
+		`noteID` int(11) NOT NULL,
+		PRIMARY KEY (`item_notesID`),
+		KEY `FK_Item_notes_Item_idx` (`itemID`),
+		KEY `FK_Item_notes_Note_idx` (`noteID`),
+		CONSTRAINT `FK_Item_notes_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `FK_Item_notes_Note` FOREIGN KEY (`noteID`) REFERENCES `Notes` (`noteID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `UQ_itemID_noteID` UNIQUE (`itemID`, `noteID`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+
+$stmt = $db->prepare($query);
+$stmt->execute();
+echo 'Item_notes ';
 		
 
 ?>
