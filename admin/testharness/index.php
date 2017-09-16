@@ -10,16 +10,21 @@
 
 include_once 'config/config.php';
 
-define('ATTA', 'itemID');
-define('ATTB', 'userID');
-define('ATTC', 'categoryID');
-define('ATTD', 'title');
-define('ATTE', 'description');
-define('ATTF', 'quantity');
-define('ATTG', 'condition');
-define('ATTH', 'price');
-define('ATTI', 'status');
+define('ATTA', 'categoryID');
+define('ATTB', 'parentID');
+define('ATTC', 'category');
+define('ATTD', 'noteID');
+define('ATTE', 'note');
+define('ATTF', 'commentID');
+define('ATTG', 'userID');
+define('ATTH', 'comment');
+define('ATTI', 'itemID');
 define('ATTJ', 'title');
+define('ATTK', 'description');
+define('ATTL', 'quantity');
+define('ATTM', 'itemcondition');
+define('ATTN', 'price');
+define('ATTO', 'status');
 
 
 /* 
@@ -89,10 +94,23 @@ include 'admin/createDB/createdb.php';
 <h3>Test Users</h3>
 <?php 
 include 'unit/test.users.php';
+include 'admin/createDB/createdb.php';
+?>
+<h3>Test Category</h3>
+<?php 
+include 'unit/test.category.php';
+?>
+<h3>Test Note</h3>
+<?php 
+include 'unit/test.note.php';
+?>
+<h3>Test Comment</h3>
+<?php 
+include 'unit/test.comment.php';
 ?>
 <h3>Test Item</h3>
 <?php 
-//include 'unit/test.item.php';
+include 'unit/test.item.php';
 ?>
 <h3>Test Validation</h3>
 <?php 
