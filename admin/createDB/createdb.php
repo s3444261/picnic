@@ -56,8 +56,8 @@ $stmt->execute();
 echo 'Users Table created.<br />';
 
 $query = "CREATE TABLE `Categories` (
-		`categoryID` int(11) NOT NULL,
-		`parentID` int(11) NOT NULL,
+		`categoryID` int(11) NOT NULL AUTO_INCREMENT,
+		`parentID` int(11) unsigned NOT NULL,
 		`category` varchar(90) NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
         `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -69,13 +69,13 @@ $stmt->execute();
 echo 'Categories Table created.<br />';
 
 $query = "CREATE TABLE `Items` (
-		`itemID` int(11) NOT NULL,
+		`itemID` int(11) NOT NULL AUTO_INCREMENT,
 		`userID` int(11) NOT NULL,
 		`categoryID` int(11) NOT NULL,
 		`title` varchar(90) NOT NULL,
 		`description` text NOT NULL,
 		`quantity` varchar(10) NOT NULL,
-		`condition` varchar(10) NOT NULL,
+		`itemcondition` varchar(10) NOT NULL,
 		`price` varchar(10) NOT NULL,
 		`status` varchar(10) NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
@@ -92,7 +92,7 @@ $stmt->execute();
 echo 'Items Table created.<br />';
 
 $query = "CREATE TABLE `Item_users` (
-		`item_usersID` int(11) NOT NULL,
+		`item_usersID` int(11) NOT NULL AUTO_INCREMENT,
 		`itemID` int(11) NOT NULL,
 		`userID` int(11) NOT NULL,
 		PRIMARY KEY (`item_usersID`),
@@ -108,7 +108,7 @@ $stmt->execute();
 echo 'Item_users Table created.<br />';
 
 $query = "CREATE TABLE `Comments` (
-		`commentID` int(11) NOT NULL,
+		`commentID` int(11) NOT NULL AUTO_INCREMENT,
 		`itemID` int(11) NOT NULL,
 		`toID` int(11) NOT NULL,
 		`fromID` int(11) NOT NULL,
@@ -129,7 +129,7 @@ $stmt->execute();
 echo 'Comments Table created.<br />';
 
 $query = "CREATE TABLE `Notes` (
-		`noteID` int(11) NOT NULL,
+		`noteID` int(11) NOT NULL AUTO_INCREMENT,
 		`itemID` int(11) NOT NULL,
 		`note` text NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
