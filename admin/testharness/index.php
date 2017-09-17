@@ -25,6 +25,10 @@ define('ATTL', 'quantity');
 define('ATTM', 'itemcondition');
 define('ATTN', 'price');
 define('ATTO', 'status');
+define('ATTP', 'item_noteID');
+define('ATTQ', 'item_commentID');
+define('ATTR', 'category_itemID');
+define('ATTS', 'user_itemID');
 
 
 /* 
@@ -111,6 +115,27 @@ include 'unit/test.comment.php';
 <h3>Test Item</h3>
 <?php 
 include 'unit/test.item.php';
+include 'admin/createDB/createdb.php';
+?>
+<h3>Test ItemNotes</h3>
+<?php 
+include 'unit/test.itemnotes.php';
+include 'admin/createDB/createdb.php';
+?>
+<h3>Test ItemComments</h3>
+<?php 
+include 'unit/test.itemcomments.php';
+include 'admin/createDB/createdb.php';
+?>
+<h3>Test CategoryItems</h3>
+<?php 
+include 'unit/test.categoryitems.php';
+include 'admin/createDB/createdb.php';
+?>
+<h3>Test UserItems</h3>
+<?php 
+include 'unit/test.useritems.php';
+include 'admin/createDB/createdb.php';
 ?>
 <h3>Test Validation</h3>
 <?php 
@@ -120,7 +145,7 @@ include 'unit/test.validation.php';
 <?php 
 include 'admin/createDB/createdb.php';
 include 'admin/seedDB/seed.php';
-
+echo '<br /><br /><br />';
 ?>
 </div>
 

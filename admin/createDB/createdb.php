@@ -147,10 +147,10 @@ $stmt->execute();
 echo 'Comments, ';
 
 $query = "CREATE TABLE `Item_comments` (
-		`item_commentsID` int(11) NOT NULL AUTO_INCREMENT,
+		`item_commentID` int(11) NOT NULL AUTO_INCREMENT,
 		`itemID` int(11) NOT NULL,
 		`commentID` int(11) NOT NULL,
-		PRIMARY KEY (`item_commentsID`),
+		PRIMARY KEY (`item_commentID`),
 		KEY `FK_Item_comments_Item_idx` (`itemID`),
 		KEY `FK_Item_comments_Comment_idx` (`commentID`),
 		CONSTRAINT `FK_Item_comments_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -176,10 +176,10 @@ $stmt->execute();
 echo 'Notes.';
 
 $query = "CREATE TABLE `Item_notes` (
-		`item_notesID` int(11) NOT NULL AUTO_INCREMENT,
+		`item_noteID` int(11) NOT NULL AUTO_INCREMENT,
 		`itemID` int(11) NOT NULL,
 		`noteID` int(11) NOT NULL,
-		PRIMARY KEY (`item_notesID`),
+		PRIMARY KEY (`item_noteID`),
 		KEY `FK_Item_notes_Item_idx` (`itemID`),
 		KEY `FK_Item_notes_Note_idx` (`noteID`),
 		CONSTRAINT `FK_Item_notes_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
