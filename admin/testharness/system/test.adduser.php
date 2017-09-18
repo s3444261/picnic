@@ -16,7 +16,7 @@ $acct = false;
 $objectError = null;
 unset ( $_SESSION ['error'] );
 $item = new Item();
-$user = new Users();
+$user = new User();
 $user->user = 'testtest';
 $user->email = 'test@gmail.com';
 $user->password = 'TestTest88';

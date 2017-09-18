@@ -99,7 +99,7 @@ $unitTestResults = '';
 
 // Unit Tests
 include 'admin/createDB/createdb.php';
-include 'unit/test.users.php';
+include 'unit/test.user.php';
 include 'admin/createDB/createdb.php';
 include 'unit/test.category.php';
 include 'admin/createDB/createdb.php';

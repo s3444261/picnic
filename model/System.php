@@ -52,7 +52,7 @@ class System {
 	public function addUser($user) {
 		unset ( $_SESSION ['error'] );
 		
-		if (get_class ( $user ) == 'Users') {
+		if (get_class ( $user ) == 'User') {
 			
 			$validate = new Validation ();
 			

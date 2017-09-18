@@ -7,7 +7,7 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-$user = new Users ();
+$user = new User ();
 $user->user = 'grant';
 $user->email = 'grant@kinkead.net';
 $user->password = 'TestTest88';
@@ -18,7 +18,7 @@ $user->status = 'admin';
 $user->password = '';  // So the current password is not updated.
 $user->update ();
 
-$user = new Users ();
+$user = new User ();
 $user->user = 'troy';
 $user->email = 's3202752@student.rmit.edu.au';
 $user->password = 'TestTest88';
@@ -29,7 +29,7 @@ $user->status = 'admin';
 $user->password = '';  // So the current password is not updated.
 $user->update ();
 
-$user = new Users ();
+$user = new User ();
 $user->user = 'diane';
 $user->email = 's3387562@student.rmit.edu.au';
 $user->password = 'TestTest88';
@@ -40,7 +40,7 @@ $user->status = 'admin';
 $user->password = '';  // So the current password is not updated.
 $user->update ();
 
-$user = new Users ();
+$user = new User ();
 $user->user = 'allen';
 $user->email = 's3492264@student.rmit.edu.au';
 $user->password = 'TestTest88';
@@ -51,7 +51,7 @@ $user->status = 'admin';
 $user->password = '';  // So the current password is not updated.
 $user->update ();
 
-$user = new Users ();
+$user = new User ();
 $user->user = 'edwan';
 $user->email = 'edwanhp@gmail.com';
 $user->password = 'TestTest88';
