@@ -66,7 +66,7 @@ $args9[ATTF] = 3;
 /*
  * Seed Users, Item and Comment
  */
-$user = new Users ();
+$user = new User ();
 $user->user = 'grant';
 $user->email = 'grant@kinkead.net';
 $user->password = 'TestTest88';

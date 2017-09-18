@@ -22,7 +22,7 @@ if (session_status () == PHP_SESSION_NONE) {
  * @property string $_activate;
  */
 
-class Users {
+class User {
 	private $_userID = '';
 	private $_user = '';
 	private $_email = '';
@@ -273,7 +273,7 @@ class Users {
 	 */
 	public function activate() {
 		if ($this->exists ()) {
-			$us = new Users ();
+			$us = new User ();
 			$us->userID = $this->_userID;
 			$us->get ( $this->initialStatus () );
 			if ($us->activate == $this->_activate) {

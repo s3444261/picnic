@@ -23,7 +23,7 @@ CREATE TABLE `Users` (
   `password` varchar(45) NULL,
   `status` varchar(45) NOT NULL,
   `activate` varchar(32) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`userID`),
   UNIQUE KEY `email_UNIQUE` (`email`),
@@ -35,7 +35,7 @@ CREATE TABLE `Categories` (
 		`parentID` int(11) unsigned NOT NULL,
 		`category` varchar(90) NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
-	  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`categoryID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -48,7 +48,7 @@ CREATE TABLE `Items` (
 		`price` varchar(10) NOT NULL,
 		`status` varchar(10) NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
-		`updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`itemID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -81,7 +81,7 @@ CREATE TABLE `Comments` (
 		`userID` int(11) NOT NULL,
 		`comment` text NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
-		`updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`commentID`),
 		KEY `FK_Comments_User_idx` (`userID`),
 		CONSTRAINT `FK_Comments_User` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -103,7 +103,7 @@ CREATE TABLE `Notes` (
 		`noteID` int(11) NOT NULL AUTO_INCREMENT,
 		`note` text NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
-		`updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`noteID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

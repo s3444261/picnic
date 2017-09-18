@@ -67,7 +67,7 @@ $args8[ATTH] = 'text3';
 /*
  * Seed Users
  */
-$user = new Users ();
+$user = new User ();
 $user->user = 'grant';
 $user->email = 'grant@kinkead.net';
 $user->password = 'TestTest88';
@@ -78,7 +78,7 @@ $user->status = 'admin';
 $user->password = '';  // So the current password is not updated.
 $user->update ();
 
-$user = new Users ();
+$user = new User ();
 $user->user = 'troy';
 $user->email = 's3202752@student.rmit.edu.au';
 $user->password = 'TestTest88';
