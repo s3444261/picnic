@@ -69,7 +69,9 @@ class Driver {
 		$logout = new LoginController ();
 		$test = new TestController ();
 		$createDB = new CreateDBController ();
-		
+		$privacyPolicy	= new PrivacyPolicyController();
+		$termsOfService = new TermsOfServiceController();
+
 		switch ($routes->controller) {
 			case 'Home' :
 				$home->display ();
@@ -107,6 +109,13 @@ class Driver {
 			case 'Logout' :
 				$logout->logout ();
 				break;
+			case 'Privacy' :
+				$privacyPolicy->display ();
+				break;
+			case 'Terms' :
+				$termsOfService->display ();
+				break;
+
 			// Remove Test from Production Server
 			case 'Test' :
 				if($this->auth()){
