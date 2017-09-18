@@ -3,6 +3,7 @@
 /*
  * Test Data
  */
+$userItemsTest = false;
 $atts = false;
 $set = false;
 $get = false;
@@ -105,7 +106,7 @@ $obj = new UserItems();
 $atts = testAttributes($obj, $args1, $attributes); 
 if(!$atts){
 	$attributeError = "Attribute Error<br />";
-	echo $attributeError;
+	$unitTestResults = $unitTestResults . $attributeError;
 }
 
 /*
@@ -123,7 +124,7 @@ if($obj->{ATTS} == 1){
 	$set1 = true; 
 } else {
 	$set1 = false;
-	$setError = $setError . "Set() failed to create object.";
+	$setError = $setError . "Set() failed to create object.<br />";
 }
 
 /*
@@ -135,7 +136,7 @@ if($obj->{ATTS} == 1){
 	$set2 = true;
 } else {
 	$set2 = false;
-	$setError = $setError . "Set() failed to create object on duplicate entry.";
+	$setError = $setError . "Set() failed to create object on duplicate entry.<br />";
 }
 
 if($set1 && $set2){
@@ -145,7 +146,7 @@ if($set1 && $set2){
 }
 
 if($setError){
-	echo $setError;
+	$unitTestResults = $unitTestResults . $setError;
 }
 
 
@@ -203,7 +204,7 @@ if($get1 && $get2 && $get3){
 }
 
 if($getError){
-	echo $getError;
+	$unitTestResults = $unitTestResults . $getError;
 }
 
 /*
@@ -231,7 +232,7 @@ for($i = 0; $i < count($testAtts) - 1; $i++){
 }
 
 if($updateError){
-	echo $updateError;
+	$unitTestResults = $unitTestResults . $updateError;
 }
 
 /*
@@ -272,7 +273,7 @@ if($exists1 && $exists2 && $exists3){
 }
 
 if($existsError){
-	echo $existsError;
+	$unitTestResults = $unitTestResults . $existsError;
 }
 
 /*
@@ -314,7 +315,7 @@ if($delete1 && $delete2 && $delete3){
 }
 
 if($deleteError){
-	echo $deleteError;
+	$unitTestResults = $unitTestResults . $deleteError;
 }
 
 /*
@@ -337,18 +338,19 @@ if(($obj1->count() == 3) && ($obj2->count() == 3) && ($obj2->count() == 3)){
 }
 
 if($countError){
-	echo $countError;
+	$unitTestResults = $unitTestResults . $countError;
 }
 
-echo 'UserItems: <font color="';
+$unitTestResults = $unitTestResults . 'UserItems: <font color="';
 
 if($atts && $set && $get && $update && $exists && $delete && $count){
-	echo 'green">PASS';
+	$unitTestResults = $unitTestResults . 'green">PASS';
+	$userItemsTest = true;
 } else {
-	echo 'red">FAIL';
+	$unitTestResults = $unitTestResults . 'red">FAIL';
 }
 
-echo '</font><br />';
+$unitTestResults = $unitTestResults . '</font><br />';
 
 
 

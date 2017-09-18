@@ -3,6 +3,7 @@
 /*
  * Test Data
  */
+$commentTest = false;
 $atts = false;
 $set = false;
 $get = false;
@@ -99,7 +100,7 @@ $obj = new Comment();
 $atts = testAttributes($obj, $args1, $attributes); 
 if(!$atts){
 	$attributeError = "Attribute Error<br />";
-	echo $attributeError;
+	$unitTestResults = $unitTestResults . $attributeError;
 }
 
 /*
@@ -122,7 +123,7 @@ if($obj->{ATTF} > 0){
 }
 
 if($setError){
-	echo $setError;
+	$unitTestResults = $unitTestResults . $setError;
 }
 
 
@@ -180,7 +181,7 @@ if($get1 && $get2 && $get3){
 }
 
 if($getError){
-	echo $getError;
+	$unitTestResults = $unitTestResults . $getError;
 }
 
 /*
@@ -208,7 +209,7 @@ for($i = 0; $i < count($testAtts) - 1; $i++){
 }
 
 if($updateError){
-	echo $updateError;
+	$unitTestResults = $unitTestResults . $updateError;
 }
 
 /*
@@ -249,7 +250,7 @@ if($exists1 && $exists2 && $exists3){
 }
 
 if($existsError){
-	echo $existsError;
+	$unitTestResults = $unitTestResults . $existsError;
 }
 
 /*
@@ -291,7 +292,7 @@ if($delete1 && $delete2 && $delete3){
 }
 
 if($deleteError){
-	echo $deleteError;
+	$unitTestResults = $unitTestResults . $deleteError;
 }
 
 /*
@@ -312,18 +313,19 @@ if(($obj1->count() == 2) && ($obj2->count() == 2)){
 }
 
 if($countError){
-	echo $countError;
+	$unitTestResults = $unitTestResults . $countError;
 }
 
-echo 'Comment: <font color="';
+$unitTestResults = $unitTestResults . 'Comment: <font color="';
 
 if($atts && $set && $get && $update && $exists && $delete && $count){
-	echo 'green">PASS';
+	$unitTestResults = $unitTestResults . 'green">PASS';
+	$commentTest = true;
 } else {
-	echo 'red">FAIL';
+	$unitTestResults = $unitTestResults . 'red">FAIL';
 }
 
-echo '</font><br />';
+$unitTestResults = $unitTestResults . '</font><br />';
 
 
 

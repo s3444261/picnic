@@ -3,6 +3,7 @@
 /*
  * Test Data
  */
+$noteTest = false;
 $atts = false;
 $set = false;
 $get = false;
@@ -61,7 +62,7 @@ $obj = new Note();
 $atts = testAttributes($obj, $args1, $attributes); 
 if(!$atts){
 	$attributeError = "Attribute Error<br />";
-	echo $attributeError;
+	$unitTestResults = $unitTestResults . $attributeError;
 }
 
 /*
@@ -84,7 +85,7 @@ if($obj->{ATTD} > 0){
 }
 
 if($setError){
-	echo $setError;
+	$unitTestResults = $unitTestResults . $setError;
 }
 
 
@@ -142,7 +143,7 @@ if($get1 && $get2 && $get3){
 }
 
 if($getError){
-	echo $getError;
+	$unitTestResults = $unitTestResults . $getError;
 }
 
 /*
@@ -170,7 +171,7 @@ for($i = 0; $i < count($testAtts) - 1; $i++){
 }
 
 if($updateError){
-	echo $updateError;
+	$unitTestResults = $unitTestResults . $updateError;
 }
 
 /*
@@ -211,7 +212,7 @@ if($exists1 && $exists2 && $exists3){
 }
 
 if($existsError){
-	echo $existsError;
+	$unitTestResults = $unitTestResults . $existsError;
 }
 
 /*
@@ -253,18 +254,19 @@ if($delete1 && $delete2 && $delete3){
 }
 
 if($deleteError){
-	echo $deleteError;
+	$unitTestResults = $unitTestResults . $deleteError;
 }
 
-echo 'Note: <font color="';
+$unitTestResults = $unitTestResults . 'Note: <font color="';
 
 if($atts && $set && $get && $update && $exists && $delete){
-	echo 'green">PASS';
+	$unitTestResults = $unitTestResults . 'green">PASS';
+	$noteTest = true;
 } else {
-	echo 'red">FAIL';
+	$unitTestResults = $unitTestResults . 'red">FAIL';
 }
 
-echo '</font><br />';
+$unitTestResults = $unitTestResults . '</font><br />';
 
 
 

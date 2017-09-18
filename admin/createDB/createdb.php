@@ -49,8 +49,6 @@ $query = "DROP TABLE IF EXISTS `Categories`";
 $stmt = $db->prepare($query);
 $stmt->execute();
 
-echo 'Tables Created: ';
-
 $query = "CREATE TABLE `Users` (
   `userID` int(11) NOT NULL AUTO_INCREMENT,
   `user` varchar(45) NOT NULL,
@@ -67,7 +65,6 @@ $query = "CREATE TABLE `Users` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Users, ';
 
 $query = "CREATE TABLE `Categories` (
 		`categoryID` int(11) NOT NULL AUTO_INCREMENT,
@@ -80,7 +77,6 @@ $query = "CREATE TABLE `Categories` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Categories, ';
 
 $query = "CREATE TABLE `Items` (
 		`itemID` int(11) NOT NULL AUTO_INCREMENT,
@@ -97,7 +93,6 @@ $query = "CREATE TABLE `Items` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Items, ';
 
 $query = "CREATE TABLE `User_items` (
 		`user_itemID` int(11) NOT NULL AUTO_INCREMENT,
@@ -113,7 +108,6 @@ $query = "CREATE TABLE `User_items` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'User_items, ';
 
 $query = "CREATE TABLE `Category_items` (
 		`category_itemID` int(11) NOT NULL AUTO_INCREMENT,
@@ -129,7 +123,6 @@ $query = "CREATE TABLE `Category_items` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Category_items, ';
 
 $query = "CREATE TABLE `Comments` (
 		`commentID` int(11) NOT NULL AUTO_INCREMENT,
@@ -144,7 +137,6 @@ $query = "CREATE TABLE `Comments` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Comments, ';
 
 $query = "CREATE TABLE `Item_comments` (
 		`item_commentID` int(11) NOT NULL AUTO_INCREMENT,
@@ -160,7 +152,6 @@ $query = "CREATE TABLE `Item_comments` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Item_comments, ';
 
 
 $query = "CREATE TABLE `Notes` (
@@ -173,7 +164,6 @@ $query = "CREATE TABLE `Notes` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Notes.';
 
 $query = "CREATE TABLE `Item_notes` (
 		`item_noteID` int(11) NOT NULL AUTO_INCREMENT,
@@ -189,7 +179,6 @@ $query = "CREATE TABLE `Item_notes` (
 
 $stmt = $db->prepare($query);
 $stmt->execute();
-echo 'Item_notes ';
 		
 
 ?>

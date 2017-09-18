@@ -85,68 +85,90 @@ function compareAttributes($obj, $arr, $attr){
 	return $test;
 }
 
+$system = false;
+$integration = false;
+$unit = false;
+
+$applicationStatus = '';
+$systemTests = '';
+$integrationTests = '';
+$unitTests = '';
+$systemTestResults = '';
+$integrationTestResults = '';
+$unitTestResults = '';
+
+include 'admin/createDB/createdb.php';
+include 'unit/test.users.php';
+include 'admin/createDB/createdb.php';
+include 'unit/test.note.php';
+include 'admin/createDB/createdb.php';
+include 'unit/test.comment.php';
+include 'admin/createDB/createdb.php';
+include 'unit/test.item.php';
+include 'admin/createDB/createdb.php';
+include 'unit/test.itemnotes.php';
+include 'admin/createDB/createdb.php';
+include 'unit/test.itemcomments.php';
+include 'admin/createDB/createdb.php';
+include 'unit/test.categoryitems.php';
+include 'admin/createDB/createdb.php';
+include 'unit/test.useritems.php';
+include 'admin/createDB/createdb.php';
+include 'unit/test.validation.php';
+include 'admin/createDB/createdb.php';
+include 'admin/seedDB/seed.php';
+
+if($userTest && $noteTest && $commentTest && $itemTest && $itemNoteTest && $itemCommentTest && $categoryItemsTest && $userItemsTest && $validationTest){
+	$unit = true;
+}
+
+if($system && $integration && $unit){
+	$applicationStatus = '<font color="green">PASS</font>';
+} else {
+	$applicationStatus = '<font color="red">FAIL</font>';
+}
+if($system){
+	$systemTests = '<font color="green">PASS</font>';
+} else {
+	$systemTests = '<font color="red">FAIL</font>';
+}
+if($integration){
+	$integrationTests = '<font color="green">PASS</font>';
+} else {
+	$integrationTests = '<font color="red">FAIL</font>';
+}
+if($unit){
+	$unitTests = '<font color="green">PASS</font>';
+} else {
+	$unitTests = '<font color="red">FAIL</font>';
+}
 ?>
 
 <h1>Test Harness</h1>
 <div class="testHarness">
-<h2>Create Database</h2>
+<h2>Application Status</h2>
 <?php 
-include 'admin/createDB/createdb.php';
+echo 'Application Status: ' . $applicationStatus;
 ?>
-<h2>Unit Tests</h2>
+<h2>Application Summary</h2>
+<?php 
+echo 'System Tests: ' . $systemTests . '<br />';
+echo 'Integration Tests: ' . $integrationTests . '<br />';
+echo 'Unit Tests: ' . $unitTests . '<br />';
+?>
+<h2>System Test Results</h2>
+<?php 
+echo $systemTestResults;
+?>
+<h2>Integration Test Results</h2>
+<?php 
+echo $integrationTestResults;
+?>
+<h2>Unit Test Results</h2>
+<?php 
+echo $unitTestResults;
+?>
 
-<h3>Test Users</h3>
-<?php 
-include 'unit/test.users.php';
-include 'admin/createDB/createdb.php';
-?>
-<h3>Test Category</h3>
-<?php 
-include 'unit/test.category.php';
-?>
-<h3>Test Note</h3>
-<?php 
-include 'unit/test.note.php';
-?>
-<h3>Test Comment</h3>
-<?php 
-include 'unit/test.comment.php';
-?>
-<h3>Test Item</h3>
-<?php 
-include 'unit/test.item.php';
-include 'admin/createDB/createdb.php';
-?>
-<h3>Test ItemNotes</h3>
-<?php 
-include 'unit/test.itemnotes.php';
-include 'admin/createDB/createdb.php';
-?>
-<h3>Test ItemComments</h3>
-<?php 
-include 'unit/test.itemcomments.php';
-include 'admin/createDB/createdb.php';
-?>
-<h3>Test CategoryItems</h3>
-<?php 
-include 'unit/test.categoryitems.php';
-include 'admin/createDB/createdb.php';
-?>
-<h3>Test UserItems</h3>
-<?php 
-include 'unit/test.useritems.php';
-include 'admin/createDB/createdb.php';
-?>
-<h3>Test Validation</h3>
-<?php 
-include 'unit/test.validation.php';
-?>
-<h2>Create &amp; Seed Database</h2>
-<?php 
-include 'admin/createDB/createdb.php';
-include 'admin/seedDB/seed.php';
-echo '<br /><br /><br />';
-?>
 </div>
 
 <?php 

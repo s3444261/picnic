@@ -35,6 +35,7 @@ $existsError = NULL;
 $deleteError = NULL;
 $loginError = NULL;
 $logoutError = NULL;
+$userTest = false;
 $atts = false;
 $set = false;
 $get = false;
@@ -97,7 +98,7 @@ $user = new Users();
 $atts = testAttributes($user, $args1, $attributes);
 if(!$atts){
 	$attributeError = "Attribute Error<br />";
-	echo $attributeError;
+	$unitTestResults = $unitTestResults . $attributeError;
 }
 
 /*
@@ -114,14 +115,14 @@ if($user->userID > 0){
 	$set = true;
 } else {
 	$set = false;
-	$setError = $setError . "Set() failed to create user.";
+	$setError = $setError . "Set() failed to create user.<br />";
 }
 
 /*
  * If any of the set tests failed, print the error.
  */ 
 if($setError){
-	echo $setError;
+	$unitTestResults = $unitTestResults . $setError;
 }
 
 /*
@@ -181,7 +182,7 @@ if($get1 && $get2 && $get3){
  * If any of the get tests failed, print the error.
  */
 if($getError){
-	echo $getError;
+	$unitTestResults = $unitTestResults . $getError;
 }
 
 /*
@@ -277,7 +278,7 @@ if($update1 && $update2 && $update3 && $update4){
  * If any of the get tests failed, print the error.
  */
 if($updateError){
-	echo $updateError;
+	$unitTestResults = $unitTestResults . $updateError;
 }
 
 /*
@@ -319,7 +320,7 @@ if($exists1 && $exists2 && $exists3){
  * If any of the get tests failed, print the error.
  */
 if($existsError){
-	echo $existsError;
+	$unitTestResults = $unitTestResults . $existsError;
 }
 
 /*
@@ -363,7 +364,7 @@ if($delete1 && $delete2 && $delete3){
  * If any of the delete tests failed, print the error.
  */
 if($deleteError){
-	echo $deleteError;
+	$unitTestResults = $unitTestResults . $deleteError;
 }
 
 /*
@@ -481,7 +482,7 @@ if($lgi1 && $lgi2 && $lgi3 && $lgi4 && $lgi5){
  * If any of the login tests failed, print the error.
  */
 if($loginError){
-	echo $loginError;
+	$unitTestResults = $unitTestResults . $loginError;
 }
 
 /*
@@ -509,7 +510,7 @@ if($lgo){
  * If any of the logout tests failed, print the error.
  */ 
 if($logoutError){
-	echo $logoutError;
+	$unitTestResults = $unitTestResults . $logoutError;
 }
 
 /*
@@ -553,7 +554,7 @@ if($compareID != $user->userID){
 }
 
 if($checkPasswordError){
-	echo $checkPasswordError;
+	$unitTestResults = $unitTestResults . $checkPasswordError;
 }
 
 /*
@@ -567,16 +568,17 @@ if($cp1 && $cp2){
 }
 
 
-echo 'Users: <font color="';
+$unitTestResults = $unitTestResults . 'Users: <font color="';
 
 if($atts && $set && $get && $update && $exists 
 		&& $delete && $login && $logout && $checkPassword){
-	echo 'green">PASS';
+			$unitTestResults = $unitTestResults . 'green">PASS';
+			$userTest = true;
 } else {
-	echo 'red">FAIL';
+	$unitTestResults = $unitTestResults . 'red">FAIL';
 }
 
-echo '</font><br />';
+$unitTestResults = $unitTestResults . '</font><br />';
 
 
 

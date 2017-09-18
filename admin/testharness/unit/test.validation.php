@@ -17,6 +17,7 @@ $v = new Validation ();
 
 // Test emptyField($content)
 // emptyField($content) with empty content
+$validationTest = false;
 $content = '';
 $b1 = false;
 $emptyFieldError = null;
@@ -43,7 +44,7 @@ try {
 }
 
 if ($emptyFieldError) {
-	echo $emptyFieldError;
+	$unitTestResults = $unitTestResults . $emptyFieldError;
 }
 
 // Test number($content)
@@ -74,7 +75,7 @@ if (! $b4) {
 }
 
 if ($numberError) {
-	echo $numberError;
+	$unitTestResults = $unitTestResults . $numberError;
 }
 
 // Test oneUpperOneLowerOneDigitGreaterEight($content)
@@ -145,7 +146,7 @@ if (! $b9) {
 }
 
 if ($oneUpperOneLowerOneDigitGreaterEightError) {
-	echo $oneUpperOneLowerOneDigitGreaterEightError;
+	$unitTestResults = $unitTestResults . $oneUpperOneLowerOneDigitGreaterEightError;
 }
 
 // Test alphaNumeric($content)
@@ -176,7 +177,7 @@ if (! $b11) {
 }
 
 if ($alphaNumericError) {
-	echo $alphaNumericError;
+	$unitTestResults = $unitTestResults . $alphaNumericError;
 }
 
 // Test alpha($content)
@@ -207,7 +208,7 @@ if (! $b13) {
 }
 
 if ($alphaError) {
-	echo $alphaError;
+	$unitTestResults = $unitTestResults . $alphaError;
 }
 
 // Test numberHyphen($content)
@@ -238,7 +239,7 @@ if (! $b15) {
 }
 
 if ($numberHyphenError) {
-	echo $numberHyphenError;
+	$unitTestResults = $unitTestResults . $numberHyphenError;
 }
 
 // Test isDate($content)
@@ -269,7 +270,7 @@ if (! $b17) {
 }
 
 if ($isDateError) {
-	echo $isDateError;
+	$unitTestResults = $unitTestResults . $isDateError;
 }
 
 // Test notPastDate($content)
@@ -322,7 +323,7 @@ try {
 }
 
 if ($notPastDateError) {
-	echo $notPastDateError;
+	$unitTestResults = $unitTestResults . $notPastDateError;
 }
 
 // Test validateEmail($content)
@@ -354,7 +355,7 @@ if (! $b22) {
 }
 
 if ($validateEmailError) {
-	echo $validateEmailError;
+	$unitTestResults = $unitTestResults . $validateEmailError;
 }
 
 // Test atLeastFour($content)
@@ -386,17 +387,18 @@ if (! $b24) {
 }
 
 if ($atLeastFourError) {
-	echo $atLeastFourError;
+	$unitTestResults = $unitTestResults . $atLeastFourError;
 }
 
-echo 'Validation: <font color="';
+$unitTestResults = $unitTestResults . 'Validation: <font color="';
 
 if ($b1 && $b2 && $b3 && $b4 && $b5 && $b6 && $b7 && $b8 && $b9 && $b10 && $b11 && $b12 && $b13 && $b14 && $b15 && $b16 && $b17 && $b18 && $b19 && $b20 && $b21 && $b22 && $b23 && $b24) {
-	echo 'green">PASS';
+	$unitTestResults = $unitTestResults . 'green">PASS';
+	$validationTest = true;
 } else {
-	echo 'red">FAIL';
+	$unitTestResults = $unitTestResults . 'red">FAIL';
 }
 
-echo '</font><br />';
+$unitTestResults = $unitTestResults . '</font><br />';
 
 ?>

@@ -62,7 +62,10 @@ $user->status = 'admin';
 $user->password = '';  // So the current password is not updated.
 $user->update ();
 
-echo '<br />Users seeded.'
+$category = new Category();
+$category->parentID = 0;
+$category->category = 'Category';
+$category->set();
 
 ?>
 
