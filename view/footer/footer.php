@@ -1,3 +1,6 @@
+
+<hr />
+
 <?php
 /*
  * Authors: 
@@ -7,6 +10,11 @@
  * Kinkead, Grant - s3444261@student.rmit.edu.au
  * Putro, Edwan - edwanhp@gmail.com
  */
+
+echo '<ul>';
+echo '<li><a href="' . PATH . 'Privacy">Privacy Policy</a></li>';
+echo '<li><a href="' . PATH . 'Terms">Terms of Service</a></li>';
+echo '</ul>';
 ?>
 
 
