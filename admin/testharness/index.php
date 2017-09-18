@@ -97,8 +97,11 @@ $systemTestResults = '';
 $integrationTestResults = '';
 $unitTestResults = '';
 
+// Unit Tests
 include 'admin/createDB/createdb.php';
 include 'unit/test.users.php';
+include 'admin/createDB/createdb.php';
+include 'unit/test.category.php';
 include 'admin/createDB/createdb.php';
 include 'unit/test.note.php';
 include 'admin/createDB/createdb.php';
@@ -115,11 +118,31 @@ include 'admin/createDB/createdb.php';
 include 'unit/test.useritems.php';
 include 'admin/createDB/createdb.php';
 include 'unit/test.validation.php';
+
+// Integration Tests
+
+// System Tests
+include 'admin/createDB/createdb.php';
+include 'system/test.adduser.php';
+
+// Return Database to original state
 include 'admin/createDB/createdb.php';
 include 'admin/seedDB/seed.php';
 
-if($userTest && $noteTest && $commentTest && $itemTest && $itemNoteTest && $itemCommentTest && $categoryItemsTest && $userItemsTest && $validationTest){
+if($userTest && $categoryTest && $noteTest && $commentTest && $itemTest && $itemNoteTest && $itemCommentTest && $categoryItemsTest && $userItemsTest && $validationTest){
 	$unit = true;
+}
+
+// Integration set to true until there is something to test.
+$integration = true;
+/*
+if(){
+	$integration = true;
+}
+*/
+
+if($adduserTest){
+	$system = true;
 }
 
 if($system && $integration && $unit){

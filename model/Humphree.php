@@ -65,9 +65,9 @@ class Humphree {
 	 */
 	public function addUser() {
 		// TO DO
-		// Convert arrays to objects if necessary and call equivalent System Function
+		// Parameters passed to the System Class must be converted to a User Object
 		$system = new System();
-		$system->addUser();
+		$system->addUser($user);
 	}
 	
 	/*

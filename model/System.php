@@ -7,11 +7,9 @@
  * Kinkead, Grant - s3444261@student.rmit.edu.au
  * Putro, Edwan - edwanhp@gmail.com
  */
-
 if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }
-
 class System {
 	
 	/*
@@ -32,7 +30,7 @@ class System {
 	}
 	
 	/*
-	 * The changePassword() function allows a user or administrator to 
+	 * The changePassword() function allows a user or administrator to
 	 * change a password for an account.
 	 */
 	public function changePassword() {
@@ -51,8 +49,54 @@ class System {
 	 * The addUser() function allows an administrator to add a user and
 	 * pre-activate the account.
 	 */
-	public function addUser() {
-		// TO DO
+	public function addUser($user) {
+		unset ( $_SESSION ['error'] );
+		
+		if (get_class ( $user ) == 'Users') {
+			
+			$validate = new Validation ();
+			
+			// Validate the username.
+			try {
+				$validate->userName ( $user->user );
+			} catch ( ValidationException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
+			
+			// Validate the email name.
+			try {
+				$validate->email ( $user->email );
+			} catch ( ValidationException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
+			
+			// Validate the password
+			try {
+				$validate->password ( $user->password );
+			} catch ( ValidationException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
+			
+			if (isset ( $_SESSION ['error'] )) {
+				return false;
+			} else {
+				$user->set ();
+				$user->get ();
+				if ($user->userID > 0) {
+					if ($user->activate ()) {
+						return true;
+					} else {
+						$_SESSION ['error'] = 'Failed to activate account.';
+						return false;
+					}
+				} else {
+					$_SESSION ['error'] = 'Failed to add user.';
+					return false;
+				}
+			}
+		} else {
+			$_SESSION ['error'] = 'Not a User Object.';
+		}
 	}
 	
 	/*
@@ -227,7 +271,5 @@ class System {
 	public function search() {
 		// TO DO
 	}
-	
-
 }
 ?>
