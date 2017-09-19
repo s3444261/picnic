@@ -52,7 +52,7 @@ class NoteTest extends PicnicTestCase {
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
 	}
 
-	public function testSetResultsInValidCategoryId(): void {
+	public function testSetResultsInValidId(): void {
 		$sut = new Note([self::NOTE_ID => 1, self::NOTE_TEXT =>'text1']);
 		$this->assertGreaterThan(0, $sut->set());
 		$this->assertGreaterThan(0, $sut->{self::NOTE_ID});

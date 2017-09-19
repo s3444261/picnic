@@ -84,7 +84,7 @@ final class CategoryTest extends PicnicTestCase {
 		$this->assertDeleteIsFunctional($validId, $invalidId);
 	}
 
-	public function testSetResultsInValidCategoryId(): void {
+	public function testSetResultsInValidId(): void {
 		$sut = new Category([self::PARENT_ID => 1, self::CATEGORY_NAME => 'child2']);
 		$this->assertGreaterThan(0, $sut->set());
 		$this->assertGreaterThan(0, $sut->{self::CATEGORY_ID});

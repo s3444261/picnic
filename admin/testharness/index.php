@@ -104,10 +104,6 @@ include 'test.user.php';
 DatabaseGenerator::Generate();
 include 'test.item.php';
 DatabaseGenerator::Generate();
-include 'test.itemnotes.php';
-DatabaseGenerator::Generate();
-include 'test.useritems.php';
-DatabaseGenerator::Generate();
 include 'test.validation.php';
 
 // Integration Tests
@@ -120,7 +116,7 @@ include 'system/test.adduser.php';
 DatabaseGenerator::Generate();
 include 'admin/seedDB/seed.php';
 
-if($userTest && $itemTest && $itemNoteTest && $userItemsTest && $validationTest){
+if($userTest && $itemTest && $validationTest){
 	$unit = true;
 }
 

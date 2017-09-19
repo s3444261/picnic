@@ -1,13 +1,11 @@
 <?php
 /* Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
- */
-
-declare(strict_types=1);
+* Derrick, Troy - s3202752@student.rmit.edu.au
+* Foster, Diane - s3387562@student.rmit.edu.au
+* Goodreds, Allen - s3492264@student.rmit.edu.au
+* Kinkead, Grant - s3444261@student.rmit.edu.au
+* Putro, Edwan - edwanhp@gmail.com
+*/
 
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
@@ -15,16 +13,15 @@ require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
-require_once dirname(__FILE__) . '/../../../model/ItemComments.php';
+require_once dirname(__FILE__) . '/../../../model/Note.php';
+require_once dirname(__FILE__) . '/../../../model/ItemNotes.php';
 
-class ItemCommentTest extends PicnicTestCase {
+class ItemNotesTest extends PicnicTestCase {
 
 	const ITEM_ID          = 'itemID';
 	const USER_ID          = 'userID';
-	const CATEGORY_ID      = 'categoryID';
-	const COMMENT_ID       = 'commentID';
-	const CATEGORY_ITEM_ID = 'category_itemID';
-	const ITEM_COMMENT_ID  = 'item_commentID';
+	const NOTE_ID          = 'noteID';
+	const ITEM_NOTE_ID     = 'item_noteID';
 
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
@@ -47,32 +44,32 @@ class ItemCommentTest extends PicnicTestCase {
 		$item = new Item();
 		$itemId = $item->set();
 
-		// Insert three comments against that item.
+		// Insert three notes against that item.
 		for($i = 0; $i < 3; $i++){
 
-			$comment = new Comment([self::ITEM_ID => $itemId, self::USER_ID => $userId]);
-			$commentId = $comment->set();
+			$note = new Note([self::ITEM_ID => $itemId, self::USER_ID => $userId]);
+			$noteId = $note->set();
 
 			$itemComment = $this->createDefaultSut();
 			$itemComment->{self::ITEM_ID} = $itemId;
-			$itemComment->{self::COMMENT_ID} = $commentId;
+			$itemComment->{self::NOTE_ID} = $noteId;
 			$itemComment->set();
 		}
 	}
 
 	protected function createDefaultSut(){
-		return new ItemComments();
+		return new ItemNotes();
 	}
 
 	protected function createSutWithId($id){
-		return new ItemComments([self::ITEM_COMMENT_ID => $id]);
+		return new ItemNotes([self::ITEM_NOTE_ID => $id]);
 	}
 
 	public function testAttributes(): void {
 		$values = [
-			self::ITEM_COMMENT_ID => 1,
-			self::ITEM_ID         => 1,
-			self::COMMENT_ID      => 1,
+			self::ITEM_NOTE_ID => 1,
+			self::ITEM_ID      => 1,
+			self::NOTE_ID      => 1,
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
@@ -83,9 +80,9 @@ class ItemCommentTest extends PicnicTestCase {
 		$invalidId = 200;
 
 		$expectedValuesForValidId = [
-			self::ITEM_COMMENT_ID => 1,
-			self::ITEM_ID         => 1,
-			self::COMMENT_ID      => 1,
+			self::ITEM_NOTE_ID  => 1,
+			self::ITEM_ID       => 1,
+			self::NOTE_ID       => 1,
 		];
 
 		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
@@ -104,41 +101,41 @@ class ItemCommentTest extends PicnicTestCase {
 	}
 
 	public function testSetResultsInValidId(): void {
-		$sut = new ItemComments([self::ITEM_ID => 1, self::COMMENT_ID => 1]);
+		$sut = new ItemNotes([self::ITEM_ID => 1, self::NOTE_ID => 1]);
 		$this->assertGreaterThan(0, $sut->set());
-		$this->assertGreaterThan(0, $sut->{self::ITEM_COMMENT_ID});
+		$this->assertGreaterThan(0, $sut->{self::ITEM_NOTE_ID});
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
 		// TD To my mind this should fail- doesn't make sense to have a
 		// comment mapped to the same item twice.
-		$sut = new ItemComments([self::ITEM_ID => 1, self::COMMENT_ID => 1]);
+		$sut = new ItemNotes([self::ITEM_ID => 1, self::NOTE_ID => 1]);
 		$sut->set();
 
-		$sut = new ItemComments([self::ITEM_ID => 1, self::COMMENT_ID => 1]);
+		$sut = new ItemNotes([self::ITEM_ID => 1, self::NOTE_ID => 1]);
 		$this->assertEquals(1, $sut->set());
-		$this->assertEquals(1, $sut->{self::ITEM_COMMENT_ID});
+		$this->assertEquals(1, $sut->{self::ITEM_NOTE_ID});
 	}
 
-	public function testCountReturnsTotalNumberOfCommentsForItem(): void {
+	public function testCountReturnsTotalNumberOfNotesForItem(): void {
 		$sut = $this->createSutWithId(1);
 		$sut->get();
 		$this->assertEquals(3, $sut->count());
 	}
 
 	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {
-		$item = new Item();
+		$item = new Note();
 		$itemId = $item->set();
 		$item->get();
 
 		$sut = $this->createSutWithId(1);
 		$sut->get();
-		$sut->{self::ITEM_ID} = $itemId;
+		$sut->{self::NOTE_ID} = $itemId;
 		$sut->update();
 
 		$sut = $this->createSutWithId(1);
 		$sut->get();
 
-		$this->assertEquals(2, $sut->{self::ITEM_ID});
+		$this->assertEquals(4, $sut->{self::NOTE_ID});
 	}
 }
