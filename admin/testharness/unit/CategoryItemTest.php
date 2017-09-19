@@ -10,20 +10,19 @@
 declare(strict_types=1);
 
 require_once 'PicnicTestCase.php';
-require_once '../../createDB/DatabaseGenerator.php';
-require_once '../../../config/Picnic.php';
-require_once '../../../model/Category.php';
-require_once '../../../model/Item.php';
-require_once '../../../model/CategoryItems.php';
+require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
+require_once dirname(__FILE__) . '/../../../config/Picnic.php';
+require_once dirname(__FILE__) . '/../../../model/Category.php';
+require_once dirname(__FILE__) . '/../../../model/Item.php';
+require_once dirname(__FILE__) . '/../../../model/CategoryItems.php';
 
-define('CATEGORY_ID', 'categoryID');
-define('PARENT_ID', 'parentID');
-define('CATEGORY_NAME', 'category');
+class CategoryItemTest extends PicnicTestCase {
 
-define('ITEM_ID', 'itemID');
-define('CATEGORY_ITEM_ID', 'category_itemID');
-
-class CategoryItemTests extends PicnicTestCase {
+	const CATEGORY_ID      = 'categoryID';
+	const PARENT_ID        = 'parentID';
+	const CATEGORY_NAME    = 'category';
+	const ITEM_ID          = 'itemID';
+	const CATEGORY_ITEM_ID = 'category_itemID';
 
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
@@ -32,9 +31,9 @@ class CategoryItemTests extends PicnicTestCase {
 
 		// insert a root category with ID == 1
 		$root = new Category();
-		$root->{CATEGORY_ID} = 1;
-		$root->{CATEGORY_NAME} = 'Category';
-		$root->{PARENT_ID} = 0;
+		$root->{self::CATEGORY_ID} = 1;
+		$root->{self::CATEGORY_NAME} = 'Category';
+		$root->{self::PARENT_ID} = 0;
 		$root->set();
 
 		// Insert three new items, and map each to the root category.
@@ -43,7 +42,7 @@ class CategoryItemTests extends PicnicTestCase {
 			$itemId = $item->set();
 			$item->get();
 
-			$categoryItem = new CategoryItems([ITEM_ID => $itemId, CATEGORY_ID => 1]);
+			$categoryItem = new CategoryItems([self::ITEM_ID => $itemId, self::CATEGORY_ID => 1]);
 			$categoryItem ->set();
 			$categoryItem ->get();
 		}
@@ -54,14 +53,14 @@ class CategoryItemTests extends PicnicTestCase {
 	}
 
 	protected function createSutWithId($id){
-		return new CategoryItems([CATEGORY_ITEM_ID => $id]);
+		return new CategoryItems([self::CATEGORY_ITEM_ID => $id]);
 	}
 
 	public function testAttributes(): void {
 		$values = [
-			CATEGORY_ITEM_ID => 2,
-			CATEGORY_ID      => 1,
-			ITEM_ID          => 1,
+			self::CATEGORY_ITEM_ID => 2,
+			self::CATEGORY_ID      => 1,
+			self::ITEM_ID          => 1,
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
@@ -72,9 +71,9 @@ class CategoryItemTests extends PicnicTestCase {
 		$invalidId = 200;
 
 		$expectedValuesForValidId = [
-			CATEGORY_ITEM_ID =>2,
-			CATEGORY_ID => 1,
-			ITEM_ID => 2
+			self::CATEGORY_ITEM_ID =>2,
+			self::CATEGORY_ID => 1,
+			self::ITEM_ID => 2
 		];
 
 		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
@@ -95,26 +94,26 @@ class CategoryItemTests extends PicnicTestCase {
 	public function testCountReturnsTotalNumberOfItemsInCategory(): void {
 		// TD: count() should probably be a member of the Category class
 		// rather than this one.
-		$sut = new CategoryItems([ CATEGORY_ITEM_ID => 1]);
+		$sut = new CategoryItems([ self::CATEGORY_ITEM_ID => 1]);
 		$sut->get();
 		$this->assertEquals(3, $sut->count());
 	}
 
 	public function testSetResultsInValidCategoryId(): void {
-		$sut = new CategoryItems([CATEGORY_ID => 1, ITEM_ID => 1]);
+		$sut = new CategoryItems([self::CATEGORY_ID => 1, self::ITEM_ID => 1]);
 		$this->assertGreaterThan(0, $sut->set());
-		$this->assertGreaterThan(0, $sut->{CATEGORY_ITEM_ID});
+		$this->assertGreaterThan(0, $sut->{self::CATEGORY_ITEM_ID});
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
 		// TD To my mind this should fail- doesn't make sense to have an
 		// item mapped to the same category twice.
-		$sut = new CategoryItems([CATEGORY_ID => 1, ITEM_ID => 1]);
+		$sut = new CategoryItems([self::CATEGORY_ID => 1, self::ITEM_ID => 1]);
 		$sut->set();
 
-		$sut = new CategoryItems([CATEGORY_ID => 1, ITEM_ID => 1]);
+		$sut = new CategoryItems([self::CATEGORY_ID => 1, self::ITEM_ID => 1]);
 		$this->assertEquals(1, $sut->set());
-		$this->assertEquals(1, $sut->{CATEGORY_ITEM_ID});
+		$this->assertEquals(1, $sut->{self::CATEGORY_ITEM_ID});
 	}
 
 	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {
@@ -122,14 +121,14 @@ class CategoryItemTests extends PicnicTestCase {
 		$itemId = $item->set();
 		$item->get();
 
-		$sut = new CategoryItems([CATEGORY_ITEM_ID => 1]);
+		$sut = new CategoryItems([self::CATEGORY_ITEM_ID => 1]);
 		$sut->get();
-		$sut->{ITEM_ID} = $itemId;
+		$sut->{self::ITEM_ID} = $itemId;
 		$sut->update();
 
-		$sut = new CategoryItems([CATEGORY_ITEM_ID => 1]);
+		$sut = new CategoryItems([self::CATEGORY_ITEM_ID => 1]);
 		$sut->get();
 
-		$this->assertEquals(4, $sut->{ITEM_ID});
+		$this->assertEquals(4, $sut->{self::ITEM_ID});
 	}
 }

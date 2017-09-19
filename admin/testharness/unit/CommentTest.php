@@ -10,19 +10,20 @@
 declare(strict_types=1);
 
 require_once 'PicnicTestCase.php';
-require_once '../../createDB/DatabaseGenerator.php';
-require_once '../../../config/Picnic.php';
-require_once '../../../model/Note.php';
-require_once '../../../model/User.php';
-require_once '../../../model/Comment.php';
+require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
+require_once dirname(__FILE__) . '/../../../config/Picnic.php';
+require_once dirname(__FILE__) . '/../../../model/Note.php';
+require_once dirname(__FILE__) . '/../../../model/User.php';
+require_once dirname(__FILE__) . '/../../../model/Comment.php';
 
-define('COMMENT_ID', 'commentID');
-define('USER_ID', 'userID');
-define('COMMENT_TEXT', 'comment');
-define('CREATION_DATE', 'created_at');
-define('MODIFIED_DATE', 'updated_at');
+class CommentTest extends PicnicTestCase{
 
-class CommentTests extends PicnicTestCase{
+	const COMMENT_ID    = 'commentID';
+	const USER_ID       = 'userID';
+	const COMMENT_TEXT   = 'comment';
+	const CREATION_DATE = 'created_at';
+	const MODIFIED_DATE = 'updated_at';
+
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
 		// Be nice if we could mock out the database, but let's see how we go with that.
@@ -42,9 +43,9 @@ class CommentTests extends PicnicTestCase{
 
 		// insert a note with ID == 1
 		$root = new Comment();
-		$root->{COMMENT_ID} = 1;
-		$root->{USER_ID} = 1;
-		$root->{COMMENT_TEXT} = 'hi there, world!';
+		$root->{self::COMMENT_ID} = 1;
+		$root->{self::USER_ID} = 1;
+		$root->{self::COMMENT_TEXT} = 'hi there, world!';
 		$root->set();
 	}
 
@@ -53,16 +54,16 @@ class CommentTests extends PicnicTestCase{
 	}
 
 	protected function createSutWithId($id){
-		return new Comment([COMMENT_ID => $id]);
+		return new Comment([self::COMMENT_ID => $id]);
 	}
 
 	public function testAttributes(): void {
 		$values = [
-			COMMENT_ID    => 2,
-			USER_ID       => 1,
-			COMMENT_TEXT  => 'heeeeeeres johhny!',
-			CREATION_DATE => '1984-08-18',
-			MODIFIED_DATE => '2015-02-13'
+			self::COMMENT_ID    => 2,
+			self::USER_ID       => 1,
+			self::COMMENT_TEXT  => 'heeeeeeres johhny!',
+			self::CREATION_DATE => '1984-08-18',
+			self::MODIFIED_DATE => '2015-02-13'
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
@@ -73,9 +74,9 @@ class CommentTests extends PicnicTestCase{
 		$invalidId = 200;
 
 		$expectedValuesForValidId = [
-			COMMENT_ID   => 1,
-			USER_ID		 => 1,
-			COMMENT_TEXT => 'hi there, world!'
+			self::COMMENT_ID   => 1,
+			self::USER_ID		 => 1,
+			self::COMMENT_TEXT => 'hi there, world!'
 		];
 
 		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
@@ -96,13 +97,13 @@ class CommentTests extends PicnicTestCase{
 	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {
 		$sut = $this->createSutWithId(1);
 		$sut->get();
-		$sut->{COMMENT_TEXT} = 'be excellent to each other';
+		$sut->{self::COMMENT_TEXT} = 'be excellent to each other';
 		$sut->update();
 
 		$sut = $this->createSutWithId(1);
 		$sut->get();
 
-		$this->assertEquals('be excellent to each other', $sut->{COMMENT_TEXT});
+		$this->assertEquals('be excellent to each other', $sut->{self::COMMENT_TEXT});
 	}
 
 	function testCountReturnsTotalNumberOfCommentsForUser(): void {

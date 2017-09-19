@@ -10,21 +10,22 @@
 declare(strict_types=1);
 
 require_once 'PicnicTestCase.php';
-require_once '../../createDB/DatabaseGenerator.php';
-require_once '../../../config/Picnic.php';
-require_once '../../../model/Comment.php';
-require_once '../../../model/Item.php';
-require_once '../../../model/User.php';
-require_once '../../../model/ItemComments.php';
+require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
+require_once dirname(__FILE__) . '/../../../config/Picnic.php';
+require_once dirname(__FILE__) . '/../../../model/Comment.php';
+require_once dirname(__FILE__) . '/../../../model/Item.php';
+require_once dirname(__FILE__) . '/../../../model/User.php';
+require_once dirname(__FILE__) . '/../../../model/ItemComments.php';
 
-define('ITEM_ID', 'itemID');
-define('USER_ID', 'userID');
-define('CATEGORY_ID', 'categoryID');
-define('COMMENT_ID', 'commentID');
-define('CATEGORY_ITEM_ID', 'category_itemID');
-define('ITEM_COMMENT_ID', 'item_commentID');
+class ItemCommentTest extends PicnicTestCase {
 
-class ItemCommentTests extends PicnicTestCase {
+	const ITEM_ID          = 'itemID';
+	const USER_ID          = 'userID';
+	const CATEGORY_ID      = 'categoryID';
+	const COMMENT_ID       = 'commentID';
+	const CATEGORY_ITEM_ID = 'category_itemID';
+	const ITEM_COMMENT_ID  = 'item_commentID';
+
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
 		// Be nice if we could mock out the database, but let's see how we go with that.
@@ -49,12 +50,12 @@ class ItemCommentTests extends PicnicTestCase {
 		// Insert three comments against that item.
 		for($i = 0; $i < 3; $i++){
 
-			$comment = new Comment([ITEM_ID => $itemId, USER_ID => $userId]);
+			$comment = new Comment([self::ITEM_ID => $itemId, self::USER_ID => $userId]);
 			$commentId = $comment->set();
 
 			$itemComment = $this->createDefaultSut();
-			$itemComment->{ITEM_ID} = $itemId;
-			$itemComment->{COMMENT_ID} = $commentId;
+			$itemComment->{self::ITEM_ID} = $itemId;
+			$itemComment->{self::COMMENT_ID} = $commentId;
 			$itemComment->set();
 		}
 	}
@@ -64,14 +65,14 @@ class ItemCommentTests extends PicnicTestCase {
 	}
 
 	protected function createSutWithId($id){
-		return new ItemComments([ITEM_COMMENT_ID => $id]);
+		return new ItemComments([self::ITEM_COMMENT_ID => $id]);
 	}
 
 	public function testAttributes(): void {
 		$values = [
-			ITEM_COMMENT_ID => 1,
-			ITEM_ID         => 1,
-			COMMENT_ID      => 1,
+			self::ITEM_COMMENT_ID => 1,
+			self::ITEM_ID         => 1,
+			self::COMMENT_ID      => 1,
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
@@ -82,9 +83,9 @@ class ItemCommentTests extends PicnicTestCase {
 		$invalidId = 200;
 
 		$expectedValuesForValidId = [
-			ITEM_COMMENT_ID => 1,
-			ITEM_ID         => 1,
-			COMMENT_ID      => 1,
+			self::ITEM_COMMENT_ID => 1,
+			self::ITEM_ID         => 1,
+			self::COMMENT_ID      => 1,
 		];
 
 		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
@@ -103,20 +104,20 @@ class ItemCommentTests extends PicnicTestCase {
 	}
 
 	public function testSetResultsInValidCategoryId(): void {
-		$sut = new ItemComments([ITEM_ID => 1, COMMENT_ID => 1]);
+		$sut = new ItemComments([self::ITEM_ID => 1, self::COMMENT_ID => 1]);
 		$this->assertGreaterThan(0, $sut->set());
-		$this->assertGreaterThan(0, $sut->{ITEM_COMMENT_ID});
+		$this->assertGreaterThan(0, $sut->{self::ITEM_COMMENT_ID});
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
 		// TD To my mind this should fail- doesn't make sense to have a
 		// comment mapped to the same item twice.
-		$sut = new ItemComments([ITEM_ID => 1, COMMENT_ID => 1]);
+		$sut = new ItemComments([self::ITEM_ID => 1, self::COMMENT_ID => 1]);
 		$sut->set();
 
-		$sut = new ItemComments([ITEM_ID => 1, COMMENT_ID => 1]);
+		$sut = new ItemComments([self::ITEM_ID => 1, self::COMMENT_ID => 1]);
 		$this->assertEquals(1, $sut->set());
-		$this->assertEquals(1, $sut->{ITEM_COMMENT_ID});
+		$this->assertEquals(1, $sut->{self::ITEM_COMMENT_ID});
 	}
 
 	public function testCountReturnsTotalNumberOfCommentsForItem(): void {
@@ -132,12 +133,12 @@ class ItemCommentTests extends PicnicTestCase {
 
 		$sut = $this->createSutWithId(1);
 		$sut->get();
-		$sut->{ITEM_ID} = $itemId;
+		$sut->{self::ITEM_ID} = $itemId;
 		$sut->update();
 
 		$sut = $this->createSutWithId(1);
 		$sut->get();
 
-		$this->assertEquals(2, $sut->{ITEM_ID});
+		$this->assertEquals(2, $sut->{self::ITEM_ID});
 	}
 }

@@ -10,16 +10,16 @@
 declare(strict_types=1);
 
 require_once 'PicnicTestCase.php';
-require_once '../../createDB/DatabaseGenerator.php';
-require_once '../../../config/Picnic.php';
-require_once '../../../model/Note.php';
+require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
+require_once dirname(__FILE__) . '/../../../config/Picnic.php';
+require_once dirname(__FILE__) . '/../../../model/Note.php';
 
-define('NOTE_ID', 'noteID');
-define('NOTE_TEXT', 'note');
-define('CREATION_DATE', 'created_at');
-define('MODIFIED_DATE', 'updated_at');
+class NoteTest extends PicnicTestCase {
 
-class NoteTests extends PicnicTestCase {
+	const NOTE_ID = 'noteID';
+	const NOTE_TEXT = 'note';
+	const CREATION_DATE = 'created_at';
+	const MODIFIED_DATE = 'updated_at';
 
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
@@ -28,8 +28,8 @@ class NoteTests extends PicnicTestCase {
 
 		// insert a note with ID == 1
 		$root = new Note();
-		$root->{NOTE_ID} = 1;
-		$root->{NOTE_TEXT} = 'hi there, world!';
+		$root->{self::NOTE_ID} = 1;
+		$root->{self::NOTE_TEXT} = 'hi there, world!';
 		$root->set();
 	}
 
@@ -38,24 +38,24 @@ class NoteTests extends PicnicTestCase {
 	}
 
 	protected function createSutWithId($id){
-		return new Note([NOTE_ID => $id]);
+		return new Note([self::NOTE_ID => $id]);
 	}
 
 	public function testAttributes(): void {
 		$values = [
-			NOTE_ID        => 1,
-			NOTE_TEXT      => 'text1',
-			CREATION_DATE  => '1984-08-18',
-			MODIFIED_DATE  => '2015-02-13'
+			self::NOTE_ID        => 1,
+			self::NOTE_TEXT      => 'text1',
+			self::CREATION_DATE  => '1984-08-18',
+			self::MODIFIED_DATE  => '2015-02-13'
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
 	}
 
 	public function testSetResultsInValidCategoryId(): void {
-		$sut = new Note([NOTE_ID => 1, NOTE_TEXT =>'text1']);
+		$sut = new Note([self::NOTE_ID => 1, self::NOTE_TEXT =>'text1']);
 		$this->assertGreaterThan(0, $sut->set());
-		$this->assertGreaterThan(0, $sut->{NOTE_ID});
+		$this->assertGreaterThan(0, $sut->{self::NOTE_ID});
 	}
 
 	public function testGet(): void {
@@ -63,8 +63,8 @@ class NoteTests extends PicnicTestCase {
 		$invalidId = 200;
 
 		$expectedValuesForValidId = [
-			NOTE_ID   => 1,
-			NOTE_TEXT => 'hi there, world!'
+			self::NOTE_ID   => 1,
+			self::NOTE_TEXT => 'hi there, world!'
 		];
 
 		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
@@ -85,13 +85,13 @@ class NoteTests extends PicnicTestCase {
 	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {
 		$sut = $this->createSutWithId(1);
 		$sut->get();
-		$sut->{NOTE_TEXT} = 'the horror';
+		$sut->{self::NOTE_TEXT} = 'the horror';
 		$sut->update();
 
 		$sut = $this->createSutWithId(1);
 		$sut->get();
 
-		$this->assertEquals('the horror', $sut->{NOTE_TEXT});
+		$this->assertEquals('the horror', $sut->{self::NOTE_TEXT});
 	}
 }
 
