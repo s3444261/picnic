@@ -10,28 +10,7 @@
 
 include_once 'config/config.php';
 
-define('ATTA', 'categoryID');
-define('ATTB', 'parentID');
-define('ATTC', 'category');
-define('ATTD', 'noteID');
-define('ATTE', 'note');
-define('ATTF', 'commentID');
-define('ATTG', 'userID');
-define('ATTH', 'comment');
-define('ATTI', 'itemID');
-define('ATTJ', 'title');
-define('ATTK', 'description');
-define('ATTL', 'quantity');
-define('ATTM', 'itemcondition');
-define('ATTN', 'price');
-define('ATTO', 'status');
-define('ATTP', 'item_noteID');
-define('ATTQ', 'item_commentID');
-define('ATTR', 'category_itemID');
-define('ATTS', 'user_itemID');
-
-
-/* 
+/*
  * TEST FUNCTIONS
  */
 
@@ -102,8 +81,6 @@ include 'admin/createDB/DatabaseGenerator.php';
 DatabaseGenerator::Generate();
 include 'test.user.php';
 DatabaseGenerator::Generate();
-include 'test.item.php';
-DatabaseGenerator::Generate();
 include 'test.validation.php';
 
 // Integration Tests
@@ -116,7 +93,7 @@ include 'system/test.adduser.php';
 DatabaseGenerator::Generate();
 include 'admin/seedDB/seed.php';
 
-if($userTest && $itemTest && $validationTest){
+if($userTest && $validationTest){
 	$unit = true;
 }
 

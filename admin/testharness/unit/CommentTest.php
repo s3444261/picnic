@@ -29,7 +29,7 @@ class CommentTest extends PicnicTestCase{
 		// Be nice if we could mock out the database, but let's see how we go with that.
 		DatabaseGenerator::Generate();
 
-		// insert a user with ID == 1
+		// Insert a user.
 		$user = new User ();
 		$user->user = 'grant';
 		$user->email = 'grant@kinkead.net';
@@ -41,9 +41,8 @@ class CommentTest extends PicnicTestCase{
 		$user->password = '';  // So the current password is not updated.
 		$user->update ();
 
-		// insert a note with ID == 1
+		// Insert a comment and associate it with the user.
 		$root = new Comment();
-		$root->{self::COMMENT_ID} = 1;
 		$root->{self::USER_ID} = 1;
 		$root->{self::COMMENT_TEXT} = 'hi there, world!';
 		$root->set();

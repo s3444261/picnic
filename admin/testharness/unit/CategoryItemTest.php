@@ -29,14 +29,14 @@ class CategoryItemTest extends PicnicTestCase {
 		// Be nice if we could mock out the database, but let's see how we go with that.
 		DatabaseGenerator::Generate();
 
-		// insert a root category with ID == 1
+		// Insert a category.
 		$root = new Category();
 		$root->{self::CATEGORY_ID} = 1;
 		$root->{self::CATEGORY_NAME} = 'Category';
 		$root->{self::PARENT_ID} = 0;
 		$root->set();
 
-		// Insert three new items, and map each to the root category.
+		// Insert three new items, and map each to the category.
 		for($i = 0; $i < 3; $i++){
 			$item = new Item();
 			$itemId = $item->set();
@@ -92,8 +92,6 @@ class CategoryItemTest extends PicnicTestCase {
 	}
 
 	public function testCountReturnsTotalNumberOfItemsInCategory(): void {
-		// TD: count() should probably be a member of the Category class
-		// rather than this one.
 		$sut = new CategoryItems([ self::CATEGORY_ITEM_ID => 1]);
 		$sut->get();
 		$this->assertEquals(3, $sut->count());
@@ -106,8 +104,6 @@ class CategoryItemTest extends PicnicTestCase {
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
-		// TD To my mind this should fail- doesn't make sense to have an
-		// item mapped to the same category twice.
 		$sut = new CategoryItems([self::CATEGORY_ID => 1, self::ITEM_ID => 1]);
 		$sut->set();
 

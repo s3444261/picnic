@@ -27,7 +27,7 @@ class UserItemTest extends PicnicTestCase {
 		// Be nice if we could mock out the database, but let's see how we go with that.
 		DatabaseGenerator::Generate();
 
-		// insert a user with ID == 1
+		// Insert a user.
 		$user = new User();
 		$user->user = 'grant';
 		$user->email = 'grant@kinkead.net';

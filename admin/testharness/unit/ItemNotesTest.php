@@ -28,7 +28,7 @@ class ItemNotesTest extends PicnicTestCase {
 		// Be nice if we could mock out the database, but let's see how we go with that.
 		DatabaseGenerator::Generate();
 
-		// insert a user with ID == 1
+		// insert a user
 		$user = new User();
 		$user->user = 'grant';
 		$user->email = 'grant@kinkead.net';
@@ -40,7 +40,7 @@ class ItemNotesTest extends PicnicTestCase {
 		$user->password = '';  // So the current password is not updated.
 		$user->update ();
 
-		// Insert a single item.
+		// Insert an item.
 		$item = new Item();
 		$itemId = $item->set();
 
@@ -107,8 +107,6 @@ class ItemNotesTest extends PicnicTestCase {
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
-		// TD To my mind this should fail- doesn't make sense to have a
-		// comment mapped to the same item twice.
 		$sut = new ItemNotes([self::ITEM_ID => 1, self::NOTE_ID => 1]);
 		$sut->set();
 

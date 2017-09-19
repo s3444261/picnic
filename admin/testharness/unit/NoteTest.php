@@ -26,7 +26,7 @@ class NoteTest extends PicnicTestCase {
 		// Be nice if we could mock out the database, but let's see how we go with that.
 		DatabaseGenerator::Generate();
 
-		// insert a note with ID == 1
+		// Insert a note.
 		$root = new Note();
 		$root->{self::NOTE_ID} = 1;
 		$root->{self::NOTE_TEXT} = 'hi there, world!';
