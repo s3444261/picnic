@@ -17,7 +17,7 @@ class System {
 	 * own account and join Humphree granting them access to add
 	 * and update items as well as view.
 	 */
-	public function createAccount() {
+	public function createAccount($user) {
 		// TO DO
 	}
 	
@@ -25,7 +25,7 @@ class System {
 	 * The activateAccount() fucntion verfies the email address
 	 * of the new user and makes the account active.
 	 */
-	public function activateAccount() {
+	public function activateAccount($user) {
 		// TO DO
 	}
 	
@@ -33,7 +33,7 @@ class System {
 	 * The changePassword() function allows a user or administrator to
 	 * change a password for an account.
 	 */
-	public function changePassword() {
+	public function changePassword($user) {
 		// TO DO
 	}
 	
@@ -41,7 +41,7 @@ class System {
 	 * The forgotPassword() function allows a user to generate a new password
 	 * which is sent to the users account via email.
 	 */
-	public function forgotPassword() {
+	public function forgotPassword($user) {
 		// TO DO
 	}
 	
@@ -102,45 +102,146 @@ class System {
 	/*
 	 * The updateUser() function allows an administrator to update a user.
 	 */
-	public function updateUser() {
-		// TO DO
+	public function updateUser($user) {
+		unset ( $_SESSION ['error'] );
+		
+		if (get_class ( $user ) == 'User') {
+			
+			$validate = new Validation ();
+			
+			// Validate the username.
+			try {
+				$validate->userName ( $user->user );
+			} catch ( ValidationException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
+			
+			// Validate the email name.
+			try {
+				$validate->email ( $user->email );
+			} catch ( ValidationException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
+			
+			// Validate the password
+			try {
+				$validate->password ( $user->password );
+			} catch ( ValidationException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
+			
+			if (isset ( $_SESSION ['error'] )) {
+				return false;
+			} else {
+				if($user->set ()){
+					return true;
+				} else {
+					$_SESSION ['error'] = 'User not updated.';
+					return false;
+				}
+			}
+		} else {
+			$_SESSION ['error'] = 'Not a User Object.';
+		}
 	}
 	
 	/*
 	 * The getUser() function allows an administrator to retrieve a user.
 	 */
-	public function getUser() {
-		// TO DO
+	public function getUser($user) {
+		$user = $user->get();
+		return $user;
 	}
 	
 	/*
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
 	public function getUsers() {
-		// TO DO
+		$users = new Users();
+		return $users->getUsers();
 	}
 	
 	/*
 	 * The disableUser() function allows an administrator to disable a users
 	 * account.
 	 */
-	public function disableUser() {
-		// TO DO
+	public function disableUser($user) {
+		if($user->userID > 0){
+			$user->status = 'suspended';
+			if($user->update()){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 	
 	/*
 	 * The deleteUser() function allows an administrator to completely delete
 	 * an account and all associated database entries.
 	 */
-	public function deleteUser() {
-		// TO DO
+	public function deleteUser($user) {
+		if($user->userID > 0){
+			
+			// Delete any comments and notes for any items held by the user and then delete the item.
+			$userItems = new UserItems();
+			$items = $userItems->getUserItems();
+			
+			foreach ($items as $item){
+				if($item->itemID > 0){
+					$itemComments = new ItemComments();
+					$itemComments->itemID = $item->itemID;
+					$comments = $itemComments->getComments();
+					
+					foreach ($comments as $comment){
+						$itemComments->commentID = $comment->commentID;
+						if($itemComments->getItemComment()){
+							$itemComments->delete();
+							$comment->delete();
+						}
+					}
+					
+					$itemNotes = new ItemNotes();
+					$itemNotes->itemID = $item->itemID;
+					$notes = $itemNotes->getNotes();
+					
+					foreach ($notes as $note){
+						$itemNotes->noteID = $note->noteID;
+						if($itemNotes->getItemNote()){
+							$itemNotes->delete();
+							$note->delete();
+						}
+					}
+					
+					$item->delete();
+				}
+			}
+			
+			// Delete any other comments made by the user
+			$comments = new Comments();
+			$comments->userID = $user->userID;
+			$userComments = $comments->getUserComments();
+			
+			foreach ($userComments as $userComment){
+				$userComment->deleteComment();
+			}
+			
+			// Finally, delete the user.
+			if($user->delete()){
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 	
 	/*
 	 * The addCategory() function allows and administrator to add a Category and
 	 * specify its position in the heirachy.
 	 */
-	public function addCategory() {
+	public function addCategory($category) {
 		// TO DO
 	}
 	
@@ -148,7 +249,7 @@ class System {
 	 * The updateCategory() function allows and administrator to update a Category and
 	 * its position in the heirachy.
 	 */
-	public function updateCategory() {
+	public function updateCategory($category) {
 		// TO DO
 	}
 	
@@ -156,14 +257,14 @@ class System {
 	 * The deleteCategory() function allows and administrator to delete a Category and
 	 * all associated database content.
 	 */
-	public function deleteCategory() {
+	public function deleteCategory($category) {
 		// TO DO
 	}
 	
 	/*
 	 * The getCategory() function retrieves a Category.
 	 */
-	public function getCategory() {
+	public function getCategory($category) {
 		// TO DO
 	}
 	
@@ -177,91 +278,105 @@ class System {
 	/*
 	 * The getCategoryItems() function retrieves all items linked to a Category.
 	 */
-	public function getCategoryItems() {
+	public function getCategoryItems($category) {
 		// TO DO
 	}
 	
 	/*
 	 * The getItem() function retrieves an item.
 	 */
-	public function getItem() {
+	public function getItem($item) {
 		// TO DO
 	}
 	
 	/*
 	 * The addItem() function adds an item.
 	 */
-	public function addItem() {
+	public function addItem($user, $item) {
 		// TO DO
 	}
 	
 	/*
 	 * The updateItem() function updates an item.
 	 */
-	public function updateItem() {
+	public function updateItem($item) {
 		// TO DO
 	}
 	
 	/*
 	 * The deleteItem() function deletes an item and all associated database content.
 	 */
-	public function deleteItem() {
+	public function deleteItem($user, $item) {
+		// TO DO
+	}
+	
+	/*
+	 * The getItemComments() function retrieves all comments for an item.
+	 */
+	public function getItemComments($item) {
 		// TO DO
 	}
 	
 	/*
 	 * The getItemComment() function retrieves an itemComment.
 	 */
-	public function getItemComment() {
+	public function getItemComment($comment) {
 		// TO DO
 	}
 	
 	/*
 	 * The addItemComment() function adds an itemComment.
 	 */
-	public function addItemComment() {
+	public function addItemComment($user, $item, $comment) {
 		// TO DO
 	}
 	
 	/*
 	 * The updateItemComment() function updates an itemComment.
 	 */
-	public function updateItemComment() {
+	public function updateItemComment($comment) {
 		// TO DO
 	}
 	
 	/*
 	 * The deleteItemComment() function deletes an itemComment and all associated database content.
 	 */
-	public function deleteItemComment() {
+	public function deleteItemComment($item, $comment) {
 		// TO DO
 	}
 	
 	/*
-	 * The getItemNote() function retrieves an itemNote.
+	 * The getItemNotes() retrieves all notes for an item.
 	 */
-	public function getItemNote() {
+	public function getItemNotes($item) {
+		// TO DO
+	}
+	
+	/*
+	 * The getItemNote() retrieves a note.
+	 */
+	public function getItemNote($note) {
 		// TO DO
 	}
 	
 	/*
 	 * The addItemNote() function adds an itemNote.
 	 */
-	public function addItemNote() {
+	public function addItemNote($item, $note) {
 		// TO DO
 	}
 	
 	/*
 	 * The updateItemNote() function updates an itemNote.
 	 */
-	public function updateItemNote() {
+	public function updateItemNote($note) {
 		// TO DO
 	}
 	
 	/*
 	 * The deleteItemNote() function deletes an itemNote and all associated database content.
 	 */
-	public function deleteItemNote() {
+	public function deleteItemNote($item, $note) {
 		// TO DO
 	}
 	

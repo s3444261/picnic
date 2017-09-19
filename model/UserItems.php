@@ -208,6 +208,29 @@ class UserItems {
 		return $row ['num'];
 	}
 	
+	/*
+	 * The getUserItems() method retrieves all items held by the user and returns
+	 * them as an array of item objects.
+	 */
+	public function getUserItems() {
+		
+		$query = "SELECT * FROM User_items WHERE userID = :userID";
+		
+		$db = Picnic::getInstance ();
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':userID', $this->_userID );
+		$stmt->execute ();
+		$objects = array();
+		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
+			$item = new Item();
+			$item->itemID = $row ['itemID'];
+			$item->get();
+			
+			$objects[] = $item;
+		}
+		return $objects;
+	}
+	
 	// Display Object Contents
 	public function printf() {
 		echo '<br /><strong>UserItem Object:</strong><br />';

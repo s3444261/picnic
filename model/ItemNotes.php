@@ -208,6 +208,52 @@ class ItemNotes {
 		return $row ['num'];
 	}
 	
+	/*
+	 * getNotes() retrieves all Note Objects for an Item.
+	 */
+	public function getNotes(){
+		
+		$query = "SELECT * FROM Item_notes WHERE itemID = :itemID";
+		
+		$db = Picnic::getInstance ();
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':itemID', $this->_itemID );
+		$stmt->execute ();
+		$objects = array();
+		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
+			$itemNote = new ItemNotes();
+			$itemNote->item_noteID = $row ['item_noteID'];
+			$itemNote->itemID = $row ['itemID'];
+			$itemNote->noteID = $row ['noteID'];
+			
+			$objects[] = $itemNote;
+		}
+		
+		return $objects;
+	}
+	
+	/*
+	 * The getItemNote() method returns the object based on the itemID and the noteID.
+	 */
+	public function getItemNote() {
+		
+		$query = "SELECT * FROM Item_notes WHERE itemID = :itemID AND noteID = :noteID";
+		
+		$db = Picnic::getInstance ();
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':itemID', $this->_itemID );
+		$stmt->bindParam ( ':noteID', $this->_noteID );
+		$stmt->execute ();
+		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+		$this->_id = $row ['item_noteID'];
+		
+		if($this->_id > 0){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	// Display Object Contents
 	public function printf() {
 		echo '<br /><strong>Note Object:</strong><br />';

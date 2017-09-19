@@ -208,6 +208,78 @@ class ItemComments {
 		return $row ['num'];
 	}
 	
+	/*
+	 * getComments() retrieves all Comment Objects for an Item.
+	 */
+	public function getComments(){
+		
+		$query = "SELECT * FROM Item_comments WHERE itemID = :itemID";
+		
+		$db = Picnic::getInstance ();
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':itemID', $this->_itemID );
+		$stmt->execute ();
+		$objects = array();
+		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
+			$itemComment = new ItemComments();
+			$itemComment->item_commentID = $row ['item_commentID'];
+			$itemComment->itemID = $row ['itemID'];
+			$itemComment->commentID = $row ['commentID'];
+			
+			$objects[] = $itemComment;
+		}
+		
+		return $objects;
+	}
+	
+	/*
+	 * The getItemComment() method returns the object based on the itemID and the commentID.
+	 */
+	public function getItemComment() {
+		
+		$query = "SELECT * FROM Item_comments WHERE itemID = :itemID AND commentID = :commentID";
+		
+		$db = Picnic::getInstance ();
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':itemID', $this->_itemID );
+		$stmt->bindParam ( ':commentID', $this->_commentID );
+		$stmt->execute ();
+		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+		$this->_id = $row ['item_commentID'];
+		
+		if($this->_id > 0){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/*
+	 * The deleteComment() deletes a comment based on the commentID
+	 */
+	public function deleteComment() {
+		
+		$comment = new Comment();
+		$comment->commentID = $this->_commentID;
+			
+			$query = "DELETE FROM Item_comments
+						WHERE commentID = :commentID";
+			
+			$db = Picnic::getInstance ();
+			$stmt = $db->prepare ( $query );
+			$stmt->bindParam ( ':commentID', $this->_commentID );
+			$stmt->execute ();
+			if (! $this->exists ()) {
+				if($comment->delete()){
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+	}
+	
 	// Display Object Contents
 	public function printf() {
 		echo '<br /><strong>Comment Object:</strong><br />';
