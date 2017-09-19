@@ -35,7 +35,7 @@ class LoginController {
 				}
 				
 				if (! isset ( $_SESSION ['error'] )) {
-					$user = new Users ();
+					$user = new User ();
 					$user->email = $_POST ['email'];
 					$user->password = $_POST ['password'];
 					unset ( $_POST ['email'] );
@@ -72,7 +72,7 @@ class LoginController {
 	
 	// Log the user out.
 	public function logout() {
-		$user = new Users ();
+		$user = new User ();
 		$user->logout ();
 		header ( 'Location: Home' );
 	}

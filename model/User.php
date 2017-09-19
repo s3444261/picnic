@@ -12,6 +12,8 @@ if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }
 
+define('SALT', 'TooMuchSalt');
+
 /**
  *
  * @property integer $_userID;

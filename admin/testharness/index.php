@@ -98,38 +98,29 @@ $integrationTestResults = '';
 $unitTestResults = '';
 
 // Unit Tests
-include 'admin/createDB/createdb.php';
-include 'unit/test.user.php';
-include 'admin/createDB/createdb.php';
-include 'unit/test.category.php';
-include 'admin/createDB/createdb.php';
-include 'unit/test.note.php';
-include 'admin/createDB/createdb.php';
-include 'unit/test.comment.php';
-include 'admin/createDB/createdb.php';
-include 'unit/test.item.php';
-include 'admin/createDB/createdb.php';
-include 'unit/test.itemnotes.php';
-include 'admin/createDB/createdb.php';
-include 'unit/test.itemcomments.php';
-include 'admin/createDB/createdb.php';
-include 'unit/test.categoryitems.php';
-include 'admin/createDB/createdb.php';
-include 'unit/test.useritems.php';
-include 'admin/createDB/createdb.php';
-include 'unit/test.validation.php';
+include 'admin/createDB/DatabaseGenerator.php';
+DatabaseGenerator::Generate();
+include 'test.user.php';
+DatabaseGenerator::Generate();
+include 'test.item.php';
+DatabaseGenerator::Generate();
+include 'test.itemnotes.php';
+DatabaseGenerator::Generate();
+include 'test.useritems.php';
+DatabaseGenerator::Generate();
+include 'test.validation.php';
 
 // Integration Tests
 
 // System Tests
-include 'admin/createDB/createdb.php';
+DatabaseGenerator::Generate();
 include 'system/test.adduser.php';
 
 // Return Database to original state
-include 'admin/createDB/createdb.php';
+DatabaseGenerator::Generate();
 include 'admin/seedDB/seed.php';
 
-if($userTest && $categoryTest && $noteTest && $commentTest && $itemTest && $itemNoteTest && $itemCommentTest && $categoryItemsTest && $userItemsTest && $validationTest){
+if($userTest && $itemTest && $itemNoteTest && $userItemsTest && $validationTest){
 	$unit = true;
 }
 

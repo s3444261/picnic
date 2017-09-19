@@ -22,7 +22,6 @@ if($_SERVER['SERVER_NAME'] == DOMAIN){
 	define('BASE', '/' . MODULE . '/');
 }
 
-define('SALT', 'TooMuchSalt');
 
 if($_SERVER['SERVER_NAME'] == 'localhost'){
 	define('SERVER', 'http://' . $_SERVER['SERVER_NAME'] . ':8080/');
