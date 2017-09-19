@@ -208,6 +208,13 @@ class ItemNotes {
 		return $row ['num'];
 	}
 	
+	/*
+	 * The getNotes() function retrieves all Note objects for an item.
+	 */
+	public function getNotes() {
+		// TO DO
+	}
+	
 	// Display Object Contents
 	public function printf() {
 		echo '<br /><strong>Note Object:</strong><br />';

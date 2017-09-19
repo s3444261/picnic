@@ -208,6 +208,13 @@ class ItemComments {
 		return $row ['num'];
 	}
 	
+	/*
+	 * getComments() retrieves all Comment Objects for an Item.
+	 */
+	public function getComments(){
+		// TO DO
+	}
+	
 	// Display Object Contents
 	public function printf() {
 		echo '<br /><strong>Comment Object:</strong><br />';
