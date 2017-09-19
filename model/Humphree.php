@@ -159,15 +159,13 @@ class Humphree {
 			$user = new User();
 			$user->userID = $_SESSION['user']['userID'];
 			$system = new System();
-			if($system->getUser($user)){
-				$_SESSION['user']['userID'] = $user->userID;
-				$_SESSION['user']['user'] = $user->user;
-				$_SESSION['user']['email'] = $user->email;
-				$_SESSION['user']['status'] = $user->status;
-				return true;
-			} else {
-				return false;
-			}
+			$user = $system->getUser($user);
+			$_SESSION['user']['userID'] = $user->userID;
+			$_SESSION['user']['user'] = $user->user;
+			$_SESSION['user']['email'] = $user->email;
+			$_SESSION['user']['status'] = $user->status;
+			$_SESSION['user']['activate'] = $user->activate;
+			return true;
 		} else {
 			return false;
 		}
@@ -200,7 +198,6 @@ class Humphree {
 		if(isset($_SESSION['user'])){
 			$user = new User();
 			$user->userID = $_SESSION['user']['userID'];
-			$user->status = $_SESSION['user']['status'];
 			unset($_SESSION['user']);
 			$system = new System();
 			if($system->disableUser($user)){

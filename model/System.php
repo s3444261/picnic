@@ -103,21 +103,62 @@ class System {
 	 * The updateUser() function allows an administrator to update a user.
 	 */
 	public function updateUser($user) {
-		// TO DO
+		unset ( $_SESSION ['error'] );
+		
+		if (get_class ( $user ) == 'User') {
+			
+			$validate = new Validation ();
+			
+			// Validate the username.
+			try {
+				$validate->userName ( $user->user );
+			} catch ( ValidationException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
+			
+			// Validate the email name.
+			try {
+				$validate->email ( $user->email );
+			} catch ( ValidationException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
+			
+			// Validate the password
+			try {
+				$validate->password ( $user->password );
+			} catch ( ValidationException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
+			
+			if (isset ( $_SESSION ['error'] )) {
+				return false;
+			} else {
+				if($user->set ()){
+					return true;
+				} else {
+					$_SESSION ['error'] = 'User not updated.';
+					return false;
+				}
+			}
+		} else {
+			$_SESSION ['error'] = 'Not a User Object.';
+		}
 	}
 	
 	/*
 	 * The getUser() function allows an administrator to retrieve a user.
 	 */
 	public function getUser($user) {
-		// TO DO
+		$user = $user->get();
+		return $user;
 	}
 	
 	/*
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
 	public function getUsers() {
-		// TO DO
+		$users = new Users();
+		return $users->getUsers();
 	}
 	
 	/*
@@ -125,7 +166,16 @@ class System {
 	 * account.
 	 */
 	public function disableUser($user) {
-		// TO DO
+		if($user->userID > 0){
+			$user->status = 'suspended';
+			if($user->update()){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 	
 	/*
@@ -133,7 +183,58 @@ class System {
 	 * an account and all associated database entries.
 	 */
 	public function deleteUser($user) {
-		// TO DO
+		if($user->userID > 0){
+			
+			// Delete any comments and notes for any items held by the user and then delete the item.
+			$userItems = new UserItems();
+			$items = $userItems->getUserItems();
+			
+			foreach ($items as $item){
+				if($item->itemID > 0){
+					$itemComments = new ItemComments();
+					$itemComments->itemID = $item->itemID;
+					$comments = $itemComments->getComments();
+					
+					foreach ($comments as $comment){
+						$itemComments->commentID = $comment->commentID;
+						if($itemComments->getItemComment()){
+							$itemComments->delete();
+							$comment->delete();
+						}
+					}
+					
+					$itemNotes = new ItemNotes();
+					$itemNotes->itemID = $item->itemID;
+					$notes = $itemNotes->getNotes();
+					
+					foreach ($notes as $note){
+						$itemNotes->noteID = $note->noteID;
+						if($itemNotes->getItemNote()){
+							$itemNotes->delete();
+							$note->delete();
+						}
+					}
+					
+					$item->delete();
+				}
+			}
+			
+			// Delete any other comments made by the user
+			$comments = new Comments();
+			$comments->userID = $user->userID;
+			$userComments = $comments->getUserComments();
+			
+			foreach ($userComments as $userComment){
+				$userComment->deleteComment();
+			}
+			
+			// Finally, delete the user.
+			if($user->delete()){
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 	
 	/*
