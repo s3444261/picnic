@@ -38,27 +38,27 @@ class Comments {
 	 * The getUserComments() method retrieves all comments made by a user and returns them
 	 * as an array of comments.
 	 */
-	public function getUserComments() {
+	public function getUserComments(): array {
 		
-			$query = "SELECT * FROM Comments WHERE userID = :userID";
+			$query = "SELECT * FROM Comments WHERE userID = :userID"; 
 			
 			$db = Picnic::getInstance ();
 			$stmt = $db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
-			$stmt->execute ();
+			$stmt->execute (); 
 			$objects = array();
 			while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
 				$comment = new Comment();
 				$comment->commentID = $row ['commentID'];
-				$comment->_userID = $row ['userID'];
-				$comment->_comment = $row ['comment'];
-				$comment->_created_at = $row ['created_at'];
-				$comment->_updated_at = $row ['updated_at'];
+				$comment->userID = $row ['userID'];
+				$comment->comment = $row ['comment'];
+				$comment->created_at = $row ['created_at'];
+				$comment->updated_at = $row ['updated_at'];
 				
 				$objects[] = $comment;
-			}
+			} 
 			
-			return $object;
+			return $objects;
 	}
 }
 ?>

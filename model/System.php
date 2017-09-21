@@ -201,53 +201,54 @@ class System {
 			
 			// Delete any comments and notes for any items held by the user and then delete the item.
 			$userItems = new UserItems();
+			$userItems->userID = $user->userID;
 			$items = $userItems->getUserItems();
 			
-			foreach ($items as $item){
-				if($item->itemID > 0){
+			foreach ($items as $item){ 
+				if($item->itemID > 0){ 
 					$itemComments = new ItemComments();
 					$itemComments->itemID = $item->itemID;
-					$comments = $itemComments->getComments();
+					$itComments = $itemComments->getComments(); 
 					
-					foreach ($comments as $comment){
-						$itemComments->commentID = $comment->commentID;
-						if($itemComments->getItemComment()){
-							$itemComments->delete();
-							$comment->delete();
-						}
+					foreach ($itComments as $itComment){
+						
+						$comment = new Comment();
+						$comment->commentID = $itComment->commentID;
+						$comment->delete();
+						$itComment->delete();
+						
 					}
-					
+
 					$itemNotes = new ItemNotes();
 					$itemNotes->itemID = $item->itemID;
-					$notes = $itemNotes->getNotes();
+					$itNotes = $itemNotes->getNotes();
 					
-					foreach ($notes as $note){
-						$itemNotes->noteID = $note->noteID;
-						if($itemNotes->getItemNote()){
-							$itemNotes->delete();
-							$note->delete();
-						}
+					foreach ($itNotes as $itNote){
+						$note = new Note();
+						$note->noteID = $itNote->noteID;
+						$note->delete();
+						$itNote->delete();
 					}
 					
 					$item->delete();
 				}
-			}
+			} 
 			
 			// Delete any other comments made by the user
 			$comments = new Comments();
 			$comments->userID = $user->userID;
-			$userComments = $comments->getUserComments();
+			$userComments = $comments->getUserComments(); 
 			
 			foreach ($userComments as $userComment){
-				$userComment->deleteComment();
-			}
+				$userComment->delete();
+			} 
 			
 			// Finally, delete the user.
 			if($user->delete()){
 				return true;
 			} else {
 				return false;
-			}
+			} 
 		}
 	}
 	

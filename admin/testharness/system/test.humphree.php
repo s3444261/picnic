@@ -5,6 +5,7 @@ $updateUser = false;
 $getUser = false;
 $getUsers = false;
 $disableUser = false;
+$deleteUser = false;
 $h = new Humphree();
 
 // Test createAccount()
@@ -147,7 +148,7 @@ if($_SESSION['user']['status'] == 'suspended'){
 }
 
 // Test deleteUser()
-/*
+
 $category = new Category();
 $category->parentID = 0;
 $category->category = 'Category';
@@ -176,29 +177,85 @@ for($i = 1; $i < 3; $i++){
 			$item->title = 'title' . $k;
 			$item->description = 'description' . $k;
 			$item->quantity = 'quantity' . $k;
-			$item->itemcondition = 'itemcondition' . $k;
+			$item->itemcondition = 'cn' . $k;
 			$item->price = 'price' . $k;
 			$item->status = 'status' . $k;
 			$item->itemID = $item->set();	
 			
-			$category = new Category();
-			$category->categoryID = $j;
-			$category->itemID = $item->itemID;
+			if($item->itemID % 2 == 0){
+				$catID = 2;
+			} else {
+				$catID = 3;
+			}
 			
-			$useritems = new UserItems();
-			$useritems->userID = $i;
-			$useritems->itemID = $item->itemID;
+			$catItems = new CategoryItems();
+			$catItems->categoryID = $catID;
+			$catItems->itemID = $item->itemID;
+			$catItems->set();
 			
-			// Comment
-			for($l = 1; $l < 10; $l ++){
+			$userItems = new UserItems();
+			$userItems->userID = $i;
+			$userItems->itemID = $item->itemID;
+			$userItems->set();
+			
+			// Comments
+			for($l = 1; $l < 10; $l++){
+				
+				if($i == 1){
+					$uID = 2;
+				} else {
+					$uID = 1;
+				}
 				
 				$comment = new Comment();
+				$comment->comment = 'comment' . $l;
+				$comment->userID = $i;
+				$comment->commentID = $comment->set();
+				
+				$itemComment = new ItemComments();
+				$itemComment->itemID = $item->itemID;
+				$itemComment->commentID = $comment->commentID;
+				$itemComment->set();
+				
+				$comment = new Comment();
+				$comment->comment = 'comment' . $l;
+				$comment->userID = $uID;
+				$comment->commentID = $comment->set();
+				
+				$ItemComment = new ItemComments();
+				$itemComment->itemID = $item->itemID;
+				$itemComment->commentID = $comment->commentID;
+				$itemComment->set(); 
+				
+				$note = new Note();
+				$note->note = 'note' . $l;
+				$note->noteID = $note->set();
+				
+				$itemNote = new ItemNotes();
+				$itemNote->itemID = $item->itemID;
+				$itemNote->noteID = $note->noteID;
+				$itemNote->set();
 			}
 		}
-	}
-	
+	}	
 }
-*/
+/*
+ * user can't be deleted unless all database dependencies have been
+ * deleted.  If user is not longer there, deletion was successful.
+ */
+$_SESSION['user']['userID'] = 2;
+$h->deleteUser();
+
+$user = new User();
+$user->userID = 2;
+if($user->exists()){
+	$hError = $hError . 'deleteUser Failed.<br />';
+	$deleteUser = false;
+} else {
+	$deleteUser = true;
+}
+
+
 // Test addCategory()
 
 // Test updateCategory()
@@ -240,7 +297,7 @@ for($i = 1; $i < 3; $i++){
 // Test Search()
 
 
-if($addUser && $updateUser && $getUser && $getUsers && $disableUser){
+if($addUser && $updateUser && $getUser && $getUsers && $disableUser  && $deleteUser){
 	$humphree = true;
 }
 
