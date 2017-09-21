@@ -51,7 +51,7 @@ class Category {
 	 * It then retrieves the attributes from the database. The attributes are set and
 	 * true is returned.
 	 */
-	public function get() {
+	public function get(): Category {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Categories WHERE categoryID = :categoryID";
 			
@@ -64,9 +64,9 @@ class Category {
 			$this->_category = $row ['category'];
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
-			return true;
+			return $this;
 		} else {
-			return false;
+			throw new CategoryException ( 'Could not retrieve category.' );
 		}
 	}
 	
@@ -74,7 +74,7 @@ class Category {
 	 * The set() function inserts the item paramaters into the
 	 * database. The categoryID is returned.
 	 */
-	public function set() {
+	public function set(): int {
 		$query = "INSERT INTO Categories
 					SET parentID = :parentID,
 						category = :category,
@@ -99,7 +99,7 @@ class Category {
 	 * attributes have not been set, they are set with the values already existing in
 	 * the database.
 	 */
-	public function update() {
+	public function update(): bool {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Categories WHERE categoryID = :categoryID";
@@ -138,7 +138,7 @@ class Category {
 	 * The delete() checks the object exists in the database. If it does,
 	 * true is returned.
 	 */
-	public function delete() {
+	public function delete(): bool {
 		if ($this->exists ()) {
 			
 			$query = "DELETE FROM Categories
@@ -162,7 +162,7 @@ class Category {
 	 * The exists() function checks to see if the id exists in the database,
 	 * if it does, true is returned.
 	 */
-	public function exists() {
+	public function exists(): bool {
 		if ($this->_categoryID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Categories WHERE categoryID = :categoryID";
 			

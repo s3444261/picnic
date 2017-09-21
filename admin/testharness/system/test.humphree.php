@@ -6,6 +6,8 @@ $getUser = false;
 $getUsers = false;
 $disableUser = false;
 $deleteUser = false;
+$addCategory = false;
+$updateCategory = false;
 $h = new Humphree();
 
 // Test createAccount()
@@ -255,10 +257,53 @@ if($user->exists()){
 	$deleteUser = true;
 }
 
+DatabaseGenerator::Generate();
 
 // Test addCategory()
+$category = new Category();
+$category->parentID = 0;
+$category->category = 'Category';
+$category->set();
+
+$_SESSION['category']['parentID'] = 1;
+$_SESSION['category']['category'] = 'Category1';
+$h->addCategory();
+
+$_SESSION['category']['parentID'] = 1;
+$_SESSION['category']['category'] = 'Category2';
+$h->addCategory();
+
+$category1 = new Category();
+$category1->categoryID = 2;
+$category1->get();
+
+$category2 = new Category();
+$category2->categoryID = 3;
+$category2->get();
+
+if($category1->category == 'Category1' && $category2->category == 'Category2'){
+	$addCategory = true;
+} else {
+	$addCategory = false;
+	$hError = $hError . 'addCategory Failed.<br />';
+}
 
 // Test updateCategory()
+$_SESSION['category']['categoryID'] = 3;
+$_SESSION['category']['parentID'] = 2;
+$_SESSION['category']['category'] = 'Category3';
+$h->updateCategory();
+
+$category = new Category();
+$category->categoryID = 3;
+$category->get();
+
+if($category->category == 'Category3' && $category->parentID == '2'){
+	$updateCategory = true;
+} else {
+	$updateCategory = false;
+	$hError = $hError . 'updateCategory Failed.<br />';
+}
 
 // Test deleteCategory()
 
@@ -297,7 +342,8 @@ if($user->exists()){
 // Test Search()
 
 
-if($addUser && $updateUser && $getUser && $getUsers && $disableUser  && $deleteUser){
+if($addUser && $updateUser && $getUser && $getUsers && $disableUser  && $deleteUser
+		&& $addCategory && $updateCategory){
 	$humphree = true;
 }
 

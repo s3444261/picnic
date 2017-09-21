@@ -256,16 +256,29 @@ class System {
 	 * The addCategory() function allows and administrator to add a Category and
 	 * specify its position in the heirachy.
 	 */
-	public function addCategory($category) {
-		// TO DO
+	public function addCategory($category): bool {
+		$cat = new Category();
+		$cat = $category;
+		$cat->categoryID = $cat->set();
+		if($cat->categoryID > 1){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/*
 	 * The updateCategory() function allows and administrator to update a Category and
 	 * its position in the heirachy.
 	 */
-	public function updateCategory($category) {
-		// TO DO
+	public function updateCategory($category): bool {
+		$cat = new Category();
+		$cat = $category;
+		if($cat->update()){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/*
