@@ -64,10 +64,12 @@ function compareAttributes($obj, $arr, $attr){
 	return $test;
 }
 
+$humphree = false;
 $system = false;
 $integration = false;
 $unit = false;
 
+$humphreeStatus = '';
 $applicationStatus = '';
 $systemTests = '';
 $integrationTests = '';
@@ -79,36 +81,45 @@ $unitTestResults = '';
 // Unit Tests
 include 'admin/createDB/DatabaseGenerator.php';
 DatabaseGenerator::Generate();
-include 'test.user.php';
+//include 'test.user.php';
 DatabaseGenerator::Generate();
-include 'test.validation.php';
+//include 'test.validation.php';
 
 // Integration Tests
 
 // System Tests
 DatabaseGenerator::Generate();
-include 'system/test.adduser.php';
+//include 'system/test.adduser.php';
+
+DatabaseGenerator::Generate();
+include 'system/test.humphree.php';
 
 // Return Database to original state
-DatabaseGenerator::Generate();
-include 'admin/seedDB/seed.php';
-
+//DatabaseGenerator::Generate();
+//include 'admin/seedDB/seed.php';
+/*
 if($userTest && $validationTest){
 	$unit = true;
 }
-
+*/
 // Integration set to true until there is something to test.
-$integration = true;
+//$integration = true;
 /*
 if(){
 	$integration = true;
 }
 */
-
+/*
 if($adduserTest){
 	$system = true;
 }
-
+*/
+if($humphree){
+	$humphreeStatus = '<font color="green">PASS</font>';
+} else {
+	$humphreeStatus = '<font color="red">FAIL</font>';
+}
+/*
 if($system && $integration && $unit){
 	$applicationStatus = '<font color="green">PASS</font>';
 } else {
@@ -129,33 +140,40 @@ if($unit){
 } else {
 	$unitTests = '<font color="red">FAIL</font>';
 }
+*/
 ?>
 
 <h1>Test Harness</h1>
 <div class="testHarness">
+<h2>Humphree Status</h2>
+<?php 
+echo 'Humphree Status: ' . $humphreeStatus . '<br />';
+echo $hError;
+?>
+<!---
 <h2>Application Status</h2>
 <?php 
-echo 'Application Status: ' . $applicationStatus;
+//echo 'Application Status: ' . $applicationStatus;
 ?>
 <h2>Application Summary</h2>
 <?php 
-echo 'System Tests: ' . $systemTests . '<br />';
-echo 'Integration Tests: ' . $integrationTests . '<br />';
-echo 'Unit Tests: ' . $unitTests . '<br />';
+//echo 'System Tests: ' . $systemTests . '<br />';
+//echo 'Integration Tests: ' . $integrationTests . '<br />';
+//echo 'Unit Tests: ' . $unitTests . '<br />';
 ?>
 <h2>System Test Results</h2>
 <?php 
-echo $systemTestResults;
+//echo $systemTestResults;
 ?>
 <h2>Integration Test Results</h2>
 <?php 
-echo $integrationTestResults;
+//echo $integrationTestResults;
 ?>
 <h2>Unit Test Results</h2>
 <?php 
-echo $unitTestResults;
+//echo $unitTestResults;
 ?>
-
+-->
 </div>
 
 <?php 

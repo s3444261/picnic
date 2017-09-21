@@ -19,7 +19,7 @@ class Humphree {
 	 * own account and join Humphree granting them access to add
 	 * and update items as well as view.
 	 */
-	public function createAccount() {
+	public function createAccount(): bool {
 		// TO DO
 		if(isset($_SESSION['user'])){
 			$user = new User();
@@ -42,7 +42,7 @@ class Humphree {
 	 * The activateAccount() fucntion verfies the email address
 	 * of the new user and makes the account active.
 	 */
-	public function activateAccount() {
+	public function activateAccount(): bool {
 		// TO DO
 		if(isset($_SESSION['user'])){
 			$user = new User();
@@ -63,7 +63,7 @@ class Humphree {
 	 * The changePassword() function allows a user or administrator to 
 	 * change a password for an account.
 	 */
-	public function changePassword() {
+	public function changePassword(): bool{
 		// TO DO
 		if(isset($_SESSION['user'])){
 			$user = new User();
@@ -85,7 +85,7 @@ class Humphree {
 	 * The forgotPassword() function allows a user to generate a new password
 	 * which is sent to the users account via email.
 	 */
-	public function forgotPassword() {
+	public function forgotPassword(): bool{
 		// TO DO
 		if(isset($_SESSION['user'])){
 			$user = new User();
@@ -106,7 +106,7 @@ class Humphree {
 	 * The addUser() function allows an administrator to add a user and
 	 * pre-activate the account.
 	 */
-	public function addUser() {
+	public function addUser(): bool{
 		// TO DO
 		if(isset($_SESSION['user'])){
 			$user = new User();
@@ -128,7 +128,7 @@ class Humphree {
 	/*
 	 * The updateUser() function allows an administrator to update a user.
 	 */
-	public function updateUser() {
+	public function updateUser(): bool{
 		// TO DO
 		if(isset($_SESSION['user'])){
 			$user = new User();
@@ -153,7 +153,7 @@ class Humphree {
 	/*
 	 * The getUser() function allows an administrator to retrieve a user.
 	 */
-	public function getUser() {
+	public function getUser(): bool{
 		// TO DO
 		if(isset($_SESSION['user'])){
 			$user = new User();
@@ -174,16 +174,17 @@ class Humphree {
 	/*
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
-	public function getUsers() {
+	public function getUsers(): bool{
 		// TO DO
 		$system = new System();
-		$users = $system->getUsers();
+		$users = $system->getUsers(); 
 		$i = 1;
 		foreach($users as $user){
 			$_SESSION['users'][$i]['user']['userID'] = $user->userID;
 			$_SESSION['users'][$i]['user']['user'] = $user->user;
 			$_SESSION['users'][$i]['user']['email'] = $user->email;
 			$_SESSION['users'][$i]['user']['status'] = $user->status;
+			$_SESSION['users'][$i]['user']['activate'] = $user->activate;
 			$i++;
 		}
 		return true;
@@ -193,12 +194,11 @@ class Humphree {
 	 * The disableUser() function allows an administrator to disable a users
 	 * account.
 	 */
-	public function disableUser() {
+	public function disableUser(): bool{
 		// TO DO
 		if(isset($_SESSION['user'])){
 			$user = new User();
 			$user->userID = $_SESSION['user']['userID'];
-			unset($_SESSION['user']);
 			$system = new System();
 			if($system->disableUser($user)){
 				return true;
@@ -214,7 +214,7 @@ class Humphree {
 	 * The deleteUser() function allows an administrator to completely delete
 	 * an account and all associated database entries.
 	 */
-	public function deleteUser() {
+	public function deleteUser(): bool{
 		// TO DO
 		if(isset($_SESSION['user'])){
 			$user = new User();
@@ -235,7 +235,7 @@ class Humphree {
 	 * The addCategory() function allows and administrator to add a Category and
 	 * specify its position in the heirachy.
 	 */
-	public function addCategory() {
+	public function addCategory(): bool{
 		// TO DO
 		if(isset($_SESSION['category'])){
 			$category = new Category();
@@ -257,7 +257,7 @@ class Humphree {
 	 * The updateCategory() function allows and administrator to update a Category and
 	 * its position in the heirachy.
 	 */
-	public function updateCategory() {
+	public function updateCategory(): bool{
 		// TO DO
 		if(isset($_SESSION['category'])){
 			$category = new Category();
@@ -280,7 +280,7 @@ class Humphree {
 	 * The deleteCategory() function allows and administrator to delete a Category and
 	 * all associated database content.
 	 */
-	public function deleteCategory() {
+	public function deleteCategory(): bool{
 		// TO DO
 		if(isset($_SESSION['category'])){
 			$category = new Category();
@@ -300,7 +300,7 @@ class Humphree {
 	/*
 	 * The getCategory() function retrieves a Category.
 	 */
-	public function getCategory() {
+	public function getCategory(): bool{
 		// TO DO
 		if(isset($_SESSION['category'])){
 			$category = new Category();
@@ -319,7 +319,7 @@ class Humphree {
 	/*
 	 * The getCategories() function retrieves all Categories.
 	 */
-	public function getCategories() {
+	public function getCategories(): bool{
 		// TO DO
 		$system = new System();
 		$categories = $system->getCategories();
@@ -340,7 +340,7 @@ class Humphree {
 	/*
 	 * The getCategoryItems() function retrieves all items linked to a Category.
 	 */
-	public function getCategoryItems() {
+	public function getCategoryItems(): bool{
 		// TO DO
 		if(isset($_SESSION['category'])){
 			$category = new Category();
@@ -392,7 +392,7 @@ class Humphree {
 	/*
 	 * The getItem() function retrieves an item.
 	 */
-	public function getItem() {
+	public function getItem(): bool{
 		// TO DO
 		if(isset($_SESSION['item'])){
 			$item = new Item();
@@ -434,7 +434,7 @@ class Humphree {
 	/*
 	 * The addItem() function adds an item.
 	 */
-	public function addItem() {
+	public function addItem(): bool{
 		// TO DO
 		if(isset($_SESSION['user']) && isset($_SESSION['item'])){
 			$user = new User();
@@ -462,7 +462,7 @@ class Humphree {
 	/*
 	 * The updateItem() function updates an item.
 	 */
-	public function updateItem() {
+	public function updateItem(): bool{
 		// TO DO
 		if(isset($_SESSION['item'])){
 			$item = new Item();
@@ -488,7 +488,7 @@ class Humphree {
 	/*
 	 * The deleteItem() function deletes an item and all associated database content.
 	 */
-	public function deleteItem() {
+	public function deleteItem(): bool{
 		// TO DO
 		if(isset($_SESSION['user']) && isset($_SESSION['item'])){
 			$user = new User();
@@ -511,7 +511,7 @@ class Humphree {
 	/*
 	 * The getItemComments() function retrieves all comments for an item.
 	 */
-	public function getItemComments() {
+	public function getItemComments(): bool{
 		// TO DO
 		if(isset($_SESSION['item'])){
 			$item = new Item();
@@ -538,7 +538,7 @@ class Humphree {
 	/*
 	 * The getItemComment() function retrieves a comment.
 	 */
-	public function getItemComment() {
+	public function getItemComment(): bool{
 		// TO DO
 		if(isset($_SESSION['comment'])){
 			$comment = new Comment();
@@ -560,7 +560,7 @@ class Humphree {
 	/*
 	 * The addItemComment() function adds an itemComment.
 	 */
-	public function addItemComment() {
+	public function addItemComment(): bool{
 		// TO DO
 		if(isset($_SESSION['user']) && isset($_SESSION['item']) && isset($_SESSION['comment'])){
 			$user = new User();
@@ -586,7 +586,7 @@ class Humphree {
 	/*
 	 * The updateItemComment() function updates an itemComment.
 	 */
-	public function updateItemComment() {
+	public function updateItemComment(): bool{
 		// TO DO
 		if(isset($_SESSION['comment'])){
 			$comment = new Comment();
@@ -608,7 +608,7 @@ class Humphree {
 	/*
 	 * The deleteItemComment() function deletes an itemComment and all associated database content.
 	 */
-	public function deleteItemComment() {
+	public function deleteItemComment(): bool{
 		// TO DO
 		if(isset($_SESSION['item']) && isset($_SESSION['comment'])){
 			$item = new Item();
@@ -631,7 +631,7 @@ class Humphree {
 	/*
 	 * The getItemNotes() retrieves all notes for an item.
 	 */
-	public function getItemNotes() {
+	public function getItemNotes(): bool{
 		// TO DO
 		if(isset($_SESSION['item'])){
 			$item = new Item();
@@ -653,7 +653,7 @@ class Humphree {
 	/*
 	 * The getItemNote() function retrieves a note for an item.
 	 */
-	public function getItemNote() {
+	public function getItemNote(): bool{
 		// TO DO
 		if(isset($_SESSION['note'])){
 			$note = new Note();
@@ -670,7 +670,7 @@ class Humphree {
 	/*
 	 * The addItemNote() function adds an itemNote.
 	 */
-	public function addItemNote() {
+	public function addItemNote(): bool{
 		// TO DO
 		if(isset($_SESSION['item']) && isset($_SESSION['note'])){
 			$item = new Item();
@@ -693,7 +693,7 @@ class Humphree {
 	/*
 	 * The updateItemNote() function updates an itemNote.
 	 */
-	public function updateItemNote() {
+	public function updateItemNote(): bool{
 		// TO DO
 		if(isset($_SESSION['note'])){
 			$note = new Note();
@@ -714,7 +714,7 @@ class Humphree {
 	/*
 	 * The deleteItemNote() function deletes an itemNote and all associated database content.
 	 */
-	public function deleteItemNote() {
+	public function deleteItemNote(): bool{
 		// TO DO
 		if(isset($_SESSION['item']) && isset($_SESSION['note'])){
 			$item = new Item();
@@ -737,7 +737,7 @@ class Humphree {
 	/*
 	 * The search() function searches the database and returns matches.
 	 */
-	public function search() {
+	public function search(): bool{
 		// TO DO
 		// Convert arrays to objects if necessary and call equivalent System Function
 		$system = new System();

@@ -47,7 +47,7 @@ class UserItems {
 	 * It then retrieves the attributes from the database. The attributes are set and
 	 * true is returned.
 	 */
-	public function get() {
+	public function get(): UserItems {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM User_items WHERE user_itemID = :user_itemID";
 			
@@ -58,9 +58,9 @@ class UserItems {
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_userID = $row ['userID'];
 			$this->_itemID = $row ['itemID'];
-			return true;
+			return this;
 		} else {
-			return false;
+			throw new UserException ( 'Could not retrieve user items.' );
 		}
 	}
 	
@@ -70,7 +70,7 @@ class UserItems {
 	 * don't, they are insserted into the table and the objectID is
 	 * retrieved and returned.
 	 */
-	public function set() {
+	public function set(): int {
 		$query = "SELECT * FROM User_items 
 					WHERE userID = :userID
 					AND itemID = :itemID";
@@ -110,7 +110,7 @@ class UserItems {
 	 * attributes have not been set, they are set with the values already existing in
 	 * the database.
 	 */
-	public function update() {
+	public function update(): bool {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM User_items WHERE user_itemID = :user_itemID";
@@ -149,7 +149,7 @@ class UserItems {
 	 * The delete() checks the object exists in the database. If it does,
 	 * true is returned.
 	 */
-	public function delete() {
+	public function delete(): bool {
 		if ($this->exists ()) {
 			
 			$query = "DELETE FROM User_items
@@ -173,7 +173,7 @@ class UserItems {
 	 * The exists() function checks to see if the id exists in the database,
 	 * if it does, true is returned.
 	 */
-	public function exists() {
+	public function exists(): bool {
 		if ($this->_user_itemID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM User_items WHERE user_itemID = :user_itemID";
 			
@@ -195,7 +195,7 @@ class UserItems {
 	/*
 	 * Count number of occurences of an item for a user.
 	 */
-	public function count() {
+	public function count(): int {
 		$query = "SELECT COUNT(*) as num
 							FROM User_items
 							WHERE userID = :userID";
@@ -212,7 +212,7 @@ class UserItems {
 	 * The getUserItems() method retrieves all items held by the user and returns
 	 * them as an array of item objects.
 	 */
-	public function getUserItems() {
+	public function getUserItems(): array {
 		
 		$query = "SELECT * FROM User_items WHERE userID = :userID";
 		
@@ -232,7 +232,7 @@ class UserItems {
 	}
 	
 	// Display Object Contents
-	public function printf() {
+	public function printf(): string {
 		echo '<br /><strong>UserItem Object:</strong><br />';
 		
 		if ($this->_id) {

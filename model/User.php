@@ -66,7 +66,7 @@ class User {
 	 * It then retrieves the attributes from the database. The attributes are set and 
 	 * true is returned.
 	 */
-	public function get() {
+	public function get(): User {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Users WHERE userID = :userID";
 			
@@ -82,9 +82,9 @@ class User {
 			$this->_activate = $row ['activate'];
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
-			return true;
+			return $this;
 		} else {
-			return false;
+			throw new UserException ( 'Could not retrieve user.' );
 		}
 	}
 	
@@ -93,7 +93,7 @@ class User {
 	 * database including a salted/encrypted password. Initial
 	 * status is 'active'. The userID is returned.
 	 */
-	public function set() {
+	public function set(): int {
 		$query = "INSERT INTO Users 
 					SET user = :user,
     					email = :email,
@@ -128,7 +128,7 @@ class User {
 	 * the database. Activate can not be updated as it is set to null by activate() once
 	 * the email address has been verified and serves no other purpose.
 	 */
-	public function update() {
+	public function update(): bool {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Users WHERE userID = :userID";
@@ -179,7 +179,7 @@ class User {
 	 * The delete() checks the object exists in the database. If it does,
 	 * true is returned.
 	 */
-	public function delete() {
+	public function delete(): bool {
 		if ($this->exists ()) {
 			
 			$query = "DELETE FROM Users
@@ -203,7 +203,7 @@ class User {
 	 * The exists() function checks to see if the id exists in the database,
 	 * if it does, true is returned.
 	 */
-	public function exists() {
+	public function exists(): bool {
 		if ($this->_userID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Users WHERE userID = :userID";
 			
@@ -225,7 +225,7 @@ class User {
 	/*
 	 * Count number of occurences of a user.
 	 */
-	public function countUser() {
+	public function countUser(): int {
 		$query = "SELECT COUNT(*) as numUsers
 							FROM Users
 							WHERE user = :user";
@@ -241,7 +241,7 @@ class User {
 	/*
 	 * Count number of occurences of an email address.
 	 */
-	public function countEmail() {
+	public function countEmail(): int {
 		$query = "SELECT COUNT(*) as numUsers
 							FROM Users
 							WHERE email = :email";
@@ -257,14 +257,14 @@ class User {
 	/*
 	 * Salt & Encrypt the password.
 	 */
-	private function encryptPassword() {
+	private function encryptPassword(): string {
 		return sha1 ( $this->_password . $this->salt () ); 
 	}
 	
 	/*
 	 * Generate a random activation code.
 	 */
-	private function activationCode() {
+	private function activationCode(): string {
 		date_default_timezone_set ( 'UTC' );
 		return md5 ( strtotime ( "now" ) . $this->_user . $this->_email );
 	}
@@ -273,7 +273,7 @@ class User {
 	 * Verify users email address. This function sets activate to null
 	 * once the email address for the user has been verified.
 	 */
-	public function activate() {
+	public function activate(): bool {
 		if ($this->exists ()) {
 			$us = new User ();
 			$us->userID = $this->_userID;
@@ -299,7 +299,7 @@ class User {
 	/*
 	 * Retrieves all users that haven't been deleted.
 	 */
-	public function getUsers() {
+	public function getUsers(): array {
 		
 		$query = "SELECT userID, user, email, status FROM Users
 					WHERE status != 'deleted'";
@@ -335,7 +335,7 @@ class User {
 	 * that the user is loggedin. In any other instance a message is returned announcing
 	 * that the user is not logged in.
 	 */
-	public function login() {
+	public function login(): void {
 		$this->_password = $this->encryptPassword ();
 
 		$query = "SELECT userID, user, email, status
@@ -373,7 +373,7 @@ class User {
 	 * then the session itself is destroyed. Finally the cookie is
 	 * destroyed. If successfully logged out, true is returned.
 	 */
-	public function logout() {
+	public function logout(): bool {
 		$_SESSION = array ();
 		session_destroy ();
 		return true;
@@ -382,7 +382,7 @@ class User {
 	/*
 	 * Compares a password with the one in the database
 	 */
-	public function checkPassword() {
+	public function checkPassword(): void {
 		$this->_password = $this->encryptPassword ();
 		
 		$query = "SELECT *
@@ -402,7 +402,7 @@ class User {
 	}
 	
 	// Display Object Contents
-	public function printf() {
+	public function printf(): string {
 		echo '<br /><strong>User Object:</strong><br />';
 		if ($this->_userID) {
 			echo 'userID => ' . $this->_userID . '<br/>';

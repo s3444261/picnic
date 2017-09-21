@@ -12,6 +12,8 @@ if (session_status () == PHP_SESSION_NONE) {
 }
 class System {
 	
+	const SUSPENDED = 'suspended';
+	
 	/*
 	 * The createAccount() function allows a user to create their
 	 * own account and join Humphree granting them access to add
@@ -49,7 +51,7 @@ class System {
 	 * The addUser() function allows an administrator to add a user and
 	 * pre-activate the account.
 	 */
-	public function addUser($user) {
+	public function addUser($user): bool {
 		unset ( $_SESSION ['error'] );
 		
 		if (get_class ( $user ) == 'User') {
@@ -81,18 +83,23 @@ class System {
 				return false;
 			} else {
 				$user->set ();
-				$user->get ();
-				if ($user->userID > 0) {
-					if ($user->activate ()) {
-						return true;
+				try {
+					$user->get ();
+					if ($user->userID > 0) {
+						if ($user->activate ()) {
+							return true;
+						} else {
+							$_SESSION ['error'] = 'Failed to activate account.';
+							return false;
+						}
 					} else {
-						$_SESSION ['error'] = 'Failed to activate account.';
+						$_SESSION ['error'] = 'Failed to add user.';
 						return false;
 					}
-				} else {
-					$_SESSION ['error'] = 'Failed to add user.';
-					return false;
+				} catch (UserException $e) {
+					$_SESSION ['error'] = $e->getError ();
 				}
+				
 			}
 		} else {
 			$_SESSION ['error'] = 'Not a User Object.';
@@ -133,7 +140,7 @@ class System {
 			if (isset ( $_SESSION ['error'] )) {
 				return false;
 			} else {
-				if($user->set ()){
+				if($user->update ()){
 					return true;
 				} else {
 					$_SESSION ['error'] = 'User not updated.';
@@ -148,26 +155,33 @@ class System {
 	/*
 	 * The getUser() function allows an administrator to retrieve a user.
 	 */
-	public function getUser($user) {
-		$user = $user->get();
-		return $user;
+	public function getUser($user): User{
+		$u = new User();
+		$u->userID = $user->userID;
+		try {
+			$u = $u->get();
+		} catch ( UserException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}		
+		return $u;
 	}
 	
 	/*
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
-	public function getUsers() {
+	public function getUsers(): array {
 		$users = new Users();
-		return $users->getUsers();
+		$usersArray = $users->getUsers(); 
+		return $usersArray;
 	}
 	
 	/*
 	 * The disableUser() function allows an administrator to disable a users
 	 * account.
 	 */
-	public function disableUser($user) {
+	public function disableUser($user): bool {
 		if($user->userID > 0){
-			$user->status = 'suspended';
+			$user->status = self::SUSPENDED;
 			if($user->update()){
 				return true;
 			} else {

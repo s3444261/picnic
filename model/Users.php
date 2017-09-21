@@ -35,9 +35,9 @@ class Users {
 	 * The getUsers() function retrieves all users from the database and returns
 	 * them as an array of user objects.
 	 */
-	public function getUsers() {
+	public function getUsers(): array {
 		
-		$query = "SELECT userID FROM Users";
+		$query = "SELECT userID FROM Users ORDER BY userID";
 		
 		$db = Picnic::getInstance ();
 		$stmt = $db->prepare ( $query );
@@ -46,7 +46,11 @@ class Users {
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$user = new User();
 			$user->userID = $row['userID'];
-			$user->get();
+			try {
+				$user->get();
+			} catch (UserException $e) {
+				$_SESSION ['error'] = $e->getError ();
+			}
 			
 			$objects [] = $user;
 		}
