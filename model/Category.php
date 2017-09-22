@@ -181,6 +181,32 @@ class Category {
 		}
 	}
 	
+	/*
+	 * The getCategories() method retrieves all categories and returns them as an array
+	 * of category objects.
+	 */
+	public function getCategories(): array {
+		
+		$query = "SELECT * FROM Categories";
+		
+		$db = Picnic::getInstance ();
+		$stmt = $db->prepare ( $query );
+		$stmt->execute ();
+		$objects = array();
+		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
+			
+			$object = new Category();
+			$object->_categoryID = $row ['categoryID'];
+			$object->_parentID = $row ['parentID'];
+			$object->_category = $row ['category'];
+			$object->_created_at = $row ['created_at'];
+			$object->_updated_at = $row ['updated_at'];
+			
+			$objects[] = $object;
+		}
+		return $objects;
+	}
+	
 	// Display Object Contents
 	public function printf() {
 		echo '<br /><strong>Category Object:</strong><br />';

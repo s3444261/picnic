@@ -282,24 +282,34 @@ class System {
 	}
 	
 	/*
-	 * The deleteCategory() function allows and administrator to delete a Category and
-	 * all associated database content.
-	 */
-	public function deleteCategory($category) {
-		// TO DO
-	}
-	
-	/*
 	 * The getCategory() function retrieves a Category.
 	 */
-	public function getCategory($category) {
-		// TO DO
+	public function getCategory($category): Category {
+		$c = new Category();
+		$c = $category;
+		try {
+			$c = $c->get();
+		} catch ( CategoryException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
+		return $c;
 	}
 	
 	/*
 	 * The getCategories() function retrieves all Categories.
 	 */
-	public function getCategories() {
+	public function getCategories(): array {
+		$c = array();
+		$cat = new Category();
+		$c = $cat->getCategories(); 
+		return $c;
+	}
+	
+	/*
+	 * The deleteCategory() function allows and administrator to delete a Category and
+	 * all associated database content.
+	 */
+	public function deleteCategory($category) {
 		// TO DO
 	}
 	

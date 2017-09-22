@@ -322,7 +322,7 @@ class Humphree {
 	public function getCategories(): bool{
 		// TO DO
 		$system = new System();
-		$categories = $system->getCategories();
+		$categories = $system->getCategories(); 
 		$i = 1;
 		foreach($categories as $category){
 			$_SESSION['categories'][$i]['category']['categoryID'] = $category->categoryID;

@@ -8,6 +8,8 @@ $disableUser = false;
 $deleteUser = false;
 $addCategory = false;
 $updateCategory = false;
+$getCategory = false;
+$getCategories = false;
 $h = new Humphree();
 
 // Test createAccount()
@@ -305,13 +307,41 @@ if($category->category == 'Category3' && $category->parentID == '2'){
 	$hError = $hError . 'updateCategory Failed.<br />';
 }
 
-// Test deleteCategory()
-
 // Test getCategory()
+$_SESSION['category']['categoryID'] = 2;
+$h->getCategory();
+
+if($_SESSION['category']['parentID'] == 1 && $_SESSION['category']['category'] == 'Category1'){
+	$getCategory = true;
+} else {
+	$getCategory = false;
+	$hError = $hError . 'getCategory Failed.<br />';
+}
 
 // Test getCategories()
+$h->getCategories();
+
+if(isset($_SESSION['categories'])){
+	if($_SESSION['categories'][1]['category']['categoryID'] == 1 &&
+		$_SESSION['categories'][1]['category']['parentID'] == 0 &&
+		$_SESSION['categories'][1]['category']['category'] == 'Category' &&
+		$_SESSION['categories'][2]['category']['categoryID'] == 2 &&
+		$_SESSION['categories'][2]['category']['parentID'] == 1 &&
+		$_SESSION['categories'][2]['category']['category'] == 'Category1' &&
+		$_SESSION['categories'][3]['category']['categoryID'] == 3 &&
+		$_SESSION['categories'][3]['category']['parentID'] == 2 &&
+		$_SESSION['categories'][3]['category']['category'] == 'Category3'){
+			$getCategories = true;
+	} else {
+		$getCategories = false;
+		$hError = $hError . 'getCategories Failed.<br />';
+	}
+}
+
 
 // Test getCategoryItems()
+
+// Test deleteCategory()
 
 // Test getItem()
 
@@ -343,7 +373,7 @@ if($category->category == 'Category3' && $category->parentID == '2'){
 
 
 if($addUser && $updateUser && $getUser && $getUsers && $disableUser  && $deleteUser
-		&& $addCategory && $updateCategory){
+		&& $addCategory && $updateCategory && $getCategory && $getCategories){
 	$humphree = true;
 }
 
