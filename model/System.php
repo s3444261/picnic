@@ -309,15 +309,101 @@ class System {
 	 * The deleteCategory() function allows and administrator to delete a Category and
 	 * all associated database content.
 	 */
-	public function deleteCategory($category) {
-		// TO DO
+	public function deleteCategory($category): bool {
+		if($category->categoryID > 0){
+			
+			// Delete any comments and notes for any items held by the category and then delete the item.
+			$categoryItems = new CategoryItems();
+			$categoryItems->categoryID = $category->categoryID;
+			$items = $categoryItems->getCategoryItems();
+			
+			foreach ($items as $item){
+				if($item->itemID > 0){
+					$itemComments = new ItemComments();
+					$itemComments->itemID = $item->itemID;
+					$itComments = $itemComments->getComments();
+					
+					foreach ($itComments as $itComment){
+						
+						$comment = new Comment();
+						$comment->commentID = $itComment->commentID;
+						$comment->delete();
+						$itComment->delete();
+						
+					}
+					
+					$itemNotes = new ItemNotes();
+					$itemNotes->itemID = $item->itemID;
+					$itNotes = $itemNotes->getNotes();
+					
+					foreach ($itNotes as $itNote){
+						$note = new Note();
+						$note->noteID = $itNote->noteID;
+						$note->delete();
+						$itNote->delete();
+					}
+					
+					$item->delete();
+				}
+			}
+			
+			// Finally, delete the category.
+			if($category->delete()){
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+	
+	/*
+	 * The countCategoryItems() method counts the number of items in a category.
+	 */
+	public function countCategoryItems($category): int{
+		
+		$numCategoryItems = 0;
+		$ci = new CategoryItems();
+		$ci->categoryID = $category->categoryID;
+		$numCategoryItems = $ci->count();
+		
+		return $numCategoryItems;
+	}
+	
+	/*
+	 * The countItemComments() method counts the number of comments for an item.
+	 */
+	public function countItemComments($item): int{
+		
+		$numItemComments = 0;
+		$ci = new ItemComments();
+		$ci->itemID = $item->itemID;
+		$numItemComments = $ci->count();
+		
+		return $numItemComments;
+	}
+	
+	/*
+	 * The countItemNotes() method counts the number of notes for an item.
+	 */
+	public function countItemNotes($item): int{
+		
+		$numItemNotes = 0;
+		$ci = new ItemNotes();
+		$ci->itemID = $item->itemID;
+		$numItemNotes = $ci->count();
+		
+		return $numItemNotes;
 	}
 	
 	/*
 	 * The getCategoryItems() function retrieves all items linked to a Category.
 	 */
-	public function getCategoryItems($category) {
-		// TO DO
+	public function getCategoryItems($category): array {
+		$ci = array();
+		$c = new CategoryItems(); 
+		$c->categoryID = $category->categoryID;
+		$ci = $c->getCategoryItems(); 
+		return $ci;
 	}
 	
 	/*
@@ -351,8 +437,18 @@ class System {
 	/*
 	 * The getItemComments() function retrieves all comments for an item.
 	 */
-	public function getItemComments($item) {
-		// TO DO
+	public function getItemComments($item): array {
+		$ic = new ItemComments();
+		$ic->itemID = $item->itemID;
+		$icids = $ic->getComments();
+		$comments = array();
+		foreach($icids as $icid){
+			$comment = new Comment();
+			$comment->commentID = $icid->commentID;
+			$comment->get();
+			$comments[] = $comment;
+		}
+		return $comments;
 	}
 	
 	/*
@@ -386,8 +482,20 @@ class System {
 	/*
 	 * The getItemNotes() retrieves all notes for an item.
 	 */
-	public function getItemNotes($item) {
-		// TO DO
+	public function getItemNotes($item): array {
+		
+		$in = new ItemNotes();
+		$in->itemID = $item->itemID;
+		$inids = $in->getNotes();
+		$notes = array();
+		foreach($inids as $inid){
+			$note = new Note();
+			$note->noteID = $inid->noteID;
+			$note->get();
+			$notes[] = $note;
+		}
+		return $notes;
+	
 	}
 	
 	/*

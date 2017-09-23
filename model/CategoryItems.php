@@ -208,6 +208,29 @@ class CategoryItems {
 		return $row ['num'];
 	}
 	
+	/*
+	 * The getCategoryItems() method retrieves all items held by the category and returns
+	 * them as an array of item objects.
+	 */
+	public function getCategoryItems(): array {
+		
+		$query = "SELECT * FROM Category_items WHERE categoryID = :categoryID";
+		
+		$db = Picnic::getInstance ();
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':categoryID', $this->_categoryID );
+		$stmt->execute ();
+		$objects = array();
+		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
+			$item = new Item();
+			$item->itemID = $row ['itemID'];
+			$item->get();
+			
+			$objects[] = $item;
+		}
+		return $objects;
+	}
+	
 	// Display Object Contents
 	public function printf() {
 		echo '<br /><strong>CategoryItem Object:</strong><br />';

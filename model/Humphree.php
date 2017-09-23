@@ -107,7 +107,7 @@ class Humphree {
 	 * pre-activate the account.
 	 */
 	public function addUser(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['user'])){
 			$user = new User();
 			$user->user = $_SESSION['user']['user'];
@@ -129,7 +129,7 @@ class Humphree {
 	 * The updateUser() function allows an administrator to update a user.
 	 */
 	public function updateUser(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['user'])){
 			$user = new User();
 			$user->userID = $_SESSION['user']['userID'];
@@ -154,7 +154,7 @@ class Humphree {
 	 * The getUser() function allows an administrator to retrieve a user.
 	 */
 	public function getUser(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['user'])){
 			$user = new User();
 			$user->userID = $_SESSION['user']['userID'];
@@ -175,7 +175,7 @@ class Humphree {
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
 	public function getUsers(): bool{
-		// TO DO
+		
 		$system = new System();
 		$users = $system->getUsers(); 
 		$i = 1;
@@ -195,7 +195,7 @@ class Humphree {
 	 * account.
 	 */
 	public function disableUser(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['user'])){
 			$user = new User();
 			$user->userID = $_SESSION['user']['userID'];
@@ -215,7 +215,7 @@ class Humphree {
 	 * an account and all associated database entries.
 	 */
 	public function deleteUser(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['user'])){
 			$user = new User();
 			$user->userID = $_SESSION['user']['userID'];
@@ -236,7 +236,7 @@ class Humphree {
 	 * specify its position in the heirachy.
 	 */
 	public function addCategory(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['category'])){
 			$category = new Category();
 			$category->parentID = $_SESSION['category']['parentID'];
@@ -258,7 +258,7 @@ class Humphree {
 	 * its position in the heirachy.
 	 */
 	public function updateCategory(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['category'])){
 			$category = new Category();
 			$category->categoryID = $_SESSION['category']['categoryID'];
@@ -281,7 +281,7 @@ class Humphree {
 	 * all associated database content.
 	 */
 	public function deleteCategory(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['category'])){
 			$category = new Category();
 			$category->categoryID = $_SESSION['category']['categoryID'];
@@ -301,7 +301,7 @@ class Humphree {
 	 * The getCategory() function retrieves a Category.
 	 */
 	public function getCategory(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['category'])){
 			$category = new Category();
 			$category->categoryID = $_SESSION['category']['categoryID'];
@@ -320,7 +320,7 @@ class Humphree {
 	 * The getCategories() function retrieves all Categories.
 	 */
 	public function getCategories(): bool{
-		// TO DO
+		
 		$system = new System();
 		$categories = $system->getCategories(); 
 		$i = 1;
@@ -338,6 +338,54 @@ class Humphree {
 	}
 	
 	/*
+	 * The countCategoryItems() method counts the number of items in a category.
+	 */
+	public function countCategoryItems(): int{
+		
+		$numCategoryItems = 0;
+		
+		if(isset($_SESSION['category'])){
+			$category = new Category();
+			$category->categoryID = $_SESSION['category']['categoryID'];
+			$system = new System();
+			$numCategoryItems = $system->countCategoryItems($category);
+		}
+		return $numCategoryItems;
+	}
+	
+	/*
+	 * The countItemComments() method counts the number of items in a category.
+	 */
+	public function countItemComments(): int{
+		
+		$numItemComments = 0;
+		
+		if(isset($_SESSION['item'])){
+			$item = new Item();
+			$item->itemID = $_SESSION['item']['itemID'];
+			$system = new System();
+			$numItemComments = $system->countItemComments($item);
+		}
+		return $numItemComments;
+	}
+	
+	/*
+	 * The countItemNotes() method counts the number of items in a category.
+	 */
+	public function countItemNotes(): int{
+		
+		$numItemNotes = 0;
+		
+		if(isset($_SESSION['item'])){
+			$item = new Item();
+			$item->itemID = $_SESSION['item']['itemID'];
+			$system = new System();
+			$numItemNotes = $system->countItemNotes($item);
+		}
+		return $numItemNotes;
+	}
+	
+	/*
 	 * The getCategoryItems() function retrieves all items linked to a Category.
 	 */
 	public function getCategoryItems(): bool{
@@ -347,6 +395,7 @@ class Humphree {
 			$category->categoryID = $_SESSION['category']['categoryID'];
 			$system = new System();
 			$categoryItems = $system->getCategoryItems($category);
+			
 			$i = 1;
 			foreach($categoryItems as $item){
 				$_SESSION['categoryItems'][$i]['item']['itemID'] = $item->itemID;
@@ -356,32 +405,31 @@ class Humphree {
 				$_SESSION['categoryItems'][$i]['item']['itemcondition'] = $item->itemcondition;
 				$_SESSION['categoryItems'][$i]['item']['price'] = $item->price;
 				$_SESSION['categoryItems'][$i]['item']['status'] = $item->status;
-				$comments = new ItemComments();
-				$comments->itemID = $item->itemID;
-				$itemComments = $comments->getComments();
+				
+				$comments = $system->getItemComments($item);
 				$j = 1;
-				foreach($itemComments as $itemComment){
-					$_SESSION['categoryItems'][$i]['item'][$j]['comment']['commentID'] = $itemComment->commentID;
-					$_SESSION['categoryItems'][$i]['item'][$j]['comment']['userID'] = $itemComment->userID;
+				foreach($comments as $comment){
+					$_SESSION['categoryItems'][$i]['item'][$j]['comment']['commentID'] = $comment->commentID;
+					$_SESSION['categoryItems'][$i]['item'][$j]['comment']['userID'] = $comment->userID;
 					$user = new User();
-					$user->userID = $itemComment->userID;
-					$user->get();
+					$user->userID = $comment->userID;
+					$user = $system->getUser($user);
 					$_SESSION['categoryItems'][$i]['item'][$j]['comment']['user'] = $user->user;
-					$_SESSION['categoryItems'][$i]['item'][$j]['comment']['comment'] = $itemComment->comment;
+					$_SESSION['categoryItems'][$i]['item'][$j]['comment']['comment'] = $comment->comment;
 					$j++;
 				}
-				$notes = new ItemNotes();
-				$notes->itemID = $item->itemID;
-				$itemNots = $notes->getNotes();
+				
+				$notes = $system->getItemNotes($item);
 				$j = 1;
-				foreach($itemNotes as $itemNote){
-					$_SESSION['categoryItems'][$i]['item'][$j]['note']['noteID'] = $itemNote->noteID;
-					$_SESSION['categoryItems'][$i]['item'][$j]['note']['note'] = $itemNote->note;
+				foreach($notes as $note){
+					$_SESSION['categoryItems'][$i]['item'][$j]['note']['noteID'] = $note->noteID;
+					$_SESSION['categoryItems'][$i]['item'][$j]['note']['note'] = $note->note;
 					$j++;
-				}
+				} 
 				$i++;
 			}
-			if(isset($_SESSION['categories'])){
+			
+			if(isset($_SESSION['categoryItems'])){
 				return true;
 			} else {
 				return false;
