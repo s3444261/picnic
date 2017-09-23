@@ -407,31 +407,113 @@ class System {
 	}
 	
 	/*
+	 * The countUserItems() method counts the number of items in a user.
+	 */
+	public function countUserItems($user): int{
+		
+		$numUserItems = 0;
+		$ui = new UserItems();
+		$ui->userID = $user->userID;
+		$numUserItems = $ui->count();
+		
+		return $numUserItems;
+	}
+	
+	/*
+	 * The getUserItems() function retrieves all items linked to a User.
+	 */
+	public function getUserItems($user): array {
+		$ui = array();
+		$u = new UserItems();
+		$u->userID = $user->userID;
+		$ui = $u->getUserItems();
+		return $ui;
+	}
+	
+	/*
 	 * The getItem() function retrieves an item.
 	 */
-	public function getItem($item) {
-		// TO DO
+	public function getItem($item): Item{
+		$i = new Item();
+		$i->itemID = $item->itemID;
+		try {
+			$i = $i->get();
+		} catch ( ItemException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
+		return $i;
 	}
 	
 	/*
 	 * The addItem() function adds an item.
 	 */
-	public function addItem($user, $item) {
-		// TO DO
+	public function addItem($user, $item): bool {
+		$i = new Item();
+		$ui = new UserItems();
+		$i = $item;
+		$i->itemID = $i->set();
+		if($i->itemID > 1){
+			$ui->userID = $user->userID;
+			$ui->itemID = $i->itemID;
+			$ui->user_itemID = $ui->set();
+			if($ui->user_itemID > 0){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 	
 	/*
 	 * The updateItem() function updates an item.
 	 */
-	public function updateItem($item) {
-		// TO DO
+	public function updateItem($item): bool {
+		$i = new Item();
+		$i = $item;
+		if($i->update()){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/*
 	 * The deleteItem() function deletes an item and all associated database content.
 	 */
-	public function deleteItem($user, $item) {
-		// TO DO
+	public function deleteItem($item): bool {
+		if($item->itemID > 0){
+			
+			$itemComments = new ItemComments();
+			$itemComments->itemID = $item->itemID;
+			$itComments = $itemComments->getComments();
+			
+			foreach ($itComments as $itComment){
+				$comment = new Comment();
+				$comment->commentID = $itComment->commentID;
+				$comment->delete();
+				$itComment->delete();
+			}
+			
+			$itemNotes = new ItemNotes();
+			$itemNotes->itemID = $item->itemID;
+			$itNotes = $itemNotes->getNotes();
+			
+			foreach ($itNotes as $itNote){
+				$note = new Note();
+				$note->noteID = $itNote->noteID;
+				$note->delete();
+				$itNote->delete();
+			}
+			
+			// Finally, delete the item.
+			if($item->delete()){
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 	
 	/*
@@ -454,8 +536,11 @@ class System {
 	/*
 	 * The getItemComment() function retrieves an itemComment.
 	 */
-	public function getItemComment($comment) {
-		// TO DO
+	public function getItemComment($comment): Comment {
+		$c = new Comment();
+		$c->commentID = $comment->commentID;
+		$c->get();
+		return $c;
 	}
 	
 	/*

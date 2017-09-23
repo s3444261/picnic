@@ -59,7 +59,7 @@ class Item {
 	 * It then retrieves the attributes from the database. The attributes are set and
 	 * true is returned.
 	 */
-	public function get() {
+	public function get(): Item {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Items WHERE itemID = :itemID";
 			
@@ -76,9 +76,9 @@ class Item {
 			$this->_status = $row ['status'];
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
-			return true;
+			return $this;
 		} else {
-			return false;
+			throw new ItemException ( 'Could not retrieve item.' );
 		}
 	}
 	
@@ -86,7 +86,7 @@ class Item {
 	 * The set() function inserts the item paramaters into the
 	 * database. The itemID is returned.
 	 */
-	public function set() {
+	public function set(): int {
 		$query = "INSERT INTO Items
 					SET title = :title,
 						description = :description,
@@ -119,7 +119,7 @@ class Item {
 	 * attributes have not been set, they are set with the values already existing in
 	 * the database.
 	 */
-	public function update() {
+	public function update(): bool {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Items WHERE itemID = :itemID";
@@ -178,7 +178,7 @@ class Item {
 	 * The delete() checks the object exists in the database. If it does,
 	 * true is returned.
 	 */
-	public function delete() {
+	public function delete(): bool{
 		if ($this->exists ()) {
 			
 			$query = "DELETE FROM Items
@@ -202,7 +202,7 @@ class Item {
 	 * The exists() function checks to see if the id exists in the database,
 	 * if it does, true is returned.
 	 */
-	public function exists() {
+	public function exists(): bool{
 		if ($this->_itemID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Items WHERE itemID = :itemID";
 			

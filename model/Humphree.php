@@ -389,7 +389,7 @@ class Humphree {
 	 * The getCategoryItems() function retrieves all items linked to a Category.
 	 */
 	public function getCategoryItems(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['category'])){
 			$category = new Category();
 			$category->categoryID = $_SESSION['category']['categoryID'];
@@ -438,10 +438,78 @@ class Humphree {
 	}
 	
 	/*
+	 * The countUserItems() method counts the number of items in a user.
+	 */
+	public function countUserItems(): int{
+		
+		$numUserItems = 0;
+		
+		if(isset($_SESSION['user'])){
+			$user = new User();
+			$user->userID = $_SESSION['user']['userID'];
+			$system = new System();
+			$numUserItems = $system->countUserItems($user);
+		}
+		return $numUserItems;
+	}
+	
+	/*
+	 * The getUserItems() function retrieves all items linked to a User.
+	 */
+	public function getUserItems(): bool{
+		
+		if(isset($_SESSION['user'])){
+			$user = new User();
+			$user->userID = $_SESSION['user']['userID'];
+			$system = new System();
+			$userItems = $system->getUserItems($user);
+			
+			$i = 1;
+			foreach($userItems as $item){
+				$_SESSION['userItems'][$i]['item']['itemID'] = $item->itemID;
+				$_SESSION['userItems'][$i]['item']['title'] = $item->title;
+				$_SESSION['userItems'][$i]['item']['description'] = $item->description;
+				$_SESSION['userItems'][$i]['item']['quantity'] = $item->quantity;
+				$_SESSION['userItems'][$i]['item']['itemcondition'] = $item->itemcondition;
+				$_SESSION['userItems'][$i]['item']['price'] = $item->price;
+				$_SESSION['userItems'][$i]['item']['status'] = $item->status;
+				
+				$comments = $system->getItemComments($item);
+				$j = 1;
+				foreach($comments as $comment){
+					$_SESSION['userItems'][$i]['item'][$j]['comment']['commentID'] = $comment->commentID;
+					$_SESSION['userItems'][$i]['item'][$j]['comment']['userID'] = $comment->userID;
+					$user = new User();
+					$user->userID = $comment->userID;
+					$user = $system->getUser($user);
+					$_SESSION['userItems'][$i]['item'][$j]['comment']['user'] = $user->user;
+					$_SESSION['userItems'][$i]['item'][$j]['comment']['comment'] = $comment->comment;
+					$j++;
+				}
+				
+				$notes = $system->getItemNotes($item);
+				$j = 1;
+				foreach($notes as $note){
+					$_SESSION['userItems'][$i]['item'][$j]['note']['noteID'] = $note->noteID;
+					$_SESSION['userItems'][$i]['item'][$j]['note']['note'] = $note->note;
+					$j++;
+				}
+				$i++;
+			}
+			
+			if(isset($_SESSION['userItems'])){
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+	
+	/*
 	 * The getItem() function retrieves an item.
 	 */
 	public function getItem(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['item'])){
 			$item = new Item();
 			$item->itemID = $_SESSION['item']['itemID'];
@@ -483,7 +551,7 @@ class Humphree {
 	 * The addItem() function adds an item.
 	 */
 	public function addItem(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['user']) && isset($_SESSION['item'])){
 			$user = new User();
 			$user->userID = $_SESSION['user']['userID'];
@@ -511,7 +579,7 @@ class Humphree {
 	 * The updateItem() function updates an item.
 	 */
 	public function updateItem(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['item'])){
 			$item = new Item();
 			$item->itemID = $_SESSION['item']['itemID'];
@@ -537,16 +605,13 @@ class Humphree {
 	 * The deleteItem() function deletes an item and all associated database content.
 	 */
 	public function deleteItem(): bool{
-		// TO DO
-		if(isset($_SESSION['user']) && isset($_SESSION['item'])){
-			$user = new User();
-			$user->userID = $_SESSION['user']['userID'];
+		
+		if(isset($_SESSION['item'])){
 			$item = new Item();
 			$item->itemID = $_SESSION['item']['itemID'];
-			unset($_SESSION['user']);
 			unset($_SESSION['item']);
 			$system = new System();
-			if($system->deleteItem($user, $item)){
+			if($system->deleteItem($item)){
 				return true;
 			} else {
 				return false;
@@ -560,7 +625,7 @@ class Humphree {
 	 * The getItemComments() function retrieves all comments for an item.
 	 */
 	public function getItemComments(): bool{
-		// TO DO
+		
 		if(isset($_SESSION['item'])){
 			$item = new Item();
 			$item->itemID = $_SESSION['item']['itemID'];

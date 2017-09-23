@@ -13,7 +13,16 @@ $getCategories = false;
 $deleteCategory = false;
 $getCategoryItems= false;
 $countCategoryItems = false;
-$countItemComments= false;
+$countItemComments = false;
+$countItemNotes = false;
+$getUserItems = false;
+$countUserItems = false;
+$getItem = false;
+$addItem = false;
+$updateItem = false;
+$deleteItem = false;
+$getItemComments = false;
+$getItemComment = false;
 $h = new Humphree();
 
 // Test createAccount()
@@ -415,19 +424,258 @@ if($testString == $resultString){
 	$getCategoryItems= true;
 }
 
+// Test countCategoryItems()
+
+$_SESSION['user']['userID']= 2;
+if($h->countUserItems() == 8){
+	$countUserItems = true;
+} else {
+	$hError = $hError . 'countUserItems Failed.<br />';
+	$countUserItems = false;
+}
+
 // Test getUserItems()
+
+$_SESSION['user']['userID']= 2;
+$h->getUserItems();
+
+$resultString = '';
+
+$testString = '9title1description1quantity1cn1price1status11452johncomment11461petercomment11472';
+$testString = $testString . 'johncomment21481petercomment21492johncomment31501petercomment31512jo';
+$testString = $testString . 'hncomment41521petercomment41532johncomment51541petercomment51552joh';
+$testString = $testString . 'ncomment61561petercomment61572johncomment71581petercomment71592john';
+$testString = $testString . 'comment81601petercomment81612johncomment973note174note275note376note';
+$testString = $testString . '477note578note679note780note810title2description2quantity2cn2price2sta';
+$testString = $testString . 'tus21632johncomment11641petercomment11652johncomment21661petercomment21';
+$testString = $testString . '672johncomment31681petercomment31692johncomment41701petercomment41712jo';
+$testString = $testString . 'hncomment51721petercomment51732johncomment61741petercomment61752jo';
+$testString = $testString . 'hncomment71761petercomment71772johncomment81781petercomment81792joh';
+$testString = $testString . 'ncomment982note183note284note385note486note587note688note789note811t';
+$testString = $testString . 'itle3description3quantity3cn3price3status31812johncomment11821petercom';
+$testString = $testString . 'ment11832johncomment21841petercomment21852johncomment31861petercomment31';
+$testString = $testString . '872johncomment41881petercomment41892johncomment51901petercomment51912j';
+$testString = $testString . 'ohncomment61921petercomment61932johncomment71941petercomment71952johnc';
+$testString = $testString . 'omment81961petercomment81972johncomment991note192note293note394note495n';
+$testString = $testString . 'ote596note697note798note812title4description4quantity4cn4price4status4';
+$testString = $testString . '1992johncomment12001petercomment12012johncomment22021petercomment22032';
+$testString = $testString . 'johncomment32041petercomment32052johncomment42061petercomment42072john';
+$testString = $testString . 'comment52081petercomment52092johncomment62101petercomment62112johncomm';
+$testString = $testString . 'ent72121petercomment72132johncomment82141petercomment82152johncomment9';
+$testString = $testString . '100note1101note2102note3103note4104note5105note6106note7107note813titl';
+$testString = $testString . 'e1description1quantity1cn1price1status12172johncomment12181petercomme';
+$testString = $testString . 'nt12192johncomment22201petercomment22212johncomment32221petercomment3';
+$testString = $testString . '2232johncomment42241petercomment42252johncomment52261petercomment52272';
+$testString = $testString . 'johncomment62281petercomment62292johncomment72301petercomment72312john';
+$testString = $testString . 'comment82321petercomment82332johncomment9109note1110note2111note3112no';
+$testString = $testString . 'te4113note5114note6115note7116note814title2description2quantity2cn2pri';
+$testString = $testString . 'ce2status22352johncomment12361petercomment12372johncomment22381peterc';
+$testString = $testString . 'omment22392johncomment32401petercomment32412johncomment42421petercomme';
+$testString = $testString . 'nt42432johncomment52441petercomment52452johncomment62461petercomment';
+$testString = $testString . '62472johncomment72481petercomment72492johncomment82501petercomment82';
+$testString = $testString . '512johncomment9118note1119note2120note3121note4122note5123note6124note';
+$testString = $testString . '7125note815title3description3quantity3cn3price3status32532johncomme';
+$testString = $testString . 'nt12541petercomment12552johncomment22561petercomment22572johncomment3';
+$testString = $testString . '2581petercomment32592johncomment42601petercomment42612johncomment5262';
+$testString = $testString . '1petercomment52632johncomment62641petercomment62652johncomment72661';
+$testString = $testString . 'petercomment72672johncomment82681petercomment82692johncomment9127not';
+$testString = $testString . 'e1128note2129note3130note4131note5132note6133note7134note8';
+
+for($i = 1; $i < $h->countUserItems(); $i++){
+	$testString= $testString . $_SESSION['userItems'][$i]['item']['itemID'];
+	$testString= $testString . $_SESSION['userItems'][$i]['item']['title'];
+	$testString= $testString . $_SESSION['userItems'][$i]['item']['description'];
+	$testString= $testString . $_SESSION['userItems'][$i]['item']['quantity'];
+	$testString= $testString . $_SESSION['userItems'][$i]['item']['itemcondition'];
+	$testString= $testString . $_SESSION['userItems'][$i]['item']['price'];
+	$testString= $testString . $_SESSION['userItems'][$i]['item']['status'];
+	
+	for($j = 1; $j < $h->countItemComments(); $j++){
+		$testString = $testString . $_SESSION['userItems'][$i]['item'][$j]['comment']['commentID'];
+		$testString = $testString . $_SESSION['userItems'][$i]['item'][$j]['comment']['userID'];
+		$testString = $testString . $_SESSION['userItems'][$i]['item'][$j]['comment']['user'];
+		$testString = $testString . $_SESSION['userItems'][$i]['item'][$j]['comment']['comment'];
+	}
+	
+	for($j = 1; $j < $h->countItemNotes(); $j++){
+		$testString = $testString . $_SESSION['userItems'][$i]['item'][$j]['note']['noteID'];
+		$testString = $testString . $_SESSION['userItems'][$i]['item'][$j]['note']['note'];
+	}
+}
+
+if($testString == $resultString){
+	$hError = $hError . 'getUserItems Failed.<br />';
+	$getUserItems= false;
+} else {
+	$getUserItems= true;
+}
 
 // Test getItem()
 
+$_SESSION['item']['itemID']= 4;
+$h->getItem();
+
+$resultString = '';
+
+$testString = '4title4description4quantity4cn4price4status4551petercomment1562johncomment1571peter';
+$testString = $testString . 'comment2582johncomment2591petercomment3602johncomment3611petercomment';
+$testString = $testString . '4622johncomment4631petercomment5642johncomment5651petercomment6662john';
+$testString = $testString . 'comment6671petercomment7682johncomment7691petercomment8702johncomment87';
+$testString = $testString . '11petercomment928note129note230note331note432note533note634note735note8';
+
+$testString= $testString . $_SESSION['item']['itemID'];
+$testString= $testString . $_SESSION['item']['title'];
+$testString= $testString . $_SESSION['item']['description'];
+$testString= $testString . $_SESSION['item']['quantity'];
+$testString= $testString . $_SESSION['item']['itemcondition'];
+$testString= $testString . $_SESSION['item']['price'];
+$testString= $testString . $_SESSION['item']['status'];
+
+for($i = 1; $i < $h->countItemComments(); $i++){
+	$testString = $testString . $_SESSION['item'][$i]['comment']['commentID'];
+	$testString = $testString . $_SESSION['item'][$i]['comment']['userID'];
+	$testString = $testString . $_SESSION['item'][$i]['comment']['user'];
+	$testString = $testString . $_SESSION['item'][$i]['comment']['comment'];
+}
+
+for($i = 1; $i < $h->countItemNotes(); $i++){
+	$testString = $testString . $_SESSION['item'][$i]['note']['noteID'];
+	$testString = $testString . $_SESSION['item'][$i]['note']['note'];
+}
+
+if($testString == $resultString){
+	$hError = $hError . 'getItem Failed.<br />';
+	$getItem = false;
+} else {
+	$getItem = true;
+}
+
+// Test addItem()
+
+$_SESSION['user']['userID'] = 2;
+$_SESSION['item']['title'] = 'addTitle';
+$_SESSION['item']['description'] = 'addDescription';
+$_SESSION['item']['quantity'] = 'addQuantity';
+$_SESSION['item']['itemcondition'] = 'aic';
+$_SESSION['item']['price'] = 'aprice';
+$_SESSION['item']['status'] = 'addStatus';
+
+$h->addItem();
+
+$resultString = '';
+$testString = '17addTitleaddDescriptionaddQuantityaicapriceaddStatus';
+
+$item = new Item();
+$item->itemID = 17;
+$item->get();
+
+$resultString = $item->itemID . $item->title . $item->description . $item->quantity;
+$resultString = $resultString . $item->itemcondition . $item->price . $item->status;
+
+if($testString == $resultString){
+	$hError = $hError . 'addItem Failed.<br />';
+	$addItem = false;
+} else {
+	$addItem = true;
+}
+
 // Test updateItem()
+
+$_SESSION['item']['itemID'] = 17;
+$_SESSION['item']['title'] = 'updateTitle';
+$_SESSION['item']['description'] = 'updateDescription';
+$_SESSION['item']['quantity'] = 'updateQuantity';
+$_SESSION['item']['itemcondition'] = 'uic';
+$_SESSION['item']['price'] = 'uprice';
+$_SESSION['item']['status'] = 'updateStatus';
+
+$h->updateItem();
+
+$resultString = '';
+$testString = '17updateTitleupdateDescriptionupdateQuantityuicupriceupdateStatus';
+
+$item = new Item();
+$item->itemID = 17;
+$item->get();
+
+$resultString = $item->itemID . $item->title . $item->description . $item->quantity;
+$resultString = $resultString . $item->itemcondition . $item->price . $item->status;
+
+if($testString == $resultString){
+	$hError = $hError . 'updateItem Failed.<br />';
+	$updateItem = false;
+} else {
+	$updateItem = true;
+}
 
 // Test deleteItem()
 
+/*
+ * An Item can't be deleted unless all database dependencies have been
+ * deleted.  If an item is not longer there, deletion was successful.
+ */
+
+$_SESSION['item']['itemID']= 16;
+$h->deleteItem();
+
+$item = new Item();
+$item->itemID = 16;
+if($item->exists()){
+	$hError = $hError . 'deleteItem Failed.<br />';
+	$deleteItem = false;
+} else {
+	$deleteItem = true;
+}
+
 // Test getItemComments()
+
+$_SESSION['item']['itemID'] = 14;
+
+$h->getItemComments();
+
+$resultString = '';
+$testString = '2352johncomment12361petercomment12372johncomment22381petercomment22392johncommen';
+$testString = $testString . 't32401petercomment32412johncomment42421petercomment42432johncommen';
+$testString = $testString . 't52441petercomment52452johncomment62461petercomment62472johncommen';
+$testString = $testString . 't72481petercomment72492johncomment82501petercomment82512johncomment9';
+
+for($i = 1; $i < $h->countItemComments(); $i++){
+	$resultString = $resultString . $_SESSION['item'][$i]['comment']['commentID'];
+	$resultString = $resultString . $_SESSION['item'][$i]['comment']['userID'];
+	$resultString = $resultString . $_SESSION['item'][$i]['comment']['user'];
+	$resultString = $resultString . $_SESSION['item'][$i]['comment']['comment'];
+}
+
+if($testString == $resultString){
+	$getItemComments = true;
+} else {
+	$hError = $hError . 'getItemComments Failed.<br />';
+	$getItemComments = false;
+}
 
 // Test getItemComment()
 
-// Test addtemComment()
+$_SESSION['comment']['commentID'] = 10;
+
+$h->getItemComment();
+
+$resultString = '';
+$testString = '102johncomment5';
+
+$resultString = $resultString . $_SESSION['comment']['commentID'];
+$resultString = $resultString . $_SESSION['comment']['userID'];
+$resultString = $resultString . $_SESSION['comment']['user'];
+$resultString = $resultString . $_SESSION['comment']['comment'];
+
+
+if($testString == $resultString){
+	$getItemComment = true;
+} else {
+	$hError = $hError . 'getItemComment Failed.<br />';
+	$getItemComment = false;
+}
+
+// Test addItemComment()
 
 // Test updateItemComment()
 
@@ -448,7 +696,9 @@ if($testString == $resultString){
 
 if($addUser && $updateUser && $getUser && $getUsers && $disableUser  && $deleteUser
 		&& $addCategory && $updateCategory && $getCategory && $getCategories && $deleteCategory
-		&& $getCategoryItems && $countCategoryItems && $countItemComments){
+		&& $getCategoryItems && $countCategoryItems && $countItemComments && $countItemNotes 
+		&& $countUserItems && $getUserItems && $getItem && $addItem && $updateItem &&$deleteItem
+		&& $getItemComments && $getItemComment){
 	$humphree = true;
 }
 
