@@ -44,8 +44,14 @@ class LoginController {
 					if (! isset ( $_SESSION ['error'] )) { 
 						
 						// Attempt the login.
-						try { 
-							$user->login (); 
+						try {
+							if ($user->login ())
+							{
+								$_SESSION ['message'] = 'Logged In';
+							} else {
+								$_SESSION ['error'] = 'Not Logged In - No current session.';
+							}
+
 							if(isset($_SESSION ['userID']) && $_SESSION ['userID'] > 0){
 								header ( 'Location: Home' );
 							}

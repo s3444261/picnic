@@ -41,6 +41,26 @@ class NoteTest extends PicnicTestCase {
 		return new Note([self::NOTE_ID => $id]);
 	}
 
+	protected function getValidId() {
+		return 1;
+	}
+
+	protected function getInvalidId() {
+		return 200;
+	}
+
+	protected function getExpectedExceptionTypeForUnsetId() {
+		return null;
+	}
+
+	protected function getExpectedAttributesForGet() {
+
+		return [
+			self::NOTE_ID   => 1,
+			self::NOTE_TEXT => 'hi there, world!'
+		];
+	}
+
 	public function testAttributes(): void {
 		$values = [
 			self::NOTE_ID        => 1,
@@ -56,30 +76,6 @@ class NoteTest extends PicnicTestCase {
 		$sut = new Note([self::NOTE_ID => 1, self::NOTE_TEXT =>'text1']);
 		$this->assertGreaterThan(0, $sut->set());
 		$this->assertGreaterThan(0, $sut->{self::NOTE_ID});
-	}
-
-	public function testGet(): void {
-		$validId = 1;
-		$invalidId = 200;
-
-		$expectedValuesForValidId = [
-			self::NOTE_ID   => 1,
-			self::NOTE_TEXT => 'hi there, world!'
-		];
-
-		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
-	}
-
-	public function testExists(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertExistsIsFunctional($validId, $invalidId);
-	}
-
-	public function testDelete(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertDeleteIsFunctional($validId, $invalidId);
 	}
 
 	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {

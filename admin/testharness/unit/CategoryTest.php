@@ -13,6 +13,7 @@ require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/Category.php';
+require_once dirname(__FILE__) . '/../../../model/CategoryException.php';
 
 final class CategoryTest extends PicnicTestCase {
 
@@ -47,6 +48,27 @@ final class CategoryTest extends PicnicTestCase {
 		return new Category([self::CATEGORY_ID => $id]);
 	}
 
+	protected function getValidId() {
+		return 1;
+	}
+
+	protected function getInvalidId() {
+		return 200;
+	}
+
+	protected function getExpectedExceptionTypeForUnsetId() {
+		return CategoryException::class;
+	}
+
+	protected function getExpectedAttributesForGet() {
+
+		return [
+			self::CATEGORY_ID   => 1,
+			self::PARENT_ID     => 0,
+			self::CATEGORY_NAME => 'root'
+		];
+	}
+
 	public function testAttributes(): void {
 		$values = [
 			self::CATEGORY_ID   => 1,
@@ -57,31 +79,6 @@ final class CategoryTest extends PicnicTestCase {
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
-	}
-
-	public function testGet(): void {
-		$validId = 1;
-		$invalidId = 200;
-
-		$expectedValuesForValidId = [
-			self::CATEGORY_ID   => 1,
-			self::PARENT_ID     => 0,
-			self::CATEGORY_NAME => 'root'
-		];
-
-		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
-	}
-
-	public function testExists(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertExistsIsFunctional($validId, $invalidId);
-	}
-
-	public function testDelete(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertDeleteIsFunctional($validId, $invalidId);
 	}
 
 	public function testSetResultsInValidId(): void {

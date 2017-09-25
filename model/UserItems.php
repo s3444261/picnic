@@ -58,7 +58,7 @@ class UserItems {
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_userID = $row ['userID'];
 			$this->_itemID = $row ['itemID'];
-			return this;
+			return $this;
 		} else {
 			throw new UserException ( 'Could not retrieve user items.' );
 		}

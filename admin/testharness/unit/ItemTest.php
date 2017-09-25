@@ -55,6 +55,32 @@ class ItemTest extends PicnicTestCase
 		return new Item([self::ITEM_ID => $id]);
 	}
 
+	protected function getValidId() {
+		return 1;
+	}
+
+	protected function getInvalidId() {
+		return 200;
+	}
+
+	protected function getExpectedExceptionTypeForUnsetId() {
+		return ItemException::class;
+	}
+
+	protected function getExpectedAttributesForGet() {
+
+		return [
+			self::ITEM_ID 		=> 1,
+			self::TITLE 		=> 'title',
+			self::DESCRIPTION 	=> 'description',
+			self::QUANTITY		=> 24,
+			self::CONDITION 	=> 'condition',
+			self::PRICE 		=> 'price',
+			self::STATUS 		=> 'status'
+		];
+	}
+
+
 	public function testAttributes(): void {
 		$values = [
 			self::ITEM_ID 		=> 1,
@@ -69,35 +95,6 @@ class ItemTest extends PicnicTestCase
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
-	}
-
-	public function testGet(): void {
-		$validId = 1;
-		$invalidId = 200;
-
-		$expectedValuesForValidId = [
-			self::ITEM_ID 		=> 1,
-			self::TITLE 		=> 'title',
-			self::DESCRIPTION 	=> 'description',
-			self::QUANTITY		=> 24,
-			self::CONDITION 	=> 'condition',
-			self::PRICE 		=> 'price',
-			self::STATUS 		=> 'status'
-		];
-
-		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
-	}
-
-	public function testExists(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertExistsIsFunctional($validId, $invalidId);
-	}
-
-	public function testDelete(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertDeleteIsFunctional($validId, $invalidId);
 	}
 
 	public function testSetResultsInValidId(): void {

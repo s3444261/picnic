@@ -65,6 +65,28 @@ class ItemNotesTest extends PicnicTestCase {
 		return new ItemNotes([self::ITEM_NOTE_ID => $id]);
 	}
 
+	protected function getValidId() {
+		return 1;
+	}
+
+	protected function getInvalidId() {
+		return 200;
+	}
+
+	protected function getExpectedExceptionTypeForUnsetId() {
+		return null;
+	}
+
+	protected function getExpectedAttributesForGet() {
+
+		return [
+			self::ITEM_NOTE_ID  => 1,
+			self::ITEM_ID       => 1,
+			self::NOTE_ID       => 1,
+		];
+	}
+
+
 	public function testAttributes(): void {
 		$values = [
 			self::ITEM_NOTE_ID => 1,
@@ -73,31 +95,6 @@ class ItemNotesTest extends PicnicTestCase {
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
-	}
-
-	public function testGet(): void {
-		$validId = 1;
-		$invalidId = 200;
-
-		$expectedValuesForValidId = [
-			self::ITEM_NOTE_ID  => 1,
-			self::ITEM_ID       => 1,
-			self::NOTE_ID       => 1,
-		];
-
-		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
-	}
-
-	public function testExists(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertExistsIsFunctional($validId, $invalidId);
-	}
-
-	public function testDelete(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertDeleteIsFunctional($validId, $invalidId);
 	}
 
 	public function testSetResultsInValidId(): void {

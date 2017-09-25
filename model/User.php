@@ -335,14 +335,14 @@ class User {
 	 * that the user is loggedin. In any other instance a message is returned announcing
 	 * that the user is not logged in.
 	 */
-	public function login(): void {
+	public function login(): bool {
 		$this->_password = $this->encryptPassword ();
 
 		$query = "SELECT userID, user, email, status
 					FROM Users
 					WHERE email = :email
     				AND password = :password
-    				AND (status != 'deleted' || status != 'suspended')
+    				AND (status != 'deleted' && status != 'suspended')
 					AND activate IS NULL";
 		
 		$db = Picnic::getInstance ();
@@ -351,20 +351,21 @@ class User {
 		$stmt->bindParam ( ':password', $this->_password );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		$this->_userID = $row ['userID'];
-		$this->_user = $row ['user'];
-		$this->_status = $row ['status'];
-		
-		if (isset ( $_SESSION ) && $this->exists ()) {
-			$_SESSION [MODULE] = true;
+
+		if ($row)
+		{
+			$this->_userID = $row ['userID'];
+			$this->_user = $row ['user'];
+			$this->_status = $row ['status'];
+
+			$_SESSION ['picnic'] = true;
 			$_SESSION ['userID'] = $this->_userID;
 			$_SESSION ['user'] = $this->_user;
 			$_SESSION ['email'] = $this->_email;
 			$_SESSION ['status'] = $this->_status;
-			
-			$_SESSION ['message'] = 'Logged In';
+			return true;
 		} else {
-			$_SESSION ['error'] = 'Not Logged In - No current session.';
+			return false;
 		} 
 	}
 	

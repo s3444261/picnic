@@ -15,6 +15,7 @@ require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/UserItems.php';
+require_once dirname(__FILE__) . '/../../../model/UserException.php';
 
 class UserItemTest extends PicnicTestCase {
 
@@ -59,6 +60,28 @@ class UserItemTest extends PicnicTestCase {
 		return new UserItems([self::USER_ITEM_ID => $id]);
 	}
 
+	protected function getValidId() {
+		return 1;
+	}
+
+	protected function getInvalidId() {
+		return 200;
+	}
+
+	protected function getExpectedExceptionTypeForUnsetId() {
+		return UserException::class;
+	}
+
+	protected function getExpectedAttributesForGet() {
+
+		return [
+			self::USER_ITEM_ID => 1,
+			self::USER_ID      => 1,
+			self::ITEM_ID      => 1
+		];
+	}
+
+
 	public function testAttributes(): void {
 		$values = [
 			self::USER_ITEM_ID => 1,
@@ -67,31 +90,6 @@ class UserItemTest extends PicnicTestCase {
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
-	}
-
-	public function testGet(): void {
-		$validId = 2;
-		$invalidId = 200;
-
-		$expectedValuesForValidId = [
-			self::USER_ITEM_ID => 2,
-			self::USER_ID      => 1,
-			self::ITEM_ID      => 2
-		];
-
-		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
-	}
-
-	public function testExists(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertExistsIsFunctional($validId, $invalidId);
-	}
-
-	public function testDelete(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertDeleteIsFunctional($validId, $invalidId);
 	}
 
 	public function testCountReturnsTotalNumberOfItemsForUser(): void {

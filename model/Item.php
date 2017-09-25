@@ -8,6 +8,8 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
+require_once dirname(__FILE__) . '/ItemException.php';
+
 if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }

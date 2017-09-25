@@ -7,6 +7,8 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
+// declare(strict_types=1);
+
 /**
  * A base test for tests, providing commonly used methods.
  */
@@ -23,6 +25,26 @@ abstract class PicnicTestCase extends PHPUnit\Framework\TestCase {
 	 * @param $id		The ID to be assigned to the object.
 	 */
 	abstract protected function createSutWithId($id);
+
+	/**
+	 * Gets an ID of an object that should be valid for the test.
+	 */
+	abstract protected function getValidId();
+
+	/**
+	 * Gets an ID of an object that should NOT be valid for the test.
+	 */
+	abstract protected function getInvalidId();
+
+	/**
+	 * Gets the type of exception that should be thrown on an error.
+	 */
+	abstract protected function getExpectedExceptionTypeForUnsetId();
+
+	/**
+	 * Gets the attributes that we expect to be returned when we get a valid object.
+	 */
+	abstract protected function getExpectedAttributesForGet();
 
 	/**
 	 * Sets attributes on $sut, using the values passed in the associative
@@ -56,72 +78,77 @@ abstract class PicnicTestCase extends PHPUnit\Framework\TestCase {
 		$this->assertValuesAreEqualTo($sut, $values);
 	}
 
-	protected function assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId): void {
-		$this->assertGetReturnsTrueForKnownId($validId);
-		$this->assertGetReturnsFalseForUnknownId($invalidId);
-		$this->assertGetReturnsFalseForUnsetId();
-		$this->assertGetRetrievesCorrectValuesForKnownId($validId, $expectedValuesForValidId);
+	public function testGetReturnsSelfOrTrueForKnownId(): void {
+		$sut = $this->createSutWithId($this->getValidId());
+
+		$result = $sut->get();
+
+		if ($result == true) {
+			$this->addToAssertionCount(1);
+		} else {
+			$this->assertEquals($sut, $result);
+		}
 	}
 
-	private function assertGetReturnsTrueForKnownId($validId): void {
-		$sut = $this->createSutWithId($validId);
-		$this->assertTrue($sut->get());
+	public function testGetThrowsOrReturnsFalseForUnknownId(): void {
+		$exceptionType = $this->getExpectedExceptionTypeForUnsetId();
+
+		if ($exceptionType != null) {
+			$sut = $this->createSutWithId($this->getInvalidId());
+			$this->expectException($exceptionType);
+			$sut->get();
+		} else {
+			$sut = $this->createSutWithId($this->getInvalidId());
+			$this->assertFalse($sut->get());
+		}
 	}
 
-	private function assertGetReturnsFalseForUnknownId($invalidId): void {
-		$sut = $this->createSutWithId($invalidId);
-		$this->assertFalse($sut->get());
-	}
-
-	private function assertGetRetrievesCorrectValuesForKnownId($validId, $expectedValues): void {
-		$sut = $this->createSutWithId($validId);
+	public function testGetRetrievesCorrectValuesForKnownId(): void {
+		$sut = $this->createSutWithId($this->getValidId());
 		$sut->get();
-		$this->assertValuesAreEqualTo($sut, $expectedValues);
+		$this->assertValuesAreEqualTo($sut, $this->getExpectedAttributesForGet());
 	}
 
-	private function assertGetReturnsFalseForUnsetId(): void {
-		$sut = $this->createDefaultSut();
-		$this->assertFalse($sut->get());
+	public function testGetThrowsOrReturnsFalseForUnsetId(): void {
+
+		$exceptionType = $this->getExpectedExceptionTypeForUnsetId();
+
+		if ($exceptionType != null) {
+			$sut = $this->createDefaultSut();
+			$this->expectException($exceptionType);
+			$sut->get();
+		} else {
+			$sut = $this->createDefaultSut();
+			$this->assertFalse($sut->get());
+		}
 	}
 
-	protected function assertExistsIsFunctional($validId, $invalidId): void {
-		$this->assertExistsReturnsTrueForKnownId($validId);
-		$this->assertExistsReturnsFalseForUnknownId($invalidId);
-		$this->assertExistsReturnsFalseForUnsetId();
-	}
-
-	private function assertExistsReturnsTrueForKnownId($validId): void {
-		$sut = $this->createSutWithId($validId);
+	public function testExistsReturnsTrueForKnownId(): void {
+		$sut = $this->createSutWithId($this->getValidId());
 		$this->assertTrue($sut->exists());
 	}
 
-	private function assertExistsReturnsFalseForUnknownId($invalidId): void {
-		$sut = $this->createSutWithId($invalidId);
+	public function testExistsReturnsFalseForUnknownId(): void {
+		$sut = $this->createSutWithId($this->getInvalidId());
 		$this->assertFalse($sut->exists());
 	}
 
-	private function assertExistsReturnsFalseForUnsetId(): void {
+	public function testExistsReturnsFalseForUnsetId(): void {
 		$sut = $this->createDefaultSut();
 		$this->assertFalse($sut->exists());
 	}
 
-	protected function assertDeleteIsFunctional($validId, $invalidId): void {
-		$this->assertDeleteReturnsTrueForKnownId($validId);
-		$this->assertDeleteReturnsFalseForUnknownId($invalidId);
-		$this->assertDeleteReturnsFalseForUnsetId();
-	}
-
-	private function assertDeleteReturnsTrueForKnownId($validId): void {
-		$sut = $this->createSutWithId($validId);
+	public function testDeleteReturnsTrueForKnownId(): void {
+		$sut = $this->createSutWithId($this->getValidId());
 		$this->assertTrue($sut->delete());
 	}
 
-	private function assertDeleteReturnsFalseForUnknownId($invalidId): void {
-		$sut = $this->createSutWithId($invalidId);
+	public function testDeleteReturnsFalseForUnknownId(): void {
+		$sut = $this->createSutWithId($this->getInvalidId());
 		$this->assertFalse($sut->delete());
 	}
 
-	private function assertDeleteReturnsFalseForUnsetId(): void {
+	public function testDeleteReturnsFalseForUnsetId(): void {
 		$sut = $this->createDefaultSut();
 		$this->assertFalse($sut->delete());
 	}

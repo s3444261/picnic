@@ -60,14 +60,14 @@ if (isset ( $_SESSION ['users'] )) {
 		?>
 		<tr>
 					<td></td>
-					<td><?php echo $user['user']; ?></td>
-					<td><?php echo $user['email']; ?></td>
-					<td><?php echo $user['status']; ?></td>
+					<td><?php echo $user->user; ?></td>
+					<td><?php echo $user->email; ?></td>
+					<td><?php echo $user->status; ?></td>
 					<td><a
-						href="<?php echo PATH . 'Administration/Edit/' . $user['userID']; ?>"
+						href="<?php echo PATH . 'Administration/Edit/' . $user->userID; ?>"
 						class="btn btn-primary btn-xs pull-right" role="button">Edit</a></td>
 					<td><a
-						href="<?php echo PATH . 'Administration/Delete/' . $user['userID']; ?>"
+						href="<?php echo PATH . 'Administration/Delete/' . $user->userID; ?>"
 						class="btn btn-primary btn-xs" role="button"
 						onclick="return confirm('Are you sure you want to delete?');">Delete</a></td>
 					<td></td>

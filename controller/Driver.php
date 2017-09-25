@@ -84,7 +84,27 @@ class Driver {
 				}
 				break;
 			case 'Administration' :
-				if($this->auth()){ 
+				if($this->auth()){
+					switch ($routes->action) {
+
+						case 'Edit': {
+							if ($routes->id > 0) {
+								$administration->edit($routes->id);
+								return;
+							}
+						}
+						break;
+
+						case 'Delete': {
+							if ($routes->id > 0) {
+								$administration->delete($routes->id);
+								return;
+							}
+						}
+						break;
+
+					}
+
 					$administration->display ();
 				} else {
 					$home->display ();

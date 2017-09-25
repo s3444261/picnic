@@ -56,6 +56,29 @@ class CommentTest extends PicnicTestCase{
 		return new Comment([self::COMMENT_ID => $id]);
 	}
 
+	protected function getValidId() {
+		return 1;
+	}
+
+	protected function getInvalidId() {
+		return 200;
+	}
+	protected function getExpectedExceptionTypeForUnsetId() {
+		return null;
+	}
+
+	protected function getExpectedAttributesForGet() {
+
+		return [
+			self::COMMENT_ID   => 1,
+			self::USER_ID		 => 1,
+			self::COMMENT_TEXT => 'hi there, world!'
+		];
+	}
+
+
+
+
 	public function testAttributes(): void {
 		$values = [
 			self::COMMENT_ID    => 2,
@@ -66,31 +89,6 @@ class CommentTest extends PicnicTestCase{
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
-	}
-
-	public function testGet(): void {
-		$validId = 1;
-		$invalidId = 200;
-
-		$expectedValuesForValidId = [
-			self::COMMENT_ID   => 1,
-			self::USER_ID		 => 1,
-			self::COMMENT_TEXT => 'hi there, world!'
-		];
-
-		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
-	}
-
-	public function testExists(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertExistsIsFunctional($validId, $invalidId);
-	}
-
-	public function testDelete(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertDeleteIsFunctional($validId, $invalidId);
 	}
 
 	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {

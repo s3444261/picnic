@@ -17,7 +17,7 @@ class SettingsController {
 		
 		if (isset ( $_POST ['add'] )) {
 			unset ( $_POST ['add'] );
-			$user = new Users ();
+			$user = new User ();
 			$v = new Validation ();
 			
 			// Process on submission of user.
@@ -93,7 +93,7 @@ class SettingsController {
 		
 		if (isset ( $_POST ['update'] )) {
 			unset ( $_POST ['update'] );
-			$user = new Users ();
+			$user = new User ();
 			$v = new Validation ();
 				
 			// Process on submission of user.
@@ -139,7 +139,7 @@ class SettingsController {
 		
 		if (isset ( $_POST ['changePassword'] )) {
 			unset ( $_POST ['changePassword'] );
-			$user = new Users ();
+			$user = new User ();
 			$v = new Validation ();
 			
 			if (isset ( $_POST ['password'] ) && isset ( $_POST ['confirm'] )) {
@@ -184,7 +184,7 @@ class SettingsController {
 		$routes = Routes::getInstance ();
 		
 		if ($routes->action == 'Edit' && $routes->id > 0) {
-			$user = new Users ();
+			$user = new User ();
 			$user->userID = $routes->id;
 			if($user->get ()){
 				$_SESSION ['editUser'] = array('userID' => $user->userID,
@@ -196,7 +196,7 @@ class SettingsController {
 			
 			include 'view/layout/editUser.php';
 		} elseif ($routes->action == 'Delete' && $routes->id > 0) {
-				$user = new Users ();
+				$user = new User ();
 				$user->userID = $routes->id;
 				$user->delete();
 				header('Location: ' . PATH . 'Settings');			

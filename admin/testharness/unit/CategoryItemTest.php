@@ -55,6 +55,26 @@ class CategoryItemTest extends PicnicTestCase {
 	protected function createSutWithId($id){
 		return new CategoryItems([self::CATEGORY_ITEM_ID => $id]);
 	}
+	protected function getValidId() {
+		return 1;
+	}
+
+	protected function getInvalidId() {
+		return 200;
+	}
+
+	protected function getExpectedExceptionTypeForUnsetId() {
+		return null;
+	}
+
+	protected function getExpectedAttributesForGet() {
+
+		return [
+			self::CATEGORY_ITEM_ID =>1,
+			self::CATEGORY_ID => 1,
+			self::ITEM_ID => 1
+		];
+	}
 
 	public function testAttributes(): void {
 		$values = [
@@ -64,31 +84,6 @@ class CategoryItemTest extends PicnicTestCase {
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
-	}
-
-	public function testGet(): void {
-		$validId = 2;
-		$invalidId = 200;
-
-		$expectedValuesForValidId = [
-			self::CATEGORY_ITEM_ID =>2,
-			self::CATEGORY_ID => 1,
-			self::ITEM_ID => 2
-		];
-
-		$this->assertGetIsFunctional($validId, $invalidId, $expectedValuesForValidId);
-	}
-
-	public function testExists(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertExistsIsFunctional($validId, $invalidId);
-	}
-
-	public function testDelete(): void {
-		$validId = 1;
-		$invalidId = 200;
-		$this->assertDeleteIsFunctional($validId, $invalidId);
 	}
 
 	public function testCountReturnsTotalNumberOfItemsInCategory(): void {
