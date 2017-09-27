@@ -23,7 +23,7 @@ CREATE TABLE `Users` (
   `password` varchar(45) NULL,
   `status` varchar(45) NOT NULL,
   `activate` varchar(32) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`userID`),
   UNIQUE KEY `email_UNIQUE` (`email`),
@@ -32,22 +32,22 @@ CREATE TABLE `Users` (
 
 CREATE TABLE `Categories` (
 		`categoryID` int(11) NOT NULL AUTO_INCREMENT,
-		`parentID` int(11) unsigned NOT NULL,
+		`parentID` int(11) unsigned,
 		`category` varchar(90) NOT NULL,
-		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
-        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  	`updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`categoryID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Items` (
-		`itemID` int(11) NOT NULL AUTO_INCREMENT,
-		`title` varchar(90) NOT NULL,
+		`itemID` bigint(11) NOT NULL AUTO_INCREMENT,
+		`title` text NOT NULL,
 		`description` text NOT NULL,
 		`quantity` varchar(10) NOT NULL,
 		`itemcondition` varchar(10) NOT NULL,
 		`price` varchar(10) NOT NULL,
-		`status` varchar(10) NOT NULL,
-		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
+		`itemStatus` varchar(10) NOT NULL,
+		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
         `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`itemID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -55,7 +55,7 @@ CREATE TABLE `Items` (
 CREATE TABLE `User_items` (
 		`user_itemID` int(11) NOT NULL AUTO_INCREMENT,
 		`userID` int(11) NOT NULL,
-		`itemID` int(11) NOT NULL,
+		`itemID` bigint(11) NOT NULL,
 		PRIMARY KEY (`user_itemID`),
 		KEY `FK_User_items_Users_idx` (`userID`),
 		KEY `FK_User_items_Items_idx` (`itemID`),
@@ -67,7 +67,7 @@ CREATE TABLE `User_items` (
 CREATE TABLE `Category_items` (
 		`category_itemID` int(11) NOT NULL AUTO_INCREMENT,
 		`categoryID` int(11) NOT NULL,
-		`itemID` int(11) NOT NULL,
+		`itemID` bigint(11) NOT NULL,
 		PRIMARY KEY (`category_itemID`),
 		KEY `FK_Category_idx` (`categoryID`),
 		KEY `FK_Item_idx` (`itemID`),
@@ -89,7 +89,7 @@ CREATE TABLE `Comments` (
 
 CREATE TABLE `Item_comments` (
 		`item_commentID` int(11) NOT NULL AUTO_INCREMENT,
-		`itemID` int(11) NOT NULL,
+		`itemID` bigint(11) NOT NULL,
 		`commentID` int(11) NOT NULL,
 		PRIMARY KEY (`item_commentID`),
 		KEY `FK_Item_comments_Item_idx` (`itemID`),
@@ -109,7 +109,7 @@ CREATE TABLE `Notes` (
 
 CREATE TABLE `Item_notes` (
 		`item_noteID` int(11) NOT NULL AUTO_INCREMENT,
-		`itemID` int(11) NOT NULL,
+		`itemID` bigint(11) NOT NULL,
 		`noteID` int(11) NOT NULL,
 		PRIMARY KEY (`item_noteID`),
 		KEY `FK_Item_notes_Item_idx` (`itemID`),

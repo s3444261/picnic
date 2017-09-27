@@ -75,7 +75,7 @@ class Item {
 			$this->_quantity = $row ['quantity'];
 			$this->_itemcondition = $row ['itemcondition'];
 			$this->_price = $row ['price'];
-			$this->_status = $row ['status'];
+			$this->_status = $row ['itemStatus'];
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
@@ -95,7 +95,7 @@ class Item {
 						quantity = :quantity,
 						itemcondition = :itemcondition,
 						price = :price,
-						status = :status,
+						itemStatus = :status,
 						created_at = NULL";
 		
 		$db = Picnic::getInstance ();
@@ -105,7 +105,7 @@ class Item {
 		$stmt->bindParam ( ':quantity', $this->_quantity );
 		$stmt->bindParam ( ':itemcondition', $this->_itemcondition );
 		$stmt->bindParam ( ':price', $this->_price );
-		$stmt->bindParam ( ':status', $this->_status ); 
+		$stmt->bindParam ( ':status', $this->_status );
 		$stmt->execute ();
 		$this->_itemID = $db->lastInsertId ();
 		if ($this->_itemID > 0) {
@@ -157,7 +157,7 @@ class Item {
 							quantity = :quantity,
 							itemcondition = :itemcondition,
 							price = :price,
-							status = :status
+							itemStatus = :status
 						WHERE itemID = :itemID";
 			
 			$db = Picnic::getInstance ();

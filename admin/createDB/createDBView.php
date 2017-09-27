@@ -11,7 +11,8 @@
 include_once 'config/config.php';
 include 'DatabaseGenerator.php';
 DatabaseGenerator::Generate();
-include 'admin/seedDB/seed.php';
+DatabaseGenerator::Populate();
+
 ?>
 
 <h1>CreateDB</h1>
