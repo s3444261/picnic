@@ -11,7 +11,7 @@
 class ContactController {
 	
 	// Displays the Contact Page.
-	public function display()
+	public function index()
 	{
 		include 'view/layout/contact.php';
 	}

@@ -11,9 +11,25 @@
 class DashboardController {
 	
 	// Displays the Dashboard Page.
-	public function display()
+	public function index()
 	{
-		include 'view/layout/dashboard.php';
+		if ($this->auth()) {
+			include 'view/layout/dashboard.php';
+		} else {
+			header('Location: ' . PATH . 'Home');
+		}
+	}
+
+	private function auth(){
+		if(isset($_SESSION[MODULE]) && isset($_SESSION['userID'])){
+			if($_SESSION['userID'] > 0){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 }
 ?>

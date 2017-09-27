@@ -61,8 +61,8 @@ if (isset ( $_SESSION [MODULE] )) {
       </ul>';
 } else {
 	echo '<ul class="nav navbar-nav navbar-right">
-		<li><a href="' . PATH . 'Sign-up">Sign-up</a></li>
-		<li><a href="' . PATH . 'Sign-in">Sign-in</a></li>
+		<li><a href="' . PATH . 'Signup">Sign-up</a></li>
+		<li><a href="' . PATH . 'Signin">Sign-in</a></li>
       </ul>';
 }
 ?> 

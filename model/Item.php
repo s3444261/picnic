@@ -10,10 +10,6 @@
 
 require_once dirname(__FILE__) . '/ItemException.php';
 
-if (session_status () == PHP_SESSION_NONE) {
-	session_start ();
-}
-
 /**
  *
  * @property integer $_itemID;

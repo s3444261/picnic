@@ -11,7 +11,7 @@
 class TermsOfServiceController {
 
 	// Displays the Terms of Service Page.
-	public function display()
+	public function index()
 	{
 		include 'view/layout/terms.php';
 	}

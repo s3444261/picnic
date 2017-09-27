@@ -8,10 +8,12 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
+require_once __DIR__ . '/../model/User.php';
+
 class LoginController {
 	
 	// Log the user in.
-	public function login() { 
+	public function index() {
 		
 		// Process login form.
 		if (isset ( $_POST ['email'] ) && isset ( $_POST ['password'] )) { 
@@ -74,13 +76,6 @@ class LoginController {
 				header ( 'Location: Home' );
 			} 
 		}  
-	} 
-	
-	// Log the user out.
-	public function logout() {
-		$user = new User ();
-		$user->logout ();
-		header ( 'Location: Home' );
 	}
 }
 ?>

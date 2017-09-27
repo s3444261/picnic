@@ -11,7 +11,7 @@
 class HomeController {
 	
 	// Displays the Home Page.
-	public function display()
+	public function index()
 	{
 		include 'view/layout/home.php';
 	}

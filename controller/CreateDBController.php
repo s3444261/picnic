@@ -7,12 +7,15 @@
  * Kinkead, Grant - s3444261@student.rmit.edu.au
  * Putro, Edwan - edwanhp@gmail.com
  */
+
+include __DIR__ . '/../admin/createDB/DatabaseGenerator.php';
+
 class CreateDBController {
-	
-	// Displays the Creates Database Page.
-	public function display()
+	public function index()
 	{
-		include 'admin/createDB/createDBView.php';
+		DatabaseGenerator::Generate();
+		DatabaseGenerator::Populate();
+
+		include __DIR__ . '/../view/layout/createDB.php';
 	}
 }
-?>

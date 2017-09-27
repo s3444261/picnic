@@ -11,7 +11,7 @@
 class TestController {
 	
 	// Displays the Test Results Page.
-	public function display()
+	public function index()
 	{
 		include 'admin/testharness/index.php';
 	}

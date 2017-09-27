@@ -11,7 +11,7 @@
 class SigninController {
 	
 	// Displays the Login Page.
-	public function display()
+	public function index()
 	{
 		include 'view/layout/signin.php';
 	}

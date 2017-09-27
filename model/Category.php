@@ -8,9 +8,6 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-if (session_status () == PHP_SESSION_NONE) {
-	session_start ();
-}
 
 /**
  *
@@ -37,10 +34,12 @@ class Category {
 			}
 		}
 	}
+
 	public function &__get($name) {
 		$name = '_' . $name;
 		return $this->$name;
 	}
+
 	public function __set($name, $value) {
 		$name = '_' . $name;
 		$this->$name = $value;

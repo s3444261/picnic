@@ -53,9 +53,3 @@ function __autoload($class) {
 		}
 	}
 }
-
-$routes = Routes::getInstance();
-$routes->base = BASE;
-$routes->setRoute();
-
-?>

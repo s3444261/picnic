@@ -11,7 +11,7 @@
 class AboutController {
 	
 	// Displays the About Page.
-	public function display()
+	public function index()
 	{
 		include 'view/layout/about.php';
 	}

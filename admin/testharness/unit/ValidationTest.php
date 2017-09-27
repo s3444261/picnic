@@ -8,6 +8,8 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
+declare(strict_types=1);
+
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 

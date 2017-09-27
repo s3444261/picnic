@@ -8,10 +8,6 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-if (session_status () == PHP_SESSION_NONE) {
-	session_start ();
-}
-
 /**
  *
  * @property integer $_item_commentID;

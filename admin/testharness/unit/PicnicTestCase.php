@@ -7,7 +7,7 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-// declare(strict_types=1);
+declare(strict_types=1);
 
 /**
  * A base test for tests, providing commonly used methods.

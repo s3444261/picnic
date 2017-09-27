@@ -8,13 +8,11 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-include_once 'config/config.php';
-
 $humphree = false;
 
 $humphreeStatus = '';
 
-include 'admin/createDB/DatabaseGenerator.php';
+include __DIR__ . '/../createDB/DatabaseGenerator.php';
 
 // System Tests
 DatabaseGenerator::Generate();

@@ -8,13 +8,14 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class PrivacyPolicyController {
+require_once __DIR__ . '/../model/User.php';
 
-	// Displays the Privacy Policy Page.
-	public function index()
-	{
-		include 'view/layout/privacyPolicy.php';
+class LogoutController
+{
+	// Log the user out.
+	public function index() {
+		$user = new User ();
+		$user->logout ();
+		header ( 'Location: Home' );
 	}
 }
-
-?>

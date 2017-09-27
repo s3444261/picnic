@@ -11,7 +11,7 @@
 class SignupController {
 	
 	// Displays the Create Account Page.
-	public function display()
+	public function index()
 	{
 		include 'view/layout/signup.php';
 	}

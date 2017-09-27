@@ -12,18 +12,7 @@
  * It calls the appropriate views as required.
  */
 
-// Start a session if one hasn't already been started.
-if (! isset ( $_SESSION )) {
-	session_start ();
-}
+require_once __DIR__ . "/controller/Driver.php";
 
-// Include config file.
-include 'config/config.php';
-
-// Call a singleton instance of the Driver class.
-$driver = Driver::getInstance ();
-
-// Display the required content.
-$driver->display ();
-
-?>
+$mainController = new Driver();
+$mainController->run();
