@@ -495,4 +495,9 @@ INSERT INTO users (userId, user, email, password, status, activate) VALUES
   (494, 'Lyndon Will', 'LyndonWill@gilgulkickup.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'user', NULL),
   (495, 'Tanika Spear', 'TanikaSpear@ethrogsgrandgent.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'user', NULL),
   (496, 'Treva Tackett', 'TrevaTackett@quintanwarlike.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'user', NULL),
-  (497, 'Cassey Paxton', 'CasseyPaxton@daneenjudo.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'user', NULL);
+  (497, 'Cassey Paxton', 'CasseyPaxton@daneenjudo.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'user', NULL),
+  (498, 'Grant Kinkead', 'grant@kinkead.net', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL),
+  (499, 'Troy Derrick', 's3202752@student.rmit.edu.au', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL),
+  (500, 'Diane Foster', 'Rs3387562@student.rmit.edu.au', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL),
+  (501, 'Allen Goodreds', 's3492264@student.rmit.edu.au', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL),
+  (502, 'Edwan Putro', 'edwanhp@gmail.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL);
