@@ -16,7 +16,7 @@ class DashboardController {
 		if ($this->auth()) {
 			include 'view/layout/dashboard.php';
 		} else {
-			header('Location: ' . PATH . 'Home');
+			header('Location: ' . BASE . '/Home');
 		}
 	}
 

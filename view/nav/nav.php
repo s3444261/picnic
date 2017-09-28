@@ -19,7 +19,7 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand hidden-xs" href="<?php echo PATH; ?>Home">Humphree</a>
+			<a class="navbar-brand hidden-xs" href="<?php echo BASE; ?>/Home">Humphree</a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
@@ -28,14 +28,14 @@
 			<ul class="nav navbar-nav">
 <?php
 if (isset ( $_SESSION [MODULE] )) {
-	echo '<li><a href="' . PATH . 'Dashboard">Dashboard</a></li>';
+	echo '<li><a href="' . BASE . '/Dashboard">Dashboard</a></li>';
 }
 ?> 
 				
 <?php
 if (isset ( $_SESSION ['status'] )) {
 	if ($_SESSION ['status'] == 'admin') {
-		echo '<li><a href="' . PATH . 'Administration">Admin</a></li>';
+		echo '<li><a href="' . BASE . '/Administration">Admin</a></li>';
 	}
 }
 ?> 
@@ -44,25 +44,25 @@ if (isset ( $_SESSION ['status'] )) {
 			<ul class="nav navbar-nav navbar-right">
 <?php
 if (isset ( $_SESSION [MODULE] )) {
-	echo '<li><a href="' . PATH . 'Test">Test</a></li>
-		<li><a href="' . PATH . 'CreateDB">Create DB</a></li>';
+	echo '<li><a href="' . BASE . '/Test">Test</a></li>
+		<li><a href="' . BASE . '/CreateDB">Create DB</a></li>';
 } else {
 	// Remove this on the Production Server
-	echo '<li><a href="' . PATH . 'Test">Test</a></li>
-		<li><a href="' . PATH . 'CreateDB">Create DB</a></li>';
+	echo '<li><a href="' . BASE . '/Test">Test</a></li>
+		<li><a href="' . BASE . '/CreateDB">Create DB</a></li>';
 }
 ?>			
 			</ul>  
 <?php
 if (isset ( $_SESSION [MODULE] )) {
 	echo '<ul class="nav navbar-nav navbar-right">
-		<li><a href="' . PATH . 'ChangePassword">Change Password</a></li>
-		<li><a href="' . PATH . 'Logout">Logout</a></li>
+		<li><a href="' . BASE . '/ChangePassword">Change Password</a></li>
+		<li><a href="' . BASE . '/Logout">Logout</a></li>
       </ul>';
 } else {
 	echo '<ul class="nav navbar-nav navbar-right">
-		<li><a href="' . PATH . 'Signup">Sign-up</a></li>
-		<li><a href="' . PATH . 'Signin">Sign-in</a></li>
+		<li><a href="' . BASE . '/Signup">Sign-up</a></li>
+		<li><a href="' . BASE . '/Signin">Sign-in</a></li>
       </ul>';
 }
 ?> 

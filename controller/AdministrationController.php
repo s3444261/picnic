@@ -37,7 +37,7 @@ class AdministrationController {
 
 			include 'view/layout/administration.php';
 		} else {
-			header('Location: ' . PATH . 'Home');
+			header('Location: ' . BASE . '/Home');
 		}
 	}
 
@@ -114,14 +114,14 @@ class AdministrationController {
 							$user->activate();
 							$_SESSION ['message'] = 'User Added';
 
-							header('Location: ' . PATH . 'Administration');
+							header('Location: ' . BASE . '/Administration');
 						}
 					}
 				}
 			}
 		}
 		} else {
-			header('Location: ' . PATH . 'Home');
+			header('Location: ' . BASE . '/Home');
 		}
 	}
 
@@ -170,12 +170,12 @@ class AdministrationController {
 						unset ($_POST ['userID']);
 						$user->update();
 
-						header('Location: ' . PATH . 'Administration');
+						header('Location: ' . BASE . '/Administration');
 					}
 				}
 			}
 		} else {
-			header('Location: ' . PATH . 'Home');
+			header('Location: ' . BASE . '/Home');
 		}
 	}
 
@@ -222,12 +222,12 @@ class AdministrationController {
 						unset ($_POST ['userID']);
 						$user->update();
 
-						header('Location: ' . PATH . 'Administration');
+						header('Location: ' . BASE . '/Administration');
 					}
 				}
 			}
 		} else {
-			header('Location: ' . PATH . 'Home');
+			header('Location: ' . BASE . '/Home');
 		}
 	}
 
@@ -251,7 +251,7 @@ class AdministrationController {
 
 			include 'view/layout/editUser.php';
 		} else {
-			header('Location: ' . PATH . 'Home');
+			header('Location: ' . BASE . '/Home');
 		}
 	}
 
@@ -264,9 +264,9 @@ class AdministrationController {
 			$user = new User ();
 			$user->userID = $id;
 			$user->delete();
-			header('Location: ' . PATH . 'Administration');
+			header('Location: ' . BASE . '/Administration');
 		} else {
-			header('Location: ' . PATH . 'Home');
+			header('Location: ' . BASE . '/Home');
 		}
 	}
 
