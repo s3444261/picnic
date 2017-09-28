@@ -1,4 +1,4 @@
-INSERT INTO items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
   (302458207719, 'Brand New Double Burner LPG gas Stove or Cook Top', 'Beautiful glass top panel. New style. Bottom of the stove is closed. Beautiful glass panel gives your kitchen a beautiful look. New in box. Quick ignition knob for each burner with adjustable flame. Low gas consumption.', '195.00', 2, 'New', ''),
   (302463864804, 'Brand new 2 ring LPG cast iron  wok burner  with auto ignition +  hose&regulator', 'Strong cast iron construction. 2 m hose & regulator is included. new in box. ring size 33 cm. just need a gas cylinder to start.', '169.00', 2, 'New', ''),
   (152670582063, 'NEW DeLonghi - DEF605GW - 60cm Upright Oven from Bing Lee', 'The oven cooling system is designed to minimise heat transfer, by circulating a cool air curtain around the oven. Increased glass content in our Durastone Plus enamel produces a perfectly smooth internal cavity surface enabling the oven to withstand just about anything.', '995.00', 0, 'New', ''),

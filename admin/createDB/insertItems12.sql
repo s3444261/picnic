@@ -1,4 +1,4 @@
-INSERT INTO items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
   (182753192144, 'Raiders of the Lost Ark Indiana Jones 1981 Australian Daybill Movie Poster', 'Item shown is the actual item available.', '95.00', 2, 'New', ''),
   (182776066023, 'Saw doll Billy puppet character Small little', 'Don''t miss out on this Small Saw doll in good condition Apart from some small black marks on fingertips of one hand, shown in last photo. Most issues can be resolved for a positive outcome.', '64.99', 4, 'New', ''),
   (122676149191, 'White Men Cant Can''t Jump Poster 61 x 46 cms', 'White Men Can''t Jump Poster 61 x 46 cms (24 x 18 inches)', '6.95', 1, 'New', ''),

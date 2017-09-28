@@ -1,5 +1,5 @@
 
-INSERT INTO categories (categoryId, category, parentId) VALUES
+INSERT INTO Categories (categoryId, category, parentId) VALUES
   (1, 'Alcohol & Food', NULL),
   (21, 'Antiques', NULL),
   (39, 'Art', NULL),

@@ -1,4 +1,4 @@
-INSERT INTO items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
   (201891342408, 'Patience Marlborough Sauvignon Blanc White Wine 2016 (12 x750ml)', 'Patience Marlborough Sauvignon Blanc White Wine 2016 (12 x750ml)  in Alcohol & Food, Alcohol & Alcohol Mixes, Wine, Wines (White)', '283.64', 5, 'New', ''),
   (192195718814, '12 x Vinifera Mudgee Cabernet Sauvignon 2010 Vintage RRP $264, NOW $119.99', '12 x Vinifera Mudgee Cabernet Sauvignon 2010 Vintage RRP $264, NOW $119.99 in Alcohol & Food, Alcohol & Alcohol Mixes, Wine, Wines (Red)', '275.78', 5, 'New', ''),
   (132180259040, 'Lyrebird Cabernet Sauvignon 2016 (12 Bottles)', 'Cabernet Sauvignon. Sauvignon Blanc. Varieties Cabernet Sauvignon. Such A Delicious Cabernet! Our Policies. Topped off with. Plus our. Unbeatable value.', '89.00', 9, 'New', ''),

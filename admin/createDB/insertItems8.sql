@@ -1,4 +1,4 @@
-INSERT INTO items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
   (192248219754, 'Apple 13" MacBook Air (256GB, 1.8GHz, i5) - MQD42', 'Apple 13" MacBook Air (256GB, 1.8GHz, i5) - MQD42 in Computers/Tablets & Networking, Laptops & Netbooks, Apple Laptops', '1,621.99', 6, 'New', ''),
   (252942898631, 'HP 250 G5 500GB Intel Celeron 4GB USB 3.0 HDMI DVD Window 10 15.6"  Cheap Laptop', 'Get connected with the value-priced HP 250 Notebook PC. Rest assured that the HP 250 can keep up with assignments on the run. The durable chassis protects the notebook so it looks as professional as you do.', '358.00', 6, 'New', ''),
   (230796136688, 'Lenovo V110 15.6" Intel Core N3350 500GB 4GB USB3 DVD Bluetooth Windows10 Laptop', 'When it comes to IT security and data breaches, you can never be too careful. That''s why the industry-certified Trusted Platform Module is integrated into the Lenovo V110, enabling file encryption, password protection, boot protection, and more.', '399.00', 8, 'New', ''),

@@ -121,8 +121,10 @@ class Driver {
 	private function getRequestUri() : string {
 		$path = '/' . trim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), "/");
 
-		if (strpos($path, BASE) === 0) {
-			$path = substr($path, strlen(BASE));
+		if (BASE != '') {
+			if (strpos($path, BASE) === 0) {
+				$path = substr($path, strlen(BASE));
+			}
 		}
 
 		$path = trim($path, '/');
@@ -140,7 +142,7 @@ class Driver {
 	 *        The name of the class that implements that controller.
 	 */
 	private function getControllerClassName($controller): string {
-		return ucfirst(strtolower($controller)) . "Controller";
+		return $controller . "Controller";
 	}
 
 	/**
