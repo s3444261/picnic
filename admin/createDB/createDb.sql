@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS `Notes`;
 DROP TABLE IF EXISTS `Item_comments`;
 DROP TABLE IF EXISTS `Comments`;
 DROP TABLE IF EXISTS `Category_items`;
+DROP TABLE IF EXISTS `User_ratings`;
 DROP TABLE IF EXISTS `User_items`;
 DROP TABLE IF EXISTS `Items`;
 DROP TABLE IF EXISTS `Users`;
@@ -62,6 +63,21 @@ CREATE TABLE `User_items` (
 		CONSTRAINT `FK_User_items_Users` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
 		CONSTRAINT `FK_User_items_Items` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
 		CONSTRAINT `UQ_userID_itemID` UNIQUE (`userID`, `itemID`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        
+CREATE TABLE `User_ratings` (
+		`user_ratingID` int(11) NOT NULL AUTO_INCREMENT,
+        `itemID` bigint(11) NOT NULL,
+        `sellrating` int(11),
+		`userID` int(11),
+		`buyrating` bigint(11) NOT NULL,
+        `transaction` varchar(32) DEFAULT NULL,
+		PRIMARY KEY (`user_ratingID`),
+		KEY `FK_User_ratings_Items_idx` (`itemID`),
+		KEY `FK_User_ratings_Users_idx` (`userID`),
+		CONSTRAINT `FK_User_ratings_Items` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `FK_User_ratings_Users` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `UQ_itemID` UNIQUE (`itemID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Category_items` (
