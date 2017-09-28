@@ -354,11 +354,11 @@ class User {
 			$this->_user = $row ['user'];
 			$this->_status = $row ['status'];
 
-			$_SESSION ['picnic'] = true;
 			$_SESSION ['userID'] = $this->_userID;
 			$_SESSION ['user'] = $this->_user;
 			$_SESSION ['email'] = $this->_email;
 			$_SESSION ['status'] = $this->_status;
+			$_SESSION [MODULE] = true;
 			return true;
 		} else {
 			return false;
