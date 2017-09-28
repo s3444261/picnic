@@ -244,9 +244,9 @@ class ItemComments {
 		$this->_id = $row ['item_commentID'];
 		
 		if($this->_id > 0){
-			return true;
+			return $this;
 		} else {
-			return false;
+			throw new ItemCommentsException ( 'Could not retrieve itemComment.' );
 		}
 	}
 	

@@ -371,8 +371,10 @@ class User {
 	 * destroyed. If successfully logged out, true is returned.
 	 */
 	public function logout(): bool {
-		$_SESSION = array ();
-		session_destroy ();
+		$_SESSION = array();
+		if(session_status() == PHP_SESSION_ACTIVE){
+			session_destroy ();
+		}
 		return true;
 	}
 	

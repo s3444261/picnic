@@ -13,12 +13,20 @@
  * @property integer $_user_itemID;
  * @property integer $_userID;
  * @property integer $_itemID;
+ * @property string $_relationship;
+ * @property string $_userStatus;
+ * @property string $_created_at;
+ * @property string $_updated_at;
  */
 
 class UserItems {
 	private $_user_itemID= '';
 	private $_userID= '';
 	private $_itemID= '';
+	private $_relationship = '';
+	private $_userStatus = '';
+	private $_created_at;
+	private $_updated_at;
 	
 	// Constructor
 	function __construct($args = array()) {
@@ -54,6 +62,10 @@ class UserItems {
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_userID = $row ['userID'];
 			$this->_itemID = $row ['itemID'];
+			$this->_relationship = $row ['relationship'];
+			$this->_userStatus = $row ['userStatus'];
+			$this->_created_at = $row ['created_at'];
+			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
 			throw new UserException ( 'Could not retrieve user items.' );
@@ -84,12 +96,16 @@ class UserItems {
 		} else {
 			$query = "INSERT INTO User_items
 					SET userID = :userID,
-						itemID = :itemID";
+						itemID = :itemID,
+						relationship = :relationship,
+						userStatus = :userStatus";
 			
 			$db = Picnic::getInstance ();
 			$stmt = $db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->bindParam ( ':relationship', $this->_relationship );
+			$stmt->bindParam ( ':userStatus', $this->_userStatus );
 			$stmt->execute ();
 			$this->_user_itemID = $db->lastInsertId ();
 			if ($this->_user_itemID > 0) {
@@ -123,10 +139,18 @@ class UserItems {
 			if (strlen ( $this->_itemID ) < 1) {
 				$this->_itemID = $row ['itemID'];
 			}
+			if (strlen ( $this->_relationship ) < 1) {
+				$this->_relationship = $row ['relationship'];
+			}
+			if (strlen ( $this->_userStatus ) < 1) {
+				$this->_userStatus = $row ['userStatus'];
+			}
 			
 			$query = "UPDATE User_items
 						SET userID = :userID,
-							itemID = :itemID
+							itemID = :itemID,
+							relationship = :relationship,
+							userStatus = :userStatus
 						WHERE user_itemID = :user_itemID";
 			
 			$db = Picnic::getInstance ();
@@ -134,6 +158,8 @@ class UserItems {
 			$stmt->bindParam ( ':user_itemID', $this->_user_itemID );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->bindParam ( ':relationship', $this->_relationship );
+			$stmt->bindParam ( ':userStatus', $this->_userStatus );
 			$stmt->execute ();
 			return true;
 		} else {
@@ -239,6 +265,12 @@ class UserItems {
 		}
 		if ($this->_itemID) {
 			echo 'itemID => ' . $this->_itemID . '<br/>';
+		}
+		if ($this->_relationship) {
+			echo 'relationship => ' . $this->_relationship . '<br/>';
+		}
+		if ($this->_userStatus) {
+			echo 'userStatus => ' . $this->_userStatus . '<br/>';
 		}
 	}
 }

@@ -11,7 +11,6 @@ if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }
 class System {
-	
 	const SUSPENDED = 'suspended';
 	
 	/*
@@ -96,10 +95,9 @@ class System {
 						$_SESSION ['error'] = 'Failed to add user.';
 						return false;
 					}
-				} catch (UserException $e) {
+				} catch ( UserException $e ) {
 					$_SESSION ['error'] = $e->getError ();
 				}
-				
 			}
 		} else {
 			$_SESSION ['error'] = 'Not a User Object.';
@@ -140,7 +138,7 @@ class System {
 			if (isset ( $_SESSION ['error'] )) {
 				return false;
 			} else {
-				if($user->update ()){
+				if ($user->update ()) {
 					return true;
 				} else {
 					$_SESSION ['error'] = 'User not updated.';
@@ -155,14 +153,14 @@ class System {
 	/*
 	 * The getUser() function allows an administrator to retrieve a user.
 	 */
-	public function getUser($user): User{
-		$u = new User();
+	public function getUser($user): User {
+		$u = new User ();
 		$u->userID = $user->userID;
 		try {
-			$u = $u->get();
+			$u = $u->get ();
 		} catch ( UserException $e ) {
 			$_SESSION ['error'] = $e->getError ();
-		}		
+		}
 		return $u;
 	}
 	
@@ -170,8 +168,8 @@ class System {
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
 	public function getUsers(): array {
-		$users = new Users();
-		$usersArray = $users->getUsers(); 
+		$users = new Users ();
+		$usersArray = $users->getUsers ();
 		return $usersArray;
 	}
 	
@@ -180,9 +178,9 @@ class System {
 	 * account.
 	 */
 	public function disableUser($user): bool {
-		if($user->userID > 0){
+		if ($user->userID > 0) {
 			$user->status = self::SUSPENDED;
-			if($user->update()){
+			if ($user->update ()) {
 				return true;
 			} else {
 				return false;
@@ -197,58 +195,57 @@ class System {
 	 * an account and all associated database entries.
 	 */
 	public function deleteUser($user) {
-		if($user->userID > 0){
+		if ($user->userID > 0) {
 			
 			// Delete any comments and notes for any items held by the user and then delete the item.
-			$userItems = new UserItems();
+			$userItems = new UserItems ();
 			$userItems->userID = $user->userID;
-			$items = $userItems->getUserItems();
+			$items = $userItems->getUserItems ();
 			
-			foreach ($items as $item){ 
-				if($item->itemID > 0){ 
-					$itemComments = new ItemComments();
+			foreach ( $items as $item ) {
+				if ($item->itemID > 0) {
+					$itemComments = new ItemComments ();
 					$itemComments->itemID = $item->itemID;
-					$itComments = $itemComments->getComments(); 
+					$itComments = $itemComments->getComments ();
 					
-					foreach ($itComments as $itComment){
+					foreach ( $itComments as $itComment ) {
 						
-						$comment = new Comment();
+						$comment = new Comment ();
 						$comment->commentID = $itComment->commentID;
-						$comment->delete();
-						$itComment->delete();
-						
+						$comment->delete ();
+						$itComment->delete ();
 					}
-
-					$itemNotes = new ItemNotes();
+					
+					$itemNotes = new ItemNotes ();
 					$itemNotes->itemID = $item->itemID;
-					$itNotes = $itemNotes->getNotes();
+					$itNotes = $itemNotes->getNotes ();
 					
-					foreach ($itNotes as $itNote){
-						$note = new Note();
+					foreach ( $itNotes as $itNote ) {
+						$note = new Note ();
 						$note->noteID = $itNote->noteID;
-						$note->delete();
-						$itNote->delete();
+						$note->delete ();
+						$itNote->delete ();
 					}
 					
-					$item->delete();
+					$item->delete ();
 				}
-			} 
+			}
 			
 			// Delete any other comments made by the user
-			$comments = new Comments();
+			$comments = new Comments ();
 			$comments->userID = $user->userID;
-			$userComments = $comments->getUserComments(); 
+			$userComments = $comments->getUserComments ();
 			
-			foreach ($userComments as $userComment){
-				$userComment->delete();
-			} 
+			foreach ( $userComments as $userComment ) {
+				$userComment->delete ();
+			}
 			
 			// Finally, delete the user.
-			if($user->delete()){
+			if ($user->delete ()) {
 				return true;
 			} else {
 				return false;
-			} 
+			}
 		}
 	}
 	
@@ -257,10 +254,10 @@ class System {
 	 * specify its position in the heirachy.
 	 */
 	public function addCategory($category): bool {
-		$cat = new Category();
+		$cat = new Category ();
 		$cat = $category;
-		$cat->categoryID = $cat->set();
-		if($cat->categoryID > 1){
+		$cat->categoryID = $cat->set ();
+		if ($cat->categoryID > 1) {
 			return true;
 		} else {
 			return false;
@@ -272,9 +269,9 @@ class System {
 	 * its position in the heirachy.
 	 */
 	public function updateCategory($category): bool {
-		$cat = new Category();
+		$cat = new Category ();
 		$cat = $category;
-		if($cat->update()){
+		if ($cat->update ()) {
 			return true;
 		} else {
 			return false;
@@ -285,10 +282,10 @@ class System {
 	 * The getCategory() function retrieves a Category.
 	 */
 	public function getCategory($category): Category {
-		$c = new Category();
+		$c = new Category ();
 		$c = $category;
 		try {
-			$c = $c->get();
+			$c = $c->get ();
 		} catch ( CategoryException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 		}
@@ -299,9 +296,9 @@ class System {
 	 * The getCategories() function retrieves all Categories.
 	 */
 	public function getCategories(): array {
-		$c = array();
-		$cat = new Category();
-		$c = $cat->getCategories(); 
+		$c = array ();
+		$cat = new Category ();
+		$c = $cat->getCategories ();
 		return $c;
 	}
 	
@@ -310,45 +307,44 @@ class System {
 	 * all associated database content.
 	 */
 	public function deleteCategory($category): bool {
-		if($category->categoryID > 0){
+		if ($category->categoryID > 0) {
 			
 			// Delete any comments and notes for any items held by the category and then delete the item.
-			$categoryItems = new CategoryItems();
+			$categoryItems = new CategoryItems ();
 			$categoryItems->categoryID = $category->categoryID;
-			$items = $categoryItems->getCategoryItems();
+			$items = $categoryItems->getCategoryItems ();
 			
-			foreach ($items as $item){
-				if($item->itemID > 0){
-					$itemComments = new ItemComments();
+			foreach ( $items as $item ) {
+				if ($item->itemID > 0) {
+					$itemComments = new ItemComments ();
 					$itemComments->itemID = $item->itemID;
-					$itComments = $itemComments->getComments();
+					$itComments = $itemComments->getComments ();
 					
-					foreach ($itComments as $itComment){
+					foreach ( $itComments as $itComment ) {
 						
-						$comment = new Comment();
+						$comment = new Comment ();
 						$comment->commentID = $itComment->commentID;
-						$comment->delete();
-						$itComment->delete();
-						
+						$comment->delete ();
+						$itComment->delete ();
 					}
 					
-					$itemNotes = new ItemNotes();
+					$itemNotes = new ItemNotes ();
 					$itemNotes->itemID = $item->itemID;
-					$itNotes = $itemNotes->getNotes();
+					$itNotes = $itemNotes->getNotes ();
 					
-					foreach ($itNotes as $itNote){
-						$note = new Note();
+					foreach ( $itNotes as $itNote ) {
+						$note = new Note ();
 						$note->noteID = $itNote->noteID;
-						$note->delete();
-						$itNote->delete();
+						$note->delete ();
+						$itNote->delete ();
 					}
 					
-					$item->delete();
+					$item->delete ();
 				}
 			}
 			
 			// Finally, delete the category.
-			if($category->delete()){
+			if ($category->delete ()) {
 				return true;
 			} else {
 				return false;
@@ -359,12 +355,11 @@ class System {
 	/*
 	 * The countCategoryItems() method counts the number of items in a category.
 	 */
-	public function countCategoryItems($category): int{
-		
+	public function countCategoryItems($category): int {
 		$numCategoryItems = 0;
-		$ci = new CategoryItems();
+		$ci = new CategoryItems ();
 		$ci->categoryID = $category->categoryID;
-		$numCategoryItems = $ci->count();
+		$numCategoryItems = $ci->count ();
 		
 		return $numCategoryItems;
 	}
@@ -372,12 +367,11 @@ class System {
 	/*
 	 * The countItemComments() method counts the number of comments for an item.
 	 */
-	public function countItemComments($item): int{
-		
+	public function countItemComments($item): int {
 		$numItemComments = 0;
-		$ci = new ItemComments();
+		$ci = new ItemComments ();
 		$ci->itemID = $item->itemID;
-		$numItemComments = $ci->count();
+		$numItemComments = $ci->count ();
 		
 		return $numItemComments;
 	}
@@ -385,12 +379,11 @@ class System {
 	/*
 	 * The countItemNotes() method counts the number of notes for an item.
 	 */
-	public function countItemNotes($item): int{
-		
+	public function countItemNotes($item): int {
 		$numItemNotes = 0;
-		$ci = new ItemNotes();
+		$ci = new ItemNotes ();
 		$ci->itemID = $item->itemID;
-		$numItemNotes = $ci->count();
+		$numItemNotes = $ci->count ();
 		
 		return $numItemNotes;
 	}
@@ -399,22 +392,21 @@ class System {
 	 * The getCategoryItems() function retrieves all items linked to a Category.
 	 */
 	public function getCategoryItems($category): array {
-		$ci = array();
-		$c = new CategoryItems(); 
+		$ci = array ();
+		$c = new CategoryItems ();
 		$c->categoryID = $category->categoryID;
-		$ci = $c->getCategoryItems(); 
+		$ci = $c->getCategoryItems ();
 		return $ci;
 	}
 	
 	/*
 	 * The countUserItems() method counts the number of items in a user.
 	 */
-	public function countUserItems($user): int{
-		
+	public function countUserItems($user): int {
 		$numUserItems = 0;
-		$ui = new UserItems();
+		$ui = new UserItems ();
 		$ui->userID = $user->userID;
-		$numUserItems = $ui->count();
+		$numUserItems = $ui->count ();
 		
 		return $numUserItems;
 	}
@@ -423,21 +415,21 @@ class System {
 	 * The getUserItems() function retrieves all items linked to a User.
 	 */
 	public function getUserItems($user): array {
-		$ui = array();
-		$u = new UserItems();
+		$ui = array ();
+		$u = new UserItems ();
 		$u->userID = $user->userID;
-		$ui = $u->getUserItems();
+		$ui = $u->getUserItems ();
 		return $ui;
 	}
 	
 	/*
 	 * The getItem() function retrieves an item.
 	 */
-	public function getItem($item): Item{
-		$i = new Item();
+	public function getItem($item): Item {
+		$i = new Item ();
 		$i->itemID = $item->itemID;
 		try {
-			$i = $i->get();
+			$i = $i->get ();
 		} catch ( ItemException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 		}
@@ -448,15 +440,15 @@ class System {
 	 * The addItem() function adds an item.
 	 */
 	public function addItem($user, $item): bool {
-		$i = new Item();
-		$ui = new UserItems();
+		$i = new Item ();
+		$ui = new UserItems ();
 		$i = $item;
-		$i->itemID = $i->set();
-		if($i->itemID > 1){
+		$i->itemID = $i->set ();
+		if ($i->itemID > 1) {
 			$ui->userID = $user->userID;
 			$ui->itemID = $i->itemID;
-			$ui->user_itemID = $ui->set();
-			if($ui->user_itemID > 0){
+			$ui->user_itemID = $ui->set ();
+			if ($ui->user_itemID > 0) {
 				return true;
 			} else {
 				return false;
@@ -470,9 +462,9 @@ class System {
 	 * The updateItem() function updates an item.
 	 */
 	public function updateItem($item): bool {
-		$i = new Item();
+		$i = new Item ();
 		$i = $item;
-		if($i->update()){
+		if ($i->update ()) {
 			return true;
 		} else {
 			return false;
@@ -483,32 +475,32 @@ class System {
 	 * The deleteItem() function deletes an item and all associated database content.
 	 */
 	public function deleteItem($item): bool {
-		if($item->itemID > 0){
+		if ($item->itemID > 0) {
 			
-			$itemComments = new ItemComments();
+			$itemComments = new ItemComments ();
 			$itemComments->itemID = $item->itemID;
-			$itComments = $itemComments->getComments();
+			$itComments = $itemComments->getComments ();
 			
-			foreach ($itComments as $itComment){
-				$comment = new Comment();
+			foreach ( $itComments as $itComment ) {
+				$comment = new Comment ();
 				$comment->commentID = $itComment->commentID;
-				$comment->delete();
-				$itComment->delete();
+				$comment->delete ();
+				$itComment->delete ();
 			}
 			
-			$itemNotes = new ItemNotes();
+			$itemNotes = new ItemNotes ();
 			$itemNotes->itemID = $item->itemID;
-			$itNotes = $itemNotes->getNotes();
+			$itNotes = $itemNotes->getNotes ();
 			
-			foreach ($itNotes as $itNote){
-				$note = new Note();
+			foreach ( $itNotes as $itNote ) {
+				$note = new Note ();
 				$note->noteID = $itNote->noteID;
-				$note->delete();
-				$itNote->delete();
+				$note->delete ();
+				$itNote->delete ();
 			}
 			
 			// Finally, delete the item.
-			if($item->delete()){
+			if ($item->delete ()) {
 				return true;
 			} else {
 				return false;
@@ -520,15 +512,15 @@ class System {
 	 * The getItemComments() function retrieves all comments for an item.
 	 */
 	public function getItemComments($item): array {
-		$ic = new ItemComments();
+		$ic = new ItemComments ();
 		$ic->itemID = $item->itemID;
-		$icids = $ic->getComments();
-		$comments = array();
-		foreach($icids as $icid){
-			$comment = new Comment();
+		$icids = $ic->getComments ();
+		$comments = array ();
+		foreach ( $icids as $icid ) {
+			$comment = new Comment ();
 			$comment->commentID = $icid->commentID;
-			$comment->get();
-			$comments[] = $comment;
+			$comment->get ();
+			$comments [] = $comment;
 		}
 		return $comments;
 	}
@@ -537,78 +529,193 @@ class System {
 	 * The getItemComment() function retrieves an itemComment.
 	 */
 	public function getItemComment($comment): Comment {
-		$c = new Comment();
+		$c = new Comment ();
 		$c->commentID = $comment->commentID;
-		$c->get();
+		$c->get ();
 		return $c;
 	}
 	
 	/*
 	 * The addItemComment() function adds an itemComment.
 	 */
-	public function addItemComment($user, $item, $comment) {
-		// TO DO
+	public function addItemComment($user, $item, $comment): bool {
+		$c = new Comment ();
+		$c->userID = $user->userID;
+		$c->comment = $comment->comment;
+		$c->commentID = $c->set ();
+		if ($c->commentID > 0) {
+			$ic = new ItemComments ();
+			$ic->itemID = $item->itemID;
+			$ic->commentID = $c->commentID;
+			$ic->item_commentID = $ic->set ();
+			if ($ic->item_commentID > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 	
 	/*
 	 * The updateItemComment() function updates an itemComment.
 	 */
-	public function updateItemComment($comment) {
-		// TO DO
+	public function updateItemComment($comment): bool {
+		$c = new Comment ();
+		$c->commentID = $comment->commentID;
+		$c->userID = $comment->userID;
+		$c->comment = $comment->comment;
+		if ($c->update ()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/*
 	 * The deleteItemComment() function deletes an itemComment and all associated database content.
 	 */
-	public function deleteItemComment($item, $comment) {
-		// TO DO
+	public function deleteItemComment($item, $comment): bool {
+		$c = new Comment ();
+		$c->commentID = $comment->commentID;
+		$ic = new ItemComments ();
+		$ic->itemID = $item->itemID;
+		$ic->commentID = $comment->commentID;
+		try {
+			$ic = $ic->getItemComment ();
+			if ($ic->delete ()) {
+				if ($c->delete ()) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} catch ( UserException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+			return false;
+		}
 	}
 	
 	/*
 	 * The getItemNotes() retrieves all notes for an item.
 	 */
 	public function getItemNotes($item): array {
-		
-		$in = new ItemNotes();
+		$in = new ItemNotes ();
 		$in->itemID = $item->itemID;
-		$inids = $in->getNotes();
-		$notes = array();
-		foreach($inids as $inid){
-			$note = new Note();
+		$inids = $in->getNotes ();
+		$notes = array ();
+		foreach ( $inids as $inid ) {
+			$note = new Note ();
 			$note->noteID = $inid->noteID;
-			$note->get();
-			$notes[] = $note;
+			$note->get ();
+			$notes [] = $note;
 		}
 		return $notes;
-	
 	}
 	
 	/*
 	 * The getItemNote() retrieves a note.
 	 */
-	public function getItemNote($note) {
-		// TO DO
+	public function getItemNote($note): Note {
+		$n = new Note ();
+		$n->noteID = $note->noteID;
+		$n->get ();
+		return $n;
 	}
 	
 	/*
 	 * The addItemNote() function adds an itemNote.
 	 */
-	public function addItemNote($item, $note) {
-		// TO DO
+	public function addItemNote($item, $note): bool {
+		$n = new Note ();
+		$n->note = $note->note;
+		$n->noteID = $n->set ();
+		if ($n->noteID > 0) {
+			$ic = new ItemNotes ();
+			$ic->itemID = $item->itemID;
+			$ic->noteID = $n->noteID;
+			$ic->item_noteID = $ic->set ();
+			if ($ic->item_noteID > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 	
 	/*
 	 * The updateItemNote() function updates an itemNote.
 	 */
-	public function updateItemNote($note) {
-		// TO DO
+	public function updateItemNote($note): bool {
+		$n = new Note ();
+		$n->noteID = $note->noteID;
+		$n->note = $note->note;
+		if ($n->update ()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/*
 	 * The deleteItemNote() function deletes an itemNote and all associated database content.
 	 */
 	public function deleteItemNote($item, $note) {
-		// TO DO
+		$n = new Note ();
+		$n->noteID = $note->noteID;
+		$in = new ItemNotes ();
+		$in->itemID = $item->itemID;
+		$in->noteID = $note->noteID;
+		try {
+			$in = $in->getItemNote ();
+			if ($in->delete ()) {
+				if ($n->delete ()) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} catch ( UserException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+			return false;
+		}
+	}
+	
+	/*
+	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
+	 */
+	public function addSellerRating($sellerRating): bool {
+		$ur = new UserRatings ();
+		$ur->itemID = $sellerRating->itemID;
+		$ur->sellrating = $sellerRating->sellerRating;
+		$ur->user_ratingID = $ur->set ();
+		if ($ur->user_ratingID > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/*
+	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
+	 */
+	public function addBuyerRating($buyerRating): bool {
+		$ur = new UserRatings ();
+		$ur->userID = $buyerRating->userID;
+		$ur->buyrating = $buyerRating->buyerRating;
+		$ur->transaction = $buyerRating->transaction;
+		if ($ur->updateTransaction ()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/*
