@@ -1,4 +1,4 @@
-INSERT INTO items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
   (162074892121, 'Miners Moss Mesh ripple mat deal  800mm x 250mm 3 items for Gold sluices', 'Miners Moss Mesh ripple mat deal  800mm x 250mm 3 items for Gold sluices  in Industrial, Mining, Equipment', '85.60', 0, 'New', ''),
   (152325733930, 'Miners Moss & Ribbed rubber matting 300 x 600mm Heavy grade 2 piece deal', 'Designed to withstand the elements! Miners Moss is constructed of very durable PVC vinyl, using a process called extrusion. In the extrusion process thousands of spaghetti like vinyl loops are formed and shaped into a heavy duty matting.', '46.90', 9, 'New', ''),
   (222539680492, 'DESERT FOX SPIRAL GOLD PANNING MACHINE SINGLE SPEED CAMEL MINING', 'It is as simple as that and so user-friendly that you will be an expert gold panner ten minutes after you have used the Desert Fox Automatic Gold Panning Machine for the first time. Operates on any 12-volt 7-amp DC power source.', '619.00', 9, 'New', ''),

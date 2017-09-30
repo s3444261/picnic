@@ -19,12 +19,13 @@ include __DIR__ . '/../config/config.php';
  */
 class Driver {
 
-	private const DEFAULT_CONTROLLER = "HomeController";
-	private const DEFAULT_ACTION     = "index";
+	private const DEFAULT_CONTROLLER_NAME       = 'Home';
+	private const DEFAULT_CONTROLLER_CLASS_NAME = self::DEFAULT_CONTROLLER_NAME . 'Controller';
+	private const DEFAULT_ACTION                = 'index';
 
-	private $controllerClassName    = self::DEFAULT_CONTROLLER;
-	private $action        = self::DEFAULT_ACTION;
-	private $params        = array();
+	private $controllerClassName                = self::DEFAULT_CONTROLLER_CLASS_NAME;
+	private $action                             = self::DEFAULT_ACTION;
+	private $params                             = array();
 
 	/**
 	 * Processes a page request.
@@ -49,6 +50,12 @@ class Driver {
 	 */
 	private function parseUri(): void {
 		$path = $this->getRequestUri();
+
+		// if the request is to the root of the site, we interpret
+		// that as a request for the default page.
+		if ($path == '') {
+			$path = self::DEFAULT_CONTROLLER_NAME;
+		}
 
 		@list($controller, $action, $params) = explode("/", $path, 3);
 
@@ -114,9 +121,13 @@ class Driver {
 	private function getRequestUri() : string {
 		$path = '/' . trim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), "/");
 
-		if (strpos($path, BASE) === 0) {
-			$path = substr($path, strlen(BASE));
+		if (BASE != '') {
+			if (strpos($path, BASE) === 0) {
+				$path = substr($path, strlen(BASE));
+			}
 		}
+
+		$path = trim($path, '/');
 
 		return $path;
 	}
@@ -131,7 +142,7 @@ class Driver {
 	 *        The name of the class that implements that controller.
 	 */
 	private function getControllerClassName($controller): string {
-		return ucfirst(strtolower($controller)) . "Controller";
+		return $controller . "Controller";
 	}
 
 	/**

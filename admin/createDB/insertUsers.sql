@@ -1,4 +1,4 @@
-INSERT INTO users (userId, user, email, password, status, activate) VALUES
+INSERT INTO Users (userId, user, email, password, status, activate) VALUES
   (1, 'Rubi Tovar', 'RubiTovar@vashtimisdoubt.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'user', NULL),
   (2, 'Dani Adame', 'DaniAdame@unslimmedcaudle.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'user', NULL),
   (3, 'Noreen Ladd', 'NoreenLadd@nerinegro.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'user', NULL),

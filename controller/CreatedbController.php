@@ -1,6 +1,6 @@
 <?php
 /*
- * Authors:
+ * Authors: 
  * Derrick, Troy - s3202752@student.rmit.edu.au
  * Foster, Diane - s3387562@student.rmit.edu.au
  * Goodreds, Allen - s3492264@student.rmit.edu.au
@@ -8,13 +8,14 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class PrivacyPolicyController {
+include __DIR__ . '/../admin/createDB/DatabaseGenerator.php';
 
-	// Displays the Privacy Policy Page.
+class CreatedbController {
 	public function index()
 	{
-		include 'view/layout/privacyPolicy.php';
+		DatabaseGenerator::Generate();
+		DatabaseGenerator::Populate();
+
+		include __DIR__ . '/../view/layout/createDB.php';
 	}
 }
-
-?>

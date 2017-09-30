@@ -16,7 +16,7 @@ class ChangePasswordController {
 		if ($this->auth()) {
 			if (isset ( $_POST ['changePassword'] )) {
 				unset ( $_POST ['changePassword'] );
-				$user = new Users ();
+				$user = new User ();
 				$v = new Validation ();
 
 				if (isset ( $_POST ['password'] ) && isset ( $_POST ['newPassword'] ) && isset ( $_POST ['confirm'] )) {
@@ -92,7 +92,7 @@ class ChangePasswordController {
 				include 'view/layout/changePassword.php';
 			}
 		} else {
-			header('Location: ' . PATH . 'Home');
+			header('Location: ' . BASE . '/Home');
 		}
 	}
 

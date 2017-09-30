@@ -13,30 +13,9 @@ error_reporting ( E_ALL );
 ini_set ( 'display_errors', 1 );
 
 date_default_timezone_set('Australia/Melbourne');
-define('DOMAIN', 'www.humphree.org');
-define('MODULE', 'picnic');
 
-if($_SERVER['SERVER_NAME'] == DOMAIN){
-	define('BASE', '/');
-} else {
-	define('BASE', '/' . MODULE . '/');
-}
-
-
-if($_SERVER['SERVER_NAME'] == 'localhost'){
-	define('SERVER', 'http://' . $_SERVER['SERVER_NAME'] . ':8080/');
-	define('PATH', SERVER . MODULE . '/');
-} elseif($_SERVER['SERVER_NAME'] == '52.62.222.222'){
-	define('SERVER', 'http://' . $_SERVER['SERVER_NAME']);
-	define('PATH', SERVER . '/picnic/');
-} elseif($_SERVER['SERVER_NAME'] == DOMAIN){
-	define('SERVER', 'http://' . $_SERVER['SERVER_NAME']);
-	define('PATH', SERVER . '/');
-} else {
-	define('SERVER', 'http://' . $_SERVER['SERVER_NAME']);
-	define('PATH', SERVER . '/');
-}
-
+define('MODULE', '');
+define('BASE', ''); //'/' . MODULE);
 
 function __autoload($class) {
 	$dir = array (

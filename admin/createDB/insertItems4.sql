@@ -1,4 +1,4 @@
-INSERT INTO items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, title, description, price, quantity, itemcondition, itemStatus) VALUES
   (172876543438, 'Girlfriend Magazine Riverdale Lili And Cole cover', 'Girlfriend Magazine Riverdale Lili And Cole cover in Books, Magazines, Magazines', '12.00', 8, 'New', ''),
   (112574631461, 'The Picture''s Home Girls Summer Special Men''s Magazine - # 4 2000', 'The Picture''s Home Girls Summer Special Men''s Magazine - # 4 2000 in Books, Magazines, Magazines', '15.00', 9, 'New', ''),
   (122717943711, 'Revenge of the Picture Holiday Book 1993 Men''s Magazine', 'Contents as pic 2 & 3.', '12.50', 8, 'New', ''),
