@@ -5,4 +5,4 @@ php:
   - nightly
  
 install:
-    - composer.phar install
+    - php ./composer.phar install
