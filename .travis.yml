@@ -3,6 +3,3 @@ language: php
 php:
   - '7.1'
   - nightly
- 
-install:
-    - php ./composer.phar install
