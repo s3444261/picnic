@@ -8,6 +8,8 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
+require_once __DIR__ . '/../config/config.php';
+
 define('SALT', 'TooMuchSalt');
 
 /**
