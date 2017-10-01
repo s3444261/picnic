@@ -19,8 +19,8 @@
  */
 
 class Category {
-	private $_categoryID = '';
-	private $_parentID = '';
+	private $_categoryID = 0;
+	private $_parentID = 0;
 	private $_category = '';
 	private $_created_at;
 	private $_updated_at;
