@@ -576,25 +576,18 @@ class System {
 	/*
 	 * The deleteItemComment() function deletes an itemComment and all associated database content.
 	 */
-	public function deleteItemComment($item, $comment): bool {
+	public function deleteItemComment($comment): bool {
 		$c = new Comment ();
 		$c->commentID = $comment->commentID;
 		$ic = new ItemComments ();
-		$ic->itemID = $item->itemID;
 		$ic->commentID = $comment->commentID;
-		try {
-			$ic = $ic->getItemComment ();
-			if ($ic->delete ()) {
-				if ($c->delete ()) {
-					return true;
-				} else {
-					return false;
-				}
+		if ($ic->deleteComment()) {
+			if ($c->delete ()) {
+				return true;
 			} else {
 				return false;
 			}
-		} catch ( UserException $e ) {
-			$_SESSION ['error'] = $e->getError ();
+		} else {
 			return false;
 		}
 	}
@@ -665,25 +658,18 @@ class System {
 	/*
 	 * The deleteItemNote() function deletes an itemNote and all associated database content.
 	 */
-	public function deleteItemNote($item, $note) {
+	public function deleteItemNote($note) {
 		$n = new Note ();
 		$n->noteID = $note->noteID;
 		$in = new ItemNotes ();
-		$in->itemID = $item->itemID;
 		$in->noteID = $note->noteID;
-		try {
-			$in = $in->getItemNote ();
-			if ($in->delete ()) {
-				if ($n->delete ()) {
-					return true;
-				} else {
-					return false;
-				}
+		if ($in->deleteNote ()) {
+			if ($n->delete ()) {
+				return true;
 			} else {
 				return false;
 			}
-		} catch ( UserException $e ) {
-			$_SESSION ['error'] = $e->getError ();
+		} else {
 			return false;
 		}
 	}
@@ -692,10 +678,11 @@ class System {
 	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
 	 */
 	public function addSellerRating($sellerRating): bool {
+		
 		$ur = new UserRatings ();
 		$ur->itemID = $sellerRating->itemID;
-		$ur->sellrating = $sellerRating->sellerRating;
-		$ur->user_ratingID = $ur->set ();
+		$ur->sellrating = $sellerRating->sellrating;
+		$ur->user_ratingID = $ur->set (); 
 		if ($ur->user_ratingID > 0) {
 			return true;
 		} else {
@@ -709,8 +696,8 @@ class System {
 	public function addBuyerRating($buyerRating): bool {
 		$ur = new UserRatings ();
 		$ur->userID = $buyerRating->userID;
-		$ur->buyrating = $buyerRating->buyerRating;
-		$ur->transaction = $buyerRating->transaction;
+		$ur->buyrating = $buyerRating->buyrating;
+		$ur->transaction = $buyerRating->transaction; 
 		if ($ur->updateTransaction ()) {
 			return true;
 		} else {

@@ -696,14 +696,11 @@ class Humphree {
 	 * The deleteItemComment() function deletes an itemComment and all associated database content.
 	 */
 	public function deleteItemComment(): bool {
-		if (isset ( $_SESSION ['item'] ) && isset ( $_SESSION ['comment'] )) {
-			$item = new Item ();
-			$item->itemID = $_SESSION ['item'] ['itemID'];
+		if (isset ( $_SESSION ['comment'] )) {
 			$comment = new Comment ();
 			$comment->commentID = $_SESSION ['comment'] ['commentID'];
 			$system = new System ();
-			if ($system->deleteItemComment ( $item, $comment )) {
-				unset ( $_SESSION ['item'] );
+			if ($system->deleteItemComment ( $comment )) {
 				unset ( $_SESSION ['comment'] );
 				return true;
 			} else {
@@ -797,14 +794,11 @@ class Humphree {
 	 * The deleteItemNote() function deletes an itemNote and all associated database content.
 	 */
 	public function deleteItemNote(): bool {
-		if (isset ( $_SESSION ['item'] ) && isset ( $_SESSION ['note'] )) {
-			$item = new Item ();
-			$item->itemID = $_SESSION ['item'] ['itemID'];
+		if (isset ( $_SESSION ['note'] )) {
 			$note = new Note ();
 			$note->noteID = $_SESSION ['note'] ['noteID'];
 			$system = new System ();
-			if ($system->deleteItemNote ( $item, $note )) {
-				unset ( $_SESSION ['item'] );
+			if ($system->deleteItemNote ( $note )) {
 				unset ( $_SESSION ['note'] );
 				return true;
 			} else {

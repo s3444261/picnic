@@ -23,6 +23,16 @@ $updateItem = false;
 $deleteItem = false;
 $getItemComments = false;
 $getItemComment = false;
+$addItemComment = false;
+$updateItemComment = false;
+$deleteItemComment = false;
+$getItemNotes = false;
+$getItemNote = false;
+$addItemNote = false;
+$updateItemNote= false;
+$deleteItemNote = false;
+$addSellerRating= false;
+$addBuyerRating = false;
 $h = new Humphree();
 
 // Test createAccount()
@@ -573,10 +583,10 @@ $resultString = $item->itemID . $item->title . $item->description . $item->quant
 $resultString = $resultString . $item->itemcondition . $item->price . $item->status;
 
 if($testString == $resultString){
+	$addItem = true;
+} else {
 	$hError = $hError . 'addItem Failed.<br />';
 	$addItem = false;
-} else {
-	$addItem = true;
 }
 
 // Test updateItem()
@@ -602,10 +612,10 @@ $resultString = $item->itemID . $item->title . $item->description . $item->quant
 $resultString = $resultString . $item->itemcondition . $item->price . $item->status;
 
 if($testString == $resultString){
+	$updateItem = true;
+} else {
 	$hError = $hError . 'updateItem Failed.<br />';
 	$updateItem = false;
-} else {
-	$updateItem = true;
 }
 
 // Test deleteItem()
@@ -637,9 +647,10 @@ $resultString = '';
 $testString = '2352johncomment12361petercomment12372johncomment22381petercomment22392johncommen';
 $testString = $testString . 't32401petercomment32412johncomment42421petercomment42432johncommen';
 $testString = $testString . 't52441petercomment52452johncomment62461petercomment62472johncommen';
-$testString = $testString . 't72481petercomment72492johncomment82501petercomment82512johncomment9';
+$testString = $testString . 't72481petercomment72492johncomment82501petercomment82512johncommen';
+$testString = $testString . 't92521petercomment9';
 
-for($i = 1; $i < $h->countItemComments(); $i++){
+for($i = 1; $i <= $h->countItemComments(); $i++){
 	$resultString = $resultString . $_SESSION['item'][$i]['comment']['commentID'];
 	$resultString = $resultString . $_SESSION['item'][$i]['comment']['userID'];
 	$resultString = $resultString . $_SESSION['item'][$i]['comment']['user'];
@@ -676,20 +687,250 @@ if($testString == $resultString){
 }
 
 // Test addItemComment()
+$_SESSION ['user'] ['userID'] = 2;
+$_SESSION ['item'] ['itemID'] = 17;
+$_SESSION ['comment'] ['comment'] = 'AddedComment';
+$h->addItemComment();
+
+unset ( $_SESSION ['user'] );
+unset ( $_SESSION ['item'] );
+unset ( $_SESSION ['comment'] );
+
+$resultString = '';
+$testString = '2892johnAddedComment';
+
+$_SESSION['comment']['commentID'] = 289;
+$h->getItemComment();
+
+$resultString = $resultString . $_SESSION['comment']['commentID'];
+$resultString = $resultString . $_SESSION['comment']['userID'];
+$resultString = $resultString . $_SESSION['comment']['user'];
+$resultString = $resultString . $_SESSION['comment']['comment'];
+unset ( $_SESSION ['comment'] );
+
+if($testString == $resultString){
+	$addItemComment= true;
+} else {
+	$hError = $hError . 'getItemComment Failed.<br />';
+	$addItemComment= false;
+}
 
 // Test updateItemComment()
 
+$_SESSION ['comment'] ['commentID'] = 289;
+$_SESSION ['comment'] ['userID'] = 1;
+$_SESSION ['comment'] ['comment'] = 'UpdateComment';
+$h->updateItemComment();
+
+unset ( $_SESSION ['user'] );
+unset ( $_SESSION ['item'] );
+unset ( $_SESSION ['comment'] );
+
+$resultString = '';
+$testString = '2891peterUpdateComment';
+
+$_SESSION['comment']['commentID'] = 289;
+$h->getItemComment();
+
+$resultString = $resultString . $_SESSION['comment']['commentID'];
+$resultString = $resultString . $_SESSION['comment']['userID'];
+$resultString = $resultString . $_SESSION['comment']['user'];
+$resultString = $resultString . $_SESSION['comment']['comment'];
+unset ( $_SESSION ['comment'] );
+
+if($testString == $resultString){
+	$updateItemComment= true;
+} else {
+	$hError = $hError . 'getItemComment Failed.<br />';
+	$updateItemComment= false;
+}
+
 // Test deleteItemComment()
+
+$_SESSION['comment']['commentID'] = 289;
+$h->deleteItemComment();
+
+$testCommentID = 289;
+
+$ic = new ItemComments();
+$ic->commentID = $testCommentID;
+
+try {
+	$ic->getItemComment();
+} catch (ItemCommentsException $e){
+
+	if($e->getError () == 'Could not retrieve itemComment.'){
+		$c = new Comment();
+		$c->commentID = $testCommentID;
+		if(!$c->get()){
+			$deleteItemComment = true;
+		} else {
+			$deleteItemComment = false;
+			$hError = $hError . 'deleteItemComment Failed.<br />';
+		}
+	} else {
+		$deleteItemComment = false;
+		$hError = $hError . 'deleteItemComment Failed.<br />';
+	} 
+} 
 
 // Test getItemNotes()
 
+$_SESSION['item']['itemID'] = 14;
+
+$h->getItemNotes();
+
+$resultString = '';
+$testString = '118note1119note2120note3121note4122note5123note6124note7125note8126note9';
+
+for($i = 1; $i <= $h->countItemNotes(); $i++){
+	$resultString = $resultString . $_SESSION['item'][$i]['note']['noteID'];
+	$resultString = $resultString . $_SESSION['item'][$i]['note']['note'];
+}
+
+if($testString == $resultString){
+	$getItemNotes = true;
+} else {
+	$hError = $hError . 'getItemNotes Failed.<br />';
+	$getItemNotes = false;
+}
+
 // Test getItemNote()
+
+$_SESSION['note']['noteID'] = 10;
+
+$h->getItemNote();
+
+$resultString = '';
+$testString = '10note1';
+
+$resultString = $resultString . $_SESSION['note']['noteID'];
+$resultString = $resultString . $_SESSION['note']['note'];
+
+if($testString == $resultString){
+	$getItemNote = true;
+} else {
+	$hError = $hError . 'getItemNote Failed.<br />';
+	$getItemNote = false;
+}
 
 // Test addtemNote()
 
+$_SESSION ['item'] ['itemID'] = 17;
+$_SESSION ['note'] ['note'] = 'AddedNote';
+$h->addItemNote();
+
+unset ( $_SESSION ['item'] );
+unset ( $_SESSION ['note'] );
+
+$resultString = '';
+$testString = '145AddedNote';
+
+$_SESSION['note']['noteID'] = 145;
+$h->getItemNote();
+
+$resultString = $resultString . $_SESSION['note']['noteID'];
+$resultString = $resultString . $_SESSION['note']['note']; 
+unset ( $_SESSION ['note'] );
+
+if($testString == $resultString){
+	$addItemNote = true;
+} else {
+	$hError = $hError . 'getItemNote Failed.<br />';
+	$addItemNote = false;
+}
+
 // Test updateItemNote()
 
+$_SESSION ['note'] ['noteID'] = 145;
+$_SESSION ['note'] ['note'] = 'UpdateNote';
+$h->updateItemNote();
+
+unset ( $_SESSION ['item'] );
+unset ( $_SESSION ['note'] );
+
+$resultString = '';
+$testString = '145UpdateNote';
+
+$_SESSION['note']['noteID'] = 145;
+$h->getItemNote();
+
+$resultString = $resultString . $_SESSION['note']['noteID'];
+$resultString = $resultString . $_SESSION['note']['note'];
+unset ( $_SESSION ['note'] );
+
+if($testString == $resultString){
+	$updateItemNote = true;
+} else {
+	$hError = $hError . 'getItemNote Failed.<br />';
+	$updateItemNote = false;
+}
+
 // Test deleteItemNote()
+
+$_SESSION['note']['noteID'] = 145;
+$h->deleteItemNote();
+
+$testNoteID = 145;
+
+$in = new ItemNotes();
+$in->noteID = $testNoteID;
+
+try {
+	$in->getItemNote();
+} catch (ItemNotesException $e){
+	
+	if($e->getError () == 'Could not retrieve itemNote.'){
+		$n = new Note();
+		$n->noteID = $testNoteID;
+		if(!$n->get()){
+			$deleteItemNote = true;
+		} else {
+			$deleteItemNote = false;
+			$hError = $hError . 'deleteItemNote Failed.<br />';
+		}
+	} else {
+		$deleteItemNote = false;
+		$hError = $hError . 'deleteItemNote Failed.<br />';
+	}
+} 
+
+// Test addSellerRating()
+
+$_SESSION ['user_rating'] ['itemID'] = 14;
+$_SESSION ['user_rating'] ['sellrating'] = 5;
+$h->addSellerRating();
+unset($_SESSION ['user_rating']);
+
+$ur = new UserRatings();
+$ur->user_ratingID = 1;
+$ur->get();
+
+if($ur->itemID == 14 && $ur->sellrating == 5 && strlen($ur->transaction) == 32){
+	$addSellerRating = true;
+} else {
+	$hError = $hError . 'addSellerRating Failed.<br />';
+	$addSellerRating = false;
+}
+
+// Test addBuyerRating()
+
+$_SESSION ['user_rating'] ['userID'] = 2;
+$_SESSION ['user_rating'] ['buyrating'] = 4;
+$_SESSION ['user_rating'] ['transaction'] = $ur->transaction;
+$h->addBuyerRating();
+
+$ur = new UserRatings();
+$ur->user_ratingID = 1;
+$ur->get(); 
+
+if($ur->itemID == 14 && $ur->sellrating == 5 && strlen($ur->transaction) == 32
+		&& $ur->userID == 2 && $ur->buyrating == 4){
+			$addBuyerRating = true;
+} else {
+	$hError = $hError . 'addBuyerRating Failed.<br />';
+	$addBuyerRating = false;
+}
 
 // Test Search()
 
@@ -698,7 +939,9 @@ if($addUser && $updateUser && $getUser && $getUsers && $disableUser  && $deleteU
 		&& $addCategory && $updateCategory && $getCategory && $getCategories && $deleteCategory
 		&& $getCategoryItems && $countCategoryItems && $countItemComments && $countItemNotes 
 		&& $countUserItems && $getUserItems && $getItem && $addItem && $updateItem &&$deleteItem
-		&& $getItemComments && $getItemComment){
+		&& $getItemComments && $getItemComment && $addItemComment && $updateItemComment
+		&& $deleteItemComment && $getItemNotes && $getItemNote && $addItemNote && $updateItemNote
+		&& $deleteItemNote && $addSellerRating && $addBuyerRating){
 	$humphree = true;
 }
 

@@ -233,17 +233,16 @@ class ItemComments {
 	 */
 	public function getItemComment() {
 		
-		$query = "SELECT * FROM Item_comments WHERE itemID = :itemID AND commentID = :commentID";
+		$query = "SELECT * FROM Item_comments WHERE commentID = :commentID";
 		
 		$db = Picnic::getInstance ();
 		$stmt = $db->prepare ( $query );
-		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->bindParam ( ':commentID', $this->_commentID );
 		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		$this->_id = $row ['item_commentID'];
-		
-		if($this->_id > 0){
+		if($stmt->rowCount() > 0){
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			$this->_id = $row ['item_commentID'];
+			$this->_itemID = $row ['itemID'];
 			return $this;
 		} else {
 			throw new ItemCommentsException ( 'Could not retrieve itemComment.' );

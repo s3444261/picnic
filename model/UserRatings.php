@@ -22,9 +22,9 @@
 class UserRatings {
 	private $_user_ratingID = '';
 	private $_itemID = '';
-	private $_sellrating = '';
+	private $_sellrating = 0;
 	private $_userID = '';
-	private $_buyrating = '';
+	private $_buyrating = 0;
 	private $_transaction = '';
 	private $_created_at;
 	private $_updated_at;
@@ -54,7 +54,7 @@ class UserRatings {
 	 */
 	public function get() {
 		if ($this->exists ()) {
-			$query = "SELECT * FROM UserRatingss WHERE user_ratingID = :user_ratingID";
+			$query = "SELECT * FROM User_ratings WHERE user_ratingID = :user_ratingID";
 			
 			$db = Picnic::getInstance ();
 			$stmt = $db->prepare ( $query );
@@ -68,9 +68,9 @@ class UserRatings {
 			$this->_transaction = $row ['transaction'];
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
-			return true;
+			return $this;
 		} else {
-			return false;
+			throw new UserRatingsException ( 'Could not retrieve userrating.' );
 		}
 	}
 	
@@ -79,10 +79,9 @@ class UserRatings {
 	 * database. The objectID is returned.
 	 */
 	public function set() {
-		$query = "INSERT INTO UserRatingss
+		$query = "INSERT INTO User_ratings
 					SET itemID = :itemID,
 						sellrating = :sellrating,
-						userID = :userID,
 						buyrating = :buyrating,
 						transaction = :transaction,
 						created_at = NULL";
@@ -91,9 +90,9 @@ class UserRatings {
 		$stmt = $db->prepare ( $query );
 		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->bindParam ( ':sellrating', $this->_sellrating );
-		$stmt->bindParam ( ':userID', $this->_userID );
 		$stmt->bindParam ( ':buyrating', $this->_buyrating );
-		$stmt->bindParam ( ':transaction', $this->_transaction );
+		$transactionCode = $this->transactionCode();
+		$stmt->bindParam ( ':transaction', $transactionCode);
 		$stmt->execute ();
 		$this->_user_ratingID = $db->lastInsertId ();
 		if ($this->_user_ratingID > 0) {
@@ -112,7 +111,7 @@ class UserRatings {
 	public function update() {
 		if ($this->exists ()) {
 			
-			$query = "SELECT * FROM UserRatingss WHERE user_ratingID = :user_ratingID";
+			$query = "SELECT * FROM User_ratings WHERE user_ratingID = :user_ratingID";
 			
 			$db = Picnic::getInstance ();
 			$stmt = $db->prepare ( $query );
@@ -136,7 +135,7 @@ class UserRatings {
 				$this->_transaction = $row ['transaction'];
 			}
 			
-			$query = "UPDATE UserRatingss
+			$query = "UPDATE User_ratings
 						SET itemID = :itemID,
 							sellrating = :sellrating,
 							userID = :userID,
@@ -166,7 +165,7 @@ class UserRatings {
 	public function delete() {
 		if ($this->exists ()) {
 			
-			$query = "DELETE FROM UserRatingss
+			$query = "DELETE FROM User_ratings
 						WHERE user_ratingID = :user_ratingID";
 			
 			$db = Picnic::getInstance ();
@@ -189,7 +188,7 @@ class UserRatings {
 	 */
 	public function exists() {
 		if ($this->_user_ratingID > 0) {
-			$query = "SELECT COUNT(*) AS numRows FROM UserRatingss WHERE user_ratingID = :user_ratingID";
+			$query = "SELECT COUNT(*) AS numRows FROM User_ratings WHERE user_ratingID = :user_ratingID";
 			
 			$db = Picnic::getInstance ();
 			$stmt = $db->prepare ( $query );
@@ -211,7 +210,7 @@ class UserRatings {
 	 */
 	public function count() {
 		$query = "SELECT COUNT(*) as num
-							FROM UserRatingss
+							FROM User_ratings
 							WHERE itemID = :itemID";
 		
 		$db = Picnic::getInstance ();
@@ -229,7 +228,7 @@ class UserRatings {
 	 * the database.
 	 */
 	public function updateTransaction(): bool {
-		$query = "SELECT user_ratingID FROM UserRatings WHERE transaction = :transaction";
+		$query = "SELECT * FROM User_ratings WHERE transaction = :transaction";
 		
 		$db = Picnic::getInstance ();
 		$stmt = $db->prepare ( $query );
@@ -239,7 +238,7 @@ class UserRatings {
 		$this->_user_ratingID = $row ['user_ratingID'];
 		$this->_itemID = $row ['itemID'];
 		$this->_sellrating = $row ['sellrating'];
-		$this->_transaction = NULL;
+		$this->_transaction = NULL; 
 		if ($this->_userID > 0 && $this->_buyrating > 0) {
 			if ($this->update ()) {
 				return true;
@@ -249,6 +248,14 @@ class UserRatings {
 		} else {
 			return false;
 		}
+	}
+	
+	/*
+	 * Generate a random transaction code.
+	 */
+	private function transactionCode(): string {
+		date_default_timezone_set ( 'UTC' );
+		return md5 ( strtotime ( "now" ) . $this->_itemID . $this->_sellrating );
 	}
 	
 	// Display Object Contents

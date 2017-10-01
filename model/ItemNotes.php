@@ -229,22 +229,47 @@ class ItemNotes {
 	}
 	
 	/*
-	 * The getItemNote() method returns the object based on the itemID and the noteID.
+	 * The getItemNote() method returns the object based on the noteID.
 	 */
 	public function getItemNote() {
 		
-		$query = "SELECT * FROM Item_notes WHERE itemID = :itemID AND noteID = :noteID";
+		$query = "SELECT * FROM Item_notes WHERE noteID = :noteID";
 		
 		$db = Picnic::getInstance ();
 		$stmt = $db->prepare ( $query );
-		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->bindParam ( ':noteID', $this->_noteID );
 		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		$this->_id = $row ['item_noteID'];
-		
-		if($this->_id > 0){
+		if($stmt->rowCount() > 0){
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			$this->_id = $row ['item_noteID'];
+			$this->_itemID = $row ['itemID'];
 			return true;
+		} else {
+			throw new ItemNotesException ( 'Could not retrieve itemNote.' );
+		}
+	}
+	
+	/*
+	 * The deleteNote() deletes a note based on the noteID
+	 */
+	public function deleteNote() {
+		
+		$note = new Note();
+		$note->noteID = $this->_noteID;
+		
+		$query = "DELETE FROM Item_notes
+						WHERE noteID = :noteID";
+		
+		$db = Picnic::getInstance ();
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':noteID', $this->_noteID );
+		$stmt->execute ();
+		if (! $this->exists ()) {
+			if($note->delete()){
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
