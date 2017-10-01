@@ -10,7 +10,7 @@
 
 include __DIR__ . '/../admin/createDB/DatabaseGenerator.php';
 
-class CreatedbController {
+class CreateDBController {
 	public function index()
 	{
 		DatabaseGenerator::Generate();
