@@ -6,5 +6,9 @@ branches:
   only:
     master
 script: 
+  - mysql create database picnic
+  - mysql create user 'p1'@'localhost' IDENTIFIED BY 'Picnic8899'
+  - mysql USE picnic
+  - mysql grant all privileges ON picnic TO 'p1'@'localhost'
   - phpunit ./admin/testharness/unit
   
