@@ -15,6 +15,25 @@
  */
 include '../../dbPicnic.php';
 
+// temporary fallback settings in the absence of dpPicnic.php,
+// to get travis running.
+if (!defined('DB_HOST')) {
+	define('DB_HOST', '127.0.0.1');
+}
+
+if (!defined('DB_USER')) {
+	define('DB_USER', 'travis');
+}
+
+if (!defined('DB_PW')) {
+	define('DB_PW', '');
+}
+
+if (!defined('DB_NAME')) {
+	define('DB_NAME', 'picnic');
+}
+// end temporary
+
 class Picnic extends PDO {
 	private static $instance;
 	public static function getInstance() {
