@@ -8,12 +8,15 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
+require_once  __DIR__ . '/../config/Picnic.php';
+
 class HomeController {
-	
+
 	// Displays the Home Page.
 	public function index()
 	{
+		$h = new Humphree(Picnic::getInstance());
+		$h ->getCategoriesIn(Category::ROOT_CATEGORY);
 		include 'view/layout/home.php';
 	}
 }
-?>

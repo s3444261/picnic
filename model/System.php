@@ -307,7 +307,17 @@ class System {
 		$c = $cat->getCategories ();
 		return $c;
 	}
-	
+
+	/*
+	 * The getCategories() function retrieves all Categories for the given parent category.
+	 */
+	public function getCategoriesIn(int $parentCategory): array {
+		$c = array ();
+		$cat = new Category ($this->db);
+		$c = $cat->getCategoriesIn ($parentCategory);
+		return $c;
+	}
+
 	/*
 	 * The deleteCategory() function allows and administrator to delete a Category and
 	 * all associated database content.

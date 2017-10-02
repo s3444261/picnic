@@ -286,6 +286,23 @@ class Humphree {
 	/*
 	 * The getCategory() function retrieves a Category.
 	 */
+	public function getCategoryById($id): bool {
+		if (isset ( $_SESSION ['category'] )) {
+			$category = new Category ($this->db);
+			$category->categoryID = $id;
+			$category = $this->system->getCategory ( $category );
+			$_SESSION ['category'] ['categoryID'] = $category->categoryID;
+			$_SESSION ['category'] ['parentID'] = $category->parentID;
+			$_SESSION ['category'] ['category'] = $category->category;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/*
+ * The getCategory() function retrieves a Category.
+ */
 	public function getCategory(): bool {
 		if (isset ( $_SESSION ['category'] )) {
 			$category = new Category ($this->db);
@@ -299,13 +316,35 @@ class Humphree {
 			return false;
 		}
 	}
-	
+
 	/*
 	 * The getCategories() function retrieves all Categories.
 	 */
 	public function getCategories(): bool {
 		$categories = $this->system->getCategories ();
 		$i = 1;
+		foreach ( $categories as $category ) {
+			$_SESSION ['categories'] [$i] ['category'] ['categoryID'] = $category->categoryID;
+			$_SESSION ['categories'] [$i] ['category'] ['parentID'] = $category->parentID;
+			$_SESSION ['categories'] [$i] ['category'] ['category'] = $category->category;
+			$i ++;
+		}
+		if (isset ( $_SESSION ['categories'] )) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/*
+ * The getCategories() function retrieves all Categories in the given parent category.
+ */
+	public function getCategoriesIn(int $parentCategoryId): bool {
+		$categories = $this->system->getCategoriesIn ($parentCategoryId);
+		$i = 1;
+
+		unset($_SESSION ['categories']);
+
 		foreach ( $categories as $category ) {
 			$_SESSION ['categories'] [$i] ['category'] ['categoryID'] = $category->categoryID;
 			$_SESSION ['categories'] [$i] ['category'] ['parentID'] = $category->parentID;
@@ -410,7 +449,57 @@ class Humphree {
 			}
 		}
 	}
-	
+
+	/*
+	 * The getCategoryItems() function retrieves all items linked to the given category.
+	 */
+	public function getCategoryItemsFor($categoryId): bool {
+		if (isset ( $_SESSION ['category'] )) {
+			$category = new Category ($this->db);
+			$category->categoryID = $categoryId;
+			$categoryItems = $this->system->getCategoryItems ( $category );
+
+			$i = 1;
+			foreach ( $categoryItems as $item ) {
+				$_SESSION ['categoryItems'] [$i] ['item'] ['itemID'] = $item->itemID;
+				$_SESSION ['categoryItems'] [$i] ['item'] ['title'] = $item->title;
+				$_SESSION ['categoryItems'] [$i] ['item'] ['description'] = $item->description;
+				$_SESSION ['categoryItems'] [$i] ['item'] ['quantity'] = $item->quantity;
+				$_SESSION ['categoryItems'] [$i] ['item'] ['itemcondition'] = $item->itemcondition;
+				$_SESSION ['categoryItems'] [$i] ['item'] ['price'] = $item->price;
+				$_SESSION ['categoryItems'] [$i] ['item'] ['status'] = $item->status;
+
+				$comments = $this->system->getItemComments ( $item );
+				$j = 1;
+				foreach ( $comments as $comment ) {
+					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['commentID'] = $comment->commentID;
+					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['userID'] = $comment->userID;
+					$user = new User ($this->db);
+					$user->userID = $comment->userID;
+					$user = $this->system->getUser ( $user );
+					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['user'] = $user->user;
+					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['comment'] = $comment->comment;
+					$j ++;
+				}
+
+				$notes = $this->system->getItemNotes ( $item );
+				$j = 1;
+				foreach ( $notes as $note ) {
+					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['note'] ['noteID'] = $note->noteID;
+					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['note'] ['note'] = $note->note;
+					$j ++;
+				}
+				$i ++;
+			}
+
+			if (isset ( $_SESSION ['categoryItems'] )) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
 	/*
 	 * The countUserItems() method counts the number of items in a user.
 	 */
@@ -514,7 +603,46 @@ class Humphree {
 			return false;
 		}
 	}
-	
+
+	/*
+	 * The getItem() function retrieves an item.
+	 */
+	public function getItemById($id): bool {
+
+			$item = new Item ($this->db);
+			$item->itemID = $id;
+			$item = $this->system->getItem ( $item );
+			$_SESSION ['item'] ['itemID'] = $item->itemID;
+			$_SESSION ['item'] ['title'] = $item->title;
+			$_SESSION ['item'] ['description'] = $item->description;
+			$_SESSION ['item'] ['quantity'] = $item->quantity;
+			$_SESSION ['item'] ['itemcondition'] = $item->itemcondition;
+			$_SESSION ['item'] ['price'] = $item->price;
+			$_SESSION ['item'] ['status'] = $item->status;
+			$itemComments = $this->system->getItemComments ( $item );
+			$i = 1;
+			foreach ( $itemComments as $itemComment ) {
+				$_SESSION ['item'] [$i] ['comment'] ['commentID'] = $itemComment->commentID;
+				$_SESSION ['item'] [$i] ['comment'] ['userID'] = $itemComment->userID;
+				$user = new User ($this->db);
+				$user->userID = $itemComment->userID;
+				$user->get ();
+				$_SESSION ['item'] [$i] ['comment'] ['user'] = $user->user;
+				$_SESSION ['item'] [$i] ['comment'] ['comment'] = $itemComment->comment;
+				$i ++;
+			}
+			$itemNotes = $this->system->getItemNotes ( $item );
+			$j = 1;
+			foreach ( $itemNotes as $itemNote ) {
+				$_SESSION ['item'] [$j] ['note'] ['noteID'] = $itemNote->noteID;
+				$_SESSION ['item'] [$j] ['note'] ['note'] = $itemNote->note;
+				$j ++;
+			}
+			return true;
+
+	}
+
+
 	/*
 	 * The addItem() function adds an item.
 	 */

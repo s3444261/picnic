@@ -10,11 +10,36 @@
 ?>
 <div class="container-fluid">
 	<h1>Humphree</h1>
-	<div class="jumbotron">
-		<div class="row">
-			<h2>Search</h2>
-		</div>
-	</div>
+
+    <div class="jumbotron">
+        <h2>Categories</h2>
+
+        <div class="container">
+           <div class="row">
+
+                <?php
+                if (isset ( $_SESSION ['categories'] )) {
+                    foreach ( $_SESSION ['categories'] as $category ) {
+                    ?>
+                    <div class="col-md-4">
+                        <p>
+                            <?php  echo '<a class="btn btn-secondary" href="'
+                                . BASE
+                                . '/Category/View/'
+                                . $category ["category"] ["categoryID"]
+                                . '" role="button">'
+                                . $category ["category"] ["category"]
+                                . '</a>'  ?>
+                        </p>
+                    </div>
+                    <?php
+                    }
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+
 	<div class="jumbotron">
 		<div class="row">
 			<h2>Search Results</h2>
