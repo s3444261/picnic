@@ -8,7 +8,7 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-require_once __DIR__ . "/../../../../dbPicnic.php";
+require_once __DIR__ . "/../../../../../dbPicnic.php";
 
 class TestPDO extends PDO {
 	private static $instance;
