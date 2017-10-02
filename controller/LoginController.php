@@ -9,6 +9,7 @@
  */
 
 require_once __DIR__ . '/../model/User.php';
+require_once  __DIR__ . '/../config/Picnic.php';
 
 class LoginController {
 	
@@ -37,7 +38,7 @@ class LoginController {
 				}
 				
 				if (! isset ( $_SESSION ['error'] )) {
-					$user = new User ();
+					$user = new User (Picnic::getInstance());
 					$user->email = $_POST ['email'];
 					$user->password = $_POST ['password'];
 					unset ( $_POST ['email'] );

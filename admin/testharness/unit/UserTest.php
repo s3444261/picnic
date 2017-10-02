@@ -10,9 +10,9 @@
 
 declare(strict_types=1);
 
+require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
-require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/UserException.php';
 
@@ -36,7 +36,9 @@ class UserTest extends PicnicTestCase {
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
 		// Be nice if we could mock out the database, but let's see how we go with that.
-		DatabaseGenerator::Generate();
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
 
 		$args = [
 			self::USER 			=> 'grant',
@@ -48,7 +50,7 @@ class UserTest extends PicnicTestCase {
 			self::MODIFIED_DATE => '2015-02-13'
 		];
 
-		$item = new User($args);
+		$item = new User($pdo, $args);
 		$item->set();
 		$item->get();
 		$item->activate();
@@ -57,11 +59,11 @@ class UserTest extends PicnicTestCase {
 	}
 
 	protected function createDefaultSut() {
-		return new User();
+		return new User(TestPDO::getInstance());
 	}
 
 	protected function createSutWithId($id) {
-		return new User([self::USER_ID => $id]);
+		return new User(TestPDO::getInstance(), [self::USER_ID => $id]);
 	}
 
 	protected function getValidId() {
@@ -104,13 +106,13 @@ class UserTest extends PicnicTestCase {
 	}
 
 	public function testSetResultsInValidId(): void {
-		$sut = new User([self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
+		$sut = new User(TestPDO::getInstance(), [self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
 		$this->assertGreaterThan(0, $sut->set());
 		$this->assertGreaterThan(0, $sut->{self::USER_ID});
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
-		$sut = new User([self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
+		$sut = new User(TestPDO::getInstance(), [self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
 		$this->assertEquals(2, $sut->set());
 		$this->assertEquals(2, $sut->{self::USER_ID});
 	}
@@ -228,7 +230,7 @@ class UserTest extends PicnicTestCase {
 			self::MODIFIED_DATE => '2015-02-13'
 		];
 
-		$item = new User($args);
+		$item = new User(TestPDO::getInstance(), $args);
 		$item->set();
 
 		$sut = $this->createDefaultSut();

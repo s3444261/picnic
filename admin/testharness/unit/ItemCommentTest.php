@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
+require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
-require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
@@ -29,10 +29,12 @@ class ItemCommentTest extends PicnicTestCase {
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
 		// Be nice if we could mock out the database, but let's see how we go with that.
-		DatabaseGenerator::Generate();
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
 
 		// Insert a user.
-		$user = new User();
+		$user = new User($pdo);
 		$user->user = 'grant';
 		$user->email = 'grant@kinkead.net';
 		$user->password = 'TestTest88';
@@ -44,13 +46,13 @@ class ItemCommentTest extends PicnicTestCase {
 		$user->update ();
 
 		// Insert an item.
-		$item = new Item();
+		$item = new Item($pdo);
 		$itemId = $item->set();
 
 		// Insert three comments against that item.
 		for($i = 0; $i < 3; $i++){
 
-			$comment = new Comment([self::ITEM_ID => $itemId, self::USER_ID => $userId]);
+			$comment = new Comment($pdo, [self::ITEM_ID => $itemId, self::USER_ID => $userId]);
 			$commentId = $comment->set();
 
 			$itemComment = $this->createDefaultSut();
@@ -61,11 +63,11 @@ class ItemCommentTest extends PicnicTestCase {
 	}
 
 	protected function createDefaultSut(){
-		return new ItemComments();
+		return new ItemComments(TestPDO::getInstance());
 	}
 
 	protected function createSutWithId($id){
-		return new ItemComments([self::ITEM_COMMENT_ID => $id]);
+		return new ItemComments(TestPDO::getInstance(), [self::ITEM_COMMENT_ID => $id]);
 	}
 
 	protected function getValidId() {
@@ -100,16 +102,16 @@ class ItemCommentTest extends PicnicTestCase {
 	}
 
 	public function testSetResultsInValidId(): void {
-		$sut = new ItemComments([self::ITEM_ID => 1, self::COMMENT_ID => 1]);
+		$sut = new ItemComments(TestPDO::getInstance(), [self::ITEM_ID => 1, self::COMMENT_ID => 1]);
 		$this->assertGreaterThan(0, $sut->set());
 		$this->assertGreaterThan(0, $sut->{self::ITEM_COMMENT_ID});
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
-		$sut = new ItemComments([self::ITEM_ID => 1, self::COMMENT_ID => 1]);
+		$sut = new ItemComments(TestPDO::getInstance(), [self::ITEM_ID => 1, self::COMMENT_ID => 1]);
 		$sut->set();
 
-		$sut = new ItemComments([self::ITEM_ID => 1, self::COMMENT_ID => 1]);
+		$sut = new ItemComments(TestPDO::getInstance(), [self::ITEM_ID => 1, self::COMMENT_ID => 1]);
 		$this->assertEquals(1, $sut->set());
 		$this->assertEquals(1, $sut->{self::ITEM_COMMENT_ID});
 	}
@@ -121,7 +123,7 @@ class ItemCommentTest extends PicnicTestCase {
 	}
 
 	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {
-		$item = new Item();
+		$item = new Item(TestPDO::getInstance());
 		$itemId = $item->set();
 		$item->get();
 

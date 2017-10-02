@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
+require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
-require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
@@ -28,10 +28,12 @@ class ItemNotesTest extends PicnicTestCase {
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
 		// Be nice if we could mock out the database, but let's see how we go with that.
-		DatabaseGenerator::Generate();
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
 
 		// insert a user
-		$user = new User();
+		$user = new User($pdo);
 		$user->user = 'grant';
 		$user->email = 'grant@kinkead.net';
 		$user->password = 'TestTest88';
@@ -43,13 +45,13 @@ class ItemNotesTest extends PicnicTestCase {
 		$user->update ();
 
 		// Insert an item.
-		$item = new Item();
+		$item = new Item($pdo);
 		$itemId = $item->set();
 
 		// Insert three notes against that item.
 		for($i = 0; $i < 3; $i++){
 
-			$note = new Note([self::ITEM_ID => $itemId, self::USER_ID => $userId]);
+			$note = new Note($pdo, [self::ITEM_ID => $itemId, self::USER_ID => $userId]);
 			$noteId = $note->set();
 
 			$itemComment = $this->createDefaultSut();
@@ -60,11 +62,11 @@ class ItemNotesTest extends PicnicTestCase {
 	}
 
 	protected function createDefaultSut(){
-		return new ItemNotes();
+		return new ItemNotes(TestPDO::getInstance());
 	}
 
 	protected function createSutWithId($id){
-		return new ItemNotes([self::ITEM_NOTE_ID => $id]);
+		return new ItemNotes(TestPDO::getInstance(), [self::ITEM_NOTE_ID => $id]);
 	}
 
 	protected function getValidId() {
@@ -100,16 +102,16 @@ class ItemNotesTest extends PicnicTestCase {
 	}
 
 	public function testSetResultsInValidId(): void {
-		$sut = new ItemNotes([self::ITEM_ID => 1, self::NOTE_ID => 1]);
+		$sut = new ItemNotes(TestPDO::getInstance(), [self::ITEM_ID => 1, self::NOTE_ID => 1]);
 		$this->assertGreaterThan(0, $sut->set());
 		$this->assertGreaterThan(0, $sut->{self::ITEM_NOTE_ID});
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
-		$sut = new ItemNotes([self::ITEM_ID => 1, self::NOTE_ID => 1]);
+		$sut = new ItemNotes(TestPDO::getInstance(), [self::ITEM_ID => 1, self::NOTE_ID => 1]);
 		$sut->set();
 
-		$sut = new ItemNotes([self::ITEM_ID => 1, self::NOTE_ID => 1]);
+		$sut = new ItemNotes(TestPDO::getInstance(), [self::ITEM_ID => 1, self::NOTE_ID => 1]);
 		$this->assertEquals(1, $sut->set());
 		$this->assertEquals(1, $sut->{self::ITEM_NOTE_ID});
 	}
@@ -121,7 +123,7 @@ class ItemNotesTest extends PicnicTestCase {
 	}
 
 	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {
-		$item = new Note();
+		$item = new Note(TestPDO::getInstance());
 		$itemId = $item->set();
 		$item->get();
 

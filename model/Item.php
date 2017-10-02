@@ -33,9 +33,13 @@ class Item {
 	private $_status = '';
 	private $_created_at;
 	private $_updated_at;
-	
+	private $db;
+
 	// Constructor
-	function __construct($args = array()) {
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -60,9 +64,8 @@ class Item {
 	public function get(): Item {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Items WHERE itemID = :itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -93,9 +96,8 @@ class Item {
 						price = :price,
 						itemStatus = :status,
 						created_at = NULL";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':title', $this->_title );
 		$stmt->bindParam ( ':description', $this->_description );
 		$stmt->bindParam ( ':quantity', $this->_quantity );
@@ -103,7 +105,7 @@ class Item {
 		$stmt->bindParam ( ':price', $this->_price );
 		$stmt->bindParam ( ':status', $this->_status );
 		$stmt->execute ();
-		$this->_itemID = $db->lastInsertId ();
+		$this->_itemID = $this->db->lastInsertId ();
 		if ($this->_itemID > 0) {
 			return $this->_itemID;
 		} else {
@@ -121,9 +123,8 @@ class Item {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Items WHERE itemID = :itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -155,9 +156,8 @@ class Item {
 							price = :price,
 							itemStatus = :status
 						WHERE itemID = :itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->bindParam ( ':title', $this->_title );
 			$stmt->bindParam ( ':description', $this->_description );
@@ -181,9 +181,8 @@ class Item {
 			
 			$query = "DELETE FROM Items
 						WHERE itemID = :itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
@@ -203,9 +202,8 @@ class Item {
 	public function exists(): bool{
 		if ($this->_itemID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Items WHERE itemID = :itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );

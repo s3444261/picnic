@@ -33,7 +33,8 @@ $updateItemNote= false;
 $deleteItemNote = false;
 $addSellerRating= false;
 $addBuyerRating = false;
-$h = new Humphree();
+
+$h = new Humphree(TestPDO::getInstance());
 
 // Test createAccount()
 
@@ -48,7 +49,7 @@ $_SESSION['user']['user'] = 'peter';
 $_SESSION['user']['email'] = 'peter@gmail.com';
 $_SESSION['user']['password'] = 'TestTest88';
 if($h->addUser()){
-	$user = new User();
+	$user = new User(TestPDO::getInstance());
 	$user->userID = 1;
 	$user->get();
 	if($user->user == 'peter'
@@ -74,7 +75,7 @@ $_SESSION['user']['password'] = 'TestTest99';
 $_SESSION['user']['status'] = 'admin';
 $_SESSION['user']['activate'] = 'blahblahblah';
 if($h->updateUser()){
-	$user = new User();
+	$user = new User(TestPDO::getInstance());
 	$user->userID = 1;
 	$user->get();
 	if($user->user == 'john'
@@ -185,7 +186,7 @@ seed();
 $_SESSION['user']['userID'] = 2;
 $h->deleteUser();
 
-$user = new User();
+$user = new User(TestPDO::getInstance());
 $user->userID = 2;
 if($user->exists()){
 	$hError = $hError . 'deleteUser Failed.<br />';
@@ -194,10 +195,10 @@ if($user->exists()){
 	$deleteUser = true;
 }
 
-DatabaseGenerator::Generate();
+DatabaseGenerator::Generate(TestPDO::getInstance());
 
 // Test addCategory()
-$category = new Category();
+$category = new Category(TestPDO::getInstance());
 $category->parentID = 0;
 $category->category = 'Category';
 $category->set();
@@ -210,11 +211,11 @@ $_SESSION['category']['parentID'] = 1;
 $_SESSION['category']['category'] = 'Category2';
 $h->addCategory();
 
-$category1 = new Category();
+$category1 = new Category(TestPDO::getInstance());
 $category1->categoryID = 2;
 $category1->get();
 
-$category2 = new Category();
+$category2 = new Category(TestPDO::getInstance());
 $category2->categoryID = 3;
 $category2->get();
 
@@ -231,7 +232,7 @@ $_SESSION['category']['parentID'] = 2;
 $_SESSION['category']['category'] = 'Category3';
 $h->updateCategory();
 
-$category = new Category();
+$category = new Category(TestPDO::getInstance());
 $category->categoryID = 3;
 $category->get();
 
@@ -284,7 +285,7 @@ seed();
 $_SESSION['category']['categoryID']= 3;
 $h->deleteCategory();
 
-$category = new Category();
+$category = new Category(TestPDO::getInstance());
 $category->categoryID = 3;
 if($category->exists()){
 	$hError = $hError . 'deleteCategory Failed.<br />';
@@ -575,7 +576,7 @@ $h->addItem();
 $resultString = '';
 $testString = '17addTitleaddDescriptionaddQuantityaicapriceaddStatus';
 
-$item = new Item();
+$item = new Item(TestPDO::getInstance());
 $item->itemID = 17;
 $item->get();
 
@@ -604,7 +605,7 @@ $h->updateItem();
 $resultString = '';
 $testString = '17updateTitleupdateDescriptionupdateQuantityuicupriceupdateStatus';
 
-$item = new Item();
+$item = new Item(TestPDO::getInstance());
 $item->itemID = 17;
 $item->get();
 
@@ -628,7 +629,7 @@ if($testString == $resultString){
 $_SESSION['item']['itemID']= 16;
 $h->deleteItem();
 
-$item = new Item();
+$item = new Item(TestPDO::getInstance());
 $item->itemID = 16;
 if($item->exists()){
 	$hError = $hError . 'deleteItem Failed.<br />';
@@ -752,7 +753,7 @@ $h->deleteItemComment();
 
 $testCommentID = 289;
 
-$ic = new ItemComments();
+$ic = new ItemComments(TestPDO::getInstance());
 $ic->commentID = $testCommentID;
 
 try {
@@ -760,7 +761,7 @@ try {
 } catch (ItemCommentsException $e){
 
 	if($e->getError () == 'Could not retrieve itemComment.'){
-		$c = new Comment();
+		$c = new Comment(TestPDO::getInstance());
 		$c->commentID = $testCommentID;
 		if(!$c->get()){
 			$deleteItemComment = true;
@@ -873,7 +874,7 @@ $h->deleteItemNote();
 
 $testNoteID = 145;
 
-$in = new ItemNotes();
+$in = new ItemNotes(TestPDO::getInstance());
 $in->noteID = $testNoteID;
 
 try {
@@ -881,7 +882,7 @@ try {
 } catch (ItemNotesException $e){
 	
 	if($e->getError () == 'Could not retrieve itemNote.'){
-		$n = new Note();
+		$n = new Note(TestPDO::getInstance());
 		$n->noteID = $testNoteID;
 		if(!$n->get()){
 			$deleteItemNote = true;
@@ -902,7 +903,7 @@ $_SESSION ['user_rating'] ['sellrating'] = 5;
 $h->addSellerRating();
 unset($_SESSION ['user_rating']);
 
-$ur = new UserRatings();
+$ur = new UserRatings(TestPDO::getInstance());
 $ur->user_ratingID = 1;
 $ur->get();
 
@@ -920,7 +921,7 @@ $_SESSION ['user_rating'] ['buyrating'] = 4;
 $_SESSION ['user_rating'] ['transaction'] = $ur->transaction;
 $h->addBuyerRating();
 
-$ur = new UserRatings();
+$ur = new UserRatings(TestPDO::getInstance());
 $ur->user_ratingID = 1;
 $ur->get(); 
 
@@ -946,9 +947,9 @@ if($addUser && $updateUser && $getUser && $getUsers && $disableUser  && $deleteU
 }
 
 function seed() {
-	DatabaseGenerator::Generate();
+	DatabaseGenerator::Generate(TestPDO::getInstance());
 	
-	$h = new Humphree();
+	$h = new Humphree(TestPDO::getInstance());
 	
 	unset($_SESSION['user']);
 	$_SESSION['user']['user'] = 'peter';
@@ -966,17 +967,17 @@ function seed() {
 	$_SESSION['user']['password'] = 'TestTest66';
 	$h->addUser();
 	
-	$category = new Category();
+	$category = new Category(TestPDO::getInstance());
 	$category->parentID = 0;
 	$category->category = 'Category';
 	$category->set();
 	
-	$category = new Category();
+	$category = new Category(TestPDO::getInstance());
 	$category->parentID = 1;
 	$category->category = 'Category1';
 	$category->set();
 	
-	$category = new Category();
+	$category = new Category(TestPDO::getInstance());
 	$category->parentID = 1;
 	$category->category = 'Category2';
 	$category->set();
@@ -990,7 +991,7 @@ function seed() {
 			// item
 			for($k = 1; $k < 5; $k++){
 				
-				$item = new Item();
+				$item = new Item(TestPDO::getInstance());
 				$item->title = 'title' . $k;
 				$item->description = 'description' . $k;
 				$item->quantity = 'quantity' . $k;
@@ -1005,12 +1006,12 @@ function seed() {
 					$catID = 3;
 				}
 				
-				$catItems = new CategoryItems();
+				$catItems = new CategoryItems(TestPDO::getInstance());
 				$catItems->categoryID = $catID;
 				$catItems->itemID = $item->itemID;
 				$catItems->set();
 				
-				$userItems = new UserItems();
+				$userItems = new UserItems(TestPDO::getInstance());
 				$userItems->userID = $i;
 				$userItems->itemID = $item->itemID;
 				$userItems->set();
@@ -1024,31 +1025,31 @@ function seed() {
 						$uID = 1;
 					}
 					
-					$comment = new Comment();
+					$comment = new Comment(TestPDO::getInstance());
 					$comment->comment = 'comment' . $l;
 					$comment->userID = $i;
 					$comment->commentID = $comment->set();
 					
-					$itemComment = new ItemComments();
+					$itemComment = new ItemComments(TestPDO::getInstance());
 					$itemComment->itemID = $item->itemID;
 					$itemComment->commentID = $comment->commentID;
 					$itemComment->set();
 					
-					$comment = new Comment();
+					$comment = new Comment(TestPDO::getInstance());
 					$comment->comment = 'comment' . $l;
 					$comment->userID = $uID;
 					$comment->commentID = $comment->set();
 					
-					$ItemComment = new ItemComments();
+					$ItemComment = new ItemComments(TestPDO::getInstance());
 					$itemComment->itemID = $item->itemID;
 					$itemComment->commentID = $comment->commentID;
 					$itemComment->set();
 					
-					$note = new Note();
+					$note = new Note(TestPDO::getInstance());
 					$note->note = 'note' . $l;
 					$note->noteID = $note->set();
 					
-					$itemNote = new ItemNotes();
+					$itemNote = new ItemNotes(TestPDO::getInstance());
 					$itemNote->itemID = $item->itemID;
 					$itemNote->noteID = $note->noteID;
 					$itemNote->set();

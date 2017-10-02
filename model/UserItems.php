@@ -27,9 +27,13 @@ class UserItems {
 	private $_userStatus = '';
 	private $_created_at;
 	private $_updated_at;
-	
+	private $db;
+
 	// Constructor
-	function __construct($args = array()) {
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -54,9 +58,8 @@ class UserItems {
 	public function get(): UserItems {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM User_items WHERE user_itemID = :user_itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user_itemID', $this->_user_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -82,9 +85,8 @@ class UserItems {
 		$query = "SELECT * FROM User_items 
 					WHERE userID = :userID
 					AND itemID = :itemID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':userID', $this->_userID );
 		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->execute ();
@@ -99,15 +101,14 @@ class UserItems {
 						itemID = :itemID,
 						relationship = :relationship,
 						userStatus = :userStatus";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->bindParam ( ':relationship', $this->_relationship );
 			$stmt->bindParam ( ':userStatus', $this->_userStatus );
 			$stmt->execute ();
-			$this->_user_itemID = $db->lastInsertId ();
+			$this->_user_itemID = $this->db->lastInsertId ();
 			if ($this->_user_itemID > 0) {
 				return $this->_user_itemID;
 			} else {
@@ -126,9 +127,8 @@ class UserItems {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM User_items WHERE user_itemID = :user_itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user_itemID', $this->_user_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -152,9 +152,8 @@ class UserItems {
 							relationship = :relationship,
 							userStatus = :userStatus
 						WHERE user_itemID = :user_itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user_itemID', $this->_user_itemID );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
@@ -176,9 +175,8 @@ class UserItems {
 			
 			$query = "DELETE FROM User_items
 						WHERE user_itemID = :user_itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user_itemID', $this->_user_itemID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
@@ -198,9 +196,8 @@ class UserItems {
 	public function exists(): bool {
 		if ($this->_user_itemID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM User_items WHERE user_itemID = :user_itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user_itemID', $this->_user_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -221,9 +218,8 @@ class UserItems {
 		$query = "SELECT COUNT(*) as num
 							FROM User_items
 							WHERE userID = :userID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':userID', $this->_userID );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -237,14 +233,13 @@ class UserItems {
 	public function getUserItems(): array {
 		
 		$query = "SELECT * FROM User_items WHERE userID = :userID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':userID', $this->_userID );
 		$stmt->execute ();
 		$objects = array();
 		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-			$item = new Item();
+			$item = new Item($this->db);
 			$item->itemID = $row ['itemID'];
 			$item->get();
 			

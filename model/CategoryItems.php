@@ -19,9 +19,13 @@ class CategoryItems {
 	private $_category_itemID= '';
 	private $_categoryID= '';
 	private $_itemID= '';
-	
+	private $db;
+
 	// Constructor
-	function __construct($args = array()) {
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -46,9 +50,8 @@ class CategoryItems {
 	public function get() {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Category_items WHERE category_itemID = :category_itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -70,9 +73,8 @@ class CategoryItems {
 		$query = "SELECT * FROM Category_items 
 					WHERE categoryID = :categoryID
 					AND itemID = :itemID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':categoryID', $this->_categoryID );
 		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->execute ();
@@ -85,13 +87,12 @@ class CategoryItems {
 			$query = "INSERT INTO Category_items
 					SET categoryID = :categoryID,
 						itemID = :itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
-			$this->_category_itemID = $db->lastInsertId ();
+			$this->_category_itemID = $this->db->lastInsertId ();
 			if ($this->_category_itemID > 0) {
 				return $this->_category_itemID;
 			} else {
@@ -110,9 +111,8 @@ class CategoryItems {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Category_items WHERE category_itemID = :category_itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -128,9 +128,8 @@ class CategoryItems {
 						SET categoryID = :categoryID,
 							itemID = :itemID
 						WHERE category_itemID = :category_itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
@@ -150,9 +149,8 @@ class CategoryItems {
 			
 			$query = "DELETE FROM Category_items
 						WHERE category_itemID = :category_itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
@@ -172,9 +170,8 @@ class CategoryItems {
 	public function exists() {
 		if ($this->_category_itemID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Category_items WHERE category_itemID = :category_itemID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -189,15 +186,14 @@ class CategoryItems {
 	}
 	
 	/*
-	 * Count number of occurences of an item for a category.
+	 * Count number of occurrences of an item for a category.
 	 */
 	public function count() {
 		$query = "SELECT COUNT(*) as num
 							FROM Category_items
 							WHERE categoryID = :categoryID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':categoryID', $this->_categoryID );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -211,14 +207,13 @@ class CategoryItems {
 	public function getCategoryItems(): array {
 		
 		$query = "SELECT * FROM Category_items WHERE categoryID = :categoryID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':categoryID', $this->_categoryID );
 		$stmt->execute ();
 		$objects = array();
 		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-			$item = new Item();
+			$item = new Item($this->db);
 			$item->itemID = $row ['itemID'];
 			$item->get();
 			

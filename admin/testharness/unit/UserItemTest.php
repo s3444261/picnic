@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
+require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
-require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/UserItems.php';
@@ -26,10 +26,12 @@ class UserItemTest extends PicnicTestCase {
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
 		// Be nice if we could mock out the database, but let's see how we go with that.
-		DatabaseGenerator::Generate();
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
 
 		// Insert a user.
-		$user = new User();
+		$user = new User($pdo);
 		$user->user = 'grant';
 		$user->email = 'grant@kinkead.net';
 		$user->password = 'TestTest88';
@@ -42,7 +44,7 @@ class UserItemTest extends PicnicTestCase {
 
 		// Insert three items and associate them with the user.
 		for($i = 0; $i < 3; $i++){
-			$item = new Item();
+			$item = new Item($pdo);
 			$itemId = $item->set();
 
 			$itemComment = $this->createDefaultSut();
@@ -53,11 +55,11 @@ class UserItemTest extends PicnicTestCase {
 	}
 
 	protected function createDefaultSut(){
-		return new UserItems();
+		return new UserItems(TestPDO::getInstance());
 	}
 
 	protected function createSutWithId($id){
-		return new UserItems([self::USER_ITEM_ID => $id]);
+		return new UserItems(TestPDO::getInstance(), [self::USER_ITEM_ID => $id]);
 	}
 
 	protected function getValidId() {
@@ -99,31 +101,31 @@ class UserItemTest extends PicnicTestCase {
 	}
 
 	public function testSetResultsInValidId(): void {
-		$sut = new UserItems([self::USER_ID => 1, self::ITEM_ID => 1]);
+		$sut = new UserItems(TestPDO::getInstance(), [self::USER_ID => 1, self::ITEM_ID => 1]);
 		$this->assertGreaterThan(0, $sut->set());
 		$this->assertGreaterThan(0, $sut->{self::USER_ITEM_ID});
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
-		$sut = new UserItems([self::USER_ID => 1, self::ITEM_ID => 1]);
+		$sut = new UserItems(TestPDO::getInstance(), [self::USER_ID => 1, self::ITEM_ID => 1]);
 		$sut->set();
 
-		$sut = new UserItems([self::USER_ID => 1, self::ITEM_ID => 1]);
+		$sut = new UserItems(TestPDO::getInstance(), [self::USER_ID => 1, self::ITEM_ID => 1]);
 		$this->assertEquals(1, $sut->set());
 		$this->assertEquals(1, $sut->{self::USER_ITEM_ID});
 	}
 
 	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {
-		$item = new Item();
+		$item = new Item(TestPDO::getInstance());
 		$itemId = $item->set();
 		$item->get();
 
-		$sut = new UserItems([self::USER_ITEM_ID => 1]);
+		$sut = new UserItems(TestPDO::getInstance(), [self::USER_ITEM_ID => 1]);
 		$sut->get();
 		$sut->{self::ITEM_ID} = $itemId;
 		$sut->update();
 
-		$sut = new UserItems([self::USER_ITEM_ID => 1]);
+		$sut = new UserItems(TestPDO::getInstance(), [self::USER_ITEM_ID => 1]);
 		$sut->get();
 
 		$this->assertEquals(4, $sut->{self::ITEM_ID});

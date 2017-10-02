@@ -19,8 +19,6 @@ define('BASE', ''); //'/' . MODULE);
 
 function __autoload($class) {
 	$dir = array (
-			'config/',
-			'connect/',
 			'controller/',
 			'model/'
 	);

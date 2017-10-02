@@ -31,7 +31,12 @@ class User {
 	private $_activate = '';
 	private $_created_at;
 	private $_updated_at;
-	function __construct($args = array()) {
+	private $db;
+
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -67,9 +72,8 @@ class User {
 	public function get(): User {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Users WHERE userID = :userID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -99,9 +103,8 @@ class User {
     					status = :status,
     					activate = :activate,
 						created_at = NULL";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':user', $this->_user );
 		$stmt->bindParam ( ':email', $this->_email );
 		$encryptedPassword = $this->encryptPassword ();
@@ -111,7 +114,7 @@ class User {
 		$activationCode = $this->activationCode ();
 		$stmt->bindParam ( ':activate', $activationCode );
 		$stmt->execute ();
-		$this->_userID = $db->lastInsertId ();
+		$this->_userID = $this->db->lastInsertId ();
 		if ($this->_userID > 0) {
 			return $this->_userID;
 		} else {
@@ -130,9 +133,8 @@ class User {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Users WHERE userID = :userID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -158,9 +160,8 @@ class User {
 							password = :password,
 							status = :status
 						WHERE userID = :userID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->bindParam ( ':user', $this->_user );
 			$stmt->bindParam ( ':email', $this->_email );
@@ -182,9 +183,8 @@ class User {
 			
 			$query = "DELETE FROM Users
 								WHERE userID = :userID";
-					
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
@@ -204,9 +204,8 @@ class User {
 	public function exists(): bool {
 		if ($this->_userID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Users WHERE userID = :userID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -227,9 +226,8 @@ class User {
 		$query = "SELECT COUNT(*) as numUsers
 							FROM Users
 							WHERE user = :user";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':user', $this->_user );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -243,9 +241,8 @@ class User {
 		$query = "SELECT COUNT(*) as numUsers
 							FROM Users
 							WHERE email = :email";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':email', $this->_email );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -273,16 +270,15 @@ class User {
 	 */
 	public function activate(): bool {
 		if ($this->exists ()) {
-			$us = new User ();
+			$us = new User ($this->db);
 			$us->userID = $this->_userID;
 			$us->get ( $this->initialStatus () );
 			if ($us->activate == $this->_activate) {
 				$query = "UPDATE Users
 							SET activate = NULL
 							WHERE userID = :userID";
-				
-				$db = Picnic::getInstance ();
-				$stmt = $db->prepare ( $query );
+
+				$stmt = $this->db->prepare ( $query );
 				$stmt->bindParam ( ':userID', $this->_userID );
 				$stmt->execute ();
 				return true;
@@ -301,9 +297,8 @@ class User {
 		
 		$query = "SELECT userID, user, email, status FROM Users
 					WHERE status != 'deleted'";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->execute ();
 		$users = array ();
 		
@@ -342,9 +337,8 @@ class User {
     				AND password = :password
     				AND (status != 'deleted' && status != 'suspended')
 					AND activate IS NULL";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':email', $this->_email );
 		$stmt->bindParam ( ':password', $this->_password );
 		$stmt->execute ();
@@ -392,9 +386,8 @@ class User {
     				AND password = :password
     				AND (status != 'deleted' || status != 'suspended')
 					AND activate IS NULL";
-	
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':email', $this->_email );
 		$stmt->bindParam ( ':password', $this->_password );
 		$stmt->execute ();

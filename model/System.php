@@ -12,7 +12,13 @@ if (session_status () == PHP_SESSION_NONE) {
 }
 class System {
 	const SUSPENDED = 'suspended';
-	
+	private $db;
+
+	// Constructor
+	function __construct(PDO $pdo) {
+		$this->db = $pdo;
+	}
+
 	/*
 	 * The createAccount() function allows a user to create their
 	 * own account and join Humphree granting them access to add
@@ -154,7 +160,7 @@ class System {
 	 * The getUser() function allows an administrator to retrieve a user.
 	 */
 	public function getUser($user): User {
-		$u = new User ();
+		$u = new User ($this->db);
 		$u->userID = $user->userID;
 		try {
 			$u = $u->get ();
@@ -168,7 +174,7 @@ class System {
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
 	public function getUsers(): array {
-		$users = new Users ();
+		$users = new Users ($this->db);
 		$usersArray = $users->getUsers ();
 		return $usersArray;
 	}
@@ -198,30 +204,30 @@ class System {
 		if ($user->userID > 0) {
 			
 			// Delete any comments and notes for any items held by the user and then delete the item.
-			$userItems = new UserItems ();
+			$userItems = new UserItems ($this->db);
 			$userItems->userID = $user->userID;
 			$items = $userItems->getUserItems ();
 			
 			foreach ( $items as $item ) {
 				if ($item->itemID > 0) {
-					$itemComments = new ItemComments ();
+					$itemComments = new ItemComments ($this->db);
 					$itemComments->itemID = $item->itemID;
 					$itComments = $itemComments->getComments ();
 					
 					foreach ( $itComments as $itComment ) {
 						
-						$comment = new Comment ();
+						$comment = new Comment ($this->db);
 						$comment->commentID = $itComment->commentID;
 						$comment->delete ();
 						$itComment->delete ();
 					}
 					
-					$itemNotes = new ItemNotes ();
+					$itemNotes = new ItemNotes ($this->db);
 					$itemNotes->itemID = $item->itemID;
 					$itNotes = $itemNotes->getNotes ();
 					
 					foreach ( $itNotes as $itNote ) {
-						$note = new Note ();
+						$note = new Note ($this->db);
 						$note->noteID = $itNote->noteID;
 						$note->delete ();
 						$itNote->delete ();
@@ -232,7 +238,7 @@ class System {
 			}
 			
 			// Delete any other comments made by the user
-			$comments = new Comments ();
+			$comments = new Comments ($this->db);
 			$comments->userID = $user->userID;
 			$userComments = $comments->getUserComments ();
 			
@@ -254,7 +260,7 @@ class System {
 	 * specify its position in the heirachy.
 	 */
 	public function addCategory($category): bool {
-		$cat = new Category ();
+		$cat = new Category ($this->db);
 		$cat = $category;
 		$cat->categoryID = $cat->set ();
 		if ($cat->categoryID > 1) {
@@ -269,7 +275,7 @@ class System {
 	 * its position in the heirachy.
 	 */
 	public function updateCategory($category): bool {
-		$cat = new Category ();
+		$cat = new Category ($this->db);
 		$cat = $category;
 		if ($cat->update ()) {
 			return true;
@@ -282,7 +288,7 @@ class System {
 	 * The getCategory() function retrieves a Category.
 	 */
 	public function getCategory($category): Category {
-		$c = new Category ();
+		$c = new Category ($this->db);
 		$c = $category;
 		try {
 			$c = $c->get ();
@@ -297,7 +303,7 @@ class System {
 	 */
 	public function getCategories(): array {
 		$c = array ();
-		$cat = new Category ();
+		$cat = new Category ($this->db);
 		$c = $cat->getCategories ();
 		return $c;
 	}
@@ -310,30 +316,30 @@ class System {
 		if ($category->categoryID > 0) {
 			
 			// Delete any comments and notes for any items held by the category and then delete the item.
-			$categoryItems = new CategoryItems ();
+			$categoryItems = new CategoryItems ($this->db);
 			$categoryItems->categoryID = $category->categoryID;
 			$items = $categoryItems->getCategoryItems ();
 			
 			foreach ( $items as $item ) {
 				if ($item->itemID > 0) {
-					$itemComments = new ItemComments ();
+					$itemComments = new ItemComments ($this->db);
 					$itemComments->itemID = $item->itemID;
 					$itComments = $itemComments->getComments ();
 					
 					foreach ( $itComments as $itComment ) {
 						
-						$comment = new Comment ();
+						$comment = new Comment ($this->db);
 						$comment->commentID = $itComment->commentID;
 						$comment->delete ();
 						$itComment->delete ();
 					}
 					
-					$itemNotes = new ItemNotes ();
+					$itemNotes = new ItemNotes ($this->db);
 					$itemNotes->itemID = $item->itemID;
 					$itNotes = $itemNotes->getNotes ();
 					
 					foreach ( $itNotes as $itNote ) {
-						$note = new Note ();
+						$note = new Note ($this->db);
 						$note->noteID = $itNote->noteID;
 						$note->delete ();
 						$itNote->delete ();
@@ -357,7 +363,7 @@ class System {
 	 */
 	public function countCategoryItems($category): int {
 		$numCategoryItems = 0;
-		$ci = new CategoryItems ();
+		$ci = new CategoryItems ($this->db);
 		$ci->categoryID = $category->categoryID;
 		$numCategoryItems = $ci->count ();
 		
@@ -369,7 +375,7 @@ class System {
 	 */
 	public function countItemComments($item): int {
 		$numItemComments = 0;
-		$ci = new ItemComments ();
+		$ci = new ItemComments ($this->db);
 		$ci->itemID = $item->itemID;
 		$numItemComments = $ci->count ();
 		
@@ -381,7 +387,7 @@ class System {
 	 */
 	public function countItemNotes($item): int {
 		$numItemNotes = 0;
-		$ci = new ItemNotes ();
+		$ci = new ItemNotes ($this->db);
 		$ci->itemID = $item->itemID;
 		$numItemNotes = $ci->count ();
 		
@@ -393,7 +399,7 @@ class System {
 	 */
 	public function getCategoryItems($category): array {
 		$ci = array ();
-		$c = new CategoryItems ();
+		$c = new CategoryItems ($this->db);
 		$c->categoryID = $category->categoryID;
 		$ci = $c->getCategoryItems ();
 		return $ci;
@@ -404,7 +410,7 @@ class System {
 	 */
 	public function countUserItems($user): int {
 		$numUserItems = 0;
-		$ui = new UserItems ();
+		$ui = new UserItems ($this->db);
 		$ui->userID = $user->userID;
 		$numUserItems = $ui->count ();
 		
@@ -416,7 +422,7 @@ class System {
 	 */
 	public function getUserItems($user): array {
 		$ui = array ();
-		$u = new UserItems ();
+		$u = new UserItems ($this->db);
 		$u->userID = $user->userID;
 		$ui = $u->getUserItems ();
 		return $ui;
@@ -426,7 +432,7 @@ class System {
 	 * The getItem() function retrieves an item.
 	 */
 	public function getItem($item): Item {
-		$i = new Item ();
+		$i = new Item ($this->db);
 		$i->itemID = $item->itemID;
 		try {
 			$i = $i->get ();
@@ -440,8 +446,8 @@ class System {
 	 * The addItem() function adds an item.
 	 */
 	public function addItem($user, $item): bool {
-		$i = new Item ();
-		$ui = new UserItems ();
+		$i = new Item ($this->db);
+		$ui = new UserItems ($this->db);
 		$i = $item;
 		$i->itemID = $i->set ();
 		if ($i->itemID > 1) {
@@ -462,7 +468,7 @@ class System {
 	 * The updateItem() function updates an item.
 	 */
 	public function updateItem($item): bool {
-		$i = new Item ();
+		$i = new Item ($this->db);
 		$i = $item;
 		if ($i->update ()) {
 			return true;
@@ -477,23 +483,23 @@ class System {
 	public function deleteItem($item): bool {
 		if ($item->itemID > 0) {
 			
-			$itemComments = new ItemComments ();
+			$itemComments = new ItemComments ($this->db);
 			$itemComments->itemID = $item->itemID;
 			$itComments = $itemComments->getComments ();
 			
 			foreach ( $itComments as $itComment ) {
-				$comment = new Comment ();
+				$comment = new Comment ($this->db);
 				$comment->commentID = $itComment->commentID;
 				$comment->delete ();
 				$itComment->delete ();
 			}
 			
-			$itemNotes = new ItemNotes ();
+			$itemNotes = new ItemNotes ($this->db);
 			$itemNotes->itemID = $item->itemID;
 			$itNotes = $itemNotes->getNotes ();
 			
 			foreach ( $itNotes as $itNote ) {
-				$note = new Note ();
+				$note = new Note ($this->db);
 				$note->noteID = $itNote->noteID;
 				$note->delete ();
 				$itNote->delete ();
@@ -512,12 +518,12 @@ class System {
 	 * The getItemComments() function retrieves all comments for an item.
 	 */
 	public function getItemComments($item): array {
-		$ic = new ItemComments ();
+		$ic = new ItemComments ($this->db);
 		$ic->itemID = $item->itemID;
 		$icids = $ic->getComments ();
 		$comments = array ();
 		foreach ( $icids as $icid ) {
-			$comment = new Comment ();
+			$comment = new Comment ($this->db);
 			$comment->commentID = $icid->commentID;
 			$comment->get ();
 			$comments [] = $comment;
@@ -529,7 +535,7 @@ class System {
 	 * The getItemComment() function retrieves an itemComment.
 	 */
 	public function getItemComment($comment): Comment {
-		$c = new Comment ();
+		$c = new Comment ($this->db);
 		$c->commentID = $comment->commentID;
 		$c->get ();
 		return $c;
@@ -539,12 +545,12 @@ class System {
 	 * The addItemComment() function adds an itemComment.
 	 */
 	public function addItemComment($user, $item, $comment): bool {
-		$c = new Comment ();
+		$c = new Comment ($this->db);
 		$c->userID = $user->userID;
 		$c->comment = $comment->comment;
 		$c->commentID = $c->set ();
 		if ($c->commentID > 0) {
-			$ic = new ItemComments ();
+			$ic = new ItemComments ($this->db);
 			$ic->itemID = $item->itemID;
 			$ic->commentID = $c->commentID;
 			$ic->item_commentID = $ic->set ();
@@ -562,7 +568,7 @@ class System {
 	 * The updateItemComment() function updates an itemComment.
 	 */
 	public function updateItemComment($comment): bool {
-		$c = new Comment ();
+		$c = new Comment ($this->db);
 		$c->commentID = $comment->commentID;
 		$c->userID = $comment->userID;
 		$c->comment = $comment->comment;
@@ -577,9 +583,9 @@ class System {
 	 * The deleteItemComment() function deletes an itemComment and all associated database content.
 	 */
 	public function deleteItemComment($comment): bool {
-		$c = new Comment ();
+		$c = new Comment ($this->db);
 		$c->commentID = $comment->commentID;
-		$ic = new ItemComments ();
+		$ic = new ItemComments ($this->db);
 		$ic->commentID = $comment->commentID;
 		if ($ic->deleteComment()) {
 			if ($c->delete ()) {
@@ -596,12 +602,12 @@ class System {
 	 * The getItemNotes() retrieves all notes for an item.
 	 */
 	public function getItemNotes($item): array {
-		$in = new ItemNotes ();
+		$in = new ItemNotes ($this->db);
 		$in->itemID = $item->itemID;
 		$inids = $in->getNotes ();
 		$notes = array ();
 		foreach ( $inids as $inid ) {
-			$note = new Note ();
+			$note = new Note ($this->db);
 			$note->noteID = $inid->noteID;
 			$note->get ();
 			$notes [] = $note;
@@ -613,7 +619,7 @@ class System {
 	 * The getItemNote() retrieves a note.
 	 */
 	public function getItemNote($note): Note {
-		$n = new Note ();
+		$n = new Note ($this->db);
 		$n->noteID = $note->noteID;
 		$n->get ();
 		return $n;
@@ -623,11 +629,11 @@ class System {
 	 * The addItemNote() function adds an itemNote.
 	 */
 	public function addItemNote($item, $note): bool {
-		$n = new Note ();
+		$n = new Note ($this->db);
 		$n->note = $note->note;
 		$n->noteID = $n->set ();
 		if ($n->noteID > 0) {
-			$ic = new ItemNotes ();
+			$ic = new ItemNotes ($this->db);
 			$ic->itemID = $item->itemID;
 			$ic->noteID = $n->noteID;
 			$ic->item_noteID = $ic->set ();
@@ -645,7 +651,7 @@ class System {
 	 * The updateItemNote() function updates an itemNote.
 	 */
 	public function updateItemNote($note): bool {
-		$n = new Note ();
+		$n = new Note ($this->db);
 		$n->noteID = $note->noteID;
 		$n->note = $note->note;
 		if ($n->update ()) {
@@ -659,9 +665,9 @@ class System {
 	 * The deleteItemNote() function deletes an itemNote and all associated database content.
 	 */
 	public function deleteItemNote($note) {
-		$n = new Note ();
+		$n = new Note ($this->db);
 		$n->noteID = $note->noteID;
-		$in = new ItemNotes ();
+		$in = new ItemNotes ($this->db);
 		$in->noteID = $note->noteID;
 		if ($in->deleteNote ()) {
 			if ($n->delete ()) {
@@ -679,7 +685,7 @@ class System {
 	 */
 	public function addSellerRating($sellerRating): bool {
 		
-		$ur = new UserRatings ();
+		$ur = new UserRatings ($this->db);
 		$ur->itemID = $sellerRating->itemID;
 		$ur->sellrating = $sellerRating->sellrating;
 		$ur->user_ratingID = $ur->set (); 
@@ -694,7 +700,7 @@ class System {
 	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
 	 */
 	public function addBuyerRating($buyerRating): bool {
-		$ur = new UserRatings ();
+		$ur = new UserRatings ($this->db);
 		$ur->userID = $buyerRating->userID;
 		$ur->buyrating = $buyerRating->buyrating;
 		$ur->transaction = $buyerRating->transaction; 

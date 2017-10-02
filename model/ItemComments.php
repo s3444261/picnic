@@ -19,9 +19,13 @@ class ItemComments {
 	private $_item_commentID= '';
 	private $_itemID= '';
 	private $_commentID= '';
-	
+	private $db;
+
 	// Constructor
-	function __construct($args = array()) {
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -46,9 +50,8 @@ class ItemComments {
 	public function get() {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Item_comments WHERE item_commentID = :item_commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':item_commentID', $this->_item_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -70,9 +73,8 @@ class ItemComments {
 		$query = "SELECT * FROM Item_comments 
 					WHERE itemID = :itemID
 					AND commentID = :commentID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->bindParam ( ':commentID', $this->_commentID );
 		$stmt->execute ();
@@ -85,13 +87,12 @@ class ItemComments {
 			$query = "INSERT INTO Item_comments
 					SET itemID = :itemID,
 						commentID = :commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
-			$this->_item_commentID = $db->lastInsertId ();
+			$this->_item_commentID = $this->db->lastInsertId ();
 			if ($this->_item_commentID > 0) {
 				return $this->_item_commentID;
 			} else {
@@ -110,9 +111,8 @@ class ItemComments {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Item_comments WHERE item_commentID = :item_commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':item_commentID', $this->_item_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -128,9 +128,8 @@ class ItemComments {
 						SET itemID = :itemID,
 							commentID = :commentID
 						WHERE item_commentID = :item_commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':item_commentID', $this->_item_commentID );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
@@ -150,9 +149,8 @@ class ItemComments {
 			
 			$query = "DELETE FROM Item_comments
 						WHERE item_commentID = :item_commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':item_commentID', $this->_item_commentID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
@@ -172,9 +170,8 @@ class ItemComments {
 	public function exists() {
 		if ($this->_item_commentID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Item_comments WHERE item_commentID = :item_commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':item_commentID', $this->_item_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -195,9 +192,8 @@ class ItemComments {
 		$query = "SELECT COUNT(*) as num
 							FROM Item_comments
 							WHERE itemID = :itemID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -210,14 +206,13 @@ class ItemComments {
 	public function getComments(){
 		
 		$query = "SELECT * FROM Item_comments WHERE itemID = :itemID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->execute ();
 		$objects = array();
 		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-			$itemComment = new ItemComments();
+			$itemComment = new ItemComments($this->db);
 			$itemComment->item_commentID = $row ['item_commentID'];
 			$itemComment->itemID = $row ['itemID'];
 			$itemComment->commentID = $row ['commentID'];
@@ -234,9 +229,8 @@ class ItemComments {
 	public function getItemComment() {
 		
 		$query = "SELECT * FROM Item_comments WHERE commentID = :commentID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':commentID', $this->_commentID );
 		$stmt->execute ();
 		if($stmt->rowCount() > 0){
@@ -254,14 +248,13 @@ class ItemComments {
 	 */
 	public function deleteComment() {
 		
-		$comment = new Comment();
+		$comment = new Comment($this->db);
 		$comment->commentID = $this->_commentID;
 			
 			$query = "DELETE FROM Item_comments
 						WHERE commentID = :commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
 			if (! $this->exists ()) {

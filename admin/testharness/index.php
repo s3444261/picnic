@@ -12,10 +12,11 @@ $humphree = false;
 
 $humphreeStatus = '';
 
+include __DIR__ . '/unit/TestPDO.php';
 include __DIR__ . '/../createDB/DatabaseGenerator.php';
 
 // System Tests
-DatabaseGenerator::Generate();
+DatabaseGenerator::Generate(TestPDO::getInstance());
 include 'system/test.humphree.php';
 
 if($humphree){

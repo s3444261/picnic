@@ -10,7 +10,12 @@
 
 class Users {
 
-	function __construct($args = array()) {
+	private $db;
+
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -34,13 +39,12 @@ class Users {
 	public function getUsers(): array {
 		
 		$query = "SELECT userID FROM Users ORDER BY userID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db ->prepare ( $query );
 		$stmt->execute ();
 		$objects = array ();
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
-			$user = new User();
+			$user = new User($this->db);
 			$user->userID = $row['userID'];
 			try {
 				$user->get();

@@ -28,9 +28,12 @@ class UserRatings {
 	private $_transaction = '';
 	private $_created_at;
 	private $_updated_at;
-	
-	// Constructor
-	function __construct($args = array()) {
+	private $db;
+
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -55,9 +58,8 @@ class UserRatings {
 	public function get() {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM User_ratings WHERE user_ratingID = :user_ratingID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -85,16 +87,15 @@ class UserRatings {
 						buyrating = :buyrating,
 						transaction = :transaction,
 						created_at = NULL";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->bindParam ( ':sellrating', $this->_sellrating );
 		$stmt->bindParam ( ':buyrating', $this->_buyrating );
 		$transactionCode = $this->transactionCode();
 		$stmt->bindParam ( ':transaction', $transactionCode);
 		$stmt->execute ();
-		$this->_user_ratingID = $db->lastInsertId ();
+		$this->_user_ratingID = $this->db->lastInsertId ();
 		if ($this->_user_ratingID > 0) {
 			return $this->_user_ratingID;
 		} else {
@@ -112,9 +113,8 @@ class UserRatings {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM User_ratings WHERE user_ratingID = :user_ratingID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -142,9 +142,8 @@ class UserRatings {
 							buyrating = :buyrating,
 							transaction = :transaction
 						WHERE user_ratingID = :user_ratingID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->bindParam ( ':sellrating', $this->_sellrating );
@@ -167,9 +166,8 @@ class UserRatings {
 			
 			$query = "DELETE FROM User_ratings
 						WHERE user_ratingID = :user_ratingID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
@@ -189,9 +187,8 @@ class UserRatings {
 	public function exists() {
 		if ($this->_user_ratingID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM User_ratings WHERE user_ratingID = :user_ratingID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -212,9 +209,8 @@ class UserRatings {
 		$query = "SELECT COUNT(*) as num
 							FROM User_ratings
 							WHERE itemID = :itemID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -229,9 +225,8 @@ class UserRatings {
 	 */
 	public function updateTransaction(): bool {
 		$query = "SELECT * FROM User_ratings WHERE transaction = :transaction";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':transaction', $this->_transaction );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );

@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
+require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
-require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/Note.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
@@ -27,10 +27,12 @@ class CommentTest extends PicnicTestCase{
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
 		// Be nice if we could mock out the database, but let's see how we go with that.
-		DatabaseGenerator::Generate();
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
 
 		// Insert a user.
-		$user = new User ();
+		$user = new User ($pdo);
 		$user->user = 'grant';
 		$user->email = 'grant@kinkead.net';
 		$user->password = 'TestTest88';
@@ -42,18 +44,18 @@ class CommentTest extends PicnicTestCase{
 		$user->update ();
 
 		// Insert a comment and associate it with the user.
-		$root = new Comment();
+		$root = new Comment($pdo);
 		$root->{self::USER_ID} = 1;
 		$root->{self::COMMENT_TEXT} = 'hi there, world!';
 		$root->set();
 	}
 
 	protected function createDefaultSut(){
-		return new Comment();
+		return new Comment(TestPDO::getInstance());
 	}
 
 	protected function createSutWithId($id){
-		return new Comment([self::COMMENT_ID => $id]);
+		return new Comment(TestPDO::getInstance(), [self::COMMENT_ID => $id]);
 	}
 
 	protected function getValidId() {

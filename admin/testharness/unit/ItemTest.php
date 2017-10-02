@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
+require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
-require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
 
 class ItemTest extends PicnicTestCase
@@ -29,7 +29,9 @@ class ItemTest extends PicnicTestCase
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
 		// Be nice if we could mock out the database, but let's see how we go with that.
-		DatabaseGenerator::Generate();
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
 
 		// Insert an item.
 		$args = [
@@ -43,16 +45,16 @@ class ItemTest extends PicnicTestCase
 			self::MODIFIED_DATE => '2015-02-13'
 		];
 
-		$item = new Item($args);
+		$item = new Item($pdo, $args);
 		$item->set();
 	}
 
 	protected function createDefaultSut() {
-		return new Item();
+		return new Item(TestPDO::getInstance());
 	}
 
 	protected function createSutWithId($id) {
-		return new Item([self::ITEM_ID => $id]);
+		return new Item(TestPDO::getInstance(), [self::ITEM_ID => $id]);
 	}
 
 	protected function getValidId() {
@@ -98,7 +100,7 @@ class ItemTest extends PicnicTestCase
 	}
 
 	public function testSetResultsInValidId(): void {
-		$sut = new Item();
+		$sut = new Item(TestPDO::getInstance());
 		$this->assertGreaterThan(0, $sut->set());
 		$this->assertGreaterThan(0, $sut->{self::ITEM_ID});
 	}
@@ -115,7 +117,7 @@ class ItemTest extends PicnicTestCase
 		$sut->{self::STATUS} 		= 'newStatus';
 		$sut->update();
 
-		$sut = new Item([self::ITEM_ID => 1]);
+		$sut = new Item(TestPDO::getInstance(), [self::ITEM_ID => 1]);
 		$sut->get();
 
 		$this->assertEquals('newTitle', 		$sut->{self::TITLE});

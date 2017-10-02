@@ -8,13 +8,14 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-include __DIR__ . '/../admin/createDB/DatabaseGenerator.php';
+require_once  __DIR__ . '/../admin/createDB/DatabaseGenerator.php';
+require_once  __DIR__ . '/../config/Picnic.php';
 
 class CreateDBController {
 	public function index()
 	{
-		DatabaseGenerator::Generate();
-		DatabaseGenerator::Populate();
+		DatabaseGenerator::Generate(Picnic::getInstance());
+		DatabaseGenerator::Populate(Picnic::getInstance());
 
 		include __DIR__ . '/../view/layout/createDB.php';
 	}

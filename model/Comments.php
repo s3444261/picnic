@@ -11,9 +11,12 @@
 class Comments {
 	
 	private $_userID = '';
-	
-	// Constructor
-	function __construct($args = array()) {
+	private $db;
+
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -37,14 +40,13 @@ class Comments {
 	public function getUserComments(): array {
 		
 			$query = "SELECT * FROM Comments WHERE userID = :userID"; 
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->execute (); 
 			$objects = array();
 			while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-				$comment = new Comment();
+				$comment = new Comment($this->db);
 				$comment->commentID = $row ['commentID'];
 				$comment->userID = $row ['userID'];
 				$comment->comment = $row ['comment'];

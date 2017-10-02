@@ -23,9 +23,13 @@ class Comment {
 	private $_comment = '';
 	private $_created_at;
 	private $_updated_at;
-	
+	private $db;
+
 	// Constructor
-	function __construct($args = array()) {
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -50,9 +54,8 @@ class Comment {
 	public function get() {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Comments WHERE commentID = :commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -75,13 +78,12 @@ class Comment {
 					SET userID = :userID,
 						comment = :comment,
 						created_at = NULL";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':userID', $this->_userID );
 		$stmt->bindParam ( ':comment', $this->_comment );
 		$stmt->execute ();
-		$this->_commentID = $db->lastInsertId ();
+		$this->_commentID = $this->db->lastInsertId ();
 		if ($this->_commentID > 0) {
 			return $this->_commentID;
 		} else {
@@ -99,9 +101,8 @@ class Comment {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Comments WHERE commentID = :commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -117,9 +118,8 @@ class Comment {
 						SET userID = :userID,
 							comment = :comment
 						WHERE commentID = :commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->bindParam ( ':comment', $this->_comment );
@@ -139,9 +139,8 @@ class Comment {
 			
 			$query = "DELETE FROM Comments
 						WHERE commentID = :commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
@@ -161,9 +160,8 @@ class Comment {
 	public function exists() {
 		if ($this->_commentID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Comments WHERE commentID = :commentID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -184,9 +182,8 @@ class Comment {
 		$query = "SELECT COUNT(*) as num
 							FROM Comments
 							WHERE userID = :userID";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':userID', $this->_userID );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );

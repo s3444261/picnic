@@ -21,9 +21,13 @@ class Note {
 	private $_note = '';
 	private $_created_at;
 	private $_updated_at;
-	
+	private $db;
+
 	// Constructor
-	function __construct($args = array()) {
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -48,9 +52,8 @@ class Note {
 	public function get() {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Notes WHERE noteID = :noteID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -71,12 +74,11 @@ class Note {
 		$query = "INSERT INTO Notes
 					SET note = :note,
 						created_at = NULL";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':note', $this->_note );
 		$stmt->execute ();
-		$this->_noteID = $db->lastInsertId ();
+		$this->_noteID = $this->db->lastInsertId ();
 		if ($this->_noteID > 0) {
 			return $this->_noteID;
 		} else {
@@ -94,9 +96,8 @@ class Note {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Notes WHERE noteID = :noteID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -108,9 +109,8 @@ class Note {
 			$query = "UPDATE Notes
 						SET note = :note
 						WHERE noteID = :noteID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':noteID', $this->_noteID );
 			$stmt->bindParam ( ':note', $this->_note );
 			$stmt->execute ();
@@ -129,9 +129,8 @@ class Note {
 			
 			$query = "DELETE FROM Notes
 						WHERE noteID = :noteID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
@@ -151,9 +150,8 @@ class Note {
 	public function exists() {
 		if ($this->_noteID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Notes WHERE noteID = :noteID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );

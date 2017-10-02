@@ -24,9 +24,13 @@ class Category {
 	private $_category = '';
 	private $_created_at;
 	private $_updated_at;
-	
+	private $db;
+
 	// Constructor
-	function __construct($args = array()) {
+	function __construct(PDO $pdo, $args = array()) {
+
+		$this->db = $pdo;
+
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -53,9 +57,8 @@ class Category {
 	public function get(): Category {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Categories WHERE categoryID = :categoryID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -78,13 +81,13 @@ class Category {
 					SET parentID = :parentID,
 						category = :category,
 						created_at = NULL";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':parentID', $this->_parentID );
 		$stmt->bindParam ( ':category', $this->_category );
 		$stmt->execute ();
-		$this->_categoryID = $db->lastInsertId ();
+
+		$this->_categoryID = $this->db->lastInsertId ();
 		if ($this->_categoryID > 0) {
 			return $this->_categoryID;
 		} else {
@@ -102,9 +105,8 @@ class Category {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Categories WHERE categoryID = :categoryID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -120,9 +122,8 @@ class Category {
 						SET parentID = :parentID,
 							category = :category
 						WHERE categoryID = :categoryID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->bindParam ( ':parentID', $this->_parentID );
 			$stmt->bindParam ( ':category', $this->_category );
@@ -142,9 +143,8 @@ class Category {
 			
 			$query = "DELETE FROM Categories
 						WHERE categoryID = :categoryID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
@@ -164,9 +164,8 @@ class Category {
 	public function exists(): bool {
 		if ($this->_categoryID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Categories WHERE categoryID = :categoryID";
-			
-			$db = Picnic::getInstance ();
-			$stmt = $db->prepare ( $query );
+
+			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -187,14 +186,13 @@ class Category {
 	public function getCategories(): array {
 		
 		$query = "SELECT * FROM Categories";
-		
-		$db = Picnic::getInstance ();
-		$stmt = $db->prepare ( $query );
+
+		$stmt = $this->db->prepare ( $query );
 		$stmt->execute ();
 		$objects = array();
 		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
 			
-			$object = new Category();
+			$object = new Category($this->db);
 			$object->_categoryID = $row ['categoryID'];
 			$object->_parentID = $row ['parentID'];
 			$object->_category = $row ['category'];

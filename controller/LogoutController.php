@@ -9,12 +9,13 @@
  */
 
 require_once __DIR__ . '/../model/User.php';
+require_once __DIR__ . '/../config/Picnic.php';
 
 class LogoutController
 {
 	// Log the user out.
 	public function index() {
-		$user = new User ();
+		$user = new User (Picnic::getInstance());
 		$user->logout ();
 		header ( 'Location: Home' );
 	}

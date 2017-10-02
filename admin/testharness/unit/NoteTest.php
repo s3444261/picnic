@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
+require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
-require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/Note.php';
 
 class NoteTest extends PicnicTestCase {
@@ -24,21 +24,23 @@ class NoteTest extends PicnicTestCase {
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
 		// Be nice if we could mock out the database, but let's see how we go with that.
-		DatabaseGenerator::Generate();
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
 
 		// Insert a note.
-		$root = new Note();
+		$root = new Note($pdo);
 		$root->{self::NOTE_ID} = 1;
 		$root->{self::NOTE_TEXT} = 'hi there, world!';
 		$root->set();
 	}
 
 	protected function createDefaultSut(){
-		return new Note();
+		return new Note(TestPDO::getInstance());
 	}
 
 	protected function createSutWithId($id){
-		return new Note([self::NOTE_ID => $id]);
+		return new Note(TestPDO::getInstance(), [self::NOTE_ID => $id]);
 	}
 
 	protected function getValidId() {
@@ -73,7 +75,7 @@ class NoteTest extends PicnicTestCase {
 	}
 
 	public function testSetResultsInValidId(): void {
-		$sut = new Note([self::NOTE_ID => 1, self::NOTE_TEXT =>'text1']);
+		$sut = new Note(TestPDO::getInstance(), [self::NOTE_ID => 1, self::NOTE_TEXT =>'text1']);
 		$this->assertGreaterThan(0, $sut->set());
 		$this->assertGreaterThan(0, $sut->{self::NOTE_ID});
 	}

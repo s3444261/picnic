@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
+require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
-require_once dirname(__FILE__) . '/../../../config/Picnic.php';
 require_once dirname(__FILE__) . '/../../../model/Category.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/CategoryItems.php';
@@ -27,10 +27,13 @@ class CategoryItemTest extends PicnicTestCase {
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
 		// Be nice if we could mock out the database, but let's see how we go with that.
-		DatabaseGenerator::Generate();
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+
+		DatabaseGenerator::Generate($pdo);
 
 		// Insert a category.
-		$root = new Category();
+		$root = new Category($pdo);
 		$root->{self::CATEGORY_ID} = 1;
 		$root->{self::CATEGORY_NAME} = 'Category';
 		$root->{self::PARENT_ID} = 0;
@@ -38,22 +41,22 @@ class CategoryItemTest extends PicnicTestCase {
 
 		// Insert three new items, and map each to the category.
 		for($i = 0; $i < 3; $i++){
-			$item = new Item();
+			$item = new Item($pdo);
 			$itemId = $item->set();
 			$item->get();
 
-			$categoryItem = new CategoryItems([self::ITEM_ID => $itemId, self::CATEGORY_ID => 1]);
+			$categoryItem = new CategoryItems($pdo, [self::ITEM_ID => $itemId, self::CATEGORY_ID => 1]);
 			$categoryItem ->set();
 			$categoryItem ->get();
 		}
 	}
 
 	protected function createDefaultSut(){
-		return new CategoryItems();
+		return new CategoryItems(TestPDO::getInstance());
 	}
 
 	protected function createSutWithId($id){
-		return new CategoryItems([self::CATEGORY_ITEM_ID => $id]);
+		return new CategoryItems(TestPDO::getInstance(), [self::CATEGORY_ITEM_ID => $id]);
 	}
 	protected function getValidId() {
 		return 1;
@@ -87,37 +90,37 @@ class CategoryItemTest extends PicnicTestCase {
 	}
 
 	public function testCountReturnsTotalNumberOfItemsInCategory(): void {
-		$sut = new CategoryItems([ self::CATEGORY_ITEM_ID => 1]);
+		$sut = new CategoryItems(TestPDO::getInstance(), [ self::CATEGORY_ITEM_ID => 1]);
 		$sut->get();
 		$this->assertEquals(3, $sut->count());
 	}
 
 	public function testSetResultsInValidId(): void {
-		$sut = new CategoryItems([self::CATEGORY_ID => 1, self::ITEM_ID => 1]);
+		$sut = new CategoryItems(TestPDO::getInstance(), [self::CATEGORY_ID => 1, self::ITEM_ID => 1]);
 		$this->assertGreaterThan(0, $sut->set());
 		$this->assertGreaterThan(0, $sut->{self::CATEGORY_ITEM_ID});
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
-		$sut = new CategoryItems([self::CATEGORY_ID => 1, self::ITEM_ID => 1]);
+		$sut = new CategoryItems(TestPDO::getInstance(), [self::CATEGORY_ID => 1, self::ITEM_ID => 1]);
 		$sut->set();
 
-		$sut = new CategoryItems([self::CATEGORY_ID => 1, self::ITEM_ID => 1]);
+		$sut = new CategoryItems(TestPDO::getInstance(), [self::CATEGORY_ID => 1, self::ITEM_ID => 1]);
 		$this->assertEquals(1, $sut->set());
 		$this->assertEquals(1, $sut->{self::CATEGORY_ITEM_ID});
 	}
 
 	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {
-		$item = new Item();
+		$item = new Item(TestPDO::getInstance());
 		$itemId = $item->set();
 		$item->get();
 
-		$sut = new CategoryItems([self::CATEGORY_ITEM_ID => 1]);
+		$sut = new CategoryItems(TestPDO::getInstance(), [self::CATEGORY_ITEM_ID => 1]);
 		$sut->get();
 		$sut->{self::ITEM_ID} = $itemId;
 		$sut->update();
 
-		$sut = new CategoryItems([self::CATEGORY_ITEM_ID => 1]);
+		$sut = new CategoryItems(TestPDO::getInstance(), [self::CATEGORY_ITEM_ID => 1]);
 		$sut->get();
 
 		$this->assertEquals(4, $sut->{self::ITEM_ID});

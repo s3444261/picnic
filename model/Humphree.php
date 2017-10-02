@@ -11,7 +11,16 @@ if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }
 class Humphree {
-	
+
+	private $db;
+   private $system;
+
+	// Constructor
+	function __construct(PDO $pdo) {
+		$this->db = $pdo;
+		$this->system = new System($pdo);
+	}
+
 	/*
 	 * The createAccount() function allows a user to create their
 	 * own account and join Humphree granting them access to add
@@ -20,13 +29,13 @@ class Humphree {
 	public function createAccount(): bool {
 		// TO DO
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->user = $_SESSION ['user'] ['user'];
 			$user->email = $_SESSION ['user'] ['email'];
 			$user->password = $_SESSION ['user'] ['password'];
 			unset ( $_SESSION ['user'] );
-			$system = new System ();
-			if ($system->createAccount ( $user )) {
+
+			if ($this->system->createAccount ( $user )) {
 				return true;
 			} else {
 				return false;
@@ -43,11 +52,10 @@ class Humphree {
 	public function activateAccount(): bool {
 		// TO DO
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->userID = $_SESSION ['user'] ['userID'];
 			unset ( $_SESSION ['user'] );
-			$system = new System ();
-			if ($system->activateAccount ( $user )) {
+			if ($this->system->activateAccount ( $user )) {
 				return true;
 			} else {
 				return false;
@@ -64,12 +72,11 @@ class Humphree {
 	public function changePassword(): bool {
 		// TO DO
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->userID = $_SESSION ['user'] ['userID'];
 			$user->password = $_SESSION ['user'] ['password'];
 			unset ( $_SESSION ['user'] );
-			$system = new System ();
-			if ($system->changePassword ( $user )) {
+			if ($this->system->changePassword ( $user )) {
 				return true;
 			} else {
 				return false;
@@ -86,11 +93,10 @@ class Humphree {
 	public function forgotPassword(): bool {
 		// TO DO
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->email = $_SESSION ['user'] ['email'];
 			unset ( $_SESSION ['user'] );
-			$system = new System ();
-			if ($system->forgotPassword ( $user )) {
+			if ($this->system->forgotPassword ( $user )) {
 				return true;
 			} else {
 				return false;
@@ -106,13 +112,12 @@ class Humphree {
 	 */
 	public function addUser(): bool {
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->user = $_SESSION ['user'] ['user'];
 			$user->email = $_SESSION ['user'] ['email'];
 			$user->password = $_SESSION ['user'] ['password'];
 			unset ( $_SESSION ['user'] );
-			$system = new System ();
-			if ($system->addUser ( $user )) {
+			if ($this->system->addUser ( $user )) {
 				return true;
 			} else {
 				return false;
@@ -127,7 +132,7 @@ class Humphree {
 	 */
 	public function updateUser(): bool {
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->userID = $_SESSION ['user'] ['userID'];
 			$user->user = $_SESSION ['user'] ['user'];
 			$user->email = $_SESSION ['user'] ['email'];
@@ -135,8 +140,7 @@ class Humphree {
 			$user->status = $_SESSION ['user'] ['status'];
 			$user->activate = $_SESSION ['user'] ['activate'];
 			unset ( $_SESSION ['user'] );
-			$system = new System ();
-			if ($system->updateUser ( $user )) {
+			if ($this->system->updateUser ( $user )) {
 				return true;
 			} else {
 				return false;
@@ -151,10 +155,9 @@ class Humphree {
 	 */
 	public function getUser(): bool {
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->userID = $_SESSION ['user'] ['userID'];
-			$system = new System ();
-			$user = $system->getUser ( $user );
+			$user = $this->system->getUser ( $user );
 			$_SESSION ['user'] ['userID'] = $user->userID;
 			$_SESSION ['user'] ['user'] = $user->user;
 			$_SESSION ['user'] ['email'] = $user->email;
@@ -170,8 +173,7 @@ class Humphree {
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
 	public function getUsers(): bool {
-		$system = new System ();
-		$users = $system->getUsers ();
+		$users = $this->system->getUsers ();
 		$i = 1;
 		foreach ( $users as $user ) {
 			$_SESSION ['users'] [$i] ['user'] ['userID'] = $user->userID;
@@ -190,10 +192,9 @@ class Humphree {
 	 */
 	public function disableUser(): bool {
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->userID = $_SESSION ['user'] ['userID'];
-			$system = new System ();
-			if ($system->disableUser ( $user )) {
+			if ($this->system->disableUser ( $user )) {
 				return true;
 			} else {
 				return false;
@@ -209,11 +210,10 @@ class Humphree {
 	 */
 	public function deleteUser(): bool {
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->userID = $_SESSION ['user'] ['userID'];
 			unset ( $_SESSION ['user'] );
-			$system = new System ();
-			if ($system->deleteUser ( $user )) {
+			if ($this->system->deleteUser ( $user )) {
 				return true;
 			} else {
 				return false;
@@ -229,12 +229,11 @@ class Humphree {
 	 */
 	public function addCategory(): bool {
 		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ();
+			$category = new Category ($this->db);
 			$category->parentID = $_SESSION ['category'] ['parentID'];
 			$category->category = $_SESSION ['category'] ['category'];
 			unset ( $_SESSION ['category'] );
-			$system = new System ();
-			if ($system->addCategory ( $category )) {
+			if ($this->system->addCategory ( $category )) {
 				return true;
 			} else {
 				return false;
@@ -250,13 +249,12 @@ class Humphree {
 	 */
 	public function updateCategory(): bool {
 		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ();
+			$category = new Category ($this->db);
 			$category->categoryID = $_SESSION ['category'] ['categoryID'];
 			$category->parentID = $_SESSION ['category'] ['parentID'];
 			$category->category = $_SESSION ['category'] ['category'];
 			unset ( $_SESSION ['category'] );
-			$system = new System ();
-			if ($system->updateCategory ( $category )) {
+			if ($this->system->updateCategory ( $category )) {
 				return true;
 			} else {
 				return false;
@@ -272,11 +270,10 @@ class Humphree {
 	 */
 	public function deleteCategory(): bool {
 		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ();
+			$category = new Category ($this->db);
 			$category->categoryID = $_SESSION ['category'] ['categoryID'];
 			unset ( $_SESSION ['category'] );
-			$system = new System ();
-			if ($system->deleteCategory ( $category )) {
+			if ($this->system->deleteCategory ( $category )) {
 				return true;
 			} else {
 				return false;
@@ -291,10 +288,9 @@ class Humphree {
 	 */
 	public function getCategory(): bool {
 		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ();
+			$category = new Category ($this->db);
 			$category->categoryID = $_SESSION ['category'] ['categoryID'];
-			$system = new System ();
-			$category = $system->getCategory ( $category );
+			$category = $this->system->getCategory ( $category );
 			$_SESSION ['category'] ['categoryID'] = $category->categoryID;
 			$_SESSION ['category'] ['parentID'] = $category->parentID;
 			$_SESSION ['category'] ['category'] = $category->category;
@@ -308,8 +304,7 @@ class Humphree {
 	 * The getCategories() function retrieves all Categories.
 	 */
 	public function getCategories(): bool {
-		$system = new System ();
-		$categories = $system->getCategories ();
+		$categories = $this->system->getCategories ();
 		$i = 1;
 		foreach ( $categories as $category ) {
 			$_SESSION ['categories'] [$i] ['category'] ['categoryID'] = $category->categoryID;
@@ -331,10 +326,9 @@ class Humphree {
 		$numCategoryItems = 0;
 		
 		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ();
+			$category = new Category ($this->db);
 			$category->categoryID = $_SESSION ['category'] ['categoryID'];
-			$system = new System ();
-			$numCategoryItems = $system->countCategoryItems ( $category );
+			$numCategoryItems = $this->system->countCategoryItems ( $category );
 		}
 		return $numCategoryItems;
 	}
@@ -346,10 +340,9 @@ class Humphree {
 		$numItemComments = 0;
 		
 		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ();
+			$item = new Item ($this->db);
 			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$system = new System ();
-			$numItemComments = $system->countItemComments ( $item );
+			$numItemComments = $this->system->countItemComments ( $item );
 		}
 		return $numItemComments;
 	}
@@ -361,10 +354,9 @@ class Humphree {
 		$numItemNotes = 0;
 		
 		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ();
+			$item = new Item ($this->db);
 			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$system = new System ();
-			$numItemNotes = $system->countItemNotes ( $item );
+			$numItemNotes = $this->system->countItemNotes ( $item );
 		}
 		return $numItemNotes;
 	}
@@ -374,10 +366,9 @@ class Humphree {
 	 */
 	public function getCategoryItems(): bool {
 		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ();
+			$category = new Category ($this->db);
 			$category->categoryID = $_SESSION ['category'] ['categoryID'];
-			$system = new System ();
-			$categoryItems = $system->getCategoryItems ( $category );
+			$categoryItems = $this->system->getCategoryItems ( $category );
 			
 			$i = 1;
 			foreach ( $categoryItems as $item ) {
@@ -389,20 +380,20 @@ class Humphree {
 				$_SESSION ['categoryItems'] [$i] ['item'] ['price'] = $item->price;
 				$_SESSION ['categoryItems'] [$i] ['item'] ['status'] = $item->status;
 				
-				$comments = $system->getItemComments ( $item );
+				$comments = $this->system->getItemComments ( $item );
 				$j = 1;
 				foreach ( $comments as $comment ) {
 					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['commentID'] = $comment->commentID;
 					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['userID'] = $comment->userID;
-					$user = new User ();
+					$user = new User ($this->db);
 					$user->userID = $comment->userID;
-					$user = $system->getUser ( $user );
+					$user = $this->system->getUser ( $user );
 					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['user'] = $user->user;
 					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['comment'] = $comment->comment;
 					$j ++;
 				}
 				
-				$notes = $system->getItemNotes ( $item );
+				$notes = $this->system->getItemNotes ( $item );
 				$j = 1;
 				foreach ( $notes as $note ) {
 					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['note'] ['noteID'] = $note->noteID;
@@ -427,10 +418,9 @@ class Humphree {
 		$numUserItems = 0;
 		
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->userID = $_SESSION ['user'] ['userID'];
-			$system = new System ();
-			$numUserItems = $system->countUserItems ( $user );
+			$numUserItems = $this->system->countUserItems ( $user );
 		}
 		return $numUserItems;
 	}
@@ -440,10 +430,9 @@ class Humphree {
 	 */
 	public function getUserItems(): bool {
 		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->userID = $_SESSION ['user'] ['userID'];
-			$system = new System ();
-			$userItems = $system->getUserItems ( $user );
+			$userItems = $this->system->getUserItems ( $user );
 			
 			$i = 1;
 			foreach ( $userItems as $item ) {
@@ -455,20 +444,20 @@ class Humphree {
 				$_SESSION ['userItems'] [$i] ['item'] ['price'] = $item->price;
 				$_SESSION ['userItems'] [$i] ['item'] ['status'] = $item->status;
 				
-				$comments = $system->getItemComments ( $item );
+				$comments = $this->system->getItemComments ( $item );
 				$j = 1;
 				foreach ( $comments as $comment ) {
 					$_SESSION ['userItems'] [$i] ['item'] [$j] ['comment'] ['commentID'] = $comment->commentID;
 					$_SESSION ['userItems'] [$i] ['item'] [$j] ['comment'] ['userID'] = $comment->userID;
-					$user = new User ();
+					$user = new User ($this->db);
 					$user->userID = $comment->userID;
-					$user = $system->getUser ( $user );
+					$user = $this->system->getUser ( $user );
 					$_SESSION ['userItems'] [$i] ['item'] [$j] ['comment'] ['user'] = $user->user;
 					$_SESSION ['userItems'] [$i] ['item'] [$j] ['comment'] ['comment'] = $comment->comment;
 					$j ++;
 				}
 				
-				$notes = $system->getItemNotes ( $item );
+				$notes = $this->system->getItemNotes ( $item );
 				$j = 1;
 				foreach ( $notes as $note ) {
 					$_SESSION ['userItems'] [$i] ['item'] [$j] ['note'] ['noteID'] = $note->noteID;
@@ -491,10 +480,9 @@ class Humphree {
 	 */
 	public function getItem(): bool {
 		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ();
+			$item = new Item ($this->db);
 			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$system = new System ();
-			$item = $system->getItem ( $item );
+			$item = $this->system->getItem ( $item );
 			$_SESSION ['item'] ['itemID'] = $item->itemID;
 			$_SESSION ['item'] ['title'] = $item->title;
 			$_SESSION ['item'] ['description'] = $item->description;
@@ -502,19 +490,19 @@ class Humphree {
 			$_SESSION ['item'] ['itemcondition'] = $item->itemcondition;
 			$_SESSION ['item'] ['price'] = $item->price;
 			$_SESSION ['item'] ['status'] = $item->status;
-			$itemComments = $system->getItemComments ( $item );
+			$itemComments = $this->system->getItemComments ( $item );
 			$i = 1;
 			foreach ( $itemComments as $itemComment ) {
 				$_SESSION ['item'] [$i] ['comment'] ['commentID'] = $itemComment->commentID;
 				$_SESSION ['item'] [$i] ['comment'] ['userID'] = $itemComment->userID;
-				$user = new User ();
+				$user = new User ($this->db);
 				$user->userID = $itemComment->userID;
 				$user->get ();
 				$_SESSION ['item'] [$i] ['comment'] ['user'] = $user->user;
 				$_SESSION ['item'] [$i] ['comment'] ['comment'] = $itemComment->comment;
 				$i ++;
 			}
-			$itemNotes = $system->getItemNotes ( $item );
+			$itemNotes = $this->system->getItemNotes ( $item );
 			$j = 1;
 			foreach ( $itemNotes as $itemNote ) {
 				$_SESSION ['item'] [$j] ['note'] ['noteID'] = $itemNote->noteID;
@@ -532,9 +520,9 @@ class Humphree {
 	 */
 	public function addItem(): bool {
 		if (isset ( $_SESSION ['user'] ) && isset ( $_SESSION ['item'] )) {
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->userID = $_SESSION ['user'] ['userID'];
-			$item = new Item ();
+			$item = new Item ($this->db);
 			$item->title = $_SESSION ['item'] ['title'];
 			$item->description = $_SESSION ['item'] ['description'];
 			$item->quantity = $_SESSION ['item'] ['quantity'];
@@ -543,8 +531,7 @@ class Humphree {
 			$item->status = $_SESSION ['item'] ['status'];
 			unset ( $_SESSION ['user'] );
 			unset ( $_SESSION ['item'] );
-			$system = new System ();
-			if ($system->addItem ( $user, $item )) {
+			if ($this->system->addItem ( $user, $item )) {
 				return true;
 			} else {
 				return false;
@@ -559,7 +546,7 @@ class Humphree {
 	 */
 	public function updateItem(): bool {
 		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ();
+			$item = new Item ($this->db);
 			$item->itemID = $_SESSION ['item'] ['itemID'];
 			$item->title = $_SESSION ['item'] ['title'];
 			$item->description = $_SESSION ['item'] ['description'];
@@ -568,8 +555,7 @@ class Humphree {
 			$item->price = $_SESSION ['item'] ['price'];
 			$item->status = $_SESSION ['item'] ['status'];
 			unset ( $_SESSION ['item'] );
-			$system = new System ();
-			if ($system->updateItem ( $item )) {
+			if ($this->system->updateItem ( $item )) {
 				return true;
 			} else {
 				return false;
@@ -584,11 +570,10 @@ class Humphree {
 	 */
 	public function deleteItem(): bool {
 		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ();
+			$item = new Item ($this->db);
 			$item->itemID = $_SESSION ['item'] ['itemID'];
 			unset ( $_SESSION ['item'] );
-			$system = new System ();
-			if ($system->deleteItem ( $item )) {
+			if ($this->system->deleteItem ( $item )) {
 				return true;
 			} else {
 				return false;
@@ -603,15 +588,14 @@ class Humphree {
 	 */
 	public function getItemComments(): bool {
 		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ();
+			$item = new Item ($this->db);
 			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$system = new System ();
-			$itemComments = $system->getItemComments ( $item );
+			$itemComments = $this->system->getItemComments ( $item );
 			$i = 1;
 			foreach ( $itemComments as $itemComment ) {
 				$_SESSION ['item'] [$i] ['comment'] ['commentID'] = $itemComment->commentID;
 				$_SESSION ['item'] [$i] ['comment'] ['userID'] = $itemComment->userID;
-				$user = new User ();
+				$user = new User ($this->db);
 				$user->userID = $itemComment->userID;
 				$user->get ();
 				$_SESSION ['item'] [$i] ['comment'] ['user'] = $user->user;
@@ -630,12 +614,11 @@ class Humphree {
 	public function getItemComment(): bool {
 		// TO DO
 		if (isset ( $_SESSION ['comment'] )) {
-			$comment = new Comment ();
+			$comment = new Comment ($this->db);
 			$comment->commentID = $_SESSION ['comment'] ['commentID'];
-			$system = new System ();
-			$itemComment = $system->getItemComment ( $comment );
+			$itemComment = $this->system->getItemComment ( $comment );
 			$_SESSION ['comment'] ['userID'] = $itemComment->userID;
-			$user = new User ();
+			$user = new User ($this->db);
 			$user->userID = $itemComment->userID;
 			$user->get ();
 			$_SESSION ['comment'] ['user'] = $user->user;
@@ -651,14 +634,13 @@ class Humphree {
 	 */
 	public function addItemComment(): bool {
 		if (isset ( $_SESSION ['user'] ) && isset ( $_SESSION ['item'] ) && isset ( $_SESSION ['comment'] )) {
-			$user = new User ();
-			$item = new Item ();
-			$comment = new Comment ();
+			$user = new User ($this->db);
+			$item = new Item ($this->db);
+			$comment = new Comment ($this->db);
 			$user->userID = $_SESSION ['user'] ['userID'];
 			$item->itemID = $_SESSION ['item'] ['itemID'];
 			$comment->comment = $_SESSION ['comment'] ['comment'];
-			$system = new System ();
-			if ($system->addItemComment ( $user, $item, $comment )) {
+			if ($this->system->addItemComment ( $user, $item, $comment )) {
 				unset ( $_SESSION ['user'] );
 				unset ( $_SESSION ['item'] );
 				unset ( $_SESSION ['comment'] );
@@ -676,12 +658,11 @@ class Humphree {
 	 */
 	public function updateItemComment(): bool {
 		if (isset ( $_SESSION ['comment'] )) {
-			$comment = new Comment ();
+			$comment = new Comment ($this->db);
 			$comment->commentID = $_SESSION ['comment'] ['commentID'];
 			$comment->userID = $_SESSION ['comment'] ['userID'];
 			$comment->comment = $_SESSION ['comment'] ['comment'];
-			$system = new System ();
-			if ($system->updateItemComment ( $comment )) {
+			if ($this->system->updateItemComment ( $comment )) {
 				unset ( $_SESSION ['comment'] );
 				return true;
 			} else {
@@ -697,10 +678,9 @@ class Humphree {
 	 */
 	public function deleteItemComment(): bool {
 		if (isset ( $_SESSION ['comment'] )) {
-			$comment = new Comment ();
+			$comment = new Comment ($this->db);
 			$comment->commentID = $_SESSION ['comment'] ['commentID'];
-			$system = new System ();
-			if ($system->deleteItemComment ( $comment )) {
+			if ($this->system->deleteItemComment ( $comment )) {
 				unset ( $_SESSION ['comment'] );
 				return true;
 			} else {
@@ -716,10 +696,9 @@ class Humphree {
 	 */
 	public function getItemNotes(): bool {
 		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ();
+			$item = new Item ($this->db);
 			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$system = new System ();
-			$itemNotes = $system->getItemNotes ( $item );
+			$itemNotes = $this->system->getItemNotes ( $item );
 			$i = 1;
 			foreach ( $itemNotes as $itemNote ) {
 				$_SESSION ['item'] [$i] ['note'] ['noteID'] = $itemNote->noteID;
@@ -737,10 +716,9 @@ class Humphree {
 	 */
 	public function getItemNote(): bool {
 		if (isset ( $_SESSION ['note'] )) {
-			$note = new Note ();
+			$note = new Note ($this->db);
 			$note->noteID = $_SESSION ['note'] ['noteID'];
-			$system = new System ();
-			$itemNote = $system->getItemNote ( $note );
+			$itemNote = $this->system->getItemNote ( $note );
 			$_SESSION ['note'] ['note'] = $itemNote->note;
 			return true;
 		} else {
@@ -753,12 +731,11 @@ class Humphree {
 	 */
 	public function addItemNote(): bool {
 		if (isset ( $_SESSION ['item'] ) && isset ( $_SESSION ['note'] )) {
-			$item = new Item ();
-			$note = new Note ();
+			$item = new Item ($this->db);
+			$note = new Note ($this->db);
 			$item->itemID = $_SESSION ['item'] ['itemID'];
 			$note->note = $_SESSION ['note'] ['note'];
-			$system = new System ();
-			if ($system->addItemNote ( $item, $note )) {
+			if ($this->system->addItemNote ( $item, $note )) {
 				unset ( $_SESSION ['item'] );
 				unset ( $_SESSION ['note'] );
 				return true;
@@ -775,11 +752,10 @@ class Humphree {
 	 */
 	public function updateItemNote(): bool {
 		if (isset ( $_SESSION ['note'] )) {
-			$note = new Note ();
+			$note = new Note ($this->db);
 			$note->noteID = $_SESSION ['note'] ['noteID'];
 			$note->note = $_SESSION ['note'] ['note'];
-			$system = new System ();
-			if ($system->updateItemNote ( $note )) {
+			if ($this->system->updateItemNote ( $note )) {
 				unset ( $_SESSION ['note'] );
 				return true;
 			} else {
@@ -795,10 +771,9 @@ class Humphree {
 	 */
 	public function deleteItemNote(): bool {
 		if (isset ( $_SESSION ['note'] )) {
-			$note = new Note ();
+			$note = new Note ($this->db);
 			$note->noteID = $_SESSION ['note'] ['noteID'];
-			$system = new System ();
-			if ($system->deleteItemNote ( $note )) {
+			if ($this->system->deleteItemNote ( $note )) {
 				unset ( $_SESSION ['note'] );
 				return true;
 			} else {
@@ -815,12 +790,11 @@ class Humphree {
 	public function addSellerRating(): bool {
 		if (isset ( $_SESSION ['user_rating'] )) {
 			if (($_SESSION ['user_rating'] ['itemID'] > 0) && ($_SESSION ['user_rating'] ['sellrating'] > 0)) {
-				$sellerRating = new UserRatings ();
+				$sellerRating = new UserRatings ($this->db);
 				$sellerRating->itemID = $_SESSION ['user_rating'] ['itemID'];
 				$sellerRating->sellrating = $_SESSION ['user_rating'] ['sellrating'];
 				unset ( $_SESSION ['user_rating'] );
-				$system = new System ();
-				if ($system->addSellerRating ( $sellerRating )) {
+				if ($this->system->addSellerRating ( $sellerRating )) {
 					return true;
 				} else {
 					return false;
@@ -839,13 +813,12 @@ class Humphree {
 	public function addBuyerRating(): bool {
 		if (isset ( $_SESSION ['user_rating'] )) {
 			if (strlen ( $_SESSION ['user_rating'] ['transaction'] > 0 ) && ($_SESSION ['user_rating'] ['userID'] > 0) && ($_SESSION ['user_rating'] ['buyrating'] > 0)) {
-				$buyerRating = new UserRatings ();
+				$buyerRating = new UserRatings ($this->db);
 				$buyerRating->userID = $_SESSION ['user_rating'] ['userID'];
 				$buyerRating->buyrating = $_SESSION ['user_rating'] ['buyrating'];
 				$buyerRating->transaction = $_SESSION ['user_rating'] ['transaction'];
 				unset ( $_SESSION ['user_rating'] );
-				$system = new System ();
-				if ($system->addBuyerRating ( $buyerRating )) {
+				if ($this->system->addBuyerRating ( $buyerRating )) {
 					return true;
 				} else {
 					return false;
@@ -864,8 +837,7 @@ class Humphree {
 	public function search(): bool {
 		// TO DO
 		// Convert arrays to objects if necessary and call equivalent System Function
-		$system = new System ();
-		$system->search ();
+		$this->system->search ();
 	}
 }
 ?>

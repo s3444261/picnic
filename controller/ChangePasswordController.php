@@ -8,6 +8,8 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
+require_once  __DIR__ . '/../config/Picnic.php';
+
 class ChangePasswordController {
 	
 	// Displays the Change Password Page.
@@ -16,7 +18,7 @@ class ChangePasswordController {
 		if ($this->auth()) {
 			if (isset ( $_POST ['changePassword'] )) {
 				unset ( $_POST ['changePassword'] );
-				$user = new User ();
+				$user = new User (Picnic::getInstance());
 				$v = new Validation ();
 
 				if (isset ( $_POST ['password'] ) && isset ( $_POST ['newPassword'] ) && isset ( $_POST ['confirm'] )) {

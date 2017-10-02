@@ -8,6 +8,8 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
+require_once  __DIR__ . '/../config/Picnic.php';
+
 class AdministrationController {
 
 	/**
@@ -17,7 +19,7 @@ class AdministrationController {
 
 		if ($this->auth())
 		{
-			$users = new Users ();
+			$users = new Users (Picnic::getInstance());
 			$_SESSION ['users'] = $users->getUsers ();
 
 			if (isset ( $_POST ['add'] )) {
@@ -47,7 +49,7 @@ class AdministrationController {
 	public function add(): void
 	{
 		if ($this->auth()) {
-			$user = new User ();
+			$user = new User (Picnic::getInstance());
 			$v = new Validation ();
 
 			// Process on submission of user.
@@ -131,7 +133,7 @@ class AdministrationController {
 	public function update(): void
 	{
 		if ($this->auth()) {
-			$user = new User ();
+			$user = new User (Picnic::getInstance());
 			$v = new Validation ();
 
 			// Process on submission of user.
@@ -185,7 +187,7 @@ class AdministrationController {
 	public function changePassword(): void
 	{
 		if ($this->auth()) {
-			$user = new User ();
+			$user = new User (Picnic::getInstance());
 			$v = new Validation ();
 
 			if (isset ($_POST ['password']) && isset ($_POST ['confirm'])) {
@@ -237,7 +239,7 @@ class AdministrationController {
 	public function edit($id): void
 	{
 		if ($this->auth()) {
-			$user = new User ();
+			$user = new User (Picnic::getInstance());
 			$user->userID = $id;
 
 			if ($user->get()) {
@@ -261,7 +263,7 @@ class AdministrationController {
 	public function delete($id): void
 	{
 		if ($this->auth()) {
-			$user = new User ();
+			$user = new User (Picnic::getInstance());
 			$user->userID = $id;
 			$user->delete();
 			header('Location: ' . BASE . '/Administration');
