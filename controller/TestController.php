@@ -13,7 +13,7 @@ class TestController {
 	// Displays the Test Results Page.
 	public function index()
 	{
-		include 'admin/testharness/index.php';
+		include 'view/layout/test.php';
 	}
 }
 ?>
