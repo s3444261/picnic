@@ -8,10 +8,7 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-define('DB_HOST', 'localhost');
-define('DB_USER', 'travis');  // this is the name that travis CI uses, so we may as well use it too
-define('DB_PW', '');          // same for the password
-define('DB_NAME', 'picnic_test');
+require_once __DIR__ . "/../../../../dbPicnic.php";
 
 class TestPDO extends PDO {
 	private static $instance;
@@ -35,25 +32,25 @@ class TestPDO extends PDO {
 
 	public static function CreateTestDatabaseAndUser() {
 
-		$rootPDO =  new PDO ( 'mysql:host=' . DB_HOST , 'root', '' );
+		$rootPDO =  new PDO ( 'mysql:host=' . DB_HOST , ADMIN_DB_USER, ADMIN_DB_PW);
 
-		$query = "DROP DATABASE IF EXISTS ".DB_NAME.";";
+		$query = "DROP DATABASE IF EXISTS ".TEST_DB_NAME.";";
 		$stmt = $rootPDO->prepare ( $query );
 		$stmt->execute ();
 
-		$query = "DROP USER IF EXISTS ".DB_USER."@".DB_HOST.";";
+		$query = "DROP USER IF EXISTS ".TEST_DB_USER."@".DB_HOST.";";
 		$stmt = $rootPDO->prepare ( $query );
 		$stmt->execute ();
 
-		$query = "CREATE USER '".DB_USER."'@'".DB_HOST."' IDENTIFIED BY '".DB_PW."';";
+		$query = "CREATE USER '".TEST_DB_USER."'@'".DB_HOST."' IDENTIFIED BY '".TEST_DB_PW."';";
 		$stmt = $rootPDO->prepare ( $query );
 		$stmt->execute ();
 
-		$query = "CREATE DATABASE picnic_test;";
+		$query = "CREATE DATABASE ".TEST_DB_NAME.";";
 		$stmt = $rootPDO->prepare ( $query );
 		$stmt->execute ();
 
-		$query = "GRANT ALL ON ".DB_NAME.".* TO '".DB_USER."'@'".DB_HOST."';";
+		$query = "GRANT ALL ON ".TEST_DB_NAME.".* TO '".TEST_DB_USER."'@'".DB_HOST."';";
 		$stmt = $rootPDO->prepare ( $query );
 		$stmt->execute ();
 		
