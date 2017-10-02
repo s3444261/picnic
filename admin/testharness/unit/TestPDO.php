@@ -8,7 +8,7 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-require_once __DIR__ . "/../../../../../dbPicnic.php";
+include __DIR__ . "/../../../../../dbPicnic.php";
 
 class TestPDO extends PDO {
 	private static $instance;
@@ -16,10 +16,10 @@ class TestPDO extends PDO {
 		if (! isset ( self::$instance )) {
 
 			$database = array (
-				'db_host' => DB_HOST,
-				'db_user' => DB_USER,
-				'db_pass' => DB_PW,
-				'db_name' => DB_NAME
+				'db_host' => getenv("DB_HOST"),
+				'db_user' => getenv("TEST_DB_USER"),
+				'db_pass' => getenv("TEST_DB_PW"),
+				'db_name' => getenv("TEST_DB_NAME")
 			);
 
 			self::$instance = new TestPDO ( 'mysql:host=' . $database ['db_host'] . ';dbname=' . $database ['db_name'], $database ['db_user'], $database ['db_pass'] );
@@ -32,25 +32,25 @@ class TestPDO extends PDO {
 
 	public static function CreateTestDatabaseAndUser() {
 
-		$rootPDO =  new PDO ( 'mysql:host=' . DB_HOST , ADMIN_DB_USER, ADMIN_DB_PW);
+		$rootPDO =  new PDO ( 'mysql:host=' . getenv("DB_HOST") , getenv("ADMIN_DB_USER"), getenv("ADMIN_DB_PW"));
 
-		$query = "DROP DATABASE IF EXISTS ".TEST_DB_NAME.";";
+		$query = "DROP DATABASE IF EXISTS ".getenv("TEST_DB_NAME").";";
 		$stmt = $rootPDO->prepare ( $query );
 		$stmt->execute ();
 
-		$query = "DROP USER IF EXISTS ".TEST_DB_USER."@".DB_HOST.";";
+		$query = "DROP USER IF EXISTS ".getenv("TEST_DB_USER")."@".getenv("DB_HOST").";";
 		$stmt = $rootPDO->prepare ( $query );
 		$stmt->execute ();
 
-		$query = "CREATE USER '".TEST_DB_USER."'@'".DB_HOST."' IDENTIFIED BY '".TEST_DB_PW."';";
+		$query = "CREATE USER '".getenv("TEST_DB_USER")."'@'".getenv("DB_HOST")."' IDENTIFIED BY '".getenv("TEST_DB_PW")."';";
 		$stmt = $rootPDO->prepare ( $query );
 		$stmt->execute ();
 
-		$query = "CREATE DATABASE ".TEST_DB_NAME.";";
+		$query = "CREATE DATABASE ".getenv("TEST_DB_NAME").";";
 		$stmt = $rootPDO->prepare ( $query );
 		$stmt->execute ();
 
-		$query = "GRANT ALL ON ".TEST_DB_NAME.".* TO '".TEST_DB_USER."'@'".DB_HOST."';";
+		$query = "GRANT ALL ON ".getenv("TEST_DB_NAME").".* TO '".getenv("TEST_DB_USER")."'@'".getenv("DB_HOST")."';";
 		$stmt = $rootPDO->prepare ( $query );
 		$stmt->execute ();
 		
