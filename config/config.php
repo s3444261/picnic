@@ -20,7 +20,8 @@ define('BASE', ''); //'/' . MODULE);
 function __autoload($class) {
 	$dir = array (
 			'controller/',
-			'model/'
+			'model/',
+		    'view/'
 	);
 	
 	foreach ( $dir as $directory ) {

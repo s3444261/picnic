@@ -11,11 +11,20 @@
 require_once  __DIR__ . '/../config/Picnic.php';
 
 class CategoryController extends BaseController {
+
+	/**
+	 * Displays the category details page for the given category.
+	 *
+	 * @param $categoryId
+	 * 			The ID of the category to be displayed.
+	 */
 	public function View($categoryId) {
 		$h = new Humphree(Picnic::getInstance());
-		$h ->getCategoryById($categoryId);
-		$h ->getCategoriesIn($categoryId);
-		$h ->getCategoryItemsFor($categoryId);
-		$this->RenderInMainTemplate('view/layout/category.php');
+
+		$view = new View();
+		$view->SetData('currentCategory', $h ->getCategoryById($categoryId));
+		$view->SetData('subCategories', $h ->getCategoriesIn($categoryId));
+		$view->SetData('items', $h ->getCategoryItemsFor($categoryId));
+		$view->Render('category');
 	}
 }

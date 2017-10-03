@@ -8,37 +8,22 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 ?>
+
 <div class="container-fluid">
 	<h1>Humphree</h1>
 
-    <div class="jumbotron">
-        <h2>Categories</h2>
-
-        <div class="container">
-           <div class="row">
-
-                <?php
-                if (isset ( $_SESSION ['categories'] )) {
-                    foreach ( $_SESSION ['categories'] as $category ) {
-                    ?>
+	<?php if (isset ( $this->data['categories'] ) && count($this->data['categories']) != 0) { ?>
+        <div class="jumbotron">
+            <h2>Categories</h2>
+            <div class="container">
+                <?php foreach ( $this->data['categories'] as $category ) { ?>
                     <div class="col-md-4">
-                        <p>
-                            <?php  echo '<a class="btn btn-secondary" href="'
-                                . BASE
-                                . '/Category/View/'
-                                . $category ["category"] ["categoryID"]
-                                . '" role="button">'
-                                . $category ["category"] ["category"]
-                                . '</a>'  ?>
-                        </p>
+                        <a class="btn btn-secondary" href="<?php echo BASE.'/Category/View/'.$category->categoryID ?>" role="button"><?php echo $category->category ?></a>
                     </div>
-                    <?php
-                    }
-                }
-                ?>
+                <?php } ?>
             </div>
         </div>
-    </div>
+    <?php } ?>
 
 	<div class="jumbotron">
 		<div class="row">

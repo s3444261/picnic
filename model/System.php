@@ -414,7 +414,16 @@ class System {
 		$ci = $c->getCategoryItems ();
 		return $ci;
 	}
-	
+
+	/*
+	 * The getCategoryItemsFor() function retrieves all items linked to the given Category.
+	 */
+	public function getCategoryItemsFor($categoryId): array {
+		$c = new CategoryItems ($this->db);
+		$c->categoryID = $categoryId;
+		$ci = $c->getCategoryItems ();
+		return $ci;
+	}
 	/*
 	 * The countUserItems() method counts the number of items in a user.
 	 */

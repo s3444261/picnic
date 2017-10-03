@@ -9,59 +9,31 @@
  */
  ?>
 
-<div class="jumbotron">
-    <h2><?php echo $_SESSION ['category'] ['category'] ?></h2>
-    <div class="container">
-       <div class="row">
-			<?php
-			if (isset ( $_SESSION ['categories'] )) {
-				foreach ( $_SESSION ['categories'] as $category ) {
-					?>
-					<div class="col-md-4">
-						<p>
-							<?php  echo '<a class="btn btn-secondary" href="'
-                                . BASE
-                                . '/Category/View/'
-                                . $category ["category"] ["categoryID"]
-                                . '" role="button">'
-								. $category ["category"] ["category"]
-                                . '</a>'  ?>
-						</p>
-					</div>
-					<?php
-				}
-			}
-			?>
+<div class="container-fluid">
+    <h1><?php echo $this->data['currentCategory']->category ?></h1>
+
+	<?php if (isset ( $this->data['subCategories'] ) && count($this->data['subCategories']) != 0) { ?>
+        <div class="jumbotron">
+            <div class="container">
+				<?php foreach ( $this->data['subCategories'] as $category ) { ?>
+                    <div class="col-md-4">
+                        <a class="btn btn-secondary" href="<?php echo BASE.'/Category/View/'.$category->categoryID ?>" role="button"><?php echo $category->category ?></a>
+                    </div>
+				<?php } ?>
+            </div>
         </div>
-    </div>
-</div>
+	<?php } ?>
 
-<h2>Items</h2>
-
-<div class="container">
-    <div class="row">
-		<?php
-		if (isset ( $_SESSION ['categoryItems'] )) {
-			foreach ( $_SESSION ['categoryItems'] as $item ) {
-				?>
-                <div class="col-sm-12">
-                    <p>
-						<?php  echo '<img src="'
-                            . BASE
-                            . '/Item/Thumb/'
-                            . $item ['item'] ['itemID']
-                            . '"/><a class="btn btn-secondary" href="'
-                            . BASE
-                            . '/Item/View/'
-                            . $item ['item'] ['itemID']
-                            . '" role="button">'
-							. $item ['item'] ['title']
-							. '</a>'  ?>
-                    </p>
-                </div>
-				<?php
-			}
-		}
-		?>
-    </div>
+	<?php if (isset ( $this->data['items'] )) { ?>
+        <div class="container">
+            <?php foreach ( $this->data['items'] as $item ) { ?>
+                    <div class="col-sm-12">
+                        <a class="btn btn-secondary" href="<?php echo BASE.'/Item/View/'.$item->itemID ?>" role="button">
+                            <img src="<?php echo BASE.'/Item/Thumb/'.$item->itemID ?>" />
+                            <?php echo $item->title ?>
+                        </a>
+                    </div>
+            <?php } ?>
+        </div>
+	<?php } ?>
 </div>

@@ -12,11 +12,14 @@ require_once  __DIR__ . '/../config/Picnic.php';
 
 class HomeController extends BaseController {
 
-	// Displays the Home Page.
-	public function index()
-	{
+	/**
+	 * Displays the home page.
+	 */
+	public function index() {
 		$h = new Humphree(Picnic::getInstance());
-		$h ->getCategoriesIn(Category::ROOT_CATEGORY);
-		$this->RenderInMainTemplate('view/layout/home.php');
+
+		$view = new View();
+		$view->SetData('categories', $h ->getCategoriesIn(Category::ROOT_CATEGORY));
+		$view->Render('home');
 	}
 }
