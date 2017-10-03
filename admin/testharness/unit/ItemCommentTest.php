@@ -78,6 +78,10 @@ class ItemCommentTest extends PicnicTestCase {
 		return 200;
 	}
 
+	protected function getExpectedExceptionTypeForUnknownId() {
+		return null;
+	}
+	
 	protected function getExpectedExceptionTypeForUnsetId() {
 		return null;
 	}

@@ -65,6 +65,11 @@ class CommentTest extends PicnicTestCase{
 	protected function getInvalidId() {
 		return 200;
 	}
+	
+	protected function getExpectedExceptionTypeForUnknownId() {
+		return null;
+	}
+	
 	protected function getExpectedExceptionTypeForUnsetId() {
 		return null;
 	}

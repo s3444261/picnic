@@ -60,6 +60,7 @@ class Validation {
 		$errorMessage = null;
 		
 		try {
+			$this->emptyField ( $content );
 			$this->oneUpperOneLowerOneDigitGreaterEight ( $content );
 		} catch ( ValidationException $e ) {
 			if ($errorMessage == null) {
@@ -194,6 +195,13 @@ class Validation {
 	public function atLeastFour($content) {
 		if (strlen ( $content ) < 4) {
 			throw new ValidationException ( 'Input must be atleast 4 characters in length!' );
+		}
+	}
+	
+	// Tests for string length atleast 8 characters long.
+	public function atLeastEight($content) {
+		if (strlen ( $content ) < 8) {
+			throw new ValidationException ( 'Input must be atleast 8 characters in length!' );
 		}
 	}
 }

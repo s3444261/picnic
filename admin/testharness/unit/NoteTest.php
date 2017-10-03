@@ -54,6 +54,10 @@ class NoteTest extends PicnicTestCase {
 	protected function getExpectedExceptionTypeForUnsetId() {
 		return null;
 	}
+	
+	protected function getExpectedExceptionTypeForUnknownId() {
+		return null;
+	}
 
 	protected function getExpectedAttributesForGet() {
 

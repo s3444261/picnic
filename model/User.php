@@ -96,29 +96,44 @@ class User {
 	 * status is 'active'. The userID is returned.
 	 */
 	public function set(): int {
-		$query = "INSERT INTO Users 
+		
+		$v = new Validation();
+		
+		try {
+			$v->userName($this->_user);
+			$v->email($this->_email);
+			$v->password($this->_password);
+			
+			if(!$this->checkUserExist() && !$this->checkEmailExist()){
+				$query = "INSERT INTO Users
 					SET user = :user,
     					email = :email,
     					password = :password,
     					status = :status,
     					activate = :activate,
 						created_at = NULL";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':user', $this->_user );
-		$stmt->bindParam ( ':email', $this->_email );
-		$encryptedPassword = $this->encryptPassword ();
-		$stmt->bindParam ( ':password', $encryptedPassword );
-		$initialStatus = $this->initialStatus ();
-		$stmt->bindParam ( ':status', $initialStatus );
-		$activationCode = $this->activationCode ();
-		$stmt->bindParam ( ':activate', $activationCode );
-		$stmt->execute ();
-		$this->_userID = $this->db->lastInsertId ();
-		if ($this->_userID > 0) {
-			return $this->_userID;
-		} else {
-			return 0;
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':user', $this->_user );
+				$stmt->bindParam ( ':email', $this->_email );
+				$encryptedPassword = $this->encryptPassword ();
+				$stmt->bindParam ( ':password', $encryptedPassword );
+				$initialStatus = $this->initialStatus ();
+				$stmt->bindParam ( ':status', $initialStatus );
+				$activationCode = $this->activationCode ();
+				$stmt->bindParam ( ':activate', $activationCode );
+				$stmt->execute ();
+				if($stmt->rowCount() > 0){
+					$this->_userID = $this->db->lastInsertId (); 
+					return $this->_userID; 
+				} else {
+					return 0;
+				}
+			} else {
+				return 0;
+			}
+		} catch (ValidationException $e) {
+			throw new UserException ( $e );
 		}
 	}
 	
@@ -130,10 +145,13 @@ class User {
 	 * the email address has been verified and serves no other purpose.
 	 */
 	public function update(): bool {
+		
+		$v = new Validation();
+		
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Users WHERE userID = :userID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->execute ();
@@ -141,26 +159,47 @@ class User {
 			
 			if (strlen ( $this->_user ) < 1) {
 				$this->_user = $row ['user'];
+			} else if($this->checkUserExist()){
+				$this->_user = $row ['user'];
+			} else {
+				try {
+					$v->userName($this->_user);
+				} catch (ValidationException $e) {
+					throw new UserException ( $e );
+				}
 			}
 			if (strlen ( $this->_email ) < 1) {
 				$this->_email = $row ['email'];
-			}
-			if (strlen ( $this->_password ) < 1) {
-				$this->_password = $row ['password'];
+			} else if($this->checkEmailExist()){
+				$this->_email = $row ['email'];
 			} else {
-				$this->_password = $this->encryptPassword ();
+				try {
+					$v->email($this->_email);
+				} catch (ValidationException $e) {
+					throw new UserException ( $e );
+				}
+			}
+			if (strlen ( $this->_password ) > 0 && strlen ( $this->_password ) != 40) {
+				try { 
+					$v->password($this->_password);
+					$this->_password = $this->encryptPassword ();
+				} catch (ValidationException $e) {
+					throw new UserException ( $e );
+				}
+			} else {
+				$this->_password = $row ['password'];
 			}
 			if (strlen ( $this->_status ) < 1) {
 				$this->_status = $row ['status'];
 			}
 			
-			$query = "UPDATE Users 
+			$query = "UPDATE Users
 						SET user = :user,
 	    					email = :email,
 							password = :password,
 							status = :status
 						WHERE userID = :userID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->bindParam ( ':user', $this->_user );
@@ -329,36 +368,46 @@ class User {
 	 * that the user is not logged in.
 	 */
 	public function login(): bool {
-		$this->_password = $this->encryptPassword ();
-
-		$query = "SELECT userID, user, email, status
+		$v = new Validation();
+		
+		try {
+			$v->email($this->_email);
+			$v->password($this->_password);
+			
+			$this->_password = $this->encryptPassword ();
+			
+			$query = "SELECT userID, user, email, status
 					FROM Users
 					WHERE email = :email
     				AND password = :password
     				AND (status != 'deleted' && status != 'suspended')
 					AND activate IS NULL";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':email', $this->_email );
-		$stmt->bindParam ( ':password', $this->_password );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-
-		if ($row)
-		{
-			$this->_userID = $row ['userID'];
-			$this->_user = $row ['user'];
-			$this->_status = $row ['status'];
-
-			$_SESSION ['userID'] = $this->_userID;
-			$_SESSION ['user'] = $this->_user;
-			$_SESSION ['email'] = $this->_email;
-			$_SESSION ['status'] = $this->_status;
-			$_SESSION [MODULE] = true;
-			return true;
-		} else {
-			return false;
-		} 
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':email', $this->_email );
+			$stmt->bindParam ( ':password', $this->_password );
+			$stmt->execute ();
+			
+			if ($stmt->rowCount() > 0)
+			{
+				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+				$this->_userID = $row ['userID'];
+				$this->_user = $row ['user'];
+				$this->_status = $row ['status'];
+				
+				$_SESSION ['userID'] = $this->_userID;
+				$_SESSION ['user'] = $this->_user;
+				$_SESSION ['email'] = $this->_email;
+				$_SESSION ['status'] = $this->_status;
+				$_SESSION [MODULE] = true;  // We can get rid of this.
+				return true;
+			} else {
+				return false;
+			}
+			
+		} catch (ValidationException $e) {
+			throw new UserException ( $e );
+		}
 	}
 	
 	/*
@@ -393,6 +442,93 @@ class User {
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 		$this->_userID = $row ['userID'];
+	}
+	
+	/*
+	 * Generates a random password
+	 * This method was obtained from:
+	 * https://www.phpjabbers.com/generate-a-random-password-with-php-php70.html
+	 */
+	public function randomPassword($length,$count, $characters): array {
+		
+		// $length - the length of the generated password
+		// $count - number of passwords to be generated
+		// $characters - types of characters to be used in the password
+		
+		// define variables used within the function
+		$symbols = array();
+		$passwords = array();
+		$used_symbols = '';
+		$pass = '';
+		
+		// an array of different character types
+		$symbols["lower_case"] = 'abcdefghijklmnopqrstuvwxyz';
+		$symbols["upper_case"] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$symbols["numbers"] = '1234567890';
+		$symbols["special_symbols"] = '!?~@#-_+<>[]{}';
+		
+		$characters = explode(",",$characters); // get characters types to be used for the passsword
+		foreach ($characters as $key=>$value) {
+			$used_symbols .= $symbols[$value]; // build a string with all characters
+		}
+		$symbols_length = strlen($used_symbols) - 1; //strlen starts from 0 so to get number of characters deduct 1
+		
+		for ($p = 0; $p < $count; $p++) {
+			$pass = '';
+			for ($i = 0; $i < $length; $i++) {
+				$n = rand(0, $symbols_length); // get a random character from the string with all characters
+				$pass .= $used_symbols[$n]; // add the character to the password string
+			}
+			$passwords[] = $pass;
+		}
+		
+		return $passwords; // return the generated password
+	}
+	
+	/*
+	 * Returns a single random password
+	 */
+	public function getRandomPassword(): string{
+		$passwords = $this->randomPassword(10,1,"lower_case,upper_case,numbers,special_symbols");
+		return $passwords[0];
+	}
+	
+	/*
+	 * Check to see if user exists.
+	 */
+	public function checkUserExist(): bool {
+		
+		$query = "SELECT * FROM Users WHERE user = :user";
+		
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindParam ( ':user', $this->_user );
+		$stmt->execute ();
+		$numUser = $stmt->rowCount();
+				
+		if($numUser > 0){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/*
+	 * Check to see if user and/or email exists.
+	 */
+	public function checkEmailExist(): bool {
+		
+		$query = "SELECT * FROM Users WHERE email = :email";
+		
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindParam ( ':email', $this->_email );
+		$stmt->execute ();
+		$numEmail = $stmt->rowCount();
+		
+		if($numEmail > 0){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	// Display Object Contents

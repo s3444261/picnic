@@ -15,6 +15,8 @@ require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/UserException.php';
+require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 class UserTest extends PicnicTestCase {
 
@@ -28,31 +30,36 @@ class UserTest extends PicnicTestCase {
 	const MODIFIED_DATE = 'updated_at';
 	const MODULE 		= 'picnic';
 
-	const CORRECT_EMAIL_ADDRESS = 'CorrectEmailAddress';
-	const CORRECT_PASSWORD = 'CorrectPassword';
-	const WRONG_EMAIL_ADDRESS = 'WrongEmailAddress';
-	const WRONG_PASSWORD = 'WrongPassword';
+	const CORRECT_USER = 'peter';
+	const CORRECT_EMAIL_ADDRESS = 'peter@gmail.com';
+	const CORRECT_PASSWORD = 'TestTest88';
+	const WRONG_EMAIL_ADDRESS = 'john@hotmail.com';
+	const WRONG_PASSWORD = 'TestTest99';
 
 	protected function setUp(): void {
-		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
-		// Be nice if we could mock out the database, but let's see how we go with that.
+		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser();
 		$pdo = TestPDO::getInstance();
 		DatabaseGenerator::Generate($pdo);
 
 		$args = [
-			self::USER 			=> 'grant',
+			self::USER 			=> self::CORRECT_USER,
 			self::EMAIL 		=> self::CORRECT_EMAIL_ADDRESS,
 			self::PASSWORD		=> self::CORRECT_PASSWORD,
-			self::STATUS 		=> 'active',
-			self::ACTIVATE 		=> 'blahblahblah',
-			self::CREATION_DATE => '1984-08-18',
-			self::MODIFIED_DATE => '2015-02-13'
+			self::STATUS 		=> 'active'
 		];
 
 		$item = new User($pdo, $args);
-		$item->set();
-		$item->get();
+		try {
+			$item->set();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
+		try {
+			$item->get();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 		$item->activate();
 
 		$_SESSION = array();
@@ -74,6 +81,10 @@ class UserTest extends PicnicTestCase {
 		return 200;
 	}
 
+	protected function getExpectedExceptionTypeForUnknownId() {
+		return UserException::class;
+	}
+	
 	protected function getExpectedExceptionTypeForUnsetId() {
 		return UserException::class;
 	}
@@ -82,14 +93,14 @@ class UserTest extends PicnicTestCase {
 
 		return [
 			self::USER_ID 		=> 1,
-			self::USER 			=> 'grant',
-			self::EMAIL 		=> 'CorrectEmailAddress',
-			self::PASSWORD		=> '65820e68486cb78216d87f65fd4816e96fb3f436',
+			self::USER 			=> 'peter',
+			self::EMAIL 		=> 'peter@gmail.com',
+			self::PASSWORD		=> '613b59f86203d9e986e08514d175a7d690f3b8f9',
 			self::STATUS 		=> 'active',
 			self::ACTIVATE 		=> null
 		];
 	}
-
+	
 	public function testAttributes(): void {
 		$values = [
 			self::USER_ID 		=> 1,
@@ -107,57 +118,143 @@ class UserTest extends PicnicTestCase {
 
 	public function testSetResultsInValidId(): void {
 		$sut = new User(TestPDO::getInstance(), [self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
-		$this->assertGreaterThan(0, $sut->set());
+		try {
+			$returnedId = $sut->set();
+		} catch (UserException $e) {
+			//Do nothing
+		}
+		$this->assertGreaterThan(0, $returnedId);
 		$this->assertGreaterThan(0, $sut->{self::USER_ID});
 	}
 
 	public function testSetForDuplicateCombinationReturnsNewId(): void {
+		$u = new User(TestPDO::getInstance(), [self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
+		try {
+			$u->set(); 
+		} catch (UserException $e) {
+			//Do nothing
+		}
 		$sut = new User(TestPDO::getInstance(), [self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
-		$this->assertEquals(2, $sut->set());
-		$this->assertEquals(2, $sut->{self::USER_ID});
+		try {
+			$returnedId = $sut->set(); 
+		} catch (UserException $e) {
+			//Do nothing
+		}
+		$this->assertEquals(0, $returnedId);
+		$this->assertEquals(1, $sut->{self::USER_ID});
 	}
 
 	public function testUpdateUserNameSucceeds(): void
 	{
+		$u = new User(TestPDO::getInstance(), [self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
+		try {
+			$u->set();
+		} catch (UserException $e) {
+			//Do nothing
+		} 
+		
 		$NEW_USER_NAME = 'NewUserName';
 
-		$updating = $this->createSutWithId(1);
-		$updating->get();
+		$updating = $this->createSutWithId(1); 
+		try {
+			$updating->get(); 
+		} catch (UserException $e) {
+			// Do Nothing
+		}
+		
 		$updating->user = $NEW_USER_NAME;
-		$updating->update();
-
+		try {
+			$updating->update();
+		} catch (UserException $e) {
+			// Do Nothing
+			echo $e->getMessage();
+		}
+		
+		try {
+			$updating->get(); 
+		} catch (UserException $e) {
+			// Do Nothing
+		}
+		
 		$sut = $this->createSutWithId(1);
-		$sut->get();
-
+		try {
+			$sut->get(); 
+		} catch (UserException $e) {
+			// Do Nothing
+		}
+		
 		$this->assertEquals($NEW_USER_NAME, $sut->user);
 	}
 
 	public function testUpdateEmailAddressSucceeds(): void
 	{
-		$NEW_EMAIL_ADDRESS = 'NewEmailAddress';
+		$u = new User(TestPDO::getInstance(), [self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
+		try {
+			$u->set();
+		} catch (UserException $e) {
+			//Do nothing
+		} 
+		
+		$NEW_EMAIL_ADDRESS = 'new@gmail.com';
 
 		$updating = $this->createSutWithId(1);
-		$updating->get();
+		try {
+			$updating->get(); 
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 		$updating->email = $NEW_EMAIL_ADDRESS;
-		$updating->update();
+		try {
+			$updating->update();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
+		try {
+			$updating->get(); 
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 
 		$sut = $this->createSutWithId(1);
-		$sut->get();
+		try {
+			$sut->get();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 
 		$this->assertEquals($NEW_EMAIL_ADDRESS, $sut->email);
 	}
 
 	public function testUpdatePasswordSucceeds(): void
 	{
+		$u = new User(TestPDO::getInstance(), [self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
+		try {
+			$u->set();
+		} catch (UserException $e) {
+			//Do nothing
+		} 
+		
 		$updating = $this->createSutWithId(1);
-		$updating->get();
+		try {
+			$updating->get();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 		$PREVIOUS_PASSWORD = $updating->password;
 
-		$updating->password = 'NewPassword';
-		$updating->update();
+		$updating->password = 'NewPassword99';
+		try {
+			$updating->update();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 
 		$sut = $this->createSutWithId(1);
-		$sut->get();
+		try {
+			$sut->get();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 
 		$this->assertNotEquals($PREVIOUS_PASSWORD, $sut->password);
 	}
@@ -165,25 +262,48 @@ class UserTest extends PicnicTestCase {
 	public function testUpdateStatusSucceeds(): void
 	{
 		$NEW_STATUS = 'NewStatus';
+		
+		$u = new User(TestPDO::getInstance(), [self::USER_ID => 1, self::USER => 'someUser', self::EMAIL => 'test@address.net', self::PASSWORD => 'TestTest88']);
+		try {
+			$u->set();
+		} catch (UserException $e) {
+			//Do nothing
+		}
 
 		$updating = $this->createSutWithId(1);
-		$updating->get();
+		try {
+			$updating->get();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 		$updating->status = $NEW_STATUS;
-		$updating->update();
+		try {
+			$updating->update();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 
 		$sut = $this->createSutWithId(1);
-		$sut->get();
+		try {
+			$sut->get();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 
 		$this->assertEquals($NEW_STATUS, $sut->status);
 	}
 
 	public function testLogoutClearsSessionData() : void {
-
+		
 		$sut = $this->createDefaultSut();
 		$sut->email = self::CORRECT_EMAIL_ADDRESS;
 		$sut->password = self::CORRECT_PASSWORD;
-		$sut->login();
-
+		try {
+			$sut->login();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
+		
 		$this->assertNotEmpty($_SESSION);
 
 		$sut->logout();
@@ -192,74 +312,116 @@ class UserTest extends PicnicTestCase {
 	}
 
 	public function testLoginFailureDoesNotCreateSessionData(): void {
+		
+		unset($_SESSION[self::MODULE]);
+		
 		$sut = $this->createDefaultSut();
 		$sut->email = self::WRONG_EMAIL_ADDRESS;
 		$sut->password = self::WRONG_PASSWORD;
 
-		$sut->login();
+		try {
+			$sut->login();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
 
 		$this->assertEmpty($_SESSION);
 	}
 
 	public function testLoginFailsForIncorrectEmail(): void {
+		
+		unset($_SESSION[self::MODULE]);
+		
 		$sut = $this->createDefaultSut();
 		$sut->email = self::WRONG_EMAIL_ADDRESS;
 		$sut->password = self::CORRECT_PASSWORD;
-
-		$this->assertFalse($sut->login());
+		
+		try {
+			$bool = $sut->login();
+		} catch (UserException $e) {
+			$bool = false;
+		}
+		$this->assertFalse($bool);
 	}
 
 	public function testLoginFailsForIncorrectPassword(): void {
+		
 		unset($_SESSION[self::MODULE]);
 
 		$sut = $this->createDefaultSut();
 		$sut->email = self::CORRECT_EMAIL_ADDRESS;
 		$sut->password = self::WRONG_PASSWORD;
 
-		$this->assertFalse($sut->login());
+		try {
+			$bool = $sut->login();
+		} catch (UserException $e) {
+			$bool = false;
+		}
+		$this->assertFalse($bool);
 	}
 
 	public function testLoginFailsForAccountNotActivated(): void {
-		$args = [
-			self::USER 			=> 'neo',
-			self::EMAIL 		=> 'neo@neo.net',
-			self::PASSWORD		=> 'neo',
-			self::STATUS 		=> 'active',
-			self::ACTIVATE 		=> 'fdsffdsfds',
-			self::CREATION_DATE => '1984-08-18',
-			self::MODIFIED_DATE => '2015-02-13'
-		];
+		
+		$u = new User(TestPDO::getInstance(), [self::USER => 'johnny', self::EMAIL => 'john@gmail.com', self::PASSWORD => 'TestTest99']);
+		try {
+			$u->set();
+			$u->get();
+		} catch (UserException $e) {
+			//Do nothing
+		}
+		
+		unset($_SESSION[self::MODULE]);
+		
+		$sut = $this->createSutWithId(2);
+		$sut->email = 'john@gmail.com';
+		$sut->password = 'TestTest99';  
 
-		$item = new User(TestPDO::getInstance(), $args);
-		$item->set();
-
-		$sut = $this->createDefaultSut();
-		$sut->email = 'neo@neo.net';
-		$sut->password = 'neo';
-
-		$this->assertFalse($sut->login());
+		try {
+			$bool = $sut->login();
+		} catch (UserException $e) {
+			$bool = false;
+		}
+		$this->assertFalse($bool);
 	}
 
 	public function testLoginFailsForAccountSuspended(): void {
-		$suspendedUser = $this->createSutWithId(1);
-		$suspendedUser->get();
-		$suspendedUser->password = self::CORRECT_PASSWORD;
-		$suspendedUser->status = 'suspended';
-		$suspendedUser->update();
-
-		$sut = $this->createDefaultSut();
-		$sut->email = self::CORRECT_EMAIL_ADDRESS;
-		$sut->password = self::CORRECT_PASSWORD;
-
-		$this->assertFalse($sut->login());
+		
+		$u = $this->createSutWithId(1);
+		$u->status = 'suspended';
+		try {
+			$u->update();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
+		
+		unset($_SESSION[self::MODULE]);
+		
+		$sut = $this->createSutWithId(1);
+		$sut->email = 'peter@gmail.com';
+		$sut->password = 'TestTest88';
+		
+		try {
+			$bool = $sut->login();
+		} catch (UserException $e) {
+			$bool = false;
+		}
+		$this->assertFalse($bool);
 	}
 
 	public function testLoginSucceedsForValidEmailAndPasswordAndActivated(): void {
-		$sut = $this->createDefaultSut();
-		$sut->email = self::CORRECT_EMAIL_ADDRESS;
-		$sut->password = self::CORRECT_PASSWORD;
-
-		$this->assertTrue($sut->login());
+				
+		unset($_SESSION[self::MODULE]);
+		
+		$sut = $this->createSutWithId(1);
+		$sut->email = 'peter@gmail.com';
+		$sut->password = 'TestTest88';
+		
+		try {
+			$bool = $sut->login();
+		} catch (UserException $e) {
+			$bool = false;
+		}
+		$this->assertTrue($bool);
 	}
 
 	public function testSuccessfulLoginCreatesSessionData(): void {
@@ -268,8 +430,12 @@ class UserTest extends PicnicTestCase {
 		$sut = $this->createDefaultSut();
 		$sut->email = self::CORRECT_EMAIL_ADDRESS;
 		$sut->password = self::CORRECT_PASSWORD;
-		$sut->login();
-
+		try {
+			$sut->login();
+		} catch (UserException $e) {
+			// Do Nothing
+		}
+		
 		$this->assertNotEmpty($_SESSION);
-	}
+	} 
 }

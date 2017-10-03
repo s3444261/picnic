@@ -70,6 +70,10 @@ class UserItemTest extends PicnicTestCase {
 		return 200;
 	}
 
+	protected function getExpectedExceptionTypeForUnknownId() {
+		return UserException::class;
+	}
+	
 	protected function getExpectedExceptionTypeForUnsetId() {
 		return UserException::class;
 	}

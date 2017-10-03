@@ -68,6 +68,10 @@ class ItemTest extends PicnicTestCase
 	protected function getExpectedExceptionTypeForUnsetId() {
 		return ItemException::class;
 	}
+	
+	protected function getExpectedExceptionTypeForUnknownId() {
+		return ItemException::class;
+	}
 
 	protected function getExpectedAttributesForGet() {
 

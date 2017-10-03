@@ -40,6 +40,11 @@ abstract class PicnicTestCase extends PHPUnit\Framework\TestCase {
 	 * Gets the type of exception that should be thrown on an error.
 	 */
 	abstract protected function getExpectedExceptionTypeForUnsetId();
+	
+	/**
+	 * Gets the type of exception that should be thrown on an error.
+	 */
+	abstract protected function getExpectedExceptionTypeForUnknownId();
 
 	/**
 	 * Gets the attributes that we expect to be returned when we get a valid object.
@@ -80,10 +85,14 @@ abstract class PicnicTestCase extends PHPUnit\Framework\TestCase {
 
 	public function testGetReturnsSelfOrTrueForKnownId(): void {
 		$sut = $this->createSutWithId($this->getValidId());
-
-		$result = $sut->get();
-
-		if ($result == true) {
+		$pdo = TestPDO::getInstance();
+		try {
+			$result = $sut->get();
+		} catch (Exception $e) {
+			$result = new User($pdo);
+		}
+		
+		if ($result) {
 			$this->addToAssertionCount(1);
 		} else {
 			$this->assertEquals($sut, $result);
@@ -91,35 +100,49 @@ abstract class PicnicTestCase extends PHPUnit\Framework\TestCase {
 	}
 
 	public function testGetThrowsOrReturnsFalseForUnknownId(): void {
-		$exceptionType = $this->getExpectedExceptionTypeForUnsetId();
+		$exceptionType = $this->getExpectedExceptionTypeForUnknownId();
 
 		if ($exceptionType != null) {
-			$sut = $this->createSutWithId($this->getInvalidId());
 			$this->expectException($exceptionType);
-			$sut->get();
+			$sut = $this->createSutWithId($this->getInvalidId());
+			$sut->get();			
 		} else {
 			$sut = $this->createSutWithId($this->getInvalidId());
-			$this->assertFalse($sut->get());
+			try {
+				$bool = $sut->get();
+			} catch (Exception $e) {
+				$bool = false;
+			}
+			$this->assertFalse($bool);
 		}
 	}
 
 	public function testGetRetrievesCorrectValuesForKnownId(): void {
 		$sut = $this->createSutWithId($this->getValidId());
-		$sut->get();
+		try {
+			$sut->get();
+		} catch (Exception $e) {
+			// Do Nothing
+		}
 		$this->assertValuesAreEqualTo($sut, $this->getExpectedAttributesForGet());
 	}
 
 	public function testGetThrowsOrReturnsFalseForUnsetId(): void {
 
-		$exceptionType = $this->getExpectedExceptionTypeForUnsetId();
+		$exceptionType = $this->getExpectedExceptionTypeForUnsetId(); 
 
 		if ($exceptionType != null) {
-			$sut = $this->createDefaultSut();
+			$sut = $this->createDefaultSut(); 
 			$this->expectException($exceptionType);
 			$sut->get();
 		} else {
 			$sut = $this->createDefaultSut();
-			$this->assertFalse($sut->get());
+			try {
+				$bool = $sut->get();
+			} catch (Exception $e) {
+				// Do Nothing
+			}
+			$this->assertFalse($bool);
 		}
 	}
 

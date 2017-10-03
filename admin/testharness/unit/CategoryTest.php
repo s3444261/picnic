@@ -58,6 +58,10 @@ final class CategoryTest extends PicnicTestCase {
 		return 200;
 	}
 
+	protected function getExpectedExceptionTypeForUnknownId() {
+		return CategoryException::class;
+	}
+	
 	protected function getExpectedExceptionTypeForUnsetId() {
 		return CategoryException::class;
 	}
