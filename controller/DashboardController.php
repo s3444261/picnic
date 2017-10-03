@@ -8,13 +8,13 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class DashboardController {
+class DashboardController extends BaseController {
 	
 	// Displays the Dashboard Page.
 	public function index()
 	{
 		if ($this->auth()) {
-			include 'view/layout/dashboard.php';
+			$this->RenderInMainTemplate('view/layout/dashboard.php');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}

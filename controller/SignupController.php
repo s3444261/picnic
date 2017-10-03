@@ -8,12 +8,12 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class SignupController {
+class SignupController  extends BaseController {
 	
 	// Displays the Create Account Page.
 	public function index()
 	{
-		include 'view/layout/signup.php';
+		$this->RenderInMainTemplate('view/layout/signup.php');
 	}
 }
 ?>

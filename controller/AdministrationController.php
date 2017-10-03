@@ -10,7 +10,7 @@
 
 require_once  __DIR__ . '/../config/Picnic.php';
 
-class AdministrationController {
+class AdministrationController extends BaseController  {
 
 	/**
 	 * Displays the main admin page.
@@ -37,7 +37,7 @@ class AdministrationController {
 				$this->changePassword();
 			}
 
-			include 'view/layout/administration.php';
+			$this->RenderInMainTemplate('view/layout/administration.php');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
@@ -251,7 +251,7 @@ class AdministrationController {
 				];
 			}
 
-			include 'view/layout/editUser.php';
+			$this->RenderInMainTemplate('view/layout/editUser.php');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}

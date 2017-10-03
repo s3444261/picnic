@@ -11,7 +11,7 @@
 require_once __DIR__ . '/../model/User.php';
 require_once  __DIR__ . '/../config/Picnic.php';
 
-class LoginController {
+class LoginController extends BaseController {
 	
 	// Log the user in.
 	public function index() {

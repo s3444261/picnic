@@ -8,12 +8,12 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class SigninController {
+class SigninController extends BaseController  {
 	
 	// Displays the Login Page.
 	public function index()
 	{
-		include 'view/layout/signin.php';
+		$this->RenderInMainTemplate('view/layout/signin.php');
 	}
 }
 ?>

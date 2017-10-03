@@ -15,36 +15,46 @@
 
 <div class="container">
 	<div class="row">
-		<?php
-		if (isset ( $_SESSION ['item'] )) {
-				?>
-			<div class="row">
-				<div class="col-md-3">ID</div>
-				<div class="col-md-9"><?php echo $_SESSION ['item'] ['itemID'] ?></div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">Description</div>
-				<div class="col-md-9"><?php echo $_SESSION ['item'] ['description'] ?> </div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">Quantity</div>
-				<div class="col-md-9"><?php echo $_SESSION ['item'] ['quantity'] ?></div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">Condition</div>
-				<div class="col-md-9"><?php echo $_SESSION ['item'] ['itemcondition'] ?></div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">Price</div>
-				<div class="col-md-9">$<?php echo $_SESSION ['item'] ['price'] ?></div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">Status</div>
-				<div class="col-md-9"><?php echo $_SESSION ['item'] ['status'] ?></div>
-			</div>
-
+        <div class="col-md-4">
+            <?php  echo '<img src="'
+                . BASE
+                . '/Item/Image/'
+                . $_SESSION ['item'] ['itemID']
+                . '"/>';
+            ?>
+        </div>
+            <div class="col-md-8">
             <?php
-		}
-		?>
-	</div>
+            if (isset ( $_SESSION ['item'] )) {
+                    ?>
+                <div class="row">
+                    <div class="col-md-3">ID</div>
+                    <div class="col-md-9"><?php echo $_SESSION ['item'] ['itemID'] ?></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">Description</div>
+                    <div class="col-md-9"><?php echo $_SESSION ['item'] ['description'] ?> </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">Quantity</div>
+                    <div class="col-md-9"><?php echo $_SESSION ['item'] ['quantity'] ?></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">Condition</div>
+                    <div class="col-md-9"><?php echo $_SESSION ['item'] ['itemcondition'] ?></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">Price</div>
+                    <div class="col-md-9">$<?php echo $_SESSION ['item'] ['price'] ?></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">Status</div>
+                    <div class="col-md-9"><?php echo $_SESSION ['item'] ['status'] ?></div>
+                </div>
+
+                <?php
+            }
+            ?>
+        </div>
+    </div>
 </div>

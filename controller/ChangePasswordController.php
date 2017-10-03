@@ -10,7 +10,7 @@
 
 require_once  __DIR__ . '/../config/Picnic.php';
 
-class ChangePasswordController {
+class ChangePasswordController extends BaseController  {
 	
 	// Displays the Change Password Page.
 	public function index() {
@@ -91,7 +91,7 @@ class ChangePasswordController {
 					}
 				}
 			} else {
-				include 'view/layout/changePassword.php';
+				$this->RenderInMainTemplate('view/layout/changePassword.php');
 			}
 		} else {
 			header('Location: ' . BASE . '/Home');

@@ -33,7 +33,7 @@ class Driver {
 	public function run(): void {
 		$this->ensureSessionIsActive();
 		$this->parseUri();
-		$this->processPage();
+		$this->invokeController();
 	}
 
 	/**
@@ -105,11 +105,10 @@ class Driver {
 	/**
 	 * Runs the controller and generates the page output.
 	 */
-	private function processPage(): void {
-		include __DIR__ . '/../view/header/header.php';
-		include __DIR__ . '/../view/nav/nav.php';
-		call_user_func_array(array(new $this->controllerClassName, $this->action), $this->params);
-		include __DIR__ . '/../view/footer/footer.php';
+	private function invokeController(): void {
+		call_user_func_array(
+			array(new $this->controllerClassName, $this->action),
+			$this->params);
 	}
 
 	/**

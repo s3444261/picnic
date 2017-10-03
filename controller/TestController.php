@@ -8,12 +8,12 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class TestController {
+class TestController extends BaseController  {
 	
 	// Displays the Test Results Page.
 	public function index()
 	{
-		include 'view/layout/test.php';
+		$this->RenderInMainTemplate('view/layout/test.php');
 	}
 }
 ?>

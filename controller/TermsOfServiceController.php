@@ -8,12 +8,12 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class TermsOfServiceController {
+class TermsOfServiceController extends BaseController  {
 
 	// Displays the Terms of Service Page.
 	public function index()
 	{
-		include 'view/layout/terms.php';
+		$this->RenderInMainTemplate('view/layout/terms.php');
 	}
 }
 

@@ -10,13 +10,12 @@
 
 require_once  __DIR__ . '/../config/Picnic.php';
 
-class CategoryController
-{
+class CategoryController extends BaseController {
 	public function View($categoryId) {
 		$h = new Humphree(Picnic::getInstance());
 		$h ->getCategoryById($categoryId);
 		$h ->getCategoriesIn($categoryId);
 		$h ->getCategoryItemsFor($categoryId);
-		include 'view/layout/category.php';
+		$this->RenderInMainTemplate('view/layout/category.php');
 	}
 }

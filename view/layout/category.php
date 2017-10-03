@@ -46,7 +46,11 @@
 				?>
                 <div class="col-sm-12">
                     <p>
-						<?php  echo '<a class="btn btn-secondary" href="'
+						<?php  echo '<img src="'
+                            . BASE
+                            . '/Item/Thumb/'
+                            . $item ['item'] ['itemID']
+                            . '"/><a class="btn btn-secondary" href="'
                             . BASE
                             . '/Item/View/'
                             . $item ['item'] ['itemID']

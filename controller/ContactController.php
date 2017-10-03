@@ -8,12 +8,12 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class ContactController {
+class ContactController extends BaseController {
 	
 	// Displays the Contact Page.
 	public function index()
 	{
-		include 'view/layout/contact.php';
+		$this->RenderInMainTemplate('view/layout/contact.php');
 	}
 }
 ?>

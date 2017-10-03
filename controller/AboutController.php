@@ -8,12 +8,12 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class AboutController {
+class AboutController extends BaseController  {
 	
 	// Displays the About Page.
 	public function index()
 	{
-		include 'view/layout/about.php';
+		$this->RenderInMainTemplate('view/layout/about.php');
 	}
 }
 ?>
