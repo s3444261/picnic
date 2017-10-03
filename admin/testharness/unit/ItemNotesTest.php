@@ -17,6 +17,8 @@ require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/Note.php';
 require_once dirname(__FILE__) . '/../../../model/ItemNotes.php';
+require_once dirname(__FILE__) . '/../../../model/ItemNotesException.php';
+require_once dirname(__FILE__) . '/../../../model/Validation.php';
 
 class ItemNotesTest extends PicnicTestCase {
 
@@ -78,11 +80,11 @@ class ItemNotesTest extends PicnicTestCase {
 	}
 
 	protected function getExpectedExceptionTypeForUnknownId() {
-		return null;
+		return ItemNotesException::class;
 	}
 	
 	protected function getExpectedExceptionTypeForUnsetId() {
-		return null;
+		return ItemNotesException::class;
 	}
 
 	protected function getExpectedAttributesForGet() {
@@ -141,4 +143,41 @@ class ItemNotesTest extends PicnicTestCase {
 
 		$this->assertEquals(4, $sut->{self::NOTE_ID});
 	}
+	
+	public function testGetNotes(): void {
+		$sut = $this->createDefaultSut();
+		$sut->itemID = 1;
+		$itemNotes = $sut->getNotes();
+		
+		$i = 1;
+		foreach($itemNotes as $itemNote){
+			$this->assertEquals($i, $itemNote->item_noteID);
+			$this->assertEquals(1, $itemNote->itemID);
+			$this->assertEquals($i, $itemNote->noteID);
+			$i++;
+		}
+	}
+	
+	public function testGetItemNoteInvalidNoteId(): void {
+		$exceptionType = $this->getExpectedExceptionTypeForUnknownId();
+		
+		if ($exceptionType != null) {
+			$this->expectException($exceptionType);
+			$sut = $this->createSutWithId(1);
+			$sut->noteID = $this->getInvalidId();
+			$sut->getItemNote();
+		}
+	} 
+	
+	public function testGetItemNoteValidNoteId(): void {
+		$sut = $this->createDefaultSut();
+		$sut->noteID = 2; 
+		try {
+			$sut->getItemNote();
+			$this->assertEquals(2, $sut->item_noteID);
+			$this->assertEquals(1, $sut->itemID);
+		} catch (ItemNotesException $e) {
+			// Do Nothing
+		}
+	} 
 }

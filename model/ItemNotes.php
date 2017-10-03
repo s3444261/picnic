@@ -57,9 +57,9 @@ class ItemNotes {
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_itemID = $row ['itemID'];
 			$this->_noteID = $row ['noteID'];
-			return true;
+			return $this;
 		} else {
-			return false;
+			throw new ItemNotesException ( 'Could not retrieve Item note.' );
 		}
 	}
 	
@@ -235,8 +235,8 @@ class ItemNotes {
 		$stmt->execute ();
 		if($stmt->rowCount() > 0){
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			$this->_id = $row ['item_noteID'];
-			$this->_itemID = $row ['itemID'];
+			$this->_item_noteID = $row ['item_noteID'];
+			$this->_itemID = $row ['itemID']; 
 			return true;
 		} else {
 			throw new ItemNotesException ( 'Could not retrieve itemNote.' );

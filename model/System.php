@@ -619,7 +619,11 @@ class System {
 		foreach ( $inids as $inid ) {
 			$note = new Note ($this->db);
 			$note->noteID = $inid->noteID;
-			$note->get ();
+			try {
+				$note->get ();
+			} catch ( NoteException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
 			$notes [] = $note;
 		}
 		return $notes;
@@ -631,7 +635,11 @@ class System {
 	public function getItemNote($note): Note {
 		$n = new Note ($this->db);
 		$n->noteID = $note->noteID;
-		$n->get ();
+		try {
+			$n->get ();
+		} catch ( NoteException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
 		return $n;
 	}
 	

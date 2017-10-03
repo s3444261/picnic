@@ -60,9 +60,9 @@ class Note {
 			$this->_note = $row ['note'];
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
-			return true;
+			return $this;
 		} else {
-			return false;
+			throw new NoteException('Could not retrieve note.');
 		}
 	}
 	
@@ -78,8 +78,8 @@ class Note {
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':note', $this->_note );
 		$stmt->execute ();
-		$this->_noteID = $this->db->lastInsertId ();
-		if ($this->_noteID > 0) {
+		if($stmt->rowCount() > 0){
+			$this->_noteID = $this->db->lastInsertId ();
 			return $this->_noteID;
 		} else {
 			return 0;

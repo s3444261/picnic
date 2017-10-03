@@ -102,7 +102,7 @@ abstract class PicnicTestCase extends PHPUnit\Framework\TestCase {
 	public function testGetThrowsOrReturnsFalseForUnknownId(): void {
 		$exceptionType = $this->getExpectedExceptionTypeForUnknownId();
 
-		if ($exceptionType != null) {
+		if ($exceptionType != null) { 
 			$this->expectException($exceptionType);
 			$sut = $this->createSutWithId($this->getInvalidId());
 			$sut->get();			

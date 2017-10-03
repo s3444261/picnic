@@ -884,7 +884,7 @@ try {
 	if($e->getError () == 'Could not retrieve itemNote.'){
 		$n = new Note(TestPDO::getInstance());
 		$n->noteID = $testNoteID;
-		if(!$n->get()){
+		if(!$n->exists()){
 			$deleteItemNote = true;
 		} else {
 			$deleteItemNote = false;
