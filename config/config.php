@@ -15,7 +15,13 @@ ini_set ( 'display_errors', 1 );
 date_default_timezone_set('Australia/Melbourne');
 
 define('MODULE', '');
-define('BASE', ''); //'/' . MODULE);
+
+if(gethostname() == 'Grant-PC'){
+	define('BASE', '/picnic');
+} else {
+	define('BASE', ''); 
+}
+
 
 function __autoload($class) {
 	$dir = array (
