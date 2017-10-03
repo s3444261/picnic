@@ -15,6 +15,8 @@ require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Note.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
+require_once dirname(__FILE__) . '/../../../model/CommentException.php';
+require_once dirname(__FILE__) . '/../../../model/Validation.php';
 
 class CommentTest extends PicnicTestCase{
 
@@ -67,11 +69,11 @@ class CommentTest extends PicnicTestCase{
 	}
 	
 	protected function getExpectedExceptionTypeForUnknownId() {
-		return null;
+		return CommentException::class;
 	}
 	
 	protected function getExpectedExceptionTypeForUnsetId() {
-		return null;
+		return CommentException::class;
 	}
 
 	protected function getExpectedAttributesForGet() {
@@ -110,7 +112,7 @@ class CommentTest extends PicnicTestCase{
 		$this->assertEquals('be excellent to each other', $sut->{self::COMMENT_TEXT});
 	}
 
-	function testCountReturnsTotalNumberOfCommentsForUser(): void {
+	public function testCountReturnsTotalNumberOfCommentsForUser(): void {
 
 		$sut = $this->createSutWithId(1);
 		$sut->get();

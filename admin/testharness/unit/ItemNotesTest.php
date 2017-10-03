@@ -170,7 +170,7 @@ class ItemNotesTest extends PicnicTestCase {
 	} 
 	
 	public function testGetItemNoteValidNoteId(): void {
-		$sut = $this->createDefaultSut();
+		$sut = $this->createDefaultSut(); 
 		$sut->noteID = 2; 
 		try {
 			$sut->getItemNote();

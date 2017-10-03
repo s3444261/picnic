@@ -63,9 +63,9 @@ class Comment {
 			$this->_comment = $row ['comment'];
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
-			return true;
+			return $this;
 		} else {
-			return false;
+			throw new CommentException('Could not retrieve comment.');
 		}
 	}
 	
