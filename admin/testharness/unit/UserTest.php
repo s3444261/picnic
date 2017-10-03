@@ -33,8 +33,15 @@ class UserTest extends PicnicTestCase {
 	const CORRECT_USER = 'peter';
 	const CORRECT_EMAIL_ADDRESS = 'peter@gmail.com';
 	const CORRECT_PASSWORD = 'TestTest88';
+	const WRONG_USER = 'john';
 	const WRONG_EMAIL_ADDRESS = 'john@hotmail.com';
 	const WRONG_PASSWORD = 'TestTest99';
+	const USER_TWO = 'mary';
+	const EMAIL_ADDRESS_TWO = 'mary@gmail.com';
+	const PASSWORD_TWO = 'TestTest77';
+	const USER_THREE = 'adrian';
+	const EMAIL_ADDRESS_THREE = 'adrian@gmail.com';
+	const PASSWORD_THREE = 'TestTest66';
 
 	protected function setUp(): void {
 		// Regenerate a fresh database.
@@ -43,24 +50,55 @@ class UserTest extends PicnicTestCase {
 		DatabaseGenerator::Generate($pdo);
 
 		$args = [
-			self::USER 			=> self::CORRECT_USER,
-			self::EMAIL 		=> self::CORRECT_EMAIL_ADDRESS,
-			self::PASSWORD		=> self::CORRECT_PASSWORD,
+				self::USER 			=> self::CORRECT_USER,
+				self::EMAIL 		=> self::CORRECT_EMAIL_ADDRESS,
+				self::PASSWORD		=> self::CORRECT_PASSWORD,
+				self::STATUS 		=> 'active'
+		];
+		
+		$args1 = [
+			self::USER 			=> self::USER_TWO,
+			self::EMAIL 		=> self::EMAIL_ADDRESS_TWO,
+			self::PASSWORD		=> self::PASSWORD_TWO,
 			self::STATUS 		=> 'active'
 		];
-
-		$item = new User($pdo, $args);
+		
+		$args2 = [
+				self::USER 			=> self::USER_THREE,
+				self::EMAIL 		=> self::EMAIL_ADDRESS_THREE,
+				self::PASSWORD		=> self::PASSWORD_THREE,
+				self::STATUS 		=> 'active'
+		];
+		
+		$u = new User($pdo, $args);
 		try {
-			$item->set();
+			$u->set();
 		} catch (UserException $e) {
 			// Do Nothing
 		}
 		try {
-			$item->get();
+			$u->get();
 		} catch (UserException $e) {
 			// Do Nothing
 		}
-		$item->activate();
+		$u->activate();
+		
+		for($i = 1; $i < 3; $i++){
+			${'u' . $i} = new User($pdo, ${'args' . $i});
+			try {
+				${'u' . $i}->set();
+			} catch (UserException $e) {
+				// Do Nothing
+			}
+			try {
+				${'u' . $i}->get();
+			} catch (UserException $e) {
+				// Do Nothing
+			}
+			if($i < 2){
+				${'u' . $i}->activate();
+			}
+		}
 
 		$_SESSION = array();
 	}
@@ -438,4 +476,91 @@ class UserTest extends PicnicTestCase {
 		
 		$this->assertNotEmpty($_SESSION);
 	} 
+	
+	public function testSuccessfulCountUser(): void {
+		$sut = $this->createDefaultSut();
+		$sut->user = self::USER_TWO;
+		$this->assertEquals(1, $sut->countUser());
+	}
+	
+	public function testSuccessfulCountEmail(): void {
+		$sut = $this->createDefaultSut();
+		$sut->email = self::EMAIL_ADDRESS_THREE;
+		$this->assertEquals(1, $sut->countEmail());
+	}
+	
+	public function testSuccessfulActivate(): void {
+		$sut = $this->createSutWithId(3);
+		try {
+			$sut->get();
+		} catch (Exception $e) {
+			// Do Nothing
+		}
+		$this->assertEquals(32, strlen($sut->activate));
+		$sut->activate();
+		try {
+			$sut->get();
+		} catch (Exception $e) {
+			// Do Nothing
+		}
+		$this->assertNull($sut->activate);
+	}
+	
+	public function testSuccessfulGetUsers(): void {
+		$sut = $this->createDefaultSut();
+		$users = $sut->getUsers();
+		$i = 1;
+		foreach($users as $user){
+			if($i == 1 ){
+				$this->assertEquals($user['userID'], $i);
+				$this->assertEquals($user['user'], self::CORRECT_USER);
+				$this->assertEquals($user['email'], SELF::CORRECT_EMAIL_ADDRESS);
+				$this->assertEquals($user['status'], 'active');
+			} else if($i == 1 ){
+				$this->assertEquals($user['userID'], $i);
+				$this->assertEquals($user['user'], self::USER_TWO);
+				$this->assertEquals($user['email'], SELF::EMAIL_ADDRESS_TWO);
+				$this->assertEquals($user['status'], 'active');
+			} else if($i == 1 ){
+				$this->assertEquals($user['userID'], $i);
+				$this->assertEquals($user['user'], self::USER_THREE);
+				$this->assertEquals($user['email'], SELF::EMAIL_ADDRESS_THREE);
+				$this->assertEquals($user['status'], 'active');
+			} 
+			$i++;
+		}
+	}
+	
+	public function testSuccessfulCheckPassword(): void {
+		$sut = $this->createDefaultSut();
+		$sut->email = self::EMAIL_ADDRESS_TWO;
+		$sut->password = self::PASSWORD_THREE;
+		$this->assertFalse($sut->checkPassword());
+		
+		$sut->password = self::PASSWORD_TWO;
+		$this->assertTrue($sut->checkPassword());
+	}
+	
+	public function testSuccessfulGetRandomPassword(): void {
+		$sut = $this->createDefaultSut();
+		$this->assertEquals(10, strlen($sut->getRandomPassword()));
+	}
+	
+	public function testSuccessfulCheckUserExist(): void {
+		$sut = $this->createDefaultSut();
+		$sut->user = self::WRONG_USER;
+		$this->assertFalse($sut->checkUserExist());
+		
+		$sut->user = self::USER_TWO;
+		$this->assertTrue($sut->checkUserExist());
+	}
+	
+	public function testSuccessfulCheckEmailExist(): void {
+		$sut = $this->createDefaultSut();
+		$sut->email = self::WRONG_EMAIL_ADDRESS;
+		$this->assertFalse($sut->checkEmailExist());
+		
+		$sut->email = self::EMAIL_ADDRESS_TWO;
+		$this->assertTrue($sut->checkEmailExist());
+	}
 }

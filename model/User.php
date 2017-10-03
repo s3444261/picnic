@@ -426,7 +426,7 @@ class User {
 	/*
 	 * Compares a password with the one in the database
 	 */
-	public function checkPassword(): void {
+	public function checkPassword(): bool {
 		$this->_password = $this->encryptPassword ();
 		
 		$query = "SELECT *
@@ -440,9 +440,12 @@ class User {
 		$stmt->bindParam ( ':email', $this->_email );
 		$stmt->bindParam ( ':password', $this->_password );
 		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		$this->_userID = $row ['userID'];
-	}
+		if($stmt->rowCount() == 1){
+			return true;
+		} else {
+			return false;
+		}
+	} 
 	
 	/*
 	 * Generates a random password
