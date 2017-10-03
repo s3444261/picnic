@@ -10,7 +10,7 @@
 
 require_once  __DIR__ . '/../config/Picnic.php';
 
-class HomeController extends BaseController {
+class HomeController {
 
 	/**
 	 * Displays the home page.

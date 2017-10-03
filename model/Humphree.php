@@ -542,38 +542,9 @@ class Humphree {
 	/*
 	 * The getItem() function retrieves an item.
 	 */
-	public function getItemById($id): void {
-		$item = new Item ($this->db);
-		$item->itemID = $id;
-		$item = $this->system->getItem ( $item );
-		$_SESSION ['item'] ['itemID'] = $item->itemID;
-		$_SESSION ['item'] ['title'] = $item->title;
-		$_SESSION ['item'] ['description'] = $item->description;
-		$_SESSION ['item'] ['quantity'] = $item->quantity;
-		$_SESSION ['item'] ['itemcondition'] = $item->itemcondition;
-		$_SESSION ['item'] ['price'] = $item->price;
-		$_SESSION ['item'] ['status'] = $item->status;
-		$itemComments = $this->system->getItemComments ( $item );
-		$i = 1;
-		foreach ( $itemComments as $itemComment ) {
-			$_SESSION ['item'] [$i] ['comment'] ['commentID'] = $itemComment->commentID;
-			$_SESSION ['item'] [$i] ['comment'] ['userID'] = $itemComment->userID;
-			$user = new User ($this->db);
-			$user->userID = $itemComment->userID;
-			$user->get ();
-			$_SESSION ['item'] [$i] ['comment'] ['user'] = $user->user;
-			$_SESSION ['item'] [$i] ['comment'] ['comment'] = $itemComment->comment;
-			$i ++;
-		}
-		$itemNotes = $this->system->getItemNotes ( $item );
-		$j = 1;
-		foreach ( $itemNotes as $itemNote ) {
-				$_SESSION ['item'] [$j] ['note'] ['noteID'] = $itemNote->noteID;
-				$_SESSION ['item'] [$j] ['note'] ['note'] = $itemNote->note;
-				$j ++;
-			}
+	public function getItemById($id): Item {
+		return $this->system->getItemById ( $id );
 	}
-
 
 	/*
 	 * The addItem() function adds an item.

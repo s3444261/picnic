@@ -10,7 +10,7 @@
 
 require_once  __DIR__ . '/../config/Picnic.php';
 
-class CategoryController extends BaseController {
+class CategoryController {
 
 	/**
 	 * Displays the category details page for the given category.

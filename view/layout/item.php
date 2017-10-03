@@ -9,56 +9,42 @@
  */
 ?>
 
-<div class="jumbotron">
-    <h2><?php echo $_SESSION ['item'] ['title'] ?></h2>
-</div>
+<h1><?php echo $this->data['item']->title ?></h1>
 
 <div class="container">
-	<div class="row">
-        <div class="col-md-4">
+    <div class="col-md-4">
+        <!-- for now, I'm just using the thumb scaled up, to avoid uploading hundreds of MB of
+             images to the dev server. If/when we want to show full size images, the URLS in the following
+              anchor should be changed from /Item/Thumb/ to /Item/Image/ -->
+        <img src="<?php echo BASE.'/Item/Thumb/'.$this->data['item']->itemID ?>" style="min-width:300px; min-height:300px" />
+    </div>
 
-            <!-- for now, I'm just using the thumb scaled up, to avoid uploading hundreds of MB of
-                 images to the dev server. If/when we want to show full size images, the URLS in the following
-                  anchor should be changed to /Item/Image/etc. -->
-            <?php  echo '<img src="'
-                . BASE
-                . '/Item/Thumb/'
-                . $_SESSION ['item'] ['itemID']
-                . '" style="min-width:300px; min-height:300px" />';
-            ?>
-        </div>
-        <div class="col-md-8">
-            <?php
-            if (isset ( $_SESSION ['item'] )) {
-                    ?>
-                <div class="row">
-                    <div class="col-md-3">ID</div>
-                    <div class="col-md-9"><?php echo $_SESSION ['item'] ['itemID'] ?></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3">Description</div>
-                    <div class="col-md-9"><?php echo $_SESSION ['item'] ['description'] ?> </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3">Quantity</div>
-                    <div class="col-md-9"><?php echo $_SESSION ['item'] ['quantity'] ?></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3">Condition</div>
-                    <div class="col-md-9"><?php echo $_SESSION ['item'] ['itemcondition'] ?></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3">Price</div>
-                    <div class="col-md-9">$<?php echo $_SESSION ['item'] ['price'] ?></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3">Status</div>
-                    <div class="col-md-9"><?php echo $_SESSION ['item'] ['status'] ?></div>
-                </div>
-
-                <?php
-            }
-            ?>
-        </div>
+    <div class="col-md-8">
+        <?php if (isset ( $this->data['item'] )) { ?>
+            <div class="row">
+                <div class="col-md-3">ID</div>
+                <div class="col-md-9"><?php echo $this->data['item']->itemID ?></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">Description</div>
+                <div class="col-md-9"><?php echo $this->data['item']->description ?> </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">Quantity</div>
+                <div class="col-md-9"><?php echo $this->data['item']->quantity ?></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">Condition</div>
+                <div class="col-md-9"><?php echo $this->data['item']->itemcondition ?></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">Price</div>
+                <div class="col-md-9">$<?php echo $this->data['item']->price ?></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">Status</div>
+                <div class="col-md-9"><?php echo $this->data['item']->status ?></div>
+            </div>
+        <?php } ?>
     </div>
 </div>

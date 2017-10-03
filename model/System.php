@@ -460,6 +460,20 @@ class System {
 		}
 		return $i;
 	}
+
+	/*
+	 * The getItem() function retrieves an item.
+	 */
+	public function getItemById($itemId): Item {
+		$i = new Item ($this->db);
+		$i->itemID = $itemId;
+		try {
+			$i = $i->get ();
+		} catch ( ItemException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
+		return $i;
+	}
 	
 	/*
 	 * The addItem() function adds an item.

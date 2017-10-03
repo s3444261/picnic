@@ -10,7 +10,7 @@
 
 require_once  __DIR__ . '/../config/Picnic.php';
 
-class ItemController extends BaseController {
+class ItemController {
 
 	const THUMB_DIRECTORY = __DIR__ . "/../../item_thumbs/";
 	const IMAGE_DIRECTORY = __DIR__ . "/../../item_images/";
@@ -26,8 +26,10 @@ class ItemController extends BaseController {
 	 */
 	public function View($itemId) {
 		$h = new Humphree(Picnic::getInstance());
-		$h ->getItemById($itemId);
-		$this->RenderInMainTemplate('view/layout/item.php');
+
+		$view = new View();
+		$view->SetData('item', $h ->getItemById($itemId));
+		$view->Render('item');
 	}
 
 	/**
@@ -40,7 +42,6 @@ class ItemController extends BaseController {
 	public function Thumb($itemId) {
 		$subDir = substr($itemId,0 , 3);
 		$path = self::THUMB_DIRECTORY . "/" . $subDir . "/" .$itemId . ".jpg";
-		header("Content-Type: image/jpeg");
 
 		if (file_exists($path)) {
 			readfile($path);
