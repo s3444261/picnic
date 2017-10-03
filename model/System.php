@@ -570,7 +570,11 @@ class System {
 	public function getItemComment($comment): Comment {
 		$c = new Comment ($this->db);
 		$c->commentID = $comment->commentID;
-		$c->get ();
+		try {
+			$c = $c->get ();
+		} catch ( UserException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
 		return $c;
 	}
 	

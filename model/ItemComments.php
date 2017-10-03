@@ -57,9 +57,9 @@ class ItemComments {
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_itemID = $row ['itemID'];
 			$this->_commentID = $row ['commentID'];
-			return true;
+			return $this;
 		} else {
-			return false;
+			throw new ItemCommentsException ( 'Could not retrieve Item comment.' );
 		}
 	}
 	
@@ -235,7 +235,7 @@ class ItemComments {
 		$stmt->execute ();
 		if($stmt->rowCount() > 0){
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			$this->_id = $row ['item_commentID'];
+			$this->_item_commentID = $row ['item_commentID'];
 			$this->_itemID = $row ['itemID'];
 			return $this;
 		} else {

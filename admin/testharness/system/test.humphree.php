@@ -763,7 +763,7 @@ try {
 	if($e->getError () == 'Could not retrieve itemComment.'){
 		$c = new Comment(TestPDO::getInstance());
 		$c->commentID = $testCommentID;
-		if(!$c->get()){
+		if(!$c->exists()){
 			$deleteItemComment = true;
 		} else {
 			$deleteItemComment = false;
