@@ -11,35 +11,28 @@ if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }
 class Humphree {
-
 	private $db;
-   private $system;
-
+	private $system;
+	
 	// Constructor
 	function __construct(PDO $pdo) {
 		$this->db = $pdo;
-		$this->system = new System($pdo);
+		$this->system = new System ( $pdo );
 	}
-
+	
 	/*
 	 * The createAccount() function allows a user to create their
 	 * own account and join Humphree granting them access to add
 	 * and update items as well as view.
 	 */
-	public function createAccount(): bool {
-		// TO DO
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->user = $_SESSION ['user'] ['user'];
-			$user->email = $_SESSION ['user'] ['email'];
-			$user->password = $_SESSION ['user'] ['password'];
-			unset ( $_SESSION ['user'] );
-
-			if ($this->system->createAccount ( $user )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function createAccount(string $userName, string $email, string $password): bool {
+		$user = new User ( $this->db );
+		$user->user = $userName;
+		$user->email = $email;
+		$user->password = $password;
+		
+		if ($this->system->createAccount ( $user )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -49,17 +42,11 @@ class Humphree {
 	 * The activateAccount() fucntion verfies the email address
 	 * of the new user and makes the account active.
 	 */
-	public function activateAccount(): bool {
-		// TO DO
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->userID = $_SESSION ['user'] ['userID'];
-			unset ( $_SESSION ['user'] );
-			if ($this->system->activateAccount ( $user )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function activateAccount(int $userID): bool {
+		$user = new User ( $this->db );
+		$user->userID = $userID;
+		if ($this->system->activateAccount ( $user )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -69,18 +56,12 @@ class Humphree {
 	 * The changePassword() function allows a user or administrator to
 	 * change a password for an account.
 	 */
-	public function changePassword(): bool {
-		// TO DO
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->userID = $_SESSION ['user'] ['userID'];
-			$user->password = $_SESSION ['user'] ['password'];
-			unset ( $_SESSION ['user'] );
-			if ($this->system->changePassword ( $user )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function changePassword(int $userID, string $password): bool {
+		$user = new User ( $this->db );
+		$user->userID = $userID;
+		$user->password = $password;
+		if ($this->system->changePassword ( $user )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -90,17 +71,11 @@ class Humphree {
 	 * The forgotPassword() function allows a user to generate a new password
 	 * which is sent to the users account via email.
 	 */
-	public function forgotPassword(): bool {
-		// TO DO
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->email = $_SESSION ['user'] ['email'];
-			unset ( $_SESSION ['user'] );
-			if ($this->system->forgotPassword ( $user )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function forgotPassword(string $email): bool {
+		$user = new User ( $this->db );
+		$user->email = $email;
+		if ($this->system->forgotPassword ( $user )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -110,18 +85,13 @@ class Humphree {
 	 * The addUser() function allows an administrator to add a user and
 	 * pre-activate the account.
 	 */
-	public function addUser(): bool {
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->user = $_SESSION ['user'] ['user'];
-			$user->email = $_SESSION ['user'] ['email'];
-			$user->password = $_SESSION ['user'] ['password'];
-			unset ( $_SESSION ['user'] );
-			if ($this->system->addUser ( $user )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function addUser(string $userName, string $email, string $password): bool {
+		$user = new User ( $this->db );
+		$user->user = $userName;
+		$user->email = $email;
+		$user->password = $password;
+		if ($this->system->addUser ( $user )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -130,21 +100,16 @@ class Humphree {
 	/*
 	 * The updateUser() function allows an administrator to update a user.
 	 */
-	public function updateUser(): bool {
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->userID = $_SESSION ['user'] ['userID'];
-			$user->user = $_SESSION ['user'] ['user'];
-			$user->email = $_SESSION ['user'] ['email'];
-			$user->password = $_SESSION ['user'] ['password'];
-			$user->status = $_SESSION ['user'] ['status'];
-			$user->activate = $_SESSION ['user'] ['activate'];
-			unset ( $_SESSION ['user'] );
-			if ($this->system->updateUser ( $user )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function updateUser(array $userArray): bool {
+		$user = new User ( $this->db );
+		$user->userID = $userArray ['userID'];
+		$user->user = $userArray ['user'];
+		$user->email = $userArray ['email'];
+		$user->password = $userArray ['password'];
+		$user->status = $userArray ['status'];
+		$user->activate = $userArray ['activate'];
+		if ($this->system->updateUser ( $user )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -153,52 +118,48 @@ class Humphree {
 	/*
 	 * The getUser() function allows an administrator to retrieve a user.
 	 */
-	public function getUser(): bool {
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->userID = $_SESSION ['user'] ['userID'];
-			$user = $this->system->getUser ( $user );
-			$_SESSION ['user'] ['userID'] = $user->userID;
-			$_SESSION ['user'] ['user'] = $user->user;
-			$_SESSION ['user'] ['email'] = $user->email;
-			$_SESSION ['user'] ['status'] = $user->status;
-			$_SESSION ['user'] ['activate'] = $user->activate;
-			return true;
-		} else {
-			return false;
-		}
+	public function getUser(int $userID): array {
+		$userArray = array ();
+		$user = new User ( $this->db );
+		$user->userID = $userID;
+		$user = $this->system->getUser ( $user );
+		$userArray ['userID'] = $user->userID;
+		$userArray ['user'] = $user->user;
+		$userArray ['email'] = $user->email;
+		$userArray ['status'] = $user->status;
+		$userArray ['activate'] = $user->activate;
+		return $userArray;
 	}
 	
 	/*
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
-	public function getUsers(): bool {
+	public function getUsers(): array {
+		$usersArray = array ();
 		$users = $this->system->getUsers ();
-		$i = 1;
+		
 		foreach ( $users as $user ) {
-			$_SESSION ['users'] [$i] ['user'] ['userID'] = $user->userID;
-			$_SESSION ['users'] [$i] ['user'] ['user'] = $user->user;
-			$_SESSION ['users'] [$i] ['user'] ['email'] = $user->email;
-			$_SESSION ['users'] [$i] ['user'] ['status'] = $user->status;
-			$_SESSION ['users'] [$i] ['user'] ['activate'] = $user->activate;
-			$i ++;
+			$userArray = array ();
+			$usersArray ['userID'] = $user->userID;
+			$usersArray ['user'] = $user->user;
+			$usersArray ['email'] = $user->email;
+			$usersArray ['status'] = $user->status;
+			$usersArray ['activate'] = $user->activate;
+			
+			$usersArray [] = $userArray;
 		}
-		return true;
+		return $usersArray;
 	}
 	
 	/*
 	 * The disableUser() function allows an administrator to disable a users
 	 * account.
 	 */
-	public function disableUser(): bool {
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->userID = $_SESSION ['user'] ['userID'];
-			if ($this->system->disableUser ( $user )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function disableUser(int $userID): bool {
+		$user = new User ( $this->db );
+		$user->userID = $userID;
+		if ($this->system->disableUser ( $user )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -208,16 +169,11 @@ class Humphree {
 	 * The deleteUser() function allows an administrator to completely delete
 	 * an account and all associated database entries.
 	 */
-	public function deleteUser(): bool {
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->userID = $_SESSION ['user'] ['userID'];
-			unset ( $_SESSION ['user'] );
-			if ($this->system->deleteUser ( $user )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function deleteUser(int $userID): bool {
+		$user = new User ( $this->db );
+		$user->userID = $userID;
+		if ($this->system->deleteUser ( $user )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -227,17 +183,12 @@ class Humphree {
 	 * The addCategory() function allows and administrator to add a Category and
 	 * specify its position in the heirachy.
 	 */
-	public function addCategory(): bool {
-		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ($this->db);
-			$category->parentID = $_SESSION ['category'] ['parentID'];
-			$category->category = $_SESSION ['category'] ['category'];
-			unset ( $_SESSION ['category'] );
-			if ($this->system->addCategory ( $category )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function addCategory(int $parentID, string $category): bool {
+		$cat = new Category ( $this->db );
+		$cat->parentID = $parentID;
+		$cat->category = $category;
+		if ($this->system->addCategory ( $cat )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -247,18 +198,13 @@ class Humphree {
 	 * The updateCategory() function allows and administrator to update a Category and
 	 * its position in the heirachy.
 	 */
-	public function updateCategory(): bool {
-		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ($this->db);
-			$category->categoryID = $_SESSION ['category'] ['categoryID'];
-			$category->parentID = $_SESSION ['category'] ['parentID'];
-			$category->category = $_SESSION ['category'] ['category'];
-			unset ( $_SESSION ['category'] );
-			if ($this->system->updateCategory ( $category )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function updateCategory(int $categoryID, int $parentID, string $category): bool {
+		$cat = new Category ( $this->db );
+		$cat->categoryID = $categoryID;
+		$cat->parentID = $parentID;
+		$cat->category = $category;
+		if ($this->system->updateCategory ( $cat )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -268,16 +214,11 @@ class Humphree {
 	 * The deleteCategory() function allows and administrator to delete a Category and
 	 * all associated database content.
 	 */
-	public function deleteCategory(): bool {
-		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ($this->db);
-			$category->categoryID = $_SESSION ['category'] ['categoryID'];
-			unset ( $_SESSION ['category'] );
-			if ($this->system->deleteCategory ( $category )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function deleteCategory(int $categoryID): bool {
+		$category = new Category ( $this->db );
+		$category->categoryID = $categoryID;
+		if ($this->system->deleteCategory ( $category )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -286,287 +227,280 @@ class Humphree {
 	/*
 	 * The getCategory() function retrieves a Category.
 	 */
-	public function getCategoryById($id): Category {
-		$category = new Category ($this->db);
-		$category->categoryID = $id;
+	public function getCategory(int $categoryID): array {
+		$cat = array ();
+		$category = new Category ( $this->db );
+		$category->categoryID = $categoryID;
 		$category = $this->system->getCategory ( $category );
-		return $category;
+		$cat ['categoryID'] = $category->categoryID;
+		$cat ['parentID'] = $category->parentID;
+		$cat ['category'] = $category->category;
+		
+		return $cat;
 	}
-
-	/*
- * The getCategory() function retrieves a Category.
- */
-	public function getCategory(): bool {
-		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ($this->db);
-			$category->categoryID = $_SESSION ['category'] ['categoryID'];
-			$category = $this->system->getCategory ( $category );
-			$_SESSION ['category'] ['categoryID'] = $category->categoryID;
-			$_SESSION ['category'] ['parentID'] = $category->parentID;
-			$_SESSION ['category'] ['category'] = $category->category;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
+	
 	/*
 	 * The getCategories() function retrieves all Categories.
 	 */
-	public function getCategories(): bool {
+	public function getCategories(): array {
+		$cats = array ();
 		$categories = $this->system->getCategories ();
-		$i = 1;
+		
 		foreach ( $categories as $category ) {
-			$_SESSION ['categories'] [$i] ['category'] ['categoryID'] = $category->categoryID;
-			$_SESSION ['categories'] [$i] ['category'] ['parentID'] = $category->parentID;
-			$_SESSION ['categories'] [$i] ['category'] ['category'] = $category->category;
-			$i ++;
+			$cat = array ();
+			$cat ['categoryID'] = $category->categoryID;
+			$cat ['parentID'] = $category->parentID;
+			$cat ['category'] = $category->category;
+			
+			$cats [] = $cat;
 		}
-		if (isset ( $_SESSION ['categories'] )) {
-			return true;
-		} else {
-			return false;
-		}
+		
+		return $cats;
 	}
-
+	
 	/*
- * The getCategories() function retrieves all Categories in the given parent category.
- */
-	public function getCategoriesIn(int $parentCategoryId): array {
-		return $this->system->getCategoriesIn ($parentCategoryId);
+	 * The getCategoriesIn() method retrieves all Categories in the given parent category.
+	 */
+	public function getCategoriesIn(int $parentID): array {
+		$categories = $this->system->getCategoriesIn ( $parentID );
+		return $categories;
 	}
 	
 	/*
 	 * The countCategoryItems() method counts the number of items in a category.
 	 */
-	public function countCategoryItems(): int {
+	public function countCategoryItems(int $categoryID): int {
 		$numCategoryItems = 0;
+		$category = new Category ( $this->db );
+		$category->categoryID = $categoryID;
+		$numCategoryItems = $this->system->countCategoryItems ( $category );
 		
-		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ($this->db);
-			$category->categoryID = $_SESSION ['category'] ['categoryID'];
-			$numCategoryItems = $this->system->countCategoryItems ( $category );
-		}
 		return $numCategoryItems;
 	}
 	
 	/*
 	 * The countItemComments() method counts the number of items in a category.
 	 */
-	public function countItemComments(): int {
+	public function countItemComments(int $itemID): int {
 		$numItemComments = 0;
+		$item = new Item ( $this->db );
+		$item->itemID = $itemID;
+		$numItemComments = $this->system->countItemComments ( $item );
 		
-		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ($this->db);
-			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$numItemComments = $this->system->countItemComments ( $item );
-		}
 		return $numItemComments;
 	}
 	
 	/*
 	 * The countItemNotes() method counts the number of items in a category.
 	 */
-	public function countItemNotes(): int {
+	public function countItemNotes(int $itemID): int {
 		$numItemNotes = 0;
+		$item = new Item ( $this->db );
+		$item->itemID = $item;
+		$numItemNotes = $this->system->countItemNotes ( $item );
 		
-		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ($this->db);
-			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$numItemNotes = $this->system->countItemNotes ( $item );
-		}
 		return $numItemNotes;
 	}
 	
 	/*
 	 * The getCategoryItems() function retrieves all items linked to a Category.
 	 */
-	public function getCategoryItems(): bool {
-		if (isset ( $_SESSION ['category'] )) {
-			$category = new Category ($this->db);
-			$category->categoryID = $_SESSION ['category'] ['categoryID'];
-			$categoryItems = $this->system->getCategoryItems ( $category );
+	public function getCategoryItems(int $categoryID): array {
+		$category = new Category ( $this->db );
+		$category->categoryID = $categoryID;
+		$categoryItems = $this->system->getCategoryItems ( $category );
+		$its = array ();
+		
+		foreach ( $categoryItems as $item ) {
+			$it = array ();
 			
-			$i = 1;
-			foreach ( $categoryItems as $item ) {
-				$_SESSION ['categoryItems'] [$i] ['item'] ['itemID'] = $item->itemID;
-				$_SESSION ['categoryItems'] [$i] ['item'] ['title'] = $item->title;
-				$_SESSION ['categoryItems'] [$i] ['item'] ['description'] = $item->description;
-				$_SESSION ['categoryItems'] [$i] ['item'] ['quantity'] = $item->quantity;
-				$_SESSION ['categoryItems'] [$i] ['item'] ['itemcondition'] = $item->itemcondition;
-				$_SESSION ['categoryItems'] [$i] ['item'] ['price'] = $item->price;
-				$_SESSION ['categoryItems'] [$i] ['item'] ['status'] = $item->status;
+			$it ['itemID'] = $item->itemID;
+			$it ['title'] = $item->title;
+			$it ['description'] = $item->description;
+			$it ['quantity'] = $item->quantity;
+			$it ['itemcondition'] = $item->itemcondition;
+			$it ['price'] = $item->price;
+			$it ['status'] = $item->status;
+			
+			$comments = $this->system->getItemComments ( $item );
+			$cs = array ();
+			
+			foreach ( $comments as $comment ) {
+				$c = array ();
 				
-				$comments = $this->system->getItemComments ( $item );
-				$j = 1;
-				foreach ( $comments as $comment ) {
-					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['commentID'] = $comment->commentID;
-					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['userID'] = $comment->userID;
-					$user = new User ($this->db);
-					$user->userID = $comment->userID;
-					$user = $this->system->getUser ( $user );
-					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['user'] = $user->user;
-					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['comment'] ['comment'] = $comment->comment;
-					$j ++;
-				}
+				$c ['commentID'] = $comment->commentID;
+				$c ['userID'] = $comment->userID;
+				$user = new User ( $this->db );
+				$user->userID = $comment->userID;
+				$user = $this->system->getUser ( $user );
+				$c ['user'] = $user->user;
+				$c ['comment'] = $comment->comment;
 				
-				$notes = $this->system->getItemNotes ( $item );
-				$j = 1;
-				foreach ( $notes as $note ) {
-					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['note'] ['noteID'] = $note->noteID;
-					$_SESSION ['categoryItems'] [$i] ['item'] [$j] ['note'] ['note'] = $note->note;
-					$j ++;
-				}
-				$i ++;
+				$cs [] = $c;
 			}
 			
-			if (isset ( $_SESSION ['categoryItems'] )) {
-				return true;
-			} else {
-				return false;
+			$it ['comments'] = $cs;
+			
+			$notes = $this->system->getItemNotes ( $item );
+			$ns = array ();
+			
+			foreach ( $notes as $note ) {
+				$n = array ();
+				
+				$n ['noteID'] = $note->noteID;
+				$n ['note'] = $note->note;
+				
+				$ns [] = $n;
 			}
+			
+			$it ['notes'] = $ns;
+			
+			$its [] = $it;
 		}
+		
+		return $its;
 	}
-
-	/*
-	 * The getCategoryItems() function retrieves all items linked to the given category.
-	 */
-	public function getCategoryItemsFor($categoryId): array {
-		return $this->system->getCategoryItemsFor ( $categoryId );
-	}
-
+	
 	/*
 	 * The countUserItems() method counts the number of items in a user.
 	 */
-	public function countUserItems(): int {
+	public function countUserItems(int $userID): int {
 		$numUserItems = 0;
 		
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->userID = $_SESSION ['user'] ['userID'];
-			$numUserItems = $this->system->countUserItems ( $user );
-		}
+		$user = new User ( $this->db );
+		$user->userID = $userID;
+		$numUserItems = $this->system->countUserItems ( $user );
+		
 		return $numUserItems;
 	}
 	
 	/*
 	 * The getUserItems() function retrieves all items linked to a User.
 	 */
-	public function getUserItems(): bool {
-		if (isset ( $_SESSION ['user'] )) {
-			$user = new User ($this->db);
-			$user->userID = $_SESSION ['user'] ['userID'];
-			$userItems = $this->system->getUserItems ( $user );
+	public function getUserItems(int $userID): array {
+		$user = new User ( $this->db );
+		$user->userID = $userID;
+		$userItems = $this->system->getUserItems ( $user );
+		$its = array ();
+		
+		foreach ( $userItems as $item ) {
+			$it = array ();
 			
-			$i = 1;
-			foreach ( $userItems as $item ) {
-				$_SESSION ['userItems'] [$i] ['item'] ['itemID'] = $item->itemID;
-				$_SESSION ['userItems'] [$i] ['item'] ['title'] = $item->title;
-				$_SESSION ['userItems'] [$i] ['item'] ['description'] = $item->description;
-				$_SESSION ['userItems'] [$i] ['item'] ['quantity'] = $item->quantity;
-				$_SESSION ['userItems'] [$i] ['item'] ['itemcondition'] = $item->itemcondition;
-				$_SESSION ['userItems'] [$i] ['item'] ['price'] = $item->price;
-				$_SESSION ['userItems'] [$i] ['item'] ['status'] = $item->status;
+			$it ['itemID'] = $item->itemID;
+			$it ['title'] = $item->title;
+			$it ['description'] = $item->description;
+			$it ['quantity'] = $item->quantity;
+			$it ['itemcondition'] = $item->itemcondition;
+			$it ['price'] = $item->price;
+			$it ['status'] = $item->status;
+			
+			$comments = $this->system->getItemComments ( $item );
+			$cs = array ();
+			
+			foreach ( $comments as $comment ) {
+				$c = array ();
 				
-				$comments = $this->system->getItemComments ( $item );
-				$j = 1;
-				foreach ( $comments as $comment ) {
-					$_SESSION ['userItems'] [$i] ['item'] [$j] ['comment'] ['commentID'] = $comment->commentID;
-					$_SESSION ['userItems'] [$i] ['item'] [$j] ['comment'] ['userID'] = $comment->userID;
-					$user = new User ($this->db);
-					$user->userID = $comment->userID;
-					$user = $this->system->getUser ( $user );
-					$_SESSION ['userItems'] [$i] ['item'] [$j] ['comment'] ['user'] = $user->user;
-					$_SESSION ['userItems'] [$i] ['item'] [$j] ['comment'] ['comment'] = $comment->comment;
-					$j ++;
-				}
+				$c ['commentID'] = $comment->commentID;
+				$c ['userID'] = $comment->userID;
+				$user = new User ( $this->db );
+				$user->userID = $comment->userID;
+				$user = $this->system->getUser ( $user );
+				$c ['user'] = $user->user;
+				$c ['comment'] = $comment->comment;
 				
-				$notes = $this->system->getItemNotes ( $item );
-				$j = 1;
-				foreach ( $notes as $note ) {
-					$_SESSION ['userItems'] [$i] ['item'] [$j] ['note'] ['noteID'] = $note->noteID;
-					$_SESSION ['userItems'] [$i] ['item'] [$j] ['note'] ['note'] = $note->note;
-					$j ++;
-				}
-				$i ++;
+				$cs [] = $c;
 			}
 			
-			if (isset ( $_SESSION ['userItems'] )) {
-				return true;
-			} else {
-				return false;
+			$it ['comments'] = $cs;
+			
+			$notes = $this->system->getItemNotes ( $item );
+			$ns = array ();
+			
+			foreach ( $notes as $note ) {
+				$n = array ();
+				
+				$n ['noteID'] = $note->noteID;
+				$n ['note'] = $note->note;
+				
+				$ns [] = $n;
 			}
+			
+			$it ['notes'] = $ns;
+			
+			$its [] = $it;
 		}
+		
+		return $its;
 	}
 	
 	/*
 	 * The getItem() function retrieves an item.
 	 */
-	public function getItem(): bool {
-		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ($this->db);
-			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$item = $this->system->getItem ( $item );
-			$_SESSION ['item'] ['itemID'] = $item->itemID;
-			$_SESSION ['item'] ['title'] = $item->title;
-			$_SESSION ['item'] ['description'] = $item->description;
-			$_SESSION ['item'] ['quantity'] = $item->quantity;
-			$_SESSION ['item'] ['itemcondition'] = $item->itemcondition;
-			$_SESSION ['item'] ['price'] = $item->price;
-			$_SESSION ['item'] ['status'] = $item->status;
-			$itemComments = $this->system->getItemComments ( $item );
-			$i = 1;
-			foreach ( $itemComments as $itemComment ) {
-				$_SESSION ['item'] [$i] ['comment'] ['commentID'] = $itemComment->commentID;
-				$_SESSION ['item'] [$i] ['comment'] ['userID'] = $itemComment->userID;
-				$user = new User ($this->db);
-				$user->userID = $itemComment->userID;
-				$user->get ();
-				$_SESSION ['item'] [$i] ['comment'] ['user'] = $user->user;
-				$_SESSION ['item'] [$i] ['comment'] ['comment'] = $itemComment->comment;
-				$i ++;
-			}
-			$itemNotes = $this->system->getItemNotes ( $item );
-			$j = 1;
-			foreach ( $itemNotes as $itemNote ) {
-				$_SESSION ['item'] [$j] ['note'] ['noteID'] = $itemNote->noteID;
-				$_SESSION ['item'] [$j] ['note'] ['note'] = $itemNote->note;
-				$j ++;
-			}
-			return true;
-		} else {
-			return false;
+	public function getItem(int $itemID): array {
+		$item = new Item ( $this->db );
+		$item->itemID = $itemID;
+		$item = $this->system->getItem ( $item );
+		$it = array ();
+		
+		$it ['itemID'] = $item->itemID;
+		$it ['title'] = $item->title;
+		$it ['description'] = $item->description;
+		$it ['quantity'] = $item->quantity;
+		$it ['itemcondition'] = $item->itemcondition;
+		$it ['price'] = $item->price;
+		$it ['status'] = $item->status;
+		
+		$comments = $this->system->getItemComments ( $item );
+		$cs = array ();
+		
+		foreach ( $comments as $comment ) {
+			$c = array ();
+			
+			$c ['commentID'] = $comment->commentID;
+			$c ['userID'] = $comment->userID;
+			$user = new User ( $this->db );
+			$user->userID = $comment->userID;
+			$user = $this->system->getUser ( $user );
+			$c ['user'] = $user->user;
+			$c ['comment'] = $comment->comment;
+			
+			$cs [] = $c;
 		}
+		
+		$it ['comments'] = $cs;
+		
+		$notes = $this->system->getItemNotes ( $item );
+		$ns = array ();
+		
+		foreach ( $notes as $note ) {
+			$n = array ();
+			
+			$n ['noteID'] = $note->noteID;
+			$n ['note'] = $note->note;
+			
+			$ns [] = $n;
+		}
+		
+		$it ['notes'] = $ns;
+		
+		return $it;
 	}
-
-	/*
-	 * The getItem() function retrieves an item.
-	 */
-	public function getItemById($id): Item {
-		return $this->system->getItemById ( $id );
-	}
-
+	
 	/*
 	 * The addItem() function adds an item.
 	 */
-	public function addItem(): bool {
-		if (isset ( $_SESSION ['user'] ) && isset ( $_SESSION ['item'] )) {
-			$user = new User ($this->db);
-			$user->userID = $_SESSION ['user'] ['userID'];
-			$item = new Item ($this->db);
-			$item->title = $_SESSION ['item'] ['title'];
-			$item->description = $_SESSION ['item'] ['description'];
-			$item->quantity = $_SESSION ['item'] ['quantity'];
-			$item->itemcondition = $_SESSION ['item'] ['itemcondition'];
-			$item->price = $_SESSION ['item'] ['price'];
-			$item->status = $_SESSION ['item'] ['status'];
-			unset ( $_SESSION ['user'] );
-			unset ( $_SESSION ['item'] );
-			if ($this->system->addItem ( $user, $item )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function addItem(int $userID, array $item): bool {
+		$user = new User ( $this->db );
+		$user->userID = $userID;
+		$it = new Item ( $this->db );
+		$it->title = $item ['title'];
+		$it->description = $item ['description'];
+		$it->quantity = $item ['quantity'];
+		$it->itemcondition = $item ['itemcondition'];
+		$it->price = $item ['price'];
+		$it->status = $item ['status'];
+		if ($this->system->addItem ( $user, $it )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -575,22 +509,17 @@ class Humphree {
 	/*
 	 * The updateItem() function updates an item.
 	 */
-	public function updateItem(): bool {
-		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ($this->db);
-			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$item->title = $_SESSION ['item'] ['title'];
-			$item->description = $_SESSION ['item'] ['description'];
-			$item->quantity = $_SESSION ['item'] ['quantity'];
-			$item->itemcondition = $_SESSION ['item'] ['itemcondition'];
-			$item->price = $_SESSION ['item'] ['price'];
-			$item->status = $_SESSION ['item'] ['status'];
-			unset ( $_SESSION ['item'] );
-			if ($this->system->updateItem ( $item )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function updateItem(array $item): bool {
+		$it = new Item ( $this->db );
+		$it->itemID = $item ['itemID'];
+		$it->title = $item ['title'];
+		$it->description = $item ['description'];
+		$it->quantity = $item ['quantity'];
+		$it->itemcondition = $item ['itemcondition'];
+		$it->price = $item ['price'];
+		$it->status = $item ['status'];
+		if ($this->system->updateItem ( $it )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -599,16 +528,11 @@ class Humphree {
 	/*
 	 * The deleteItem() function deletes an item and all associated database content.
 	 */
-	public function deleteItem(): bool {
-		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ($this->db);
-			$item->itemID = $_SESSION ['item'] ['itemID'];
-			unset ( $_SESSION ['item'] );
-			if ($this->system->deleteItem ( $item )) {
-				return true;
-			} else {
-				return false;
-			}
+	public function deleteItem(int $itemID): bool {
+		$item = new Item ( $this->db );
+		$item->itemID = $itemID;
+		if ($this->system->deleteItem ( $item )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -617,68 +541,57 @@ class Humphree {
 	/*
 	 * The getItemComments() function retrieves all comments for an item.
 	 */
-	public function getItemComments(): bool {
-		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ($this->db);
-			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$itemComments = $this->system->getItemComments ( $item );
-			$i = 1;
-			foreach ( $itemComments as $itemComment ) {
-				$_SESSION ['item'] [$i] ['comment'] ['commentID'] = $itemComment->commentID;
-				$_SESSION ['item'] [$i] ['comment'] ['userID'] = $itemComment->userID;
-				$user = new User ($this->db);
-				$user->userID = $itemComment->userID;
-				$user->get ();
-				$_SESSION ['item'] [$i] ['comment'] ['user'] = $user->user;
-				$_SESSION ['item'] [$i] ['comment'] ['comment'] = $itemComment->comment;
-				$i ++;
-			}
-			return true;
-		} else {
-			return false;
+	public function getItemComments(int $itemID): array {
+		$item = new Item ( $this->db );
+		$item->itemID = $itemID;
+		$itemComments = $this->system->getItemComments ( $item );
+		$cs = array ();
+		
+		foreach ( $itemComments as $itemComment ) {
+			$c = array ();
+			
+			$c ['commentID'] = $itemComment->commentID;
+			$c ['userID'] = $itemComment->userID;
+			$user = new User ( $this->db );
+			$user->userID = $itemComment->userID;
+			$user = $this->system->getUser ( $user );
+			$c ['user'] = $user->user;
+			$c ['comment'] = $itemComment->comment;
+			
+			$cs [] = $c;
 		}
+		return $cs;
 	}
 	
 	/*
 	 * The getItemComment() function retrieves a comment.
 	 */
-	public function getItemComment(): bool {
-		// TO DO
-		if (isset ( $_SESSION ['comment'] )) {
-			$comment = new Comment ($this->db);
-			$comment->commentID = $_SESSION ['comment'] ['commentID'];
-			$itemComment = $this->system->getItemComment ( $comment );
-			$_SESSION ['comment'] ['userID'] = $itemComment->userID;
-			$user = new User ($this->db);
-			$user->userID = $itemComment->userID;
-			$user->get ();
-			$_SESSION ['comment'] ['user'] = $user->user;
-			$_SESSION ['comment'] ['comment'] = $itemComment->comment;
-			return true;
-		} else {
-			return false;
-		}
+	public function getItemComment(int $commentID): array {
+		$c = array ();
+		
+		$comment = new Comment ( $this->db );
+		$comment->commentID = $commentID;
+		$itemComment = $this->system->getItemComment ( $comment );
+		$c ['userID'] = $itemComment->userID;
+		$user = new User ( $this->db );
+		$user->userID = $itemComment->userID;
+		$user = $this->system->getUser ( $user );
+		$c ['user'] = $user->user;
+		$c ['comment'] = $itemComment->comment;
 	}
 	
 	/*
 	 * The addItemComment() function adds an itemComment.
 	 */
-	public function addItemComment(): bool {
-		if (isset ( $_SESSION ['user'] ) && isset ( $_SESSION ['item'] ) && isset ( $_SESSION ['comment'] )) {
-			$user = new User ($this->db);
-			$item = new Item ($this->db);
-			$comment = new Comment ($this->db);
-			$user->userID = $_SESSION ['user'] ['userID'];
-			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$comment->comment = $_SESSION ['comment'] ['comment'];
-			if ($this->system->addItemComment ( $user, $item, $comment )) {
-				unset ( $_SESSION ['user'] );
-				unset ( $_SESSION ['item'] );
-				unset ( $_SESSION ['comment'] );
-				return true;
-			} else {
-				return false;
-			}
+	public function addItemComment(int $userID, int $itemID, string $comment): bool {
+		$user = new User ( $this->db );
+		$item = new Item ( $this->db );
+		$c = new Comment ( $this->db );
+		$user->userID = $userID;
+		$item->itemID = $itemID;
+		$c->comment = $comment;
+		if ($this->system->addItemComment ( $user, $item, $c )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -687,18 +600,13 @@ class Humphree {
 	/*
 	 * The updateItemComment() function updates an itemComment.
 	 */
-	public function updateItemComment(): bool {
-		if (isset ( $_SESSION ['comment'] )) {
-			$comment = new Comment ($this->db);
-			$comment->commentID = $_SESSION ['comment'] ['commentID'];
-			$comment->userID = $_SESSION ['comment'] ['userID'];
-			$comment->comment = $_SESSION ['comment'] ['comment'];
-			if ($this->system->updateItemComment ( $comment )) {
-				unset ( $_SESSION ['comment'] );
-				return true;
-			} else {
-				return false;
-			}
+	public function updateItemComment(array $c): bool {
+		$comment = new Comment ( $this->db );
+		$comment->commentID = $c ['commentID'];
+		$comment->userID = $c ['userID'];
+		$comment->comment = $c ['comment'];
+		if ($this->system->updateItemComment ( $comment )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -707,16 +615,11 @@ class Humphree {
 	/*
 	 * The deleteItemComment() function deletes an itemComment and all associated database content.
 	 */
-	public function deleteItemComment(): bool {
-		if (isset ( $_SESSION ['comment'] )) {
-			$comment = new Comment ($this->db);
-			$comment->commentID = $_SESSION ['comment'] ['commentID'];
-			if ($this->system->deleteItemComment ( $comment )) {
-				unset ( $_SESSION ['comment'] );
-				return true;
-			} else {
-				return false;
-			}
+	public function deleteItemComment(int $commentID): bool {
+		$comment = new Comment ( $this->db );
+		$comment->commentID = $commentID;
+		if ($this->system->deleteItemComment ( $comment )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -725,54 +628,48 @@ class Humphree {
 	/*
 	 * The getItemNotes() retrieves all notes for an item.
 	 */
-	public function getItemNotes(): bool {
-		if (isset ( $_SESSION ['item'] )) {
-			$item = new Item ($this->db);
-			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$itemNotes = $this->system->getItemNotes ( $item );
-			$i = 1;
-			foreach ( $itemNotes as $itemNote ) {
-				$_SESSION ['item'] [$i] ['note'] ['noteID'] = $itemNote->noteID;
-				$_SESSION ['item'] [$i] ['note'] ['note'] = $itemNote->note;
-				$i ++;
-			}
-			return true;
-		} else {
-			return false;
+	public function getItemNotes(int $itemID): array {
+		$item = new Item ( $this->db );
+		$item->itemID = $itemID;
+		$itemNotes = $this->system->getItemNotes ( $item );
+		$ns = array ();
+		
+		foreach ( $itemNotes as $itemNote ) {
+			$n = array ();
+			
+			$n ['noteID'] = $itemNote->noteID;
+			$n ['note'] = $itemNote->note;
+			
+			$ns [] = $n;
 		}
+		return $ns;
 	}
 	
 	/*
 	 * The getItemNote() function retrieves a note for an item.
 	 */
-	public function getItemNote(): bool {
-		if (isset ( $_SESSION ['note'] )) {
-			$note = new Note ($this->db);
-			$note->noteID = $_SESSION ['note'] ['noteID'];
-			$itemNote = $this->system->getItemNote ( $note );
-			$_SESSION ['note'] ['note'] = $itemNote->note;
-			return true;
-		} else {
-			return false;
-		}
+	public function getItemNote(int $noteID): array {
+		$n = array ();
+		
+		$note = new Note ( $this->db );
+		$note->noteID = noteID;
+		$itemNote = $this->system->getItemNote ( $note );
+		$n ['noteID'] = $itemNote->noteID;
+		$n ['note'] = $itemNote->note;
+		
+		return $n;
 	}
 	
 	/*
 	 * The addItemNote() function adds an itemNote.
 	 */
-	public function addItemNote(): bool {
-		if (isset ( $_SESSION ['item'] ) && isset ( $_SESSION ['note'] )) {
-			$item = new Item ($this->db);
-			$note = new Note ($this->db);
-			$item->itemID = $_SESSION ['item'] ['itemID'];
-			$note->note = $_SESSION ['note'] ['note'];
-			if ($this->system->addItemNote ( $item, $note )) {
-				unset ( $_SESSION ['item'] );
-				unset ( $_SESSION ['note'] );
-				return true;
-			} else {
-				return false;
-			}
+	public function addItemNote(int $itemID, string $note): bool {
+		$item = new Item ( $this->db );
+		$n = new Note ( $this->db );
+		$item->itemID = $itemID;
+		$n->note = $note;
+		if ($this->system->addItemNote ( $item, $n )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -781,17 +678,12 @@ class Humphree {
 	/*
 	 * The updateItemNote() function updates an itemNote.
 	 */
-	public function updateItemNote(): bool {
-		if (isset ( $_SESSION ['note'] )) {
-			$note = new Note ($this->db);
-			$note->noteID = $_SESSION ['note'] ['noteID'];
-			$note->note = $_SESSION ['note'] ['note'];
-			if ($this->system->updateItemNote ( $note )) {
-				unset ( $_SESSION ['note'] );
-				return true;
-			} else {
-				return false;
-			}
+	public function updateItemNote(int $noteID, string $note): bool {
+		$n = new Note ( $this->db );
+		$n->noteID = $noteID;
+		$n->note = $note;
+		if ($this->system->updateItemNote ( $note )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -800,16 +692,11 @@ class Humphree {
 	/*
 	 * The deleteItemNote() function deletes an itemNote and all associated database content.
 	 */
-	public function deleteItemNote(): bool {
-		if (isset ( $_SESSION ['note'] )) {
-			$note = new Note ($this->db);
-			$note->noteID = $_SESSION ['note'] ['noteID'];
-			if ($this->system->deleteItemNote ( $note )) {
-				unset ( $_SESSION ['note'] );
-				return true;
-			} else {
-				return false;
-			}
+	public function deleteItemNote(int $noteID): bool {
+		$n = new Note ( $this->db );
+		$n->noteID = $noteID;
+		if ($this->system->deleteItemNote ( $n )) {
+			return true;
 		} else {
 			return false;
 		}
@@ -818,18 +705,13 @@ class Humphree {
 	/*
 	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
 	 */
-	public function addSellerRating(): bool {
-		if (isset ( $_SESSION ['user_rating'] )) {
-			if (($_SESSION ['user_rating'] ['itemID'] > 0) && ($_SESSION ['user_rating'] ['sellrating'] > 0)) {
-				$sellerRating = new UserRatings ($this->db);
-				$sellerRating->itemID = $_SESSION ['user_rating'] ['itemID'];
-				$sellerRating->sellrating = $_SESSION ['user_rating'] ['sellrating'];
-				unset ( $_SESSION ['user_rating'] );
-				if ($this->system->addSellerRating ( $sellerRating )) {
-					return true;
-				} else {
-					return false;
-				}
+	public function addSellerRating(int $itemID, int $sellRating): bool {
+		if (($itemID > 0) && ($sellRating > 0)) {
+			$s = new UserRatings ( $this->db );
+			$s->itemID = $itemID;
+			$s->sellrating = $sellRating;
+			if ($this->system->addSellerRating ( $s )) {
+				return true;
 			} else {
 				return false;
 			}
@@ -841,19 +723,15 @@ class Humphree {
 	/*
 	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
 	 */
-	public function addBuyerRating(): bool {
-		if (isset ( $_SESSION ['user_rating'] )) {
-			if (strlen ( $_SESSION ['user_rating'] ['transaction'] > 0 ) && ($_SESSION ['user_rating'] ['userID'] > 0) && ($_SESSION ['user_rating'] ['buyrating'] > 0)) {
-				$buyerRating = new UserRatings ($this->db);
-				$buyerRating->userID = $_SESSION ['user_rating'] ['userID'];
-				$buyerRating->buyrating = $_SESSION ['user_rating'] ['buyrating'];
-				$buyerRating->transaction = $_SESSION ['user_rating'] ['transaction'];
-				unset ( $_SESSION ['user_rating'] );
-				if ($this->system->addBuyerRating ( $buyerRating )) {
-					return true;
-				} else {
-					return false;
-				}
+	public function addBuyerRating(string $transaction, int $buyRating, int $userID): bool {
+		if (strlen ( $transaction > 0 ) && ($buyRating > 0) && ($userID > 0)) {
+			$br = new UserRatings ( $this->db );
+			$br->userID = $userID;
+			$br->buyrating = $buyRating;
+			$br->transaction = $transaction;
+			unset ( $_SESSION ['user_rating'] );
+			if ($this->system->addBuyerRating ( $br )) {
+				return true;
 			} else {
 				return false;
 			}
