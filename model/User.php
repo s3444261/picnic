@@ -72,7 +72,7 @@ class User {
 	public function get(): User {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Users WHERE userID = :userID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->execute ();

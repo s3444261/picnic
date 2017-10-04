@@ -13,7 +13,7 @@ declare(strict_types=1);
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
-class ValidationTests extends PHPUnit\Framework\TestCase {
+class ValidationTest extends PHPUnit\Framework\TestCase {
 
 	public function testEmptyFieldThrowsForEmptyString() {
 		$sut = new Validation();

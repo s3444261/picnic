@@ -57,56 +57,19 @@ class System {
 	 * pre-activate the account.
 	 */
 	public function addUser(User $user): bool {
-		unset ( $_SESSION ['error'] );
 		
-		if (get_class ( $user ) == 'User') {
-			
-			$validate = new Validation ();
-			
-			// Validate the username.
+		try {
+			$user->set ();
 			try {
-				$validate->userName ( $user->user );
-			} catch ( ValidationException $e ) {
-				$_SESSION ['error'] = $e->getError ();
-			}
-			
-			// Validate the email name.
-			try {
-				$validate->email ( $user->email );
-			} catch ( ValidationException $e ) {
-				$_SESSION ['error'] = $e->getError ();
-			}
-			
-			// Validate the password
-			try {
-				$validate->password ( $user->password );
-			} catch ( ValidationException $e ) {
-				$_SESSION ['error'] = $e->getError ();
-			}
-			
-			if (isset ( $_SESSION ['error'] )) {
+				$user->get ();
+				return true;
+			} catch ( UserException $e ) {
+				$_SESSION ['error'] = 'Failed to retrieve User.'; 
 				return false;
-			} else {
-				$user->set ();
-				try {
-					$user->get ();
-					if ($user->userID > 0) {
-						if ($user->activate ()) {
-							return true;
-						} else {
-							$_SESSION ['error'] = 'Failed to activate account.';
-							return false;
-						}
-					} else {
-						$_SESSION ['error'] = 'Failed to add user.';
-						return false;
-					}
-				} catch ( UserException $e ) {
-					$_SESSION ['error'] = $e->getError ();
-				}
 			}
-		} else {
-			$_SESSION ['error'] = 'Not a User Object.';
+		} catch ( UserException $e ) {
+			$_SESSION ['error'] = 'Failed to add User.'; 
+			return false;
 		}
 	}
 	
