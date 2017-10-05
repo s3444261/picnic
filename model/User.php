@@ -7,10 +7,9 @@
  * Kinkead, Grant - s3444261@student.rmit.edu.au
  * Putro, Edwan - edwanhp@gmail.com
  */
-
 require_once __DIR__ . '/../config/config.php';
 
-define('SALT', 'TooMuchSalt');
+define ( 'SALT', 'TooMuchSalt' );
 
 /**
  *
@@ -21,7 +20,6 @@ define('SALT', 'TooMuchSalt');
  * @property string $_status;
  * @property string $_activate;
  */
-
 class User {
 	private $_userID = '';
 	private $_user = '';
@@ -32,11 +30,9 @@ class User {
 	private $_created_at;
 	private $_updated_at;
 	private $db;
-
 	function __construct(PDO $pdo, $args = array()) {
-
 		$this->db = $pdo;
-
+		
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -66,7 +62,7 @@ class User {
 	
 	/*
 	 * The get() function first confirms that the user object exists in the database.
-	 * It then retrieves the attributes from the database. The attributes are set and 
+	 * It then retrieves the attributes from the database. The attributes are set and
 	 * true is returned.
 	 */
 	public function get(): User {
@@ -91,49 +87,74 @@ class User {
 	}
 	
 	/*
+	 * The getUserIdByEmail searches for a user based on email address
+	 */
+	public function getUserIdByEmail(): int {
+		$v = new Validation ();
+		
+		try {
+			$v->email ( $this->email );
+			
+			$query = "SELECT userID FROM Users WHERE email = :email";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':email', $this->_email );
+			$stmt->execute ();
+			if ($stmt->rowCount () > 0) {
+				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+				$this->_userID = $row ['userID'];
+				return $this->userID;
+			} else {
+				return 0;
+			}
+		} catch ( ValidationException $e ) {
+			throw new UserException ( $e->getMessage () );
+			return 0;
+		}
+	}
+	
+	/*
 	 * The set() function inserts the user paramaters into the
 	 * database including a salted/encrypted password. Initial
 	 * status is 'active'. The userID is returned.
 	 */
 	public function set(): int {
-		
-		$v = new Validation();
+		$v = new Validation ();
 		
 		try {
-			$v->userName($this->_user);
-			$v->email($this->_email);
-			$v->password($this->_password);
+			$v->userName ( $this->_user );
+			$v->email ( $this->_email );
+			$v->password ( $this->_password );
+			$this->checkUserExist ();
+			$this->checkEmailExist ();
 			
-			if(!$this->checkUserExist() && !$this->checkEmailExist()){
-				$query = "INSERT INTO Users
+			$query = "INSERT INTO Users
 					SET user = :user,
     					email = :email,
     					password = :password,
     					status = :status,
     					activate = :activate,
 						created_at = NULL";
-				
-				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':user', $this->_user );
-				$stmt->bindParam ( ':email', $this->_email );
-				$encryptedPassword = $this->encryptPassword ();
-				$stmt->bindParam ( ':password', $encryptedPassword );
-				$initialStatus = $this->initialStatus ();
-				$stmt->bindParam ( ':status', $initialStatus );
-				$activationCode = $this->activationCode ();
-				$stmt->bindParam ( ':activate', $activationCode );
-				$stmt->execute ();
-				if($stmt->rowCount() > 0){
-					$this->_userID = $this->db->lastInsertId (); 
-					return $this->_userID; 
-				} else {
-					return 0;
-				}
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':user', $this->_user );
+			$stmt->bindParam ( ':email', $this->_email );
+			$encryptedPassword = $this->encryptPassword ();
+			$stmt->bindParam ( ':password', $encryptedPassword );
+			$initialStatus = $this->initialStatus ();
+			$stmt->bindParam ( ':status', $initialStatus );
+			$activationCode = $this->activationCode ();
+			$stmt->bindParam ( ':activate', $activationCode );
+			$stmt->execute ();
+			if ($stmt->rowCount () > 0) {
+				$this->_userID = $this->db->lastInsertId ();
+				return $this->_userID;
 			} else {
 				return 0;
 			}
-		} catch (ValidationException $e) {
-			throw new UserException ( $e );
+		} catch ( ValidationException $e ) {
+			throw new UserException ( $e->getMessage () );
+			return 0;
 		}
 	}
 	
@@ -145,69 +166,100 @@ class User {
 	 * the email address has been verified and serves no other purpose.
 	 */
 	public function update(): bool {
-		
-		$v = new Validation();
+		$v = new Validation ();
 		
 		if ($this->exists ()) {
 			
-			$query = "SELECT * FROM Users WHERE userID = :userID";
+			try {
+				$v->userName ( $this->_user );
+				$v->email ( $this->_email );
+				
+				$query = "SELECT * FROM Users WHERE userID = :userID";
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->execute ();
+				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+				
+				if ($this->user != $row ['user']) {
+					try {
+						$this->checkUserExist ();
+						
+						if ($this->email != $row ['email']) {
+							try {
+								$this->checkEmailExist ();
+								
+								if (strlen ( $this->_status ) < 1) {
+									$this->_status = $row ['status'];
+								}
+								
+								$query = "UPDATE Users
+						   				SET user = :user,
+	    								email = :email,
+										status = :status
+										WHERE userID = :userID";
+								
+								$stmt = $this->db->prepare ( $query );
+								$stmt->bindParam ( ':userID', $this->_userID );
+								$stmt->bindParam ( ':user', $this->_user );
+								$stmt->bindParam ( ':email', $this->_email );
+								$stmt->bindParam ( ':status', $this->_status );
+								$stmt->execute ();
+								if($stmt->rowCount() > 0){
+									return true;
+								} else {
+									throw new UserException ( 'User not updated!' );
+									return false;
+								}
+							} catch ( UserException $e ) {
+								throw new UserException ( $e->getMessage () );
+								return false;
+							}
+						}
+					} catch ( UserException $e ) {
+						throw new UserException ( $e->getMessage () );
+						return false;
+					}
+				} 
+			} catch ( ValidationException $e ) {
+				throw new UserException ( $e->getMessage () );
+				return false;
+			}
+		} else {
+			throw new UserException ( 'User does not exist!' );
+			return false;
+		}
+	}
+	
+	/*
+	 * The method updates the password only.
+	 */
+	public function updatePassword(): bool {
+		$v = new Validation ();
+		
+		if ($this->exists ()) {
 			
-			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':userID', $this->_userID );
-			$stmt->execute ();
-			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			
-			if (strlen ( $this->_user ) < 1) {
-				$this->_user = $row ['user'];
-			} else if($this->checkUserExist()){
-				$this->_user = $row ['user'];
-			} else {
-				try {
-					$v->userName($this->_user);
-				} catch (ValidationException $e) {
-					throw new UserException ( $e );
-				}
-			}
-			if (strlen ( $this->_email ) < 1) {
-				$this->_email = $row ['email'];
-			} else if($this->checkEmailExist()){
-				$this->_email = $row ['email'];
-			} else {
-				try {
-					$v->email($this->_email);
-				} catch (ValidationException $e) {
-					throw new UserException ( $e );
-				}
-			}
-			if (strlen ( $this->_password ) > 0 && strlen ( $this->_password ) != 40) {
-				try { 
-					$v->password($this->_password);
-					$this->_password = $this->encryptPassword ();
-				} catch (ValidationException $e) {
-					throw new UserException ( $e );
-				}
-			} else {
-				$this->_password = $row ['password'];
-			}
-			if (strlen ( $this->_status ) < 1) {
-				$this->_status = $row ['status'];
-			}
-			
-			$query = "UPDATE Users
-						SET user = :user,
-	    					email = :email,
-							password = :password,
-							status = :status
+			try {
+				$v->password ( $this->_password );
+				$this->_password = $this->encryptPassword ();
+				
+				$query = "UPDATE Users
+						SET password = :password
 						WHERE userID = :userID";
-			
-			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':userID', $this->_userID );
-			$stmt->bindParam ( ':user', $this->_user );
-			$stmt->bindParam ( ':email', $this->_email );
-			$stmt->bindParam ( ':password', $this->_password );
-			$stmt->bindParam ( ':status', $this->_status );
-			$stmt->execute ();
-			return true;
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->bindParam ( ':password', $this->_password );
+				$stmt->execute ();
+				if ($stmt->rowCount () > 0) {
+					return true;
+				} else {
+					return false;
+				}
+			} catch ( ValidationException $e ) {
+				throw new UserException ( $e->getMessage () );
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -222,7 +274,7 @@ class User {
 			
 			$query = "DELETE FROM Users
 								WHERE userID = :userID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->execute ();
@@ -243,7 +295,7 @@ class User {
 	public function exists(): bool {
 		if ($this->_userID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Users WHERE userID = :userID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->execute ();
@@ -265,7 +317,7 @@ class User {
 		$query = "SELECT COUNT(*) as numUsers
 							FROM Users
 							WHERE user = :user";
-
+		
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':user', $this->_user );
 		$stmt->execute ();
@@ -280,7 +332,7 @@ class User {
 		$query = "SELECT COUNT(*) as numUsers
 							FROM Users
 							WHERE email = :email";
-
+		
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':email', $this->_email );
 		$stmt->execute ();
@@ -292,7 +344,7 @@ class User {
 	 * Salt & Encrypt the password.
 	 */
 	private function encryptPassword(): string {
-		return sha1 ( $this->_password . $this->salt () ); 
+		return sha1 ( $this->_password . $this->salt () );
 	}
 	
 	/*
@@ -304,23 +356,45 @@ class User {
 	}
 	
 	/*
+	 * Generate a random activation code.
+	 */
+	public function getUserIdByActivationCode() {
+		$query = "SELECT userID FROM Users WHERE activate = :activate";
+		
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindParam ( ':activate', $this->_activate );
+		$stmt->execute ();
+		if ($stmt->rowCount () > 0) {
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			return $this->_userID = $row ['userID'];
+		} else {
+			throw new UserException ( 'Failed to retrieve UserID!' );
+			return 0;
+		}
+	}
+	
+	/*
 	 * Verify users email address. This function sets activate to null
 	 * once the email address for the user has been verified.
 	 */
 	public function activate(): bool {
 		if ($this->exists ()) {
-			$us = new User ($this->db);
+			$us = new User ( $this->db );
 			$us->userID = $this->_userID;
 			$us->get ( $this->initialStatus () );
-			if ($us->activate == $this->_activate) {
-				$query = "UPDATE Users
+			if(!is_null($this->_activate)){
+				if ($us->activate == $this->_activate) {
+					$query = "UPDATE Users
 							SET activate = NULL
 							WHERE userID = :userID";
-
-				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':userID', $this->_userID );
-				$stmt->execute ();
-				return true;
+					
+					$stmt = $this->db->prepare ( $query );
+					$stmt->bindParam ( ':userID', $this->_userID );
+					$stmt->execute ();
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}
@@ -333,10 +407,9 @@ class User {
 	 * Retrieves all users that haven't been deleted.
 	 */
 	public function getUsers(): array {
-		
 		$query = "SELECT userID, user, email, status FROM Users
 					WHERE status != 'deleted'";
-
+		
 		$stmt = $this->db->prepare ( $query );
 		$stmt->execute ();
 		$users = array ();
@@ -368,11 +441,11 @@ class User {
 	 * that the user is not logged in.
 	 */
 	public function login(): bool {
-		$v = new Validation();
+		$v = new Validation ();
 		
 		try {
-			$v->email($this->_email);
-			$v->password($this->_password);
+			$v->email ( $this->_email );
+			$v->password ( $this->_password );
 			
 			$this->_password = $this->encryptPassword ();
 			
@@ -388,8 +461,7 @@ class User {
 			$stmt->bindParam ( ':password', $this->_password );
 			$stmt->execute ();
 			
-			if ($stmt->rowCount() > 0)
-			{
+			if ($stmt->rowCount () > 0) {
 				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 				$this->_userID = $row ['userID'];
 				$this->_user = $row ['user'];
@@ -399,14 +471,13 @@ class User {
 				$_SESSION ['user'] = $this->_user;
 				$_SESSION ['email'] = $this->_email;
 				$_SESSION ['status'] = $this->_status;
-				$_SESSION [MODULE] = true;  // We can get rid of this.
+				$_SESSION [MODULE] = true; // We can get rid of this.
 				return true;
 			} else {
 				return false;
 			}
-			
-		} catch (ValidationException $e) {
-			throw new UserException ( $e );
+		} catch ( ValidationException $e ) {
+			throw new UserException ( $e->getMessage () );
 		}
 	}
 	
@@ -416,8 +487,8 @@ class User {
 	 * destroyed. If successfully logged out, true is returned.
 	 */
 	public function logout(): bool {
-		$_SESSION = array();
-		if(session_status() == PHP_SESSION_ACTIVE){
+		$_SESSION = array ();
+		if (session_status () == PHP_SESSION_ACTIVE) {
 			session_destroy ();
 		}
 		return true;
@@ -435,54 +506,54 @@ class User {
     				AND password = :password
     				AND (status != 'deleted' || status != 'suspended')
 					AND activate IS NULL";
-
+		
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':email', $this->_email );
 		$stmt->bindParam ( ':password', $this->_password );
 		$stmt->execute ();
-		if($stmt->rowCount() == 1){
+		if ($stmt->rowCount () == 1) {
 			return true;
 		} else {
 			return false;
 		}
-	} 
+	}
 	
 	/*
 	 * Generates a random password
 	 * This method was obtained from:
 	 * https://www.phpjabbers.com/generate-a-random-password-with-php-php70.html
 	 */
-	public function randomPassword($length,$count, $characters): array {
+	public function randomPassword($length, $count, $characters): array {
 		
 		// $length - the length of the generated password
 		// $count - number of passwords to be generated
 		// $characters - types of characters to be used in the password
 		
 		// define variables used within the function
-		$symbols = array();
-		$passwords = array();
+		$symbols = array ();
+		$passwords = array ();
 		$used_symbols = '';
 		$pass = '';
 		
 		// an array of different character types
-		$symbols["lower_case"] = 'abcdefghijklmnopqrstuvwxyz';
-		$symbols["upper_case"] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$symbols["numbers"] = '1234567890';
-		$symbols["special_symbols"] = '!?~@#-_+<>[]{}';
+		$symbols ["lower_case"] = 'abcdefghijklmnopqrstuvwxyz';
+		$symbols ["upper_case"] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$symbols ["numbers"] = '1234567890';
+		$symbols ["special_symbols"] = '!?~@#-_+<>[]{}';
 		
-		$characters = explode(",",$characters); // get characters types to be used for the passsword
-		foreach ($characters as $key=>$value) {
-			$used_symbols .= $symbols[$value]; // build a string with all characters
+		$characters = explode ( ",", $characters ); // get characters types to be used for the passsword
+		foreach ( $characters as $key => $value ) {
+			$used_symbols .= $symbols [$value]; // build a string with all characters
 		}
-		$symbols_length = strlen($used_symbols) - 1; //strlen starts from 0 so to get number of characters deduct 1
+		$symbols_length = strlen ( $used_symbols ) - 1; // strlen starts from 0 so to get number of characters deduct 1
 		
-		for ($p = 0; $p < $count; $p++) {
+		for($p = 0; $p < $count; $p ++) {
 			$pass = '';
-			for ($i = 0; $i < $length; $i++) {
-				$n = rand(0, $symbols_length); // get a random character from the string with all characters
-				$pass .= $used_symbols[$n]; // add the character to the password string
+			for($i = 0; $i < $length; $i ++) {
+				$n = rand ( 0, $symbols_length ); // get a random character from the string with all characters
+				$pass .= $used_symbols [$n]; // add the character to the password string
 			}
-			$passwords[] = $pass;
+			$passwords [] = $pass;
 		}
 		
 		return $passwords; // return the generated password
@@ -491,24 +562,24 @@ class User {
 	/*
 	 * Returns a single random password
 	 */
-	public function getRandomPassword(): string{
-		$passwords = $this->randomPassword(10,1,"lower_case,upper_case,numbers,special_symbols");
-		return $passwords[0];
+	public function getRandomPassword(): string {
+		$passwords = $this->randomPassword ( 10, 1, "lower_case,upper_case,numbers,special_symbols" );
+		return $passwords [0];
 	}
 	
 	/*
 	 * Check to see if user exists.
 	 */
 	public function checkUserExist(): bool {
-		
 		$query = "SELECT * FROM Users WHERE user = :user";
 		
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':user', $this->_user );
 		$stmt->execute ();
-		$numUser = $stmt->rowCount();
-				
-		if($numUser > 0){
+		$numUser = $stmt->rowCount ();
+		
+		if ($numUser > 0) {
+			throw new ValidationException ( 'This user name is not available!' );
 			return true;
 		} else {
 			return false;
@@ -519,15 +590,15 @@ class User {
 	 * Check to see if user and/or email exists.
 	 */
 	public function checkEmailExist(): bool {
-		
 		$query = "SELECT * FROM Users WHERE email = :email";
 		
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':email', $this->_email );
 		$stmt->execute ();
-		$numEmail = $stmt->rowCount();
+		$numEmail = $stmt->rowCount ();
 		
-		if($numEmail > 0){
+		if ($numEmail > 0) {
+			throw new ValidationException ( 'This email address is not available!' );
 			return true;
 		} else {
 			return false;
@@ -554,7 +625,7 @@ class User {
 		}
 		if ($this->_activate) {
 			echo 'activate => ' . $this->_activate . '<br/>';
-		} elseif($this->_activate == NULL) {
+		} elseif ($this->_activate == NULL) {
 			echo 'activate => NULL<br/>';
 		}
 		if ($this->_created_at) {

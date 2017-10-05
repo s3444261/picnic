@@ -25,7 +25,28 @@ class System {
 	 * and update items as well as view.
 	 */
 	public function createAccount(User $user) {
-		// TO DO
+		try {
+			if($user->set () > 0){
+				return true;
+			} else {
+				return false;
+			}
+		} catch ( UserException $e ) {
+			$_SESSION ['error'] = $e->getMessage();
+			return false;
+		}
+	}
+	
+	/*
+	 * This method retrieves a userID from a users activation code.
+	 */
+	public function getUserIdByActivationCode( User $user ): int{
+		try {
+			return $user->getUserIdByActivationCode();
+		} catch (UserException $e) {
+			$_SESSION ['error'] = $e->getMessage();
+			return 0;
+		}
 	}
 	
 	/*
@@ -33,23 +54,47 @@ class System {
 	 * of the new user and makes the account active.
 	 */
 	public function activateAccount(User $user) {
-		// TO DO
+		if($user->activate()){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/*
 	 * The changePassword() function allows a user or administrator to
 	 * change a password for an account.
 	 */
-	public function changePassword(User $user) {
-		// TO DO
+	public function changePassword(User $user): bool {
+		try {
+			return $user->updatePassword();
+		} catch (UserException $e) {
+			$_SESSION ['error'] = $e->getMessage();
+			return false;
+		}
 	}
 	
 	/*
 	 * The forgotPassword() function allows a user to generate a new password
 	 * which is sent to the users account via email.
 	 */
-	public function forgotPassword(User $user) {
-		// TO DO
+	public function forgotPassword(User $user): User {
+		try {
+			$user->userID = $user->getUserIdByEmail();
+			$user->password = $user->getRandomPassword(); 
+			$randomPassword = $user->password;
+			try {
+				$user->updatePassword(); 
+				$user->password = $randomPassword;
+				return $user;
+			} catch (UserException $e) {
+				$_SESSION ['error'] = $e->getMessage();
+				return $user;
+			}
+		} catch (UserException $e) {
+			$_SESSION ['error'] = $e->getMessage();
+			return $user;
+		}
 	}
 	
 	/*
@@ -64,11 +109,11 @@ class System {
 				$user->get ();
 				return true;
 			} catch ( UserException $e ) {
-				$_SESSION ['error'] = 'Failed to retrieve User.'; 
+				$_SESSION ['error'] = $e->getMessage(); 
 				return false;
 			}
 		} catch ( UserException $e ) {
-			$_SESSION ['error'] = 'Failed to add User.'; 
+			$_SESSION ['error'] = $e->getMessage(); 
 			return false;
 		}
 	}
@@ -76,46 +121,13 @@ class System {
 	/*
 	 * The updateUser() function allows an administrator to update a user.
 	 */
-	public function updateUser(User $user) {
-		unset ( $_SESSION ['error'] );
-		
-		if (get_class ( $user ) == 'User') {
-			
-			$validate = new Validation ();
-			
-			// Validate the username.
-			try {
-				$validate->userName ( $user->user );
-			} catch ( ValidationException $e ) {
-				$_SESSION ['error'] = $e->getError ();
-			}
-			
-			// Validate the email name.
-			try {
-				$validate->email ( $user->email );
-			} catch ( ValidationException $e ) {
-				$_SESSION ['error'] = $e->getError ();
-			}
-			
-			// Validate the password
-			try {
-				$validate->password ( $user->password );
-			} catch ( ValidationException $e ) {
-				$_SESSION ['error'] = $e->getError ();
-			}
-			
-			if (isset ( $_SESSION ['error'] )) {
-				return false;
-			} else {
-				if ($user->update ()) {
-					return true;
-				} else {
-					$_SESSION ['error'] = 'User not updated.';
-					return false;
-				}
-			}
-		} else {
-			$_SESSION ['error'] = 'Not a User Object.';
+	public function updateUser(User $user): bool {
+		try {
+			$user->update();
+			return true;
+		} catch (UserException $e) {
+			$_SESSION ['error'] = $e->getError ();
+			return false;
 		}
 	}
 	

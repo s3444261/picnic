@@ -38,6 +38,13 @@ class Humphree {
 		}
 	}
 	
+	public function getUserIdByActivationCode(string $activationCode): int {
+		$user = new User ( $this->db );
+		$user->activate = $activationCode;
+		
+		return $this->system->getUserIdByActivationCode( $user );
+	}
+	
 	/*
 	 * The activateAccount() fucntion verfies the email address
 	 * of the new user and makes the account active.
@@ -71,14 +78,15 @@ class Humphree {
 	 * The forgotPassword() function allows a user to generate a new password
 	 * which is sent to the users account via email.
 	 */
-	public function forgotPassword(string $email): bool {
+	public function forgotPassword(string $email): array {
 		$user = new User ( $this->db );
 		$user->email = $email;
-		if ($this->system->forgotPassword ( $user )) {
-			return true;
-		} else {
-			return false;
-		}
+		$user = $this->system->forgotPassword ( $user );
+		$userArray = array();
+		$userArray['userID'] = $user->userID;
+		$userArray['email'] = $user->email;
+		$userArray['password'] = $user->password;
+		return $userArray;
 	}
 	
 	/*
@@ -105,9 +113,7 @@ class Humphree {
 		$user->userID = $userArray ['userID'];
 		$user->user = $userArray ['user'];
 		$user->email = $userArray ['email'];
-		$user->password = $userArray ['password'];
 		$user->status = $userArray ['status'];
-		$user->activate = $userArray ['activate'];
 		if ($this->system->updateUser ( $user )) {
 			return true;
 		} else {
