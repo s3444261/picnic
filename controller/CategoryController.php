@@ -22,9 +22,9 @@ class CategoryController {
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
-		$view->SetData('currentCategory', $h ->getCategoryById($categoryId));
+		$view->SetData('currentCategory', $h ->getCategory($categoryId));
 		$view->SetData('subCategories', $h ->getCategoriesIn($categoryId));
-		$view->SetData('items', $h ->getCategoryItemsFor($categoryId));
+		$view->SetData('items', $h ->getCategoryItems($categoryId));
 		$view->Render('category');
 	}
 }

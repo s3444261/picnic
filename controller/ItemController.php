@@ -28,7 +28,7 @@ class ItemController {
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
-		$view->SetData('item', $h ->getItemById($itemId));
+		$view->SetData('item', $h ->getItem($itemId));
 		$view->Render('item');
 	}
 
