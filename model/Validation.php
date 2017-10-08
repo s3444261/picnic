@@ -122,6 +122,13 @@ class Validation {
 		}
 	}
 	
+	// Tests for a number greater than zero.
+	public function numberGreaterThanZero($content) {
+		if (is_numeric ( $content ) && $content < 1) {
+			throw new ValidationException ( 'Number must be greater than zero!' );
+		}
+	}
+	
 	// Tests for at least one upper case character.
 	// At least one lower case character.
 	// At least one digit.

@@ -151,7 +151,6 @@ class Humphree {
 			$usersArray ['user'] = $user->user;
 			$usersArray ['email'] = $user->email;
 			$usersArray ['status'] = $user->status;
-			$usersArray ['activate'] = $user->activate;
 			
 			$usersArray [] = $userArray;
 		}

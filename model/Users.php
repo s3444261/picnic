@@ -33,30 +33,47 @@ class Users {
 	}
 	
 	/*
-	 * The getUsers() function retrieves all users from the database and returns
-	 * them as an array of user objects.
+	 * Retrieves all users that haven't been deleted.
 	 */
-	public function getUsers(): array {
+	public function getUsers(int $pageNumber, int $usersPerPage): array {
 		
-		$query = "SELECT userID FROM Users ORDER BY userID";
-
-		$stmt = $this->db ->prepare ( $query );
-		$stmt->execute ();
-		$objects = array ();
-		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
-			$user = new User($this->db);
-			$user->userID = $row['userID'];
-			try {
-				$user->get();
-			} catch (UserException $e) {
-				$_SESSION ['error'] = $e->getError ();
+		$v = new Validation();
+		
+		try {
+			$v->number($pageNumber);
+			$v->number($usersPerPage);
+			$v->numberGreaterThanZero($pageNumber);
+			$v->numberGreaterThanZero($usersPerPage);
+			
+			$pn = $pageNumber;
+			$upp = $usersPerPage;
+			
+			$pn = ($pn - 1)*$upp;
+			
+			$query = "SELECT userID, user, email, status
+					FROM Users
+					WHERE status != 'deleted'
+					LIMIT " . $pn . "," . $upp;
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->execute ();
+			$users = array ();
+			
+			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+				
+				$user = new User($this->db);
+				$user->userID = $row['userID'];
+				$user->user = $row['user'];
+				$user->email = $row['email'];
+				$user->status = $row['status'];
+				
+				$users [] = $user;
 			}
 			
-			$objects [] = $user;
+			return $users;
+		} catch (ValidationException $e) { 
+			throw new UsersException($e->getMessage());
 		}
-		
-		return $objects;
 	}
-
 }
 ?>

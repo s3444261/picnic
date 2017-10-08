@@ -523,32 +523,6 @@ class User {
 	}
 	
 	/*
-	 * Retrieves all users that haven't been deleted.
-	 */
-	public function getUsers(): array {
-		$query = "SELECT userID, user, email, status FROM Users
-					WHERE status != 'deleted'";
-		
-		$stmt = $this->db->prepare ( $query );
-		$stmt->execute ();
-		$users = array ();
-		
-		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
-			
-			$user = array (
-					'userID' => $row ['userID'],
-					'user' => $row ['user'],
-					'email' => $row ['email'],
-					'status' => $row ['status'] 
-			);
-			
-			$users [] = $user;
-		}
-		
-		return $users;
-	}
-	
-	/*
 	 * For the user to login, the object must contain at least an email and password.
 	 * The supplied password is encrypted. The user is only logged in for this application.
 	 * Data is then retrieved from the database based on the email and password. The

@@ -150,9 +150,15 @@ class System {
 	/*
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
-	public function getUsers(): array {
+	public function getUsers(int $pageNumber, int $usersPerPage): array {
+		$usersArray = array();
 		$users = new Users ( $this->db );
-		$usersArray = $users->getUsers ();
+		try {
+			$usersArray = $users->getUsers ($pageNumber, $usersPerPage);
+		} catch ( UsersException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+			return $usersArray;
+		}
 		return $usersArray;
 	}
 	

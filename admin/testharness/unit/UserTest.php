@@ -766,35 +766,6 @@ class UserTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	/*
-	 * getUsers(): array
-	 */
-	
-	public function testGetUsersSuccess(): void {
-		$sut = $this->createDefaultSut();
-		$users = $sut->getUsers();
-		$i = 1;
-		foreach($users as $user){
-			if($i == 1 ){
-				$this->assertEquals($user['userID'], $i);
-				$this->assertEquals($user['user'], self::USER_ONE);
-				$this->assertEquals($user['email'], SELF::EMAIL_ADDRESS_ONE);
-				$this->assertEquals($user['status'], 'active');
-			} else if($i == 1 ){
-				$this->assertEquals($user['userID'], $i);
-				$this->assertEquals($user['user'], self::USER_TWO);
-				$this->assertEquals($user['email'], SELF::EMAIL_ADDRESS_TWO);
-				$this->assertEquals($user['status'], 'active');
-			} else if($i == 1 ){
-				$this->assertEquals($user['userID'], $i);
-				$this->assertEquals($user['user'], self::USER_THREE);
-				$this->assertEquals($user['email'], SELF::EMAIL_ADDRESS_THREE);
-				$this->assertEquals($user['status'], 'active');
-			}
-			$i++;
-		}
-	}
-	
-	/*
 	 * login(): bool
 	 */
 	

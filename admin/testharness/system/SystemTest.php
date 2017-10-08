@@ -20,7 +20,7 @@
  * addUser(User $user): bool
  * updateUser(User $user): bool
  * getUser(User $user): User
- * getUsers(): array
+ * getUsers(int $pageNumber, int $usersPerPage): array
  * disableUser(User $user): bool
  * deleteUser(User $user): bool
  * 
@@ -91,8 +91,10 @@
  * -- testGetUserInvalidUserID(): void
  * -- testGetUserValidUserID(): void
  * 
- * getUsers(): array
- * -- testGetUsers(): void
+ * getUsers(int $pageNumber, int $usersPerPage): array
+ * -- testGetUsersPageNumberZero(): void
+ * -- testGetUsersUsersPerPageZero(): void
+ * -- testGetUsersSuccess(): void
  * 
  * disableUser(User $user): bool
  * -- testDisableUserNoUserID(): void
@@ -134,6 +136,7 @@ require_once dirname(__FILE__) . '/../../../model/ItemCommentsException.php';
 require_once dirname(__FILE__) . '/../../../model/ItemNotesException.php';
 require_once dirname(__FILE__) . '/../../../model/NoteException.php';
 require_once dirname(__FILE__) . '/../../../model/UserException.php';
+require_once dirname(__FILE__) . '/../../../model/UsersException.php';
 require_once dirname(__FILE__) . '/../../../model/UserRatingsException.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
@@ -188,6 +191,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const STATUS_ADD = 'suspended';
 	const STATUS_ACTIVE = 'active';
 	const STATUS_SUSPENDED = 'suspended';
+	const PAGE_NUMBER = 10;
+	const USERS_PER_PAGE = 20;
+	const PAGE_NUMBER_ZERO = 0;
+	const USERS_PER_PAGE_ZERO = 0;
+	const ERROR_ZERO = 'Number must be greater than zero!';
 	
 	
 	// Category Parameters
@@ -231,6 +239,28 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			} catch (UserException $e) { }
 			${'u' . $i}->activate();
 		}	
+	}
+	
+	protected function populateUsers(): void {
+		
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
+		
+		// Populate the Users table.
+		
+		for($i = 1; $i <= 400; $i++){
+			${'u' . $i} = new User($pdo, [self::USER => 'user' . $i, self::EMAIL => 'email' . $i . '@gmail.com', self::PASSWORD => 'PassWord' . $i]);
+			try {
+				${'u' . $i}->set();
+			} catch (UserException $e) {}
+			try {
+				${'u' . $i}->get();
+			} catch (UserException $e) { }
+			try {
+				${'u' . $i}->activate();
+			} catch (UserException $e) {}
+		}
 	}
 	
 	/*
@@ -855,33 +885,51 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	/*
-	 * getUsers(): array
+	 * getUsers(int $pageNumber, int $usersPerPage): array
 	 */
-	
-	public function testGetUsers(): void {
+	public function testGetUsersPageNumberZero(): void {
+		$this->populateUsers();
+		unset($_SESSION);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
-		$users = $system->getUsers();
-		$i = 1;
-		foreach($users as $user){
-			if($i == 1 ){
-				$this->assertEquals($user->userID, $i);
-				$this->assertEquals($user->user, self::USER_ONE);
-				$this->assertEquals($user->email, SELF::EMAIL_ADDRESS_ONE);
-				$this->assertEquals($user->status, 'active');
-			} else if($i == 1 ){
-				$this->assertEquals($user->userID, $i);
-				$this->assertEquals($user->user, self::USER_TWO);
-				$this->assertEquals($user->email, SELF::EMAIL_ADDRESS_TWO);
-				$this->assertEquals($user->status, 'active');
-			} else if($i == 1 ){
-				$this->assertEquals($user->userID, $i);
-				$this->assertEquals($user->user, self::USER_THREE);
-				$this->assertEquals($user->email, SELF::EMAIL_ADDRESS_THREE);
-				$this->assertEquals($user->status, 'active');
-			}
-			$i++;
+		$system->getUsers(self::PAGE_NUMBER_ZERO, self::USERS_PER_PAGE);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_ZERO, $_SESSION['error']);
 		}
+	}
+	
+	public function testGetUsersUsersPerPageZero(): void {
+		$this->populateUsers();
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$system->getUsers(self::PAGE_NUMBER, self::USERS_PER_PAGE_ZERO);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_ZERO, $_SESSION['error']);
+		}
+	}
+	
+	public function testGetUsersSuccess(): void {
+		$this->populateUsers();
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		try {
+		 	$users = $system->getUsers(self::PAGE_NUMBER, self::USERS_PER_PAGE);
+		 	
+		 	$pn = self::PAGE_NUMBER;
+		 	$upp = self::USERS_PER_PAGE;
+		 	
+		 	$start = ($pn - 1)*$upp + 1; 
+		 	
+		 	foreach($users as $user){
+		 		$this->assertEquals($start, $user->userID);
+		 		$this->assertEquals('user' . $start, $user->user);
+		 		$this->assertEquals('email' . $start . '@gmail.com', $user->email);
+		 		$start++;
+		 	}
+		 	
+		} catch (UsersException $e) {}	 
 	}
 	
 	/*
