@@ -44,12 +44,10 @@ if (isset ( $_SESSION ['status'] )) {
 			<ul class="nav navbar-nav navbar-right">
 <?php
 if (isset ( $_SESSION [MODULE] )) {
-	echo '<li><a href="' . BASE . '/Test">Test</a></li>
-		<li><a href="' . BASE . '/CreateDB">Create DB</a></li>';
+	echo '<li><a href="' . BASE . '/CreateDB">Create DB</a></li>';
 } else {
 	// Remove this on the Production Server
-	echo '<li><a href="' . BASE . '/Test">Test</a></li>
-		<li><a href="' . BASE . '/CreateDB">Create DB</a></li>';
+	echo '<li><a href="' . BASE . '/CreateDB">Create DB</a></li>';
 }
 ?>			
 			</ul>  
