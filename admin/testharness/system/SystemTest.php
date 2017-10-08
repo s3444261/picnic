@@ -7,6 +7,104 @@
  * Kinkead, Grant - s3444261@student.rmit.edu.au
  * Putro, Edwan - edwanhp@gmail.com
  */
+
+/*
+ * TEST SUMMARY
+ * 
+ * -- System.php Test Blocks: --
+ * createAccount(User $user): bool
+ * getUserIdByActivationCode( User $user ): int
+ * activateAccount(User $user): bool
+ * changePassword(User $user): bool
+ * forgotPassword(User $user): User
+ * addUser(User $user): bool
+ * updateUser(User $user): bool
+ * getUser(User $user): User
+ * getUsers(): array
+ * disableUser(User $user): bool
+ * deleteUser(User $user): bool
+ * 
+ * -- System.php Test SubBlocks: --
+ * createAccount(User $user): bool
+ * -- testcreateAccountNoUser(): void
+ * -- testcreateAccountShortUser(): void
+ * -- testcreateAccountExistUser(): void
+ * -- testcreateAccountNoEmail(): void
+ * -- testcreateAccountBadEmail(): void
+ * -- testcreateAccountExistEmail(): void
+ * -- testcreateAccountNoPassword(): void
+ * -- testcreateAccountShortPassword(): void
+ * -- testcreateAccountNoUpperPassword(): void
+ * -- testcreateAccountNoLowerPassword(): void
+ * -- testcreateAccountNoNumberPassword(): void
+ * -- testcreateAccountSuccessful(): void
+ * 
+ * getUserIdByActivationCode( User $user ): int
+ * -- testGetUserIdByActivationCodeInvalidCode(): void
+ * -- testGetUserIdByActivationCodeValidCode(): void
+ * 
+ * activateAccount(User $user): bool
+ * -- testActivateAccountInvalidId(): void
+ * -- testActivateAccountValidId(): void
+ * 
+ * changePassword(User $user): bool
+ * testChangePasswordNoPassword(): void
+ * -- testChangePasswordShortPassword(): void
+ * -- testChangePasswordNoUpperPassword(): void
+ * -- testChangePasswordNoLowerPassword(): void
+ * -- testChangePasswordNoNumberPassword(): void
+ * -- testChangePasswordSuccessful(): void
+ * 
+ * forgotPassword(User $user): User
+ * -- testforgotPasswordNoEmail(): void
+ * -- testforgotPasswordBadEmail(): void
+ * -- testforgotPasswordNotExistEmail(): void
+ * -- testforgotPasswordExistEmail(): void
+ * 
+ * addUser(User $user): bool
+ * -- testAddUserNoUser(): void
+ * -- testAddUserShortUser(): void
+ * -- testAddUserExistUser(): void
+ * -- testAddUserNoEmail(): void
+ * -- testAddUserBadEmail(): void
+ * -- testAddUserExistEmail(): void
+ * -- testAddUserNoPassword(): void
+ * -- testAddUserShortPassword(): void
+ * -- testAddUserNoUpperPassword(): void
+ * -- testAddUserNoLowerPassword(): void
+ * -- testAddUserNoNumberPassword(): void
+ * -- testAddUserSuccessful(): void
+ * 
+ * updateUser(User $user): bool
+ * -- testUpdateUserNoUserID(): void
+ * -- testUpdateUserNoUser(): void
+ * -- testUpdateUserShortUser(): void
+ * -- testUpdateUserExistUser(): void
+ * -- testUpdateUserNoEmail(): void
+ * -- testUpdateUserBadEmail(): void
+ * -- testUpdateUserExistEmail(): void
+ * -- testUpdateUserNoStatus(): void
+ * -- testUpdateUserSuccessful(): void
+ * 
+ * getUser(User $user): User
+ * -- testGetUserNoUserID(): void
+ * -- testGetUserInvalidUserID(): void
+ * -- testGetUserValidUserID(): void
+ * 
+ * getUsers(): array
+ * -- testGetUsers(): void
+ * 
+ * disableUser(User $user): bool
+ * -- testDisableUserNoUserID(): void
+ * -- testDisableUserInvalidUserID(): void
+ * -- testDisableUserValidUserID(): void
+ * 
+ * deleteUser(User $user): bool
+ * -- testDeleteUserNoUserID(): void
+ * -- testDeleteUserInvalidUserID(): void
+ * -- testDeleteUserValidUserID(): void
+ * 
+ */
 declare(strict_types=1);
 
 if (session_status () == PHP_SESSION_NONE) {
@@ -39,7 +137,7 @@ require_once dirname(__FILE__) . '/../../../model/UserException.php';
 require_once dirname(__FILE__) . '/../../../model/UserRatingsException.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
-class HumphreeTest extends PHPUnit\Framework\TestCase {
+class SystemTest extends PHPUnit\Framework\TestCase {
 	
 	// User Parameters
 	const USER_ID       = 'userID';
@@ -73,6 +171,7 @@ class HumphreeTest extends PHPUnit\Framework\TestCase {
 	const PASSWORD_NO_NUMBER = 'TestTestTest';
 	const FAILED_TO_ADD_USER = 'Failed to add User.';
 	const ERROR_USER_NOT_EXIST = 'User does not exist!';
+	const ERROR_USER_ID_EMPTY = 'Input is required!';
 	const ERROR_USER_EMPTY = 'Username Error: Input is required!';
 	const ERROR_USER_SHORT = 'Username Error: Input must be atleast 4 characters in length!';
 	const ERROR_USER_DUPLICATE = 'This user name is not available!';
@@ -84,8 +183,12 @@ class HumphreeTest extends PHPUnit\Framework\TestCase {
 	const INVALID_ID = 200;
 	const INVALID_ACTIVATION_CODE = 'ef4flslerlwldxl234lsdl3w';
 	const ERROR_ACTIVATION_CODE = 'Failed to retrieve UserID!';
+	const ERROR_ACTIVATION_CODE_SHORT = 'Activation code must the 32 characters in length!';
 	const EMAIL_NOT_EXIST = 'bandicoot@gumtree.net';
 	const STATUS_ADD = 'suspended';
+	const STATUS_ACTIVE = 'active';
+	const STATUS_SUSPENDED = 'suspended';
+	
 	
 	// Category Parameters
 	const CATEGORY_ID   = 'categoryID';
@@ -279,7 +382,7 @@ class HumphreeTest extends PHPUnit\Framework\TestCase {
 		$sut->activate = self::INVALID_ACTIVATION_CODE;
 		$system->getUserIdByActivationCode($sut);
 		if(isset($_SESSION['error'])){
-			$this->assertEquals(self::ERROR_ACTIVATION_CODE, $_SESSION['error']);
+			$this->assertEquals(self::ERROR_ACTIVATION_CODE_SHORT, $_SESSION['error']);
 		} else {
 			$this->assertFalse(true);
 		}
@@ -297,6 +400,10 @@ class HumphreeTest extends PHPUnit\Framework\TestCase {
 		$this->assertGreaterThan(0, $system->getUserIdByActivationCode($sut));
 	}
 	
+	/*
+	 * activateAccount() Test
+	 */
+	
 	public function testActivateAccountInvalidId(): void{
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
@@ -312,12 +419,9 @@ class HumphreeTest extends PHPUnit\Framework\TestCase {
 			$this->assertFalse(true);
 		}
 		$sut->userID = self::INVALID_ID;
-		$this->assertFalse($system->activateAccount($sut));
+		$this->expectExceptionMessage(self::ERROR_USER_NOT_EXIST);
+		$system->activateAccount($sut);
 	}
-	
-	/*
-	 * activateAccount() Test
-	 */
 	
 	public function testActivateAccountValidId(): void{
 		$pdo = TestPDO::getInstance();
@@ -610,7 +714,7 @@ class HumphreeTest extends PHPUnit\Framework\TestCase {
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::STATUS => self::STATUS_ADD]);
 		$this->assertFalse($system->updateUser($sut));
 		if(isset($_SESSION['error'])){
-			$this->assertEquals(self::ERROR_USER_NOT_EXIST, $_SESSION['error']);
+			$this->assertEquals(self::ERROR_USER_ID_EMPTY, $_SESSION['error']);
 		}
 	}
 	
@@ -707,5 +811,134 @@ class HumphreeTest extends PHPUnit\Framework\TestCase {
 		$this->assertEquals(self::STATUS_ADD, $sut->status);
 	}
 	
+	/*
+	 * getUser(User $user): User
+	 */
+	
+	public function testGetUserNoUserID(): void {
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new User($pdo);
+		$sut = $system->getUser($sut);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_USER_ID_EMPTY, $_SESSION['error']);
+		} else {
+			$this->assertTrue(false);
+		}
+	}
+	
+	public function testGetUserInvalidUserID(): void {
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new User($pdo);
+		$sut->userID = self::INVALID_ID;
+		$sut = $system->getUser($sut);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_USER_NOT_EXIST, $_SESSION['error']);
+		} else {
+			$this->assertTrue(false);
+		}
+	}
+	
+	public function testGetUserValidUserID(): void {
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new User($pdo);
+		$sut->userID = self::USER_ID_1;
+		$sut = $system->getUser($sut);
+		$this->assertEquals(self::USER_ONE, $sut->user);
+		$this->assertEquals(self::EMAIL_ADDRESS_ONE, $sut->email);
+		$this->assertEquals(self::STATUS_ACTIVE, $sut->status);
+	}
+	
+	/*
+	 * getUsers(): array
+	 */
+	
+	public function testGetUsers(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$users = $system->getUsers();
+		$i = 1;
+		foreach($users as $user){
+			if($i == 1 ){
+				$this->assertEquals($user->userID, $i);
+				$this->assertEquals($user->user, self::USER_ONE);
+				$this->assertEquals($user->email, SELF::EMAIL_ADDRESS_ONE);
+				$this->assertEquals($user->status, 'active');
+			} else if($i == 1 ){
+				$this->assertEquals($user->userID, $i);
+				$this->assertEquals($user->user, self::USER_TWO);
+				$this->assertEquals($user->email, SELF::EMAIL_ADDRESS_TWO);
+				$this->assertEquals($user->status, 'active');
+			} else if($i == 1 ){
+				$this->assertEquals($user->userID, $i);
+				$this->assertEquals($user->user, self::USER_THREE);
+				$this->assertEquals($user->email, SELF::EMAIL_ADDRESS_THREE);
+				$this->assertEquals($user->status, 'active');
+			}
+			$i++;
+		}
+	}
+	
+	/*
+	 * disableUser(User $user): bool
+	 */
+	
+	public function testDisableUserNoUserID(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new User($pdo);
+		if($system->disableUser($sut)){
+			$this->assertTrue(false);
+		} else {
+			$this->assertTrue(true);
+		}
+	}
+	
+	public function testDisableUserInvalidUserID(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new User($pdo);
+		$sut->userID = self::INVALID_ID;
+		if($system->disableUser($sut)){
+			$this->assertTrue(false);
+		} else {
+			$this->assertTrue(true);
+		}
+	}
+	
+	public function testDisableUserValidUserID(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new User($pdo);
+		$sut->userID = self::USER_ID_1;
+		
+		if($system->disableUser($sut)){
+			$sut = $system->getUser($sut);
+			$this->assertEquals(self::STATUS_SUSPENDED, $sut->status);
+		} else {
+			$this->assertTrue(false);
+		} 
+	}
+	
+    /*
+	 * deleteUser(User $user): bool
+	 */
+	
+	public function testDeleteUserNoUserID(): void {
+		
+	}
+	
+	public function testDeleteUserInvalidUserID(): void {
+		
+	}
+	
+	public function testDeleteUserValidUserID(): void {
+		
+	}
 	
 }

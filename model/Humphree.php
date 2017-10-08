@@ -7,6 +7,7 @@
  * Kinkead, Grant - s3444261@student.rmit.edu.au
  * Putro, Edwan - edwanhp@gmail.com
  */
+
 if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }

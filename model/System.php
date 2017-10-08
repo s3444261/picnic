@@ -11,8 +11,10 @@ if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }
 class System {
-	const SUSPENDED = 'suspended';
+	
 	private $db;
+	
+	const SUSPENDED = 'suspended';
 	
 	// Constructor
 	function __construct(PDO $pdo) {
@@ -24,7 +26,7 @@ class System {
 	 * own account and join Humphree granting them access to add
 	 * and update items as well as view.
 	 */
-	public function createAccount(User $user) {
+	public function createAccount(User $user): bool {
 		try {
 			if($user->set () > 0){
 				return true;
@@ -53,7 +55,7 @@ class System {
 	 * The activateAccount() fucntion verfies the email address
 	 * of the new user and makes the account active.
 	 */
-	public function activateAccount(User $user) {
+	public function activateAccount(User $user): bool {
 		if($user->activate()){
 			return true;
 		} else {
@@ -160,10 +162,12 @@ class System {
 	 */
 	public function disableUser(User $user): bool {
 		if ($user->userID > 0) {
+			$user = $this->getUser($user);
 			$user->status = self::SUSPENDED;
-			if ($user->update ()) {
+			try { 
+				$user->update();
 				return true;
-			} else {
+			} catch (UserException $e) {
 				return false;
 			}
 		} else {
@@ -175,7 +179,7 @@ class System {
 	 * The deleteUser() function allows an administrator to completely delete
 	 * an account and all associated database entries.
 	 */
-	public function deleteUser(User $user) {
+	public function deleteUser(User $user): bool {
 		if ($user->userID > 0) {
 			
 			// Delete any comments and notes for any items held by the user and then delete the item.

@@ -7,6 +7,10 @@
  * Kinkead, Grant - s3444261@student.rmit.edu.au
  * Putro, Edwan - edwanhp@gmail.com
  */
+
+/*
+ * 
+ */
 require_once __DIR__ . '/../config/config.php';
 
 define ( 'SALT', 'TooMuchSalt' );
@@ -30,6 +34,21 @@ class User {
 	private $_created_at;
 	private $_updated_at;
 	private $db;
+	
+	const ERROR_USER_NOT_EXIST = 'User does not exist!';
+	const ERROR_EMAIL_NOT_EXIST = 'Email does not exist!';
+	const ERROR_USER_SET = 'Failed to create user!';
+	const ERROR_USER_NOT_UPDATED = 'User Not Updated!';
+	const ERROR_PASSWORD_NOT_UPDATED = 'Password Not Updated!';
+	const ERROR_USER_ID_NOT_INT = 'UserID must be an integer!';
+	const ERROR_USER_ID_INVALID = 'Invalid userID!';
+	const ERROR_ACTIVATION_FAILURE = 'Failed to activate account!';
+	const ERROR_ACTIVATION_CODE_RETRIEVE = 'Failed to retrieve user!';
+	const ERROR_ACTIVATION_CODE_NOT_MATCH = 'Activation Codes did not match!';
+	const ERROR_USER_DUPLICATE = 'This user name is not available!';
+	const ERROR_EMAIL_DUPLICATE = 'This email address is not available!';
+	
+	
 	function __construct(PDO $pdo, $args = array()) {
 		$this->db = $pdo;
 		
@@ -66,23 +85,32 @@ class User {
 	 * true is returned.
 	 */
 	public function get(): User {
-		if ($this->exists ()) {
-			$query = "SELECT * FROM Users WHERE userID = :userID";
+		$v = new Validation();
+		
+		try {
+			$v->emptyField($this->userID);
+			$v->number($this->userID);
 			
-			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':userID', $this->_userID );
-			$stmt->execute ();
-			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			$this->_user = $row ['user'];
-			$this->_email = $row ['email'];
-			$this->_password = $row ['password'];
-			$this->_status = $row ['status'];
-			$this->_activate = $row ['activate'];
-			$this->_created_at = $row ['created_at'];
-			$this->_updated_at = $row ['updated_at'];
-			return $this;
-		} else {
-			throw new UserException ( 'Could not retrieve user.' );
+			if ($this->exists ()) {
+				$query = "SELECT * FROM Users WHERE userID = :userID";
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->execute ();
+				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+				$this->_user = $row ['user'];
+				$this->_email = $row ['email'];
+				$this->_password = $row ['password'];
+				$this->_status = $row ['status'];
+				$this->_activate = $row ['activate'];
+				$this->_created_at = $row ['created_at'];
+				$this->_updated_at = $row ['updated_at'];
+				return $this;
+			} else {
+				throw new UserException ( self::ERROR_USER_NOT_EXIST);
+			}			
+		} catch (ValidationException $e) {
+			throw new UserException ( $e->getMessage() );
 		}
 	}
 	
@@ -105,6 +133,7 @@ class User {
 				$this->_userID = $row ['userID'];
 				return $this->userID;
 			} else {
+				throw new UserException ( self::ERROR_EMAIL_NOT_EXIST);
 				return 0;
 			}
 		} catch ( ValidationException $e ) {
@@ -112,6 +141,9 @@ class User {
 			return 0;
 		}
 	}
+	/*
+	 * 
+	 */
 	
 	/*
 	 * The set() function inserts the user paramaters into the
@@ -150,6 +182,7 @@ class User {
 				$this->_userID = $this->db->lastInsertId ();
 				return $this->_userID;
 			} else {
+				throw new UserException ( self::ERROR_USER_SET);
 				return 0;
 			}
 		} catch ( ValidationException $e ) {
@@ -184,49 +217,49 @@ class User {
 				if ($this->user != $row ['user']) {
 					try {
 						$this->checkUserExist ();
-						
-						if ($this->email != $row ['email']) {
-							try {
-								$this->checkEmailExist ();
-								
-								if (strlen ( $this->_status ) < 1) {
-									$this->_status = $row ['status'];
-								}
-								
-								$query = "UPDATE Users
-						   				SET user = :user,
-	    								email = :email,
-										status = :status
-										WHERE userID = :userID";
-								
-								$stmt = $this->db->prepare ( $query );
-								$stmt->bindParam ( ':userID', $this->_userID );
-								$stmt->bindParam ( ':user', $this->_user );
-								$stmt->bindParam ( ':email', $this->_email );
-								$stmt->bindParam ( ':status', $this->_status );
-								$stmt->execute ();
-								if($stmt->rowCount() > 0){
-									return true;
-								} else {
-									throw new UserException ( 'User not updated!' );
-									return false;
-								}
-							} catch ( UserException $e ) {
-								throw new UserException ( $e->getMessage () );
-								return false;
-							}
-						}
 					} catch ( UserException $e ) {
 						throw new UserException ( $e->getMessage () );
 						return false;
 					}
-				} 
+				}
+						
+				if ($this->email != $row ['email']) {
+					try {
+						$this->checkEmailExist ();
+					} catch ( UserException $e ) {
+						throw new UserException ( $e->getMessage () );
+						return false;
+					}
+				}
+								
+				if (strlen ( $this->_status ) < 1) {
+					$this->_status = $row ['status'];
+				}
+							
+				$query = "UPDATE Users
+					   	SET user = :user,
+    					email = :email,
+						status = :status
+						WHERE userID = :userID";
+							
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->bindParam ( ':user', $this->_user );
+				$stmt->bindParam ( ':email', $this->_email );
+				$stmt->bindParam ( ':status', $this->_status );
+				$stmt->execute ();
+				if($stmt->rowCount() > 0){
+					return true;
+				} else {
+					throw new UserException ( self::ERROR_USER_NOT_UPDATED);
+					return false;
+				}
 			} catch ( ValidationException $e ) {
 				throw new UserException ( $e->getMessage () );
 				return false;
 			}
 		} else {
-			throw new UserException ( 'User does not exist!' );
+			throw new UserException ( self::ERROR_USER_NOT_EXIST);
 			return false;
 		}
 	}
@@ -237,30 +270,40 @@ class User {
 	public function updatePassword(): bool {
 		$v = new Validation ();
 		
-		if ($this->exists ()) {
+		try {
+			$v->emptyField($this->userID);
+			$v->number($this->userID);
 			
-			try {
-				$v->password ( $this->_password );
-				$this->_password = $this->encryptPassword ();
+			if ($this->exists ()) {
 				
-				$query = "UPDATE Users
+				try {
+					$v->password ( $this->_password );
+					$this->_password = $this->encryptPassword ();
+					
+					$query = "UPDATE Users
 						SET password = :password
 						WHERE userID = :userID";
-				
-				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':userID', $this->_userID );
-				$stmt->bindParam ( ':password', $this->_password );
-				$stmt->execute ();
-				if ($stmt->rowCount () > 0) {
-					return true;
-				} else {
+					
+					$stmt = $this->db->prepare ( $query );
+					$stmt->bindParam ( ':userID', $this->_userID );
+					$stmt->bindParam ( ':password', $this->_password );
+					$stmt->execute ();
+					if ($stmt->rowCount () > 0) {
+						return true;
+					} else {
+						throw new UserException ( self::ERROR_PASSWORD_NOT_UPDATED);
+						return false;
+					}
+				} catch ( ValidationException $e ) {
+					throw new UserException ( $e->getMessage () );
 					return false;
 				}
-			} catch ( ValidationException $e ) {
-				throw new UserException ( $e->getMessage () );
+			} else {
+				throw new UserException ( self::ERROR_USER_NOT_EXIST);
 				return false;
 			}
-		} else {
+		} catch (ValidationException $e) {
+			throw new UserException ( $e->getMessage () );
 			return false;
 		}
 	}
@@ -270,20 +313,35 @@ class User {
 	 * true is returned.
 	 */
 	public function delete(): bool {
-		if ($this->exists ()) {
+		$v = new Validation ();
+		
+		try {
+			$v->emptyField($this->userID);
+			$v->number($this->userID);
 			
-			$query = "DELETE FROM Users
+			if ($this->exists ()) {
+				
+				$query = "DELETE FROM Users
 								WHERE userID = :userID";
-			
-			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':userID', $this->_userID );
-			$stmt->execute ();
-			if (! $this->exists ()) {
-				return true;
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->execute ();
+				try {
+					if (! $this->exists ()) {
+						return true;
+					} else {
+						return false;
+					}
+				} catch (UserException $e) {
+					throw new UserException($e->getMessage());
+				}
 			} else {
+				throw new UserException(self::ERROR_USER_ID_INVALID);
 				return false;
 			}
-		} else {
+		} catch (ValidationException $e) {
+			throw new UserException($e->getMessage());
 			return false;
 		}
 	}
@@ -293,19 +351,30 @@ class User {
 	 * if it does, true is returned.
 	 */
 	public function exists(): bool {
-		if ($this->_userID > 0) {
-			$query = "SELECT COUNT(*) AS numRows FROM Users WHERE userID = :userID";
+		$v = new Validation ();
+		
+		try {
+			$v->emptyField($this->userID);
+			$v->number($this->userID);
 			
-			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':userID', $this->_userID );
-			$stmt->execute ();
-			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			if ($row ['numRows'] > 0) {
-				return true;
+			if ($this->_userID > 0) {
+				$query = "SELECT COUNT(*) AS numRows FROM Users WHERE userID = :userID";
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->execute ();
+				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+				if ($row ['numRows'] > 0) {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
+				throw new UserException(self::ERROR_USER_ID_NOT_INT);
 				return false;
 			}
-		} else {
+		} catch (ValidationException $e) {
+			throw new UserException($e->getMessage());
 			return false;
 		}
 	}
@@ -314,30 +383,55 @@ class User {
 	 * Count number of occurences of a user.
 	 */
 	public function countUser(): int {
-		$query = "SELECT COUNT(*) as numUsers
+		$v = new Validation ();
+		
+		try {
+			$v->emptyField($this->user);
+			$v->atLeastFour($this->user);
+			$v->alpha($this->user);
+			
+			$query = "SELECT COUNT(*) as numUsers
 							FROM Users
 							WHERE user = :user";
-		
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':user', $this->_user );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		return $row ['numUsers'];
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':user', $this->_user );
+			$stmt->execute ();
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			
+			return $row ['numUsers'];
+			
+		} catch (ValidationException $e) {
+			throw new UserException($e->getMessage());
+			return 0;
+		}
 	}
 	
 	/*
 	 * Count number of occurences of an email address.
 	 */
 	public function countEmail(): int {
-		$query = "SELECT COUNT(*) as numUsers
+		$v = new Validation ();
+		
+		try {
+			$v->emptyField($this->email); 
+			$v->email($this->email); 
+			
+			$query = "SELECT COUNT(*) as numUsers
 							FROM Users
 							WHERE email = :email";
-		
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':email', $this->_email );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		return $row ['numUsers'];
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':email', $this->_email );
+			$stmt->execute ();
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			
+			return $row ['numUsers'];
+			
+		} catch (ValidationException $e) { 
+			throw new UserException($e->getMessage());
+			return 0;
+		}
 	}
 	
 	/*
@@ -358,17 +452,27 @@ class User {
 	/*
 	 * Generate a random activation code.
 	 */
-	public function getUserIdByActivationCode() {
-		$query = "SELECT userID FROM Users WHERE activate = :activate";
+	public function getUserIdByActivationCode(): int {
+		$v = new Validation ();
 		
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':activate', $this->_activate );
-		$stmt->execute ();
-		if ($stmt->rowCount () > 0) {
-			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			return $this->_userID = $row ['userID'];
-		} else {
-			throw new UserException ( 'Failed to retrieve UserID!' );
+		try {
+			$v->emptyField($this->activate);
+			$v->activation($this->activate);
+			
+			$query = "SELECT userID FROM Users WHERE activate = :activate";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':activate', $this->_activate );
+			$stmt->execute ();
+			if ($stmt->rowCount () > 0) {
+				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+				return $row['userID'];
+			} else {
+				throw new UserException ( self::ERROR_ACTIVATION_CODE_RETRIEVE);
+				return 0;
+			}
+		} catch (ValidationException $e) {
+			throw new UserException($e->getMessage());
 			return 0;
 		}
 	}
@@ -378,27 +482,42 @@ class User {
 	 * once the email address for the user has been verified.
 	 */
 	public function activate(): bool {
-		if ($this->exists ()) {
-			$us = new User ( $this->db );
-			$us->userID = $this->_userID;
-			$us->get ( $this->initialStatus () );
-			if(!is_null($this->_activate)){
-				if ($us->activate == $this->_activate) {
-					$query = "UPDATE Users
-							SET activate = NULL
-							WHERE userID = :userID";
+		$v = new Validation ();
+		
+		try {
+			$v->emptyField($this->userID);
+			$v->number($this->userID);
+			
+			try {
+				$this->exists ();
+				
+				$query = "UPDATE Users
+					SET activate = NULL
+					WHERE userID = :userID";
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->execute ();
+						
+				try {
+					$this->get();
 					
-					$stmt = $this->db->prepare ( $query );
-					$stmt->bindParam ( ':userID', $this->_userID );
-					$stmt->execute ();
-					return true;
-				} else {
+					if(is_null($this->activate)){
+						return true;
+					} else {
+						throw new UserException(self::ERROR_ACTIVATION_FAILURE);
+						return false;
+					}
+				} catch (UserException $e) {
+					throw new UserException($e->getMessage());
 					return false;
 				}
-			} else {
+			} catch (UserException $e) {
+				throw new UserException($e->getMessage());
 				return false;
 			}
-		} else {
+		} catch (ValidationException $e) {
+			throw new UserException($e->getMessage());
 			return false;
 		}
 	}
@@ -579,7 +698,7 @@ class User {
 		$numUser = $stmt->rowCount ();
 		
 		if ($numUser > 0) {
-			throw new ValidationException ( 'This user name is not available!' );
+			throw new UserException ( self::ERROR_USER_DUPLICATE);
 			return true;
 		} else {
 			return false;
@@ -598,7 +717,7 @@ class User {
 		$numEmail = $stmt->rowCount ();
 		
 		if ($numEmail > 0) {
-			throw new ValidationException ( 'This email address is not available!' );
+			throw new UserException ( self::ERROR_EMAIL_DUPLICATE);
 			return true;
 		} else {
 			return false;

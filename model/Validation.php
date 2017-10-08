@@ -204,5 +204,12 @@ class Validation {
 			throw new ValidationException ( 'Input must be atleast 8 characters in length!' );
 		}
 	}
+	
+	// Tests for string length 32 characters long.
+	public function activation($content) {
+		if (strlen ( $content ) != 32) {
+			throw new ValidationException ( 'Activation code must the 32 characters in length!' );
+		}
+	}
 }
 ?>
