@@ -12,7 +12,7 @@
  */
 
 echo '<ul>';
-echo '<li><a href="' . BASE . '/PrivacyPolicy">Privacy Policy</a></li>';
+echo '<li><a href="' . BASE . '/PrivacyPolicy">Privacy policy</a></li>';
 echo '<li><a href="' . BASE . '/TermsOfService">Terms of Service</a></li>';
 echo '</ul>';
 ?>
