@@ -19,6 +19,11 @@ class CategoryController {
 	 * 			The ID of the category to be displayed.
 	 */
 	public function View($categoryId) {
+
+		if ($categoryId == "") {
+			$categoryId = Category::ROOT_CATEGORY;
+		}
+
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
