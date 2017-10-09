@@ -10,12 +10,12 @@
 declare(strict_types=1);
 
 require_once 'TestPDO.php';
-require_once 'PicnicTestCase.php';
+require_once 'PicnicTestCaseOld.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Note.php';
 require_once dirname(__FILE__) . '/../../../model/NoteException.php';
 
-class NoteTest extends PicnicTestCase {
+class NoteTest extends PicnicTestCaseOld {
 
 	const NOTE_ID = 'noteID';
 	const NOTE_TEXT = 'note';

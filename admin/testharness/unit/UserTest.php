@@ -137,13 +137,14 @@
 declare(strict_types=1);
 
 require_once 'TestPDO.php';
+require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/UserException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
-class UserTest extends PHPUnit\Framework\TestCase {
+class UserTest extends PicnicTestCase {
 
 	const USER_ID       = 'userID';
 	const USER 			= 'user';
@@ -159,6 +160,7 @@ class UserTest extends PHPUnit\Framework\TestCase {
 	const USER_ONE = 'peter';
 	const EMAIL_ADDRESS_ONE = 'peter@gmail.com';
 	const PASSWORD_ONE = 'TestTest88';
+	const PASSWORD_ONE_ENCRYPTED = '613b59f86203d9e986e08514d175a7d690f3b8f9';
 	const USER_ID_2 = '2';
 	const USER_TWO = 'mary';
 	const EMAIL_ADDRESS_TWO = 'mary@gmail.com';
@@ -167,6 +169,7 @@ class UserTest extends PHPUnit\Framework\TestCase {
 	const USER_THREE = 'adrian';
 	const EMAIL_ADDRESS_THREE = 'adrian@gmail.com';
 	const PASSWORD_THREE = 'TestTest66';
+	const ACTIVATE_THREE = 'bcd1389292792cbee34cde3c80da74d8';
 	const USER_ADD = 'brian';
 	const EMAIL_ADD = 'brian@gmail.com';
 	const PASSWORD_ADD = 'TestTest22';
@@ -281,29 +284,29 @@ class UserTest extends PHPUnit\Framework\TestCase {
 	protected function getExpectedAttributesForGet() {
 
 		return [
-			self::USER_ID 		=> 1,
-			self::USER 			=> 'peter',
-			self::EMAIL 		=> 'peter@gmail.com',
-			self::PASSWORD		=> '613b59f86203d9e986e08514d175a7d690f3b8f9',
-			self::STATUS 		=> 'active',
+			self::USER_ID 		=> self::USER_ID_1,
+			self::USER 			=> self::USER_ONE,
+			self::EMAIL 		=> self::EMAIL_ADDRESS_ONE,
+			self::PASSWORD		=> self::PASSWORD_ONE_ENCRYPTED,
+			self::STATUS 		=> self::STATUS_ACTIVE,
 			self::ACTIVATE 		=> null
 		];
 	}
-	/*
+	
 	public function testAttributes(): void {
 		$values = [
-			self::USER_ID 		=> 1,
-			self::USER 			=> 'grant',
-			self::EMAIL 		=> 'grant@kinkead.net',
-			self::PASSWORD		=> 'TestTest88',
-			self::STATUS 		=> 'active',
-			self::ACTIVATE 		=> 'blahblahblahblahblahblahblahblah',
+			self::USER_ID 		=> self::USER_ID_2,
+			self::USER 			=> self::USER_TWO,
+			self::EMAIL 		=> self::EMAIL_ADDRESS_TWO,
+			self::PASSWORD		=> self::PASSWORD_TWO,
+			self::STATUS 		=> self::STATUS_ACTIVE,
+			self::ACTIVATE 		=> self::ACTIVATE_THREE,
 			self::CREATION_DATE => '1984-08-18',
 			self::MODIFIED_DATE => '2015-02-13'
 		];
 
-	//	$this->assertAttributesAreSetAndRetrievedCorrectly($values);
-	}*/
+		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
+	}
 	
 	/*
 	 * get(): User

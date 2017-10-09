@@ -141,16 +141,16 @@ class Humphree {
 	/*
 	 * The getUsers() function allows an administrator to retrieve all users.
 	 */
-	public function getUsers(): array {
+	public function getUsers($page, $itemsPerPage): array {
 		$usersArray = array ();
-		$users = $this->system->getUsers ();
+		$users = $this->system->getUsers ($page, $itemsPerPage);
 		
 		foreach ( $users as $user ) {
 			$userArray = array ();
-			$usersArray ['userID'] = $user->userID;
-			$usersArray ['user'] = $user->user;
-			$usersArray ['email'] = $user->email;
-			$usersArray ['status'] = $user->status;
+			$userArray ['userID'] = $user->userID;
+			$userArray ['user'] = $user->user;
+			$userArray ['email'] = $user->email;
+			$userArray ['status'] = $user->status;
 			
 			$usersArray [] = $userArray;
 		}
@@ -442,7 +442,7 @@ class Humphree {
 	/*
 	 * The getItem() function retrieves an item.
 	 */
-	public function getItem(int $itemID): array {
+	public function getItem($itemID): array {
 		$item = new Item ( $this->db );
 		$item->itemID = $itemID;
 		$item = $this->system->getItem ( $item );

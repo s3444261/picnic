@@ -40,6 +40,14 @@
 			</form>
 		</div>
 	</div>
+
+	<?php
+	$pager = new Pager();
+	echo $pager->createLinks( 3, 'pagination pagination-sm',$this->data ['pageNumber'], $this->data ['limit'], $this->data ['totalItems'] );
+
+	echo '<p>Displaying ' .((($this->data ['pageNumber'] - 1) * $this->data ['limit']) + 1) . ' - ' . ($this->data ['pageNumber'] * $this->data ['limit']) . ' of ' . $this->data ['totalItems'] . ' users.</p>';
+	?>
+
 	<div class="row">
 		<table class="table listUser">
 			<thead>
@@ -55,19 +63,19 @@
 			</thead>
 			<tbody>
 <?php
-if (isset ( $_SESSION ['users'] )) {
-	foreach ( $_SESSION ['users'] as $user ) {
+if (isset ( $this->data['users'] )) {
+	foreach ( $this->data['users'] as $user ) {
 		?>
 		<tr>
 					<td></td>
-					<td><?php echo $user->user; ?></td>
-					<td><?php echo $user->email; ?></td>
-					<td><?php echo $user->status; ?></td>
+					<td><?php echo $user['user']; ?></td>
+					<td><?php echo $user['email']; ?></td>
+					<td><?php echo $user['status']; ?></td>
 					<td><a
-						href="<?php echo BASE . '/Administration/Edit/' . $user->userID; ?>"
+						href="<?php echo BASE . '/Administration/Edit/' . $user['userID']; ?>"
 						class="btn btn-primary btn-xs pull-right" role="button">Edit</a></td>
 					<td><a
-						href="<?php echo BASE . '/Administration/Delete/' . $user->userID; ?>"
+						href="<?php echo BASE . '/Administration/Delete/' . $user['userID']; ?>"
 						class="btn btn-primary btn-xs" role="button"
 						onclick="return confirm('Are you sure you want to delete?');">Delete</a></td>
 					<td></td>
@@ -79,6 +87,9 @@ if (isset ( $_SESSION ['users'] )) {
 </tbody>
 		</table>
 	</div>
+
+	<?php
+        $pager = new Pager();
+        echo $pager->createLinks( 3, 'pagination pagination-sm',$this->data ['pageNumber'], $this->data ['limit'], $this->data ['totalItems'] );
+    ?>
 </div>
-
-

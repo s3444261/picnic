@@ -18,9 +18,28 @@ class AdministrationController extends BaseController  {
 	public function index() : void {
 
 		if ($this->auth())
-		{
-			$users = new Users (Picnic::getInstance());
-			$_SESSION ['users'] = $users->getUsers ();
+		{	$h = new Humphree(Picnic::getInstance());
+
+			$view = new View();
+
+			if (isset($_SERVER['QUERY_STRING'])) {
+				parse_str($_SERVER['QUERY_STRING']);
+			}
+
+			if (!isset($page))  {
+				$page = 1;
+			}
+
+			if (!isset($limit))  {
+				$limit =25;
+			}
+
+			$view->SetData('users',  $h->getUsers($page, $limit));
+			$view->SetData('pageNumber', $page);
+			$view->SetData('limit',  $limit);
+			$view->SetData('totalItems',  sizeof($h->getUsers(1, 1000000))); // temporary, until we get a countUsers() method.
+			$view->Render('administration');
+
 
 			if (isset ( $_POST ['add'] )) {
 				unset ( $_POST ['add'] );
@@ -36,8 +55,6 @@ class AdministrationController extends BaseController  {
 				unset ( $_POST ['changePassword'] );
 				$this->changePassword();
 			}
-
-			$this->RenderInMainTemplate('view/layout/administration.php');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
@@ -260,18 +277,16 @@ class AdministrationController extends BaseController  {
 	/**
 	 * Deletes the user with the given ID.
 	 */
-	public function delete($id): void
+	public function Delete($id): void
 	{
 		if ($this->auth()) {
-			$user = new User (Picnic::getInstance());
-			$user->userID = $id;
-			$user->delete();
+			$h = new Humphree(Picnic::getInstance());
+			$h->deleteUser($id);
 			header('Location: ' . BASE . '/Administration');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
 	}
-
 
 	private function auth(){
 		if(isset($_SESSION[MODULE]) && isset($_SESSION['userID'])){
