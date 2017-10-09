@@ -10,7 +10,7 @@
 declare(strict_types=1);
 
 require_once 'TestPDO.php';
-require_once 'PicnicTestCase.php';
+require_once 'PicnicTestCaseOld.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../model/ItemComments.php';
 require_once dirname(__FILE__) . '/../../../model/ItemCommentsException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
 
-class ItemCommentsTest extends PicnicTestCase {
+class ItemCommentsTest extends PicnicTestCaseOld {
 
 	const ITEM_ID          = 'itemID';
 	const USER_ID          = 'userID';

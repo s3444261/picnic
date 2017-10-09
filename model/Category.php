@@ -20,14 +20,18 @@
 
 class Category {
 
-	public const ROOT_CATEGORY = 0;
-
 	private $_categoryID = 0;
 	private $_parentID = 0;
 	private $_category = '';
 	private $_created_at;
 	private $_updated_at;
 	private $db;
+	
+	const ERROR_CATEGORY_NOT_EXIST = 'The category does not exist!';
+	const ERROR_CATEGORY_NOT_CREATED = 'The category was not created!';
+	const ERROR_CATEGORY_NOT_UPDATED = 'The category was not updated!';
+	const ERROR_PARENT_ID_NOT_EXIST = 'The parent category does not exist!';
+	const ERROR_PARENT_ID_NONE = 'Input is required!';
 
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
@@ -71,7 +75,7 @@ class Category {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new CategoryException ( 'Could not retrieve category.' );
+			throw new CategoryException ( self::ERROR_CATEGORY_NOT_EXIST );
 		}
 	}
 	
@@ -80,20 +84,51 @@ class Category {
 	 * database. The categoryID is returned.
 	 */
 	public function set(): int {
-		$query = "INSERT INTO Categories
+		$v = new Validation();
+		
+		try {
+			$v->emptyField($this->parentID);
+			$v->number($this->parentID);
+			$v->emptyField($this->category);
+			
+			if($this->parentID > 0){
+				$this->categoryID = $this->parentID;
+				if(!$this->exists()){
+					throw new CategoryException ( self::ERROR_PARENT_ID_NOT_EXIST);
+					return 0;
+				}
+				$this->categoryID = NULL;
+			}
+			
+			$query = "SELECT COUNT(*) AS numCategories FROM Categories";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->execute ();
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			
+			if($row['numCategories'] > 1 && $this->parentID == 0){
+				throw new CategoryException ( self::ERROR_PARENT_ID_NONE);
+				return 0;
+			}
+			
+			$query = "INSERT INTO Categories
 					SET parentID = :parentID,
 						category = :category,
 						created_at = NULL";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':parentID', $this->_parentID );
-		$stmt->bindParam ( ':category', $this->_category );
-		$stmt->execute ();
-
-		$this->_categoryID = $this->db->lastInsertId ();
-		if ($this->_categoryID > 0) {
-			return $this->_categoryID;
-		} else {
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':parentID', $this->_parentID );
+			$stmt->bindParam ( ':category', $this->_category );
+			$stmt->execute ();
+			
+			if($stmt->rowCount() > 0){
+				return $this->_categoryID = $this->db->lastInsertId ();
+			} else {
+				throw new CategoryException ( self::ERROR_CATEGORY_NOT_CREATED);
+				return 0;
+			}
+		} catch (ValidationException $e) {
+			throw new CategoryException ( $e->getMessage() );
 			return 0;
 		}
 	}
@@ -114,7 +149,15 @@ class Category {
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
-			if (strlen ( $this->_parentID ) < 1) {
+			if (is_numeric( $this->_parentID ) && $this->parentID > 0) {
+				$trueCategoryID = $this->_categoryID;
+				$this->_categoryID = $this->parentID;
+				if($this->exists()){
+					$this->_categoryID = $trueCategoryID;
+				} else {
+					$this->_parentID = $row ['parentID'];
+				}
+			} else {
 				$this->_parentID = $row ['parentID'];
 			}
 			if (strlen ( $this->_category ) < 1) {
@@ -180,63 +223,6 @@ class Category {
 		} else {
 			return false;
 		}
-	}
-	
-	/*
-	 * The getCategories() method retrieves all categories and returns them as an array
-	 * of category objects.
-	 */
-	public function getCategories(): array {
-		
-		$query = "SELECT * FROM Categories";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->execute ();
-		$objects = array();
-		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-			
-			$object = new Category($this->db);
-			$object->_categoryID = $row ['categoryID'];
-			$object->_parentID = $row ['parentID'];
-			$object->_category = $row ['category'];
-			$object->_created_at = $row ['created_at'];
-			$object->_updated_at = $row ['updated_at'];
-			
-			$objects[] = $object;
-		}
-		return $objects;
-	}
-
-	/*
-	 * The getCategories() method retrieves all categories for the given parent category and
-	 * returns them as an array of category objects.
-	 */
-	public function getCategoriesIn(int $parentCategory): array {
-
-		if ($parentCategory == self::ROOT_CATEGORY) {
-			$query = "SELECT * FROM Categories WHERE parentID IS NULL";
-			$stmt = $this->db->prepare($query);
-		}
-		else {
-			$query = "SELECT * FROM Categories WHERE parentID = :parentCategoryId";
-			$stmt = $this->db->prepare($query);
-			$stmt->bindParam(':parentCategoryId', $parentCategory);
-		}
-
-		$stmt->execute();
-		$objects = array();
-		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-
-			$object = new Category($this->db);
-			$object->_categoryID = $row ['categoryID'];
-			$object->_parentID = $row ['parentID'];
-			$object->_category = $row ['category'];
-			$object->_created_at = $row ['created_at'];
-			$object->_updated_at = $row ['updated_at'];
-
-			$objects[] = $object;
-		}
-		return $objects;
 	}
 
 	// Display Object Contents

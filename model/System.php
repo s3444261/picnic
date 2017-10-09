@@ -245,12 +245,17 @@ class System {
 	 * specify its position in the heirachy.
 	 */
 	public function addCategory(Category $category): bool {
-		$cat = new Category ( $this->db );
-		$cat = $category;
-		$cat->categoryID = $cat->set ();
-		if ($cat->categoryID > 1) {
-			return true;
-		} else {
+		try {
+			$category->categoryID = $category->set ();
+			try {
+				$category->get ();
+				return true;
+			} catch ( CategoryException $e ) {
+				$_SESSION ['error'] = $e->getMessage();
+				return false;
+			}
+		} catch ( CategoryException $e ) {
+			$_SESSION ['error'] = $e->getMessage();
 			return false;
 		}
 	}
@@ -260,9 +265,7 @@ class System {
 	 * its position in the heirachy.
 	 */
 	public function updateCategory(Category $category): bool {
-		$cat = new Category ( $this->db );
-		$cat = $category;
-		if ($cat->update ()) {
+		if ($category->update ()) {
 			return true;
 		} else {
 			return false;
@@ -338,7 +341,7 @@ class System {
 	 */
 	public function getCategories(): array {
 		$c = array ();
-		$cat = new Category ( $this->db );
+		$cat = new Categories( $this->db );
 		$c = $cat->getCategories ();
 		return $c;
 	}
@@ -348,7 +351,7 @@ class System {
 	 */
 	public function getCategoriesIn(int $parentID): array {
 		$c = array ();
-		$cat = new Category ( $this->db );
+		$cat = new Categories ( $this->db );
 		$c = $cat->getCategoriesIn ( $parentID );
 		return $c;
 	}

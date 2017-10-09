@@ -10,7 +10,7 @@
 declare(strict_types=1);
 
 require_once 'TestPDO.php';
-require_once 'PicnicTestCase.php';
+require_once 'PicnicTestCaseOld.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
 require_once dirname(__FILE__) . '/../../../model/Comments.php';

@@ -37,16 +37,6 @@ abstract class PicnicTestCase extends PHPUnit\Framework\TestCase {
 	abstract protected function getInvalidId();
 
 	/**
-	 * Gets the type of exception that should be thrown on an error.
-	 */
-	abstract protected function getExpectedExceptionTypeForUnsetId();
-	
-	/**
-	 * Gets the type of exception that should be thrown on an error.
-	 */
-	abstract protected function getExpectedExceptionTypeForUnknownId();
-
-	/**
 	 * Gets the attributes that we expect to be returned when we get a valid object.
 	 */
 	abstract protected function getExpectedAttributesForGet();
@@ -81,98 +71,5 @@ abstract class PicnicTestCase extends PHPUnit\Framework\TestCase {
 		$sut = $this->createDefaultSut();
 		$this->setAttributes($sut, $values);
 		$this->assertValuesAreEqualTo($sut, $values);
-	}
-
-	public function testGetReturnsSelfOrTrueForKnownId(): void {
-		$sut = $this->createSutWithId($this->getValidId());
-		$pdo = TestPDO::getInstance();
-		try {
-			$result = $sut->get();
-		} catch (Exception $e) {
-			$result = new User($pdo);
-		}
-		
-		if ($result) {
-			$this->addToAssertionCount(1);
-		} else {
-			$this->assertEquals($sut, $result);
-		}
-	}
-
-	public function testGetThrowsOrReturnsFalseForUnknownId(): void {
-		$exceptionType = $this->getExpectedExceptionTypeForUnknownId();
-
-		if ($exceptionType != null) { 
-			$this->expectException($exceptionType);
-			$sut = $this->createSutWithId($this->getInvalidId());
-			$sut->get();			
-		} else {
-			$sut = $this->createSutWithId($this->getInvalidId());
-			try {
-				$bool = $sut->get();
-			} catch (Exception $e) {
-				$bool = false;
-			}
-			$this->assertFalse($bool);
-		}
-	}
-
-	public function testGetRetrievesCorrectValuesForKnownId(): void {
-		$sut = $this->createSutWithId($this->getValidId());
-		try {
-			$sut->get();
-		} catch (Exception $e) {
-			// Do Nothing
-		}
-		$this->assertValuesAreEqualTo($sut, $this->getExpectedAttributesForGet());
-	}
-
-	public function testGetThrowsOrReturnsFalseForUnsetId(): void {
-
-		$exceptionType = $this->getExpectedExceptionTypeForUnsetId(); 
-
-		if ($exceptionType != null) {
-			$sut = $this->createDefaultSut(); 
-			$this->expectException($exceptionType);
-			$sut->get();
-		} else {
-			$sut = $this->createDefaultSut();
-			try {
-				$bool = $sut->get();
-			} catch (Exception $e) {
-				// Do Nothing
-			}
-			$this->assertFalse($bool);
-		}
-	}
-
-	public function testExistsReturnsTrueForKnownId(): void {
-		$sut = $this->createSutWithId($this->getValidId());
-		$this->assertTrue($sut->exists());
-	}
-
-	public function testExistsReturnsFalseForUnknownId(): void {
-		$sut = $this->createSutWithId($this->getInvalidId());
-		$this->assertFalse($sut->exists());
-	}
-
-	public function testExistsReturnsFalseForUnsetId(): void {
-		$sut = $this->createDefaultSut();
-		$this->assertFalse($sut->exists());
-	}
-
-	public function testDeleteReturnsTrueForKnownId(): void {
-		$sut = $this->createSutWithId($this->getValidId());
-		$this->assertTrue($sut->delete());
-	}
-
-	public function testDeleteReturnsFalseForUnknownId(): void {
-		$sut = $this->createSutWithId($this->getInvalidId());
-		$this->assertFalse($sut->delete());
-	}
-
-	public function testDeleteReturnsFalseForUnsetId(): void {
-		$sut = $this->createDefaultSut();
-		$this->assertFalse($sut->delete());
 	}
 }

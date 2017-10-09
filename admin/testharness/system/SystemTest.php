@@ -23,6 +23,9 @@
  * getUsers(int $pageNumber, int $usersPerPage): array
  * disableUser(User $user): bool
  * deleteUser(User $user): bool
+ * addCategory(Category $category): bool
+ * updateCategory(Category $category): bool
+ * getCategory(Category $category): Category
  * 
  * -- System.php Test SubBlocks: --
  * createAccount(User $user): bool
@@ -102,9 +105,31 @@
  * -- testDisableUserValidUserID(): void
  * 
  * deleteUser(User $user): bool
- * -- testDeleteUserNoUserID(): void
- * -- testDeleteUserInvalidUserID(): void
- * -- testDeleteUserValidUserID(): void
+ * TO DO
+ * 
+ * addCategory(Category $category): bool
+ * -- testAddCategoryNoParentId(): void
+ * -- testAddCategoryInvalidParentId(): void
+ * -- testAddCategoryNoCategory(): void
+ * -- testAddCategorySuccess(): void
+ * 
+ * updateCategory(Category $category): bool
+ * -- testUpdateCategoryNoCategoryId(): void
+ * -- testUpdateCategoryInvalidCategoryId(): void
+ * -- testUpdateCategoryNoParentId(): void
+ * -- testUpdateCategoryInvalidParentId(): void
+ * -- testUpdateCategoryNoCategory(): void
+ * -- testUpdateCategoryParentId(): void
+ * -- testUpdateCategoryCategory(): void
+ * -- testUpdateCategoryAll(): void
+ * 
+ * deleteCategory(Category $category): bool
+ * TO DO
+ * 
+ * getCategory(Category $category): Category
+ * -- testGetCategoryNoCategoryId(): void
+ * -- testGetCategoryInvalidCategoryId(): void
+ * -- testGetCategoryValidCategoryId(): 
  * 
  */
 declare(strict_types=1);
@@ -197,17 +222,57 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const USERS_PER_PAGE_ZERO = 0;
 	const ERROR_ZERO = 'Number must be greater than zero!';
 	
-	
-	// Category Parameters
 	const CATEGORY_ID   = 'categoryID';
-	const PARENT_ID	 	= 'parentID';
-	const CATEGORY      = 'category';
+	const PARENT_ID     = 'parentID';
+	const CATEGORY_NAME = 'category';
+	
+	const CATEGORY_ID_1 = 1;
+	const PARENT_ID_0 = 0;
+	const CATEGORY_1 = 'Category';
+	const CATEGORY_ID_2 = 2;
+	const PARENT_ID_1 = 1;
+	const PARENT_ID_2 = 2;
+	const CATEGORY_2 = 'Category2';
+	const CATEGORY_ID_3 = 3;
+	const CATEGORY_3 = 'Category3';
+	const PARENT_ID_3 = 3;
+	const CATEGORY_ID_4 = 4;
+	const CATEGORY_4 = 'Category4';
+	const CATEGORY_ID_INVALID = 400;
+	const PARENT_ID_INVALID = 300;
+	const ERROR_CATEGORY_NOT_EXIST = 'The category does not exist!';
+	const ERROR_CATEGORY_NOT_CREATED = 'The category was not created!';
+	const ERROR_CATEGORY_NOT_UPDATED = 'The category was not updated!';
+	const ERROR_PARENT_ID_NONE = 'Input is required!';
+	const ERROR_PARENT_ID_NOT_EXIST = 'The parent category does not exist!';
+	const ERROR_PARENT_ID_INVALID = 'Input is required!';
+	const ERROR_CATEGORY_NONE = 'Input is required!';
 	
 	protected function setUp(): void {
 		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser();
 		$pdo = TestPDO::getInstance();
 		DatabaseGenerator::Generate($pdo);
+		
+		// Insert a root category
+		$root = new Category($pdo);
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set();
+		} catch (CategoryException $e) {}
+		
+		// Insert additional categories
+		$c = new Category($pdo);
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set();
+		} catch (CategoryException $e) {}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set();
+		} catch (CategoryException $e) {}
 		
 		$args1 = [
 				self::USER 			=> self::USER_ONE,
@@ -247,9 +312,72 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		DatabaseGenerator::Generate($pdo);
 		
+		// Insert a root category
+		$root = new Category($pdo);
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set();
+		} catch (CategoryException $e) {}
+		
+		// Insert additional categories
+		$c = new Category($pdo);
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set();
+		} catch (CategoryException $e) {}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set();
+		} catch (CategoryException $e) {}
+		
+		// Populate the Users table.
+		for($i = 1; $i <= 400; $i++){
+			${'u' . $i} = new User($pdo, [self::USER => 'user' . $i, self::EMAIL => 'email' . $i . '@gmail.com', self::PASSWORD => 'PassWord' . $i]);
+			try {
+				${'u' . $i}->set();
+			} catch (UserException $e) {}
+			try {
+				${'u' . $i}->get();
+			} catch (UserException $e) { }
+			try {
+				${'u' . $i}->activate();
+			} catch (UserException $e) {}
+		}
+	}
+	
+	protected function populateAll(): void {
+		
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
+		
+		// Populate the Categories Table
+		
+		// Insert a root category
+		$root = new Category($pdo);
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set();
+		} catch (CategoryException $e) {}
+		
+		// Insert additional categories
+		$c = new Category($pdo);
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set();
+		} catch (CategoryException $e) {}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set();
+		} catch (CategoryException $e) {}
+		
 		// Populate the Users table.
 		
-		for($i = 1; $i <= 400; $i++){
+		for($i = 1; $i <= 3; $i++){
 			${'u' . $i} = new User($pdo, [self::USER => 'user' . $i, self::EMAIL => 'email' . $i . '@gmail.com', self::PASSWORD => 'PassWord' . $i]);
 			try {
 				${'u' . $i}->set();
@@ -975,18 +1103,187 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	
     /*
 	 * deleteUser(User $user): bool
+	 * Will require a large number of tests once validation of all
+	 * other classes has been completed.
 	 */
 	
-	public function testDeleteUserNoUserID(): void {
-		
+    /*
+     * addCategory(Category $category): bool
+     */
+	public function testAddCategoryNoParentId(): void {
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::CATEGORY_NAME => self::CATEGORY_4]);
+		$this->assertFalse($system->addCategory($sut));
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_PARENT_ID_NONE, $_SESSION['error']);
+		}
 	}
 	
-	public function testDeleteUserInvalidUserID(): void {
-		
+	public function testAddCategoryInvalidParentId(): void {
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::PARENT_ID => self::PARENT_ID_INVALID, self::CATEGORY_NAME => self::CATEGORY_4]);
+		$this->assertFalse($system->addCategory($sut));
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_PARENT_ID_NOT_EXIST, $_SESSION['error']);
+		}
 	}
 	
-	public function testDeleteUserValidUserID(): void {
-		
+	public function testAddCategoryNoCategory(): void {
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::PARENT_ID => self::PARENT_ID_1]);
+		$this->assertFalse($system->addCategory($sut));
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_CATEGORY_NONE, $_SESSION['error']);
+		}
+	}
+	
+	public function testAddCategorySuccess(): void {
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::PARENT_ID => self::PARENT_ID_1, self::CATEGORY_NAME => self::CATEGORY_4]);
+		$this->assertTrue($system->addCategory($sut));
+	}
+	
+	/*
+	 * updateCategory(Category $category): bool
+	 */
+	
+	public function testUpdateCategoryNoCategoryId(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::PARENT_ID => self::PARENT_ID_1, self::CATEGORY_NAME => self::CATEGORY_4]);
+		$this->assertFalse($system->updateCategory($sut));
+	}
+	
+	public function testUpdateCategoryInvalidCategoryId(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::CATEGORY_ID => self::CATEGORY_ID_INVALID, self::PARENT_ID => self::PARENT_ID_1, self::CATEGORY_NAME => self::CATEGORY_4]);
+		$this->assertFalse($system->updateCategory($sut));
+	}
+	
+	public function testUpdateCategoryNoParentId(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::CATEGORY_ID => self::CATEGORY_ID_3, self::CATEGORY_NAME => self::CATEGORY_4]);
+		$this->assertTrue($system->updateCategory($sut));
+		try {
+			$sut->get();
+		} catch (Exception $e) {}
+		$this->assertSame('1', $sut->parentID);
+		$this->assertSame(self::CATEGORY_4, $sut->category);
+	}
+	
+	public function testUpdateCategoryInvalidParentId(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::CATEGORY_ID => self::CATEGORY_ID_3, self::PARENT_ID => self::PARENT_ID_INVALID, self::CATEGORY_NAME => self::CATEGORY_4]);
+		$this->assertTrue($system->updateCategory($sut));
+		try {
+			$sut->get();
+		} catch (Exception $e) {}
+		$this->assertSame('1', $sut->parentID);
+		$this->assertSame(self::CATEGORY_4, $sut->category);
+	}
+	
+	public function testUpdateCategoryNoCategory(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::CATEGORY_ID => self::CATEGORY_ID_3, self::PARENT_ID => self::PARENT_ID_2]);
+		$this->assertTrue($system->updateCategory($sut));
+		try {
+			$sut->get();
+		} catch (Exception $e) {}
+		$this->assertSame('2', $sut->parentID);
+		$this->assertSame(self::CATEGORY_3, $sut->category);
+	}
+	
+	public function testUpdateCategoryParentId(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::CATEGORY_ID => self::CATEGORY_ID_3, self::PARENT_ID => self::PARENT_ID_2, self::CATEGORY_NAME => self::CATEGORY_3]);
+		$this->assertTrue($system->updateCategory($sut));
+		try {
+			$sut->get();
+		} catch (Exception $e) {}
+		$this->assertSame('2', $sut->parentID);
+		$this->assertSame(self::CATEGORY_3, $sut->category);
+	}
+	
+	public function testUpdateCategoryCategory(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::CATEGORY_ID => self::CATEGORY_ID_3, self::PARENT_ID => self::PARENT_ID_1, self::CATEGORY_NAME => self::CATEGORY_4]);
+		$this->assertTrue($system->updateCategory($sut));
+		try {
+			$sut->get();
+		} catch (Exception $e) {}
+		$this->assertSame('1', $sut->parentID);
+		$this->assertSame(self::CATEGORY_4, $sut->category);
+	}
+	
+	public function testUpdateCategoryAll(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::CATEGORY_ID => self::CATEGORY_ID_3, self::PARENT_ID => self::PARENT_ID_2, self::CATEGORY_NAME => self::CATEGORY_4]);
+		$this->assertTrue($system->updateCategory($sut));
+		try {
+			$sut->get();
+		} catch (Exception $e) {}
+		$this->assertSame('2', $sut->parentID);
+		$this->assertSame(self::CATEGORY_4, $sut->category);
+	}
+	
+	/*
+	 * deleteCategory(Category $category): bool
+	 * TO DO
+	 */
+	
+	/*
+	 * getCategory(Category $category): Category
+	 */
+	
+	public function testGetCategoryNoCategoryId(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo);
+		$category = $system->getCategory($sut);
+		$this->assertSame(0, $category->categoryID);
+		$this->assertSame(0, $category->parentID);
+		$this->assertEmpty($category->category);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_CATEGORY_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testGetCategoryInvalidCategoryId(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::CATEGORY_ID => self::CATEGORY_ID_INVALID]);
+		$category = $system->getCategory($sut);
+		$this->assertSame('400', $category->categoryID);
+		$this->assertSame(0, $category->parentID);
+		$this->assertEmpty($category->category);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_CATEGORY_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testGetCategoryValidCategoryId(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Category($pdo, [self::CATEGORY_ID => self::CATEGORY_ID_3]);
+		$category = $system->getCategory($sut);
+		$this->assertSame('3', $category->categoryID);
+		$this->assertSame('1', $category->parentID);
+		$this->assertSame(self::CATEGORY_3, $category->category);
 	}
 	
 }
