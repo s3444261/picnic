@@ -22,8 +22,8 @@
                 echo '<li><a href="' . BASE . '/TermsOfService">Terms of Service</a></li>';
                 echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/PrivacyPolicy">Privacy policy</a></li>';
                 echo '<li class="nav-item"><a class="nav-link" href="#">Search</a></li>';
-                echo '<li class="nav-item"><a class="nav-link" href="#">Login</a></li>';
-                echo '<li class="nav-item"><a class="nav-link" href="#">View catalogue</a></li>';
+                echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/SignIn">Login</a></li>';
+                echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/Category/View">View catalogue</a></li>';
 
                 echo '</ul>';
                 ?>
