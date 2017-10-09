@@ -59,7 +59,7 @@ if(isset($_SESSION['message'])){
         <!-- Central column -->
         <div class="col-9">
             <a href="<?php echo BASE."/Home" ?>">
-                <img src="<?php echo BASE; ?>/img/logo.png" class="logo img-fluid mx-auto d-block top-n-tail"  alt="Humphree logo"> </div>>
+                <img src="<?php echo BASE; ?>/img/logo.png" class="logo img-fluid mx-auto d-block top-n-tail"  alt="Humphree logo">
             </a>
             <form class="navbar-form" role="search">
                 <div class="input-group add-on">
