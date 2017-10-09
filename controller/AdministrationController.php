@@ -22,16 +22,17 @@ class AdministrationController extends BaseController  {
 
 			$view = new View();
 
-			if (isset($_SERVER['QUERY_STRING']))
-			{
+			if (isset($_SERVER['QUERY_STRING'])) {
 				parse_str($_SERVER['QUERY_STRING']);
 			}
-			else{
+
+			if (!isset($page))  {
 				$page = 1;
-				$limit = 25;
 			}
 
-			$totalItems = 400;
+			if (!isset($limit))  {
+				$limit =25;
+			}
 
 			$view->SetData('users',  $h->getUsers($page, $limit));
 			$view->SetData('pageNumber', $page);
