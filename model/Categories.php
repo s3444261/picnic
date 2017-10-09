@@ -22,7 +22,7 @@ class Categories {
 
 	private $db;
 
-
+	const ROOT_CATEGORY = 0;
 	
 	/*
 	 * The getCategories() method retrieves all categories and returns them as an array
