@@ -58,7 +58,9 @@ if(isset($_SESSION['message'])){
         <div class="col"></div>
         <!-- Central column -->
         <div class="col-9">
-            <img src="<?php echo BASE; ?>/img/logo.png" class="logo img-fluid mx-auto d-block top-n-tail"  alt="Humphree logo">
+            <a href="<?php echo BASE."/Home" ?>">
+                <img src="<?php echo BASE; ?>/img/logo.png" class="logo img-fluid mx-auto d-block top-n-tail"  alt="Humphree logo"> </div>>
+            </a>
             <form class="navbar-form" role="search">
                 <div class="input-group add-on">
                     <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">
