@@ -287,7 +287,6 @@ class Humphree {
 	 * The countCategoryItems() method counts the number of items in a category.
 	 */
 	public function countCategoryItems(int $categoryID): int {
-		$numCategoryItems = 0;
 		$category = new Category ( $this->db );
 		$category->categoryID = $categoryID;
 		$numCategoryItems = $this->system->countCategoryItems ( $category );
@@ -299,7 +298,6 @@ class Humphree {
 	 * The countItemComments() method counts the number of items in a category.
 	 */
 	public function countItemComments(int $itemID): int {
-		$numItemComments = 0;
 		$item = new Item ( $this->db );
 		$item->itemID = $itemID;
 		$numItemComments = $this->system->countItemComments ( $item );
@@ -311,9 +309,8 @@ class Humphree {
 	 * The countItemNotes() method counts the number of items in a category.
 	 */
 	public function countItemNotes(int $itemID): int {
-		$numItemNotes = 0;
 		$item = new Item ( $this->db );
-		$item->itemID = $item;
+		$item->itemID = $itemID;
 		$numItemNotes = $this->system->countItemNotes ( $item );
 		
 		return $numItemNotes;
@@ -325,7 +322,7 @@ class Humphree {
 	public function getCategoryItemsByPage(int $categoryID, int $pageNumber , int $itemsPerPage): array {
 		$category = new Category ( $this->db );
 		$category->categoryID = $categoryID;
-		$categoryItems = $this->system->getCategoryItems ( $category, $pageNumber , $itemsPerPage);
+		$categoryItems = $this->system->getCategoryItemsByPage( $category, $pageNumber , $itemsPerPage);
 		$its = array ();
 		
 		foreach ( $categoryItems as $item ) {
@@ -382,8 +379,6 @@ class Humphree {
 	 * The countUserItems() method counts the number of items in a user.
 	 */
 	public function countUserItems(int $userID): int {
-		$numUserItems = 0;
-		
 		$user = new User ( $this->db );
 		$user->userID = $userID;
 		$numUserItems = $this->system->countUserItems ( $user );
@@ -595,6 +590,8 @@ class Humphree {
 		$user = $this->system->getUser ( $user );
 		$c ['user'] = $user->user;
 		$c ['comment'] = $itemComment->comment;
+
+		return $c;
 	}
 	
 	/*
@@ -669,7 +666,7 @@ class Humphree {
 		$n = array ();
 		
 		$note = new Note ( $this->db );
-		$note->noteID = noteID;
+		$note->noteID = $noteID;
 		$itemNote = $this->system->getItemNote ( $note );
 		$n ['noteID'] = $itemNote->noteID;
 		$n ['note'] = $itemNote->note;
@@ -699,7 +696,7 @@ class Humphree {
 		$n = new Note ( $this->db );
 		$n->noteID = $noteID;
 		$n->note = $note;
-		if ($this->system->updateItemNote ( $note )) {
+		if ($this->system->updateItemNote ( $n )) {
 			return true;
 		} else {
 			return false;
@@ -764,6 +761,7 @@ class Humphree {
 		// TO DO
 		// Convert arrays to objects if necessary and call equivalent System Function
 		$this->system->search ();
+
+		return true;
 	}
 }
-?>
