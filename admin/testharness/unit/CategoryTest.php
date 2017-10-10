@@ -89,8 +89,7 @@ final class CategoryTest extends PicnicTestCase{
 	const ERROR_CATEGORY_NONE = 'Input is required!';
 
 	protected function setUp(): void {
-		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
-		// Be nice if we could mock out the database, but let's see how we go with that.
+		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser();
 		$pdo = TestPDO::getInstance();
 		DatabaseGenerator::Generate($pdo);

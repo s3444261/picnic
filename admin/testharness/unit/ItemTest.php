@@ -24,27 +24,19 @@
  * -- testGetItemValidItemId():
  *
  * set(): int
- * -- testSetItemNoParentId(): void
- * -- testSetItemInvalidParentId(): void
- * -- testSetItemNoItem(): void
- * -- testSetItemSuccess(): void
+ * TO DO 
  *
  * update(): bool
- * -- testUpdateItemNoItemId(): void
- * -- testUpdateItemInvalidItemId(): void
- * -- testUpdateItemNoParentId(): void
- * -- testUpdateItemInvalidParentId(): void
- * -- testUpdateItemNoItem(): void
- * -- testUpdateItemParentId(): void
- * -- testUpdateItemItem(): void
- * -- testUpdateItemAll(): void
+ * TO DO
  *
  * delete(): bool
+ * TO DO
  * -- testDeleteItemItemIdEmpty(): void
  * -- testDeleteItemItemIdInvalid(): void
  * -- testDeleteItemItemIdValid(): void
  *
  * exists(): bool
+ * TO DO
  * -- testExistsItemItemIdEmpty(): void
  * -- testExistsItemItemIdInvalid(): void
  * -- testExistsItemItemIdValid(): void

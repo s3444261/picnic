@@ -38,6 +38,7 @@ class Users {
 	public function getUsers(int $pageNumber, int $usersPerPage): array {
 		
 		$v = new Validation();
+		$users = array ();
 		
 		try {
 			$v->number($pageNumber);
@@ -57,8 +58,7 @@ class Users {
 			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->execute ();
-			$users = array ();
-			
+						
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 				
 				$user = new User($this->db);
@@ -69,11 +69,10 @@ class Users {
 				
 				$users [] = $user;
 			}
-			
-			return $users;
 		} catch (ValidationException $e) { 
 			throw new UsersException($e->getMessage());
 		}
+		return $users;
 	}
 }
 ?>

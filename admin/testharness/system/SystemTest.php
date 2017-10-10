@@ -141,6 +141,26 @@
  * -- testGetCategoriesInParentIdInvalid(): void
  * -- testGetCategoriesInParentIdValid(): void
  * 
+ * countCategoryItems(Category $category): int
+ * TO DO
+ * 
+ * countItemComments(Item $item): int
+ * TO DO
+ * 
+ * countItemNotes(Item $item): int
+ * TO DO
+ * 
+ * getCategoryItems(Category $category, int $pageNumber , int $itemsPerPage): array
+ * -- testGetCategoryItemsPageNumberZero(): void
+ * -- testGetCategoryItemsCategoryItemsPerPageZero(): void
+ * -- testGetCategoryItemsSuccess(): void
+ * 
+ * countUserItems(User $user): int
+ * TO DO
+ * 
+ * getUserItems(User $user): array
+ * TO DO
+ * 
  * getItem(Item $item): Item
  * -- testGetItemNoItemId(): void
  * -- testGetItemInvalidItemId(): void
@@ -173,6 +193,7 @@ require_once dirname(__FILE__) . '/../../../model/Users.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
 require_once dirname(__FILE__) . '/../../../model/CategoryException.php';
 require_once dirname(__FILE__) . '/../../../model/CategoriesException.php';
+require_once dirname(__FILE__) . '/../../../model/CategoryItemsException.php';
 require_once dirname(__FILE__) . '/../../../model/CommentException.php';
 require_once dirname(__FILE__) . '/../../../model/ItemException.php';
 require_once dirname(__FILE__) . '/../../../model/ItemCommentsException.php';
@@ -302,6 +323,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ITEM_ID_INVALID = 400;
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
 	const ERROR_ITEM_ID_INVALID = 'The ItemID does not exist!';
+	
+	const ITEMS_PAGE_NUMBER = 3;
+	const ITEMS_PER_PAGE = 6;
+	const ITEMS_PAGE_NUMBER_ZERO = 0;
+	const ITEMS_PER_PAGE_ZERO = 0;
 	
 	protected function setUp(): void {
 		// Regenerate a fresh database.
@@ -443,6 +469,69 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		} catch (ItemException $e) {}
 	}
 	
+	protected function populateCategoryItems(): void {
+		
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
+		
+		// Populate the Category Table
+		// Insert a root category
+		$root = new Category($pdo);
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set();
+		} catch (CategoryException $e) {}
+		
+		// Insert additional categories
+		$c = new Category($pdo);
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set();
+		} catch (CategoryException $e) {}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set();
+		} catch (CategoryException $e) {}
+		$c->{self::PARENT_ID} = self::PARENT_ID_2;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_4;
+		try {
+			$c->set();
+		} catch (CategoryException $e) {}
+		
+		// Populate the Items Table
+		for($i = 1; $i <= 100; $i++){
+			$item = new Item($pdo, [
+					self::TITLE 		=> 'title' . $i,
+					self::DESCRIPTION 	=> 'description' . $i,
+					self::QUANTITY 		=> 'quantity' . $i,
+					self::CONDITION 	=> 'condition' . $i,
+					self::PRICE 		=> 'price' . $i,
+					self::STATUS 		=> 'status' . $i
+			]);
+			try {
+				$item->set();
+			} catch (ItemException $e) {}
+		}
+		
+		// Populate the CategoryItems Table
+		$j = 2;
+		for($i = 1; $i <= 100; $i++){
+			$ci = new CategoryItems($pdo, [
+					self::CATEGORY_ID => $j,
+					SELF::ITEM_ID => $i
+			]);
+			try {
+				$ci->set();
+			} catch (CategoryItemsExceptionException $e) {}
+			if($i % 34 == 0){
+				$j++;
+			}
+		}
+	}
+	
 	protected function populateUsers(): void {
 		
 		TestPDO::CreateTestDatabaseAndUser();
@@ -533,7 +622,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	
 	public function testcreateAccountNoUser(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => NULL, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -544,7 +633,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountShortUser(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_SHORT, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -555,7 +644,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountExistUser(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_TWO, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -566,7 +655,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountNoEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => NULL, self::PASSWORD => self::PASSWORD_ADD]);
@@ -577,7 +666,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountBadEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_BAD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -588,7 +677,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountExistEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADDRESS_TWO, self::PASSWORD => self::PASSWORD_ADD]);
@@ -599,7 +688,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountNoPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => NULL]);
@@ -610,7 +699,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountShortPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_SHORT]);
@@ -621,7 +710,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountNoUpperPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_NO_UPPER]);
@@ -632,7 +721,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountNoLowerPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_NO_LOWER]);
@@ -643,7 +732,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountNoNumberPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_NO_NUMBER]);
@@ -654,7 +743,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testcreateAccountSuccessful(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -666,7 +755,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	
 	public function testGetUserIdByActivationCodeInvalidCode(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -684,7 +773,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testGetUserIdByActivationCodeValidCode(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -740,7 +829,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	
 	public function testChangePasswordNoPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => 1, self::PASSWORD => NULL]);
@@ -751,7 +840,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testChangePasswordShortPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => 1, self::PASSWORD => self::PASSWORD_SHORT]);
@@ -762,7 +851,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testChangePasswordNoUpperPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => 1, self::PASSWORD => self::PASSWORD_NO_UPPER]);
@@ -773,7 +862,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testChangePasswordNoLowerPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => 1, self::PASSWORD => self::PASSWORD_NO_LOWER]);
@@ -784,7 +873,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testChangePasswordNoNumberPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => 1, self::PASSWORD => self::PASSWORD_NO_NUMBER]);
@@ -795,7 +884,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testChangePasswordSuccessful(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => 1, self::PASSWORD => self::PASSWORD_ADD]);
@@ -821,7 +910,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	
 	public function testforgotPasswordNoEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::EMAIL => NULL]);
@@ -832,7 +921,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testforgotPasswordBadEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::EMAIL => self::EMAIL_BAD]);
@@ -843,7 +932,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testforgotPasswordNotExistEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::EMAIL => self::EMAIL_BAD]);
@@ -854,7 +943,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testforgotPasswordExistEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::EMAIL => self::EMAIL_ADDRESS_TWO]);
@@ -870,7 +959,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	
 	public function testAddUserNoUser(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => NULL, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -881,7 +970,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserShortUser(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_SHORT, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -892,7 +981,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserExistUser(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_TWO, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -903,7 +992,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserNoEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => NULL, self::PASSWORD => self::PASSWORD_ADD]);
@@ -914,7 +1003,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserBadEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_BAD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -925,7 +1014,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserExistEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADDRESS_TWO, self::PASSWORD => self::PASSWORD_ADD]);
@@ -936,7 +1025,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserNoPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => NULL]);
@@ -947,7 +1036,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserShortPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_SHORT]);
@@ -958,7 +1047,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserNoUpperPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_NO_UPPER]);
@@ -969,7 +1058,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserNoLowerPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_NO_LOWER]);
@@ -980,7 +1069,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserNoNumberPassword(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_NO_NUMBER]);
@@ -991,7 +1080,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddUserSuccessful(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
@@ -1003,7 +1092,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	
 	public function testUpdateUserNoUserID(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::STATUS => self::STATUS_ADD]);
@@ -1014,7 +1103,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testUpdateUserNoUser(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => self::USER_ID_1, self::USER => NULL, self::EMAIL => self::EMAIL_ADD, self::STATUS => self::STATUS_ADD]);
@@ -1026,7 +1115,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testUpdateUserShortUser(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => self::USER_ID_1, self::USER => self::USER_SHORT, self::EMAIL => self::EMAIL_ADD, self::STATUS => self::STATUS_ADD]);
@@ -1037,7 +1126,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testUpdateUserExistUser(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => self::USER_ID_1, self::USER => self::USER_TWO, self::EMAIL => self::EMAIL_ADD, self::STATUS => self::STATUS_ADD]);
@@ -1048,7 +1137,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testUpdateUserNoEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => self::USER_ID_1, self::USER => self::USER_ADD, self::EMAIL => NULL, self::STATUS => self::STATUS_ADD]);
@@ -1059,7 +1148,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testUpdateUserBadEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => self::USER_ID_1, self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_BAD, self::STATUS => self::STATUS_ADD]);
@@ -1070,7 +1159,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testUpdateUserExistEmail(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => self::USER_ID_1, self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADDRESS_TWO, self::STATUS => self::STATUS_ADD]);
@@ -1081,7 +1170,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testUpdateUserNoStatus(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => self::USER_ID_1, self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::STATUS => self::STATUS_ADD]);
@@ -1093,7 +1182,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testUpdateUserSuccessful(): void{
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER_ID => self::USER_ID_1, self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::STATUS => self::STATUS_ADD]);
@@ -1111,7 +1200,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	
 	public function testGetUserNoUserID(): void {
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo);
@@ -1124,7 +1213,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testGetUserInvalidUserID(): void {
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo);
@@ -1138,7 +1227,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testGetUserValidUserID(): void {
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo);
@@ -1154,7 +1243,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	public function testGetUsersPageNumberZero(): void {
 		$this->populateUsers();
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$system->getUsers(self::PAGE_NUMBER_ZERO, self::USERS_PER_PAGE);
@@ -1165,7 +1254,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	
 	public function testGetUsersUsersPerPageZero(): void {
 		$this->populateUsers();
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$system->getUsers(self::PAGE_NUMBER, self::USERS_PER_PAGE_ZERO);
@@ -1176,7 +1265,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	
 	public function testGetUsersSuccess(): void {
 		$this->populateUsers();
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		try {
@@ -1248,7 +1337,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
      * addCategory(Category $category): bool
      */
 	public function testAddCategoryNoParentId(): void {
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new Category($pdo, [self::CATEGORY_NAME => self::CATEGORY_4]);
@@ -1259,7 +1348,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddCategoryInvalidParentId(): void {
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new Category($pdo, [self::PARENT_ID => self::PARENT_ID_INVALID, self::CATEGORY_NAME => self::CATEGORY_4]);
@@ -1270,7 +1359,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddCategoryNoCategory(): void {
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new Category($pdo, [self::PARENT_ID => self::PARENT_ID_1]);
@@ -1281,7 +1370,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testAddCategorySuccess(): void {
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new Category($pdo, [self::PARENT_ID => self::PARENT_ID_1, self::CATEGORY_NAME => self::CATEGORY_4]);
@@ -1388,7 +1477,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	
 	public function testGetCategoryNoCategoryId(): void {
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new Category($pdo);
@@ -1458,7 +1547,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 * getCategoriesIn(int $parentID): array
 	 */
 	public function testGetCategoriesInParentIdInvalid(): void {
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$cats = $system->getCategoriesIn(self::INVALID_ID);
@@ -1483,11 +1572,53 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	/*
+	 * getCategoryItems(Category $category, int $pageNumber , int $itemsPerPage): array
+	 */
+	
+	public function testGetCategoryItemsByPagePageNumberZero(): void {
+		unset($_SESSION['error']);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$c = new Category($pdo);
+		$c->categoryID = self::CATEGORY_ID_3;
+		$ci = $system->getCategoryItemsByPage($c, self::ITEMS_PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE);
+		if(isset($_SESSION['error'])){ 
+			$this->assertEquals(self::ERROR_ZERO, $_SESSION['error']);
+		}
+	}
+	
+	public function testGetCategoryItemsByPageItemsPerPageZero(): void {
+		unset($_SESSION['error']);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$c = new Category($pdo);
+		$c->categoryID = self::CATEGORY_ID_3;
+		$ci = $system->getCategoryItemsByPage($c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_ZERO, $_SESSION['error']);
+		}
+	}
+	
+	public function testGetCategoryItemsByPageSuccess(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$this->populateCategoryItems();
+		$c = new Category($pdo);
+		$c->categoryID = self::CATEGORY_ID_3;
+		$ci = $system->getCategoryItemsByPage($c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE);
+		$start = 47;
+		foreach($ci as $item){
+			$this->assertEquals($start, $item->itemID);
+			$start++;
+		}
+	}
+	
+	/*
 	 * getItem(Item $item): Item
 	 */
 	
 	public function testGetItemNoItemId(): void {
-		unset($_SESSION);
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new Item($pdo);

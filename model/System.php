@@ -331,7 +331,7 @@ class System {
 		try {
 			$c = $c->get ();
 		} catch ( CategoryException $e ) {
-			$_SESSION ['error'] = $e->getError ();
+			$_SESSION ['error'] = $e->getMessage ();
 		}
 		return $c;
 	}
@@ -355,7 +355,7 @@ class System {
 		try {
 			$c = $cat->getCategoriesIn ( $parentID );
 		} catch ( CategoriesException $e ) {
-			$_SESSION ['error'] = $e->getError ();
+			$_SESSION ['error'] = $e->getMessage ();
 		}
 		return $c;
 	}
@@ -397,14 +397,20 @@ class System {
 	}
 	
 	/*
-	 * The getCategoryItems() function retrieves all items linked to a Category.
+	 * The getCategoryItemsByPage() function retrieves all items linked to a Category.
 	 */
-	public function getCategoryItems(Category $category): array {
-		$ci = array ();
-		$c = new CategoryItems ( $this->db );
-		$c->categoryID = $category->categoryID;
-		$ci = $c->getCategoryItems ();
-		return $ci;
+	public function getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage): array {
+		$pn = $pageNumber;
+		$ipp = $itemsPerPage;
+		$categoryItemsArray = array ();
+		$categoryItems = new CategoryItems ( $this->db);
+		$categoryItems->categoryID = $category->categoryID;
+		try {
+			$categoryItemsArray= $categoryItems->getCategoryItemsByPage($pn, $ipp);
+		} catch ( CategoryItemsException $e ) {
+			$_SESSION ['error'] = $e->getMessage (); 
+		}
+		return $categoryItemsArray;
 	}
 	
 	/*

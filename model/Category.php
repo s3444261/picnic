@@ -74,10 +74,10 @@ class Category {
 			$this->_category = $row ['category'];
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
-			return $this;
 		} else {
 			throw new CategoryException ( self::ERROR_CATEGORY_NOT_EXIST );
 		}
+		return $this;
 	}
 	
 	/*
