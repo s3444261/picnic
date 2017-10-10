@@ -10,7 +10,7 @@
  ?>
 
 <div class="container-fluid">
-  <h1><?php echo $this->data['currentCategory']['category'] ?></h1>
+  <h1><?php echo $this->data['currentCategoryName'] ?></h1>
 
 	<?php if (isset ( $this->data['subCategories'] ) && count($this->data['subCategories']) != 0) { ?>
   <div class="jumbotron">
@@ -22,7 +22,7 @@
         <div class="container">
     			<?php foreach ( $this->data['subCategories'] as $category ) { ?>
             <div class="col-md-4">
-              <a class="btn btn-secondary" href="<?php echo BASE.'/Category/View/'.$category->categoryID ?>" role="button"><?php echo $category->category ?></a>
+              <a class="btn btn-secondary" href="<?php echo BASE.'/Category/View/'.$category['categoryID'] ?>" role="button"><?php echo $category['category'] ?></a>
             </div>
     			<?php } ?>
         </div>
