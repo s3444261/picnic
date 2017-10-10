@@ -13,21 +13,42 @@ require_once  __DIR__ . '/../config/Picnic.php';
 class CategoryController {
 
 	/**
+	 * Default handler. Redirects to View.
+	 *
+	 */
+	public function index() {
+		header('Location: ' . BASE . '/Category/View');
+	}
+
+	/**
 	 * Displays the category details page for the given category.
 	 *
 	 * @param $categoryId
 	 * 			The ID of the category to be displayed.
 	 */
-	public function View($categoryId) {
+	public function View(string $categoryId) {
 
 		if ($categoryId == "") {
 			$categoryId = Category::ROOT_CATEGORY;
 		}
 
+		// category ID must be a number, and small enough to fit into a 32 bit int.
+		if (!is_numeric($categoryId) || strlen($categoryId) > 9) {
+			http_response_code(400);
+			echo ('<h1>Bad Request</h1>');
+			die();
+		}
+
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
-		$view->SetData('currentCategory', $h ->getCategory($categoryId));
+
+		if ($categoryId == Category::ROOT_CATEGORY) {
+			$view->SetData('currentCategoryName', "");
+		} else {
+			$view->SetData('currentCategoryName', $h ->getCategory($categoryId)['category']);
+		}
+
 		$view->SetData('subCategories', $h ->getCategoriesIn($categoryId));
 		$view->SetData('items', $h ->getCategoryItems($categoryId));
 		$view->Render('category');
