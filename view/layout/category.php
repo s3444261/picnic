@@ -10,7 +10,7 @@
  ?>
 
 <div class="container-fluid">
-    <h1><?php echo $this->data['currentCategory']['category'] ?></h1>
+    <h1><?php echo $this->data['currentCategoryName'] ?></h1>
 
 	<?php if (isset ( $this->data['subCategories'] ) && count($this->data['subCategories']) != 0) { ?>
         <div class="jumbotron">
