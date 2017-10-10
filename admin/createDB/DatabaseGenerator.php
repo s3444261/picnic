@@ -46,7 +46,7 @@ class DatabaseGenerator
 		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems16.sql');
 		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems17.sql');
 		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItemCategories.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItemUsers.sql');
+		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItemUsers1.sql');
 		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItemUsers2.sql');
 	}
 }

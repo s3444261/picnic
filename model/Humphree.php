@@ -448,7 +448,7 @@ class Humphree {
 	/*
 	 * The getItem() function retrieves an item.
 	 */
-	public function getItem($itemID): array {
+	public function getItem(int $itemID): array {
 		$item = new Item ( $this->db );
 		$item->itemID = $itemID;
 		$item = $this->system->getItem ( $item );
