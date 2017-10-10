@@ -21,8 +21,8 @@
         <div class="row">
           <div class="col-md-4">
             <!-- for now, I'm just using the thumb scaled up, to avoid uploading hundreds of MB of images to the dev server. If/when we want to show full size images, the URLS in the following anchor should be changed from /Item/Thumb/ to /Item/Image/ -->
-            <img src="http://lorempixel.com/300/300"/>
-  <!--      <img src="<?php echo BASE.'/Item/Thumb/'.$this->data['item']['itemID'] ?>" style="min-width:300px; min-height:300px" /> -->
+            <!-- <img src="http://lorempixel.com/300/300"/> -->
+            <img src="<?php echo BASE.'/Item/Thumb/'.$this->data['item']['itemID'] ?>" style="min-width:300px; min-height:300px" />
           </div>
           <div class="col-md-8">
               <?php if (isset ( $this->data['item'] )) { ?>
