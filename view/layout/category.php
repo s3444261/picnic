@@ -33,8 +33,25 @@
   </div>
 	<?php } ?>
 
-	<?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], true); ?>
-	<?php if (isset ( $this->data['items'] ) ) { ?>
+  <?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], true); ?>
+	<?php if (isset ( $this->data['items'] )) { ?>
+  <div class="row">
+    <!-- Left margin -->
+    <div class="col"></div>
+    <!-- Central column -->
+    <div class="col-9">
+      <div class="container">
+      <ul class="nav nav-tabs nav-justified">
+        <li class="nav-item active">
+          <a class="nav-link" href="#1" data-toggle="tab">For sale</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#2" data-toggle="tab">Wanted</a>
+        </li>
+      </ul>
+      <div class="tab-content ">
+        <div class="tab-pane active" id="1">
+          <div class="row">
             <?php foreach ( $this->data['items'] as $item ) { ?>
 
               <div class="col-sm-6 col-md-4 col-xl-3 top-n-tail">
@@ -70,10 +87,13 @@
         </div> <!-- end of tab pane #2 -->
       </div> <!-- end of .tab-content -->
     </div> <!-- end .container -->
+  </div> <!-- end .col-9 -->
+  <!-- Right margin -->
+  <div class="col"></div>
+</div> <!-- end .row -->
 	<?php } ?>
-
-	<?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], false); ?>
-</div>
+  <?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], false); ?>
+</div> <!-- end .container-fluid -->
 
 <!-- <div class="container-fluid">
   <h1><?php echo $this->data['currentCategory']['category'] ?></h1>
