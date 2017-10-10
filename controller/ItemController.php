@@ -40,7 +40,21 @@ class ItemController {
 	 * 			The ID of the item whose thumbnail will be sent.
 	 */
 	public function Thumb($itemId) {
-		$subDir = substr($itemId,0 , 3);
+
+		// to avoid killing the file system with millions of files in a single directory,
+		// we store images in a structure like so:
+		//
+		// THUMB_DIRECTORY/XXX/YYYYYYY.jpg
+		//
+		// ... where XXX is the number of thousands in the item ID, and YYYYYY is the item ID itself.
+		//
+		// Examples:
+		// Item 34567 would be found at:  THUMB_DIRECTORY/34/34567.jpg
+		// Item 1234 would be found at:  THUMB_DIRECTORY/1/1234.jpg
+		// Item 8 would be found at:  THUMB_DIRECTORY/0/8.jpg
+		$paddedItemId = str_pad($itemId, 4, '0', STR_PAD_LEFT);
+		$subDir = substr($paddedItemId, 0 , strlen($paddedItemId) - 3);
+
 		$path = self::THUMB_DIRECTORY . "/" . $subDir . "/" .$itemId . ".jpg";
 
 		if (file_exists($path)) {
@@ -62,17 +76,9 @@ class ItemController {
 	 * 			The ID of the item whose image will be sent.
 	 */
 	public function Image($itemId) {
-		$subDir = substr($itemId,0 , 3);
-		$path = self::IMAGE_DIRECTORY . "/" . $subDir . "/" . $itemId . ".jpg";
 
-		if (file_exists($path)) {
-			readfile($path);
-			header("Content-Type: image/jpeg");
-		} else if (file_exists(self::DEFAULT_IMAGE)) {
-			readfile(self::DEFAULT_IMAGE);
-			header("Content-Type: image/jpeg");
-		} else {
-			http_response_code(404);
-		}
+		// for now, I'm just using the thumb scaled up, to avoid uploading hundreds of MB of
+		// images to the dev server.
+		$this->Thumb($itemId);
 	}
 }
