@@ -63,6 +63,12 @@
 		"oAP": "\/.idea\/workspace.xml",
 		"oF": 0
 		},
+	"\/.phpintel\/85a1884d9eccc8173db259ea84de60d3": {
+		"ft": 8192,
+		"oA": 2,
+		"oAP": "\/.phpintel\/85a1884d9eccc8173db259ea84de60d3",
+		"oF": 0
+		},
 	"\/.phpintel\/b8b2d37db865c70b160c072d303d25fb": {
 		"ft": 8192,
 		"oA": 2,
@@ -561,6 +567,12 @@
 		"ft": 8192,
 		"oA": 2,
 		"oAP": "\/fonts\/glyphicons-halflings-regular.woff2",
+		"oF": 0
+		},
+	"\/img\/favicon.ico": {
+		"ft": 8192,
+		"oA": 2,
+		"oAP": "\/img\/favicon.ico",
 		"oF": 0
 		},
 	"\/img\/logo.png": {
