@@ -24,7 +24,9 @@
         </div>
 	<?php } ?>
 
-	<?php if (isset ( $this->data['items'] )) { ?>
+	<?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], true); ?>
+
+	<?php if (isset ( $this->data['items'] ) ) { ?>
         <div class="container">
             <?php foreach ( $this->data['items'] as $item ) { ?>
                     <div class="col-sm-12">
@@ -36,4 +38,6 @@
             <?php } ?>
         </div>
 	<?php } ?>
+
+	<?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], false); ?>
 </div>

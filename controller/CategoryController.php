@@ -14,7 +14,6 @@ class CategoryController {
 
 	/**
 	 * Default handler. Redirects to View.
-	 *
 	 */
 	public function index() {
 		header('Location: ' . BASE . '/Category/View');
@@ -41,6 +40,9 @@ class CategoryController {
 
 		$h = new Humphree(Picnic::getInstance());
 
+		$pagerData = Pager::ParsePagerDataFromQuery();
+		$pagerData->totalItems = $h->countCategoryItems($categoryId);
+
 		$view = new View();
 
 		if ($categoryId == Category::ROOT_CATEGORY) {
@@ -49,8 +51,9 @@ class CategoryController {
 			$view->SetData('currentCategoryName', $h ->getCategory($categoryId)['category']);
 		}
 
-		$view->SetData('subCategories', $h ->getCategoriesIn($categoryId));
-		$view->SetData('items', $h ->getCategoryItems($categoryId));
+		$view->SetData('subCategories', $h->getCategoriesIn($categoryId));
+		$view->SetData('items', $h->getCategoryItemsByPage($categoryId, $pagerData->pageNumber, $pagerData->itemsPerPage ));
+		$view->SetData('pagerData', $pagerData);
 		$view->Render('category');
 	}
 }

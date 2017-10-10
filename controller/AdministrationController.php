@@ -17,27 +17,15 @@ class AdministrationController extends BaseController  {
 	 */
 	public function index() : void {
 
-		if ($this->auth())
-		{	$h = new Humphree(Picnic::getInstance());
+		if ($this->auth())  {
+			$h = new Humphree(Picnic::getInstance());
+
+			$pagerData = Pager::ParsePagerDataFromQuery();
+			$pagerData->totalItems = sizeof($h->getUsers(1, 1000000)); // temporary, until we get a countUsers() method.
 
 			$view = new View();
-
-			if (isset($_SERVER['QUERY_STRING'])) {
-				parse_str($_SERVER['QUERY_STRING']);
-			}
-
-			if (!isset($page))  {
-				$page = 1;
-			}
-
-			if (!isset($limit))  {
-				$limit =25;
-			}
-
-			$view->SetData('users',  $h->getUsers($page, $limit));
-			$view->SetData('pageNumber', $page);
-			$view->SetData('limit',  $limit);
-			$view->SetData('totalItems',  sizeof($h->getUsers(1, 1000000))); // temporary, until we get a countUsers() method.
+			$view->SetData('users', $h->getUsers($pagerData->pageNumber, $pagerData->itemsPerPage));
+			$view->SetData('pagerData', $pagerData);
 			$view->Render('administration');
 
 
@@ -252,6 +240,9 @@ class AdministrationController extends BaseController  {
 
 	/**
 	 * Displays a page allowing editing of the user with the given ID.
+	 *
+	 * @param $id
+	 * 			The ID of the user to be edited.
 	 */
 	public function edit($id): void
 	{
@@ -276,6 +267,9 @@ class AdministrationController extends BaseController  {
 
 	/**
 	 * Deletes the user with the given ID.
+	 *
+	 * @param $id
+	 * 			The ID of the user to be deleted.
 	 */
 	public function Delete($id): void
 	{

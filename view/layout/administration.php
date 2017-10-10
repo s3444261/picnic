@@ -14,7 +14,7 @@
 		<div
 			class="text-center col-xs-10 col-xs-offset-1 col-sm-4 col-sm-offset-4 col-md-8 col-md-offset-2">
 			<form data-toggle="validator" role="form" class="form-inline"
-				method="post" action="Administration">
+				method="post" action="<?php echo BASE . '/Administration'; ?>">
 				<div class="form-group addUser">
 					<label class="sr-only" for="user">Username</label> <input
 						type="text" class="form-control" name="user" id="user"
@@ -41,12 +41,7 @@
 		</div>
 	</div>
 
-	<?php
-	$pager = new Pager();
-	echo $pager->createLinks( 3, 'pagination pagination-sm',$this->data ['pageNumber'], $this->data ['limit'], $this->data ['totalItems'] );
-
-	echo '<p>Displaying ' .((($this->data ['pageNumber'] - 1) * $this->data ['limit']) + 1) . ' - ' . ($this->data ['pageNumber'] * $this->data ['limit']) . ' of ' . $this->data ['totalItems'] . ' users.</p>';
-	?>
+	<?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], true); ?>
 
 	<div class="row">
 		<table class="table listUser">
@@ -88,8 +83,5 @@ if (isset ( $this->data['users'] )) {
 		</table>
 	</div>
 
-	<?php
-        $pager = new Pager();
-        echo $pager->createLinks( 3, 'pagination pagination-sm',$this->data ['pageNumber'], $this->data ['limit'], $this->data ['totalItems'] );
-    ?>
+	<?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], false); ?>
 </div>
