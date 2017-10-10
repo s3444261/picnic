@@ -48,7 +48,7 @@
 <!--            </div>-->
 <!--        </div>-->
 <!--    --><?php //} ?>
-
+<!---->
 <!--	<div class="jumbotron">-->
 <!--		<div class="row">-->
 <!--			<h2>Search Results</h2>-->
