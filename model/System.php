@@ -341,7 +341,7 @@ class System {
 	 */
 	public function getCategories(): array {
 		$c = array ();
-		$cat = new Category( $this->db );
+		$cat = new Categories( $this->db );
 		$c = $cat->getCategories ();
 		return $c;
 	}
@@ -351,8 +351,12 @@ class System {
 	 */
 	public function getCategoriesIn(int $parentID): array {
 		$c = array ();
-		$cat = new Category ( $this->db );
-		$c = $cat->getCategoriesIn ( $parentID );
+		$cat = new Categories ( $this->db );
+		try {
+			$c = $cat->getCategoriesIn ( $parentID );
+		} catch ( CategoriesException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
 		return $c;
 	}
 	

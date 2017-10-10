@@ -26,6 +26,8 @@
  * addCategory(Category $category): bool
  * updateCategory(Category $category): bool
  * getCategory(Category $category): Category
+ * getCategories(): array
+ * getCategoriesIn(int $parentID): array
  * 
  * -- System.php Test SubBlocks: --
  * createAccount(User $user): bool
@@ -131,6 +133,11 @@
  * -- testGetCategoryInvalidCategoryId(): void
  * -- testGetCategoryValidCategoryId(): 
  * 
+ * getCategories(): array
+ * -- testGetCategories(): void
+ * 
+ * getCategoriesIn(int $parentID): array
+ * 
  */
 declare(strict_types=1);
 
@@ -142,6 +149,7 @@ require_once dirname(__FILE__) . '/../../testharness/unit/TestPDO.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/System.php';
 require_once dirname(__FILE__) . '/../../../model/Category.php';
+require_once dirname(__FILE__) . '/../../../model/Categories.php';
 require_once dirname(__FILE__) . '/../../../model/CategoryItems.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
 require_once dirname(__FILE__) . '/../../../model/Comments.php';
@@ -155,6 +163,7 @@ require_once dirname(__FILE__) . '/../../../model/UserRatings.php';
 require_once dirname(__FILE__) . '/../../../model/Users.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
 require_once dirname(__FILE__) . '/../../../model/CategoryException.php';
+require_once dirname(__FILE__) . '/../../../model/CategoriesException.php';
 require_once dirname(__FILE__) . '/../../../model/CommentException.php';
 require_once dirname(__FILE__) . '/../../../model/ItemException.php';
 require_once dirname(__FILE__) . '/../../../model/ItemCommentsException.php';
@@ -248,6 +257,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ERROR_PARENT_ID_INVALID = 'Input is required!';
 	const ERROR_CATEGORY_NONE = 'Input is required!';
 	
+	const ROOT_CATEGORY = 0;
+	const ROOT_CATEGORY_NAME = 'Category';
+	const PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
+	
 	protected function setUp(): void {
 		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser();
@@ -304,6 +317,35 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			} catch (UserException $e) { }
 			${'u' . $i}->activate();
 		}	
+	}
+	
+	protected function populateCategories(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
+		
+		// Insert a root category
+		$root = new Category($pdo);
+		$root->{self::PARENT_ID} = self::ROOT_CATEGORY;
+		$root->{self::CATEGORY_NAME} = self::ROOT_CATEGORY_NAME;
+		try {
+			$root->set();
+		} catch (CategoryException $e) {}
+		
+		// Insert additional categories
+		$j = 1;
+		for($i = 1; $i <= 99; $i++){
+			if($i % 3 == 0){
+				$j++;
+			}
+			$c = new Category($pdo);
+			$c->{self::PARENT_ID} = $j;
+			$c->{self::CATEGORY_NAME} = 'cat' . $i;
+			try {
+				$c->set();
+			} catch (CategoryException $e) {}
+		}
 	}
 	
 	protected function populateUsers(): void {
@@ -1251,6 +1293,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	
 	public function testGetCategoryNoCategoryId(): void {
+		unset($_SESSION);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new Category($pdo);
@@ -1285,5 +1328,64 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertSame('1', $category->parentID);
 		$this->assertSame(self::CATEGORY_3, $category->category);
 	}
+	
+	/*
+	 * getCategories(): array
+	 */
+	
+	public function testGetCategories(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$this->populateCategories();
+		$cats = $system->getCategories();
+		$i = 1;
+		$j = 0;
+		foreach($cats as $cat){
+			if($i == 1){
+				$this->assertEquals($i, $cat->categoryID);
+				$this->assertEquals($j, $cat->parentID);
+				$this->assertEquals('Category', $cat->category);
+				$j++;
+			} else {
+				$number = $i - 1;
+				$this->assertEquals($i, $cat->categoryID);
+				$this->assertEquals($j, $cat->parentID);
+				$this->assertSame('cat' . $number, $cat->category);
+			}
+			if($i % 3 == 0){
+				$j++;
+			}
+			$i++;
+		}
+	}
+	
+	/*
+	 * getCategoriesIn(int $parentID): array
+	 */
+	public function testGetCategoriesInParentIdInvalid(): void {
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$cats = $system->getCategoriesIn(self::INVALID_ID);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::PARENT_ID_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testGetCategoriesInParentIdValid(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$this->populateCategories();
+		$cats = $system->getCategoriesIn(4);
+		$i = 10;
+		foreach($cats as $cat){
+			$number = $i - 1;
+			$this->assertEquals($i, $cat->categoryID);
+			$this->assertEquals(4, $cat->parentID);
+			$this->assertSame('cat' . $number, $cat->category);
+			$i++;
+		}
+	}
+	
 	
 }

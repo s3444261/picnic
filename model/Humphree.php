@@ -268,8 +268,19 @@ class Humphree {
 	 * The getCategoriesIn() method retrieves all Categories in the given parent category.
 	 */
 	public function getCategoriesIn(int $parentID): array {
+		$cats = array ();
 		$categories = $this->system->getCategoriesIn ( $parentID );
-		return $categories;
+		
+		foreach ( $categories as $category ) {
+			$cat = array ();
+			$cat ['categoryID'] = $category->categoryID;
+			$cat ['parentID'] = $category->parentID;
+			$cat ['category'] = $category->category;
+			
+			$cats [] = $cat;
+		}
+		
+		return $cats;
 	}
 	
 	/*
