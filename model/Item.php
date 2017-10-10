@@ -24,7 +24,7 @@ require_once dirname(__FILE__) . '/ItemException.php';
  */
 
 class Item {
-	private $_itemID = '';
+	private $_itemID = 0;
 	private $_title = '';
 	private $_description = '';
 	private $_quantity = '';
@@ -34,6 +34,8 @@ class Item {
 	private $_created_at;
 	private $_updated_at;
 	private $db;
+	
+	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
 
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
@@ -79,7 +81,7 @@ class Item {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new ItemException ( 'Could not retrieve item.' );
+			throw new ItemException ( self::ERROR_ITEM_NOT_EXIST);
 		}
 	}
 	

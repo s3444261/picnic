@@ -7,14 +7,58 @@
 * Putro, Edwan - edwanhp@gmail.com
 */
 
+/*
+ * TEST SUMMARY
+ *
+ * -- Item.php Test Blocks: --
+ * get(): Item
+ * set(): int
+ * update(): bool
+ * delete(): bool
+ * exists(): bool
+ *
+ * -- Item.php Test SubBlocks: --
+ * get(): Item
+ * -- testGetItemNoItemId(): void
+ * -- testGetItemInvalidItemId(): void
+ * -- testGetItemValidItemId():
+ *
+ * set(): int
+ * -- testSetItemNoParentId(): void
+ * -- testSetItemInvalidParentId(): void
+ * -- testSetItemNoItem(): void
+ * -- testSetItemSuccess(): void
+ *
+ * update(): bool
+ * -- testUpdateItemNoItemId(): void
+ * -- testUpdateItemInvalidItemId(): void
+ * -- testUpdateItemNoParentId(): void
+ * -- testUpdateItemInvalidParentId(): void
+ * -- testUpdateItemNoItem(): void
+ * -- testUpdateItemParentId(): void
+ * -- testUpdateItemItem(): void
+ * -- testUpdateItemAll(): void
+ *
+ * delete(): bool
+ * -- testDeleteItemItemIdEmpty(): void
+ * -- testDeleteItemItemIdInvalid(): void
+ * -- testDeleteItemItemIdValid(): void
+ *
+ * exists(): bool
+ * -- testExistsItemItemIdEmpty(): void
+ * -- testExistsItemItemIdInvalid(): void
+ * -- testExistsItemItemIdValid(): void
+ */
+
 declare(strict_types=1);
 
 require_once 'TestPDO.php';
-require_once 'PicnicTestCaseOld.php';
+require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
+require_once dirname(__FILE__) . '/../../../model/ItemException.php';
 
-class ItemTest extends PicnicTestCaseOld
+class ItemTest extends PicnicTestCase
 {
 	const ITEM_ID          	= 'itemID';
 	const TITLE 			= 'title';
@@ -25,6 +69,30 @@ class ItemTest extends PicnicTestCaseOld
 	const STATUS 			= 'status';
 	const CREATION_DATE 	= 'created_at';
 	const MODIFIED_DATE 	= 'updated_at';
+	
+	const ITEM_ID_1         = 1;
+	const TITLE_1			= 'title1';
+	const DESCRIPTION_1		= 'description1';
+	const QUANTITY_1		= 'quantity1';
+	const CONDITION_1		= 'condition1';
+	const PRICE_1			= 'price1';
+	const STATUS_1			= 'active';
+	const ITEM_ID_2         = 2;
+	const TITLE_2			= 'title2';
+	const DESCRIPTION_2		= 'description2';
+	const QUANTITY_2		= 'quantity2';
+	const CONDITION_2		= 'condition2';
+	const PRICE_2			= 'price2';
+	const STATUS_2			= 'active';
+	const ITEM_ID_3         = 3;
+	const TITLE_3			= 'title3';
+	const DESCRIPTION_3		= 'description3';
+	const QUANTITY_3		= 'quantity3';
+	const CONDITION_3		= 'condition3';
+	const PRICE_3			= 'price3';
+	const STATUS_3			= 'active';
+	
+	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
 
 	protected function setUp(): void {
 		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
@@ -33,20 +101,51 @@ class ItemTest extends PicnicTestCaseOld
 		$pdo = TestPDO::getInstance();
 		DatabaseGenerator::Generate($pdo);
 
-		// Insert an item.
+		// Insert items.
 		$args = [
-			self::TITLE 		=> 'title',
-			self::DESCRIPTION 	=> 'description',
-			self::QUANTITY		=> 24,
-			self::CONDITION 	=> 'condition',
-			self::PRICE 		=> 'price',
-			self::STATUS 		=> 'status',
-			self::CREATION_DATE => '1984-08-18',
-			self::MODIFIED_DATE => '2015-02-13'
+				self::ITEM_ID 		=> self::ITEM_ID_1,
+				self::TITLE 		=> self::TITLE_1,
+				self::DESCRIPTION 	=> self::DESCRIPTION_1,
+				self::QUANTITY		=> self::QUANTITY_1,
+				self::CONDITION		=> self::CONDITION_1,
+				self::PRICE 		=> self::PRICE_1,
+				self::STATUS 		=> self::STATUS_1
 		];
 
 		$item = new Item($pdo, $args);
-		$item->set();
+		try {
+			$item->set();
+		} catch (ItemException $e) {}
+		
+		$args2 = [
+				self::ITEM_ID 		=> self::ITEM_ID_2,
+				self::TITLE 		=> self::TITLE_2,
+				self::DESCRIPTION 	=> self::DESCRIPTION_2,
+				self::QUANTITY		=> self::QUANTITY_2,
+				self::CONDITION		=> self::CONDITION_2,
+				self::PRICE 		=> self::PRICE_2,
+				self::STATUS 		=> self::STATUS_2
+		];
+		
+		$item = new Item($pdo, $args2);
+		try {
+			$item->set();
+		} catch (ItemException $e) {}
+		
+		$args3 = [
+				self::ITEM_ID 		=> self::ITEM_ID_3,
+				self::TITLE 		=> self::TITLE_3,
+				self::DESCRIPTION 	=> self::DESCRIPTION_3,
+				self::QUANTITY		=> self::QUANTITY_3,
+				self::CONDITION		=> self::CONDITION_3,
+				self::PRICE 		=> self::PRICE_3,
+				self::STATUS 		=> self::STATUS_3
+		];
+		
+		$item = new Item($pdo, $args3);
+		try {
+			$item->set();
+		} catch (ItemException $e) {}
 	}
 
 	protected function createDefaultSut() {
@@ -65,70 +164,61 @@ class ItemTest extends PicnicTestCaseOld
 		return 200;
 	}
 
-	protected function getExpectedExceptionTypeForUnsetId() {
-		return ItemException::class;
-	}
-	
-	protected function getExpectedExceptionTypeForUnknownId() {
-		return ItemException::class;
-	}
-
 	protected function getExpectedAttributesForGet() {
 
 		return [
-			self::ITEM_ID 		=> 1,
-			self::TITLE 		=> 'title',
-			self::DESCRIPTION 	=> 'description',
-			self::QUANTITY		=> 24,
-			self::CONDITION 	=> 'condition',
-			self::PRICE 		=> 'price',
-			self::STATUS 		=> 'status'
+			self::ITEM_ID 		=> self::ITEM_ID_1,
+			self::TITLE 		=> self::TITLE_1,
+			self::DESCRIPTION 	=> self::DESCRIPTION_1,
+			self::QUANTITY		=> self::QUANTITY_1,
+			self::CONDITION		=> self::CONDITION_1,
+			self::PRICE 		=> self::PRICE_1,
+			self::STATUS 		=> self::STATUS_1
 		];
 	}
 
 
 	public function testAttributes(): void {
 		$values = [
-			self::ITEM_ID 		=> 1,
-			self::TITLE 		=> 'title',
-			self::DESCRIPTION 	=> 'description',
-			self::QUANTITY		=> 24,
-			self::CONDITION 	=> 'condition',
-			self::PRICE 		=> 'price',
-			self::STATUS 		=> 'status',
+			self::ITEM_ID 		=> self::ITEM_ID_1,
+			self::TITLE 		=> self::TITLE_1,
+			self::DESCRIPTION 	=> self::DESCRIPTION_1,
+			self::QUANTITY		=> self::QUANTITY_1,
+			self::CONDITION		=> self::CONDITION_1,
+			self::PRICE 		=> self::PRICE_1,
 			self::CREATION_DATE => '1984-08-18',
 			self::MODIFIED_DATE => '2015-02-13'
 		];
 
 		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
 	}
-
-	public function testSetResultsInValidId(): void {
-		$sut = new Item(TestPDO::getInstance());
-		$this->assertGreaterThan(0, $sut->set());
-		$this->assertGreaterThan(0, $sut->{self::ITEM_ID});
+	
+	/*
+	 * get(): Item
+	 */
+	public function testGetItemNoItemId(): void {
+		$sut = $this->createDefaultSut();
+		$this->expectExceptionMessage(self::ERROR_ITEM_NOT_EXIST);
+		$sut->get();
 	}
-
-	public function testUpdateIsCorrectlyReflectedInSubsequentGet(): void {
-
-		$sut =  $this->createSutWithId(1);
+	
+	public function testGetItemInvalidItemId(): void {
+		$sut = $this->createSutWithId($this->getInvalidId());
+		$this->expectExceptionMessage(self::ERROR_ITEM_NOT_EXIST);
 		$sut->get();
-		$sut->{self::TITLE}			= 'newTitle';
-		$sut->{self::DESCRIPTION}	= 'newDescription';
-		$sut->{self::QUANTITY}		= 995;
-		$sut->{self::CONDITION }	= 'newCcnd';
-		$sut->{self::PRICE}			= 'newPrice';
-		$sut->{self::STATUS} 		= 'newStatus';
-		$sut->update();
-
-		$sut = new Item(TestPDO::getInstance(), [self::ITEM_ID => 1]);
-		$sut->get();
-
-		$this->assertEquals('newTitle', 		$sut->{self::TITLE});
-		$this->assertEquals('newDescription', 	$sut->{self::DESCRIPTION});
-		$this->assertEquals(995, 				$sut->{self::QUANTITY});
-		$this->assertEquals('newCcnd', 			$sut->{self::CONDITION});
-		$this->assertEquals('newPrice', 		$sut->{self::PRICE});
-		$this->assertEquals('newStatus', 		$sut->{self::STATUS});
+	}
+	
+	public function testGetItemValidItemId(): void {
+		$sut = $this->createSutWithId(self::ITEM_ID_2);
+		try {
+			$sut->get();
+		} catch (ItemException $e) {}
+		$this->assertEquals(self::ITEM_ID_2, $sut->itemID);
+		$this->assertEquals(self::TITLE_2, $sut->title);
+		$this->assertEquals(self::DESCRIPTION_2, $sut->description);
+		$this->assertEquals(self::QUANTITY_2, $sut->quantity);
+		$this->assertEquals(self::CONDITION_2, $sut->itemcondition);
+		$this->assertEquals(self::PRICE_2, $sut->price);
+		$this->assertEquals(self::STATUS_2, $sut->status);
 	}
 }

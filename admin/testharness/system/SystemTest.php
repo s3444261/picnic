@@ -28,6 +28,7 @@
  * getCategory(Category $category): Category
  * getCategories(): array
  * getCategoriesIn(int $parentID): array
+ * getItem(Item $item): Item
  * 
  * -- System.php Test SubBlocks: --
  * createAccount(User $user): bool
@@ -137,6 +138,14 @@
  * -- testGetCategories(): void
  * 
  * getCategoriesIn(int $parentID): array
+ * -- testGetCategoriesInParentIdInvalid(): void
+ * -- testGetCategoriesInParentIdValid(): void
+ * 
+ * getItem(Item $item): Item
+ * -- testGetItemNoItemId(): void
+ * -- testGetItemInvalidItemId(): void
+ * -- testGetItemValidItemId():
+ * 
  * 
  */
 declare(strict_types=1);
@@ -261,6 +270,39 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ROOT_CATEGORY_NAME = 'Category';
 	const PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
 	
+	const ITEM_ID          	= 'itemID';
+	const TITLE 			= 'title';
+	const DESCRIPTION 		= 'description';
+	const QUANTITY 			= 'quantity';
+	const CONDITION 		= 'itemcondition';
+	const PRICE 			= 'price';
+	const ITEM_STATUS 		= 'status';
+	
+	const ITEM_ID_1         = 1;
+	const TITLE_1			= 'title1';
+	const DESCRIPTION_1		= 'description1';
+	const QUANTITY_1		= 'quantity1';
+	const CONDITION_1		= 'condition1';
+	const PRICE_1			= 'price1';
+	const STATUS_1			= 'active';
+	const ITEM_ID_2         = 2;
+	const TITLE_2			= 'title2';
+	const DESCRIPTION_2		= 'description2';
+	const QUANTITY_2		= 'quantity2';
+	const CONDITION_2		= 'condition2';
+	const PRICE_2			= 'price2';
+	const STATUS_2			= 'active';
+	const ITEM_ID_3         = 3;
+	const TITLE_3			= 'title3';
+	const DESCRIPTION_3		= 'description3';
+	const QUANTITY_3		= 'quantity3';
+	const CONDITION_3		= 'condition3';
+	const PRICE_3			= 'price3';
+	const STATUS_3			= 'active';
+	const ITEM_ID_INVALID = 400;
+	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
+	const ERROR_ITEM_ID_INVALID = 'The ItemID does not exist!';
+	
 	protected function setUp(): void {
 		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser();
@@ -346,6 +388,59 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				$c->set();
 			} catch (CategoryException $e) {}
 		}
+	}
+	
+	protected function populateItems(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
+		
+		// Insert items.
+		$args = [
+				self::ITEM_ID 		=> self::ITEM_ID_1,
+				self::TITLE 		=> self::TITLE_1,
+				self::DESCRIPTION 	=> self::DESCRIPTION_1,
+				self::QUANTITY		=> self::QUANTITY_1,
+				self::CONDITION		=> self::CONDITION_1,
+				self::PRICE 		=> self::PRICE_1,
+				self::ITEM_STATUS 		=> self::STATUS_1
+		];
+		
+		$item = new Item($pdo, $args);
+		try {
+			$item->set();
+		} catch (ItemException $e) {}
+		
+		$args2 = [
+				self::ITEM_ID 		=> self::ITEM_ID_2,
+				self::TITLE 		=> self::TITLE_2,
+				self::DESCRIPTION 	=> self::DESCRIPTION_2,
+				self::QUANTITY		=> self::QUANTITY_2,
+				self::CONDITION		=> self::CONDITION_2,
+				self::PRICE 		=> self::PRICE_2,
+				self::ITEM_STATUS 		=> self::STATUS_2
+		];
+		
+		$item = new Item($pdo, $args2);
+		try {
+			$item->set();
+		} catch (ItemException $e) {}
+		
+		$args3 = [
+				self::ITEM_ID 		=> self::ITEM_ID_3,
+				self::TITLE 		=> self::TITLE_3,
+				self::DESCRIPTION 	=> self::DESCRIPTION_3,
+				self::QUANTITY		=> self::QUANTITY_3,
+				self::CONDITION		=> self::CONDITION_3,
+				self::PRICE 		=> self::PRICE_3,
+				self::ITEM_STATUS 		=> self::STATUS_3
+		];
+		
+		$item = new Item($pdo, $args3);
+		try {
+			$item->set();
+		} catch (ItemException $e) {}
 	}
 	
 	protected function populateUsers(): void {
@@ -1387,5 +1482,58 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		}
 	}
 	
+	/*
+	 * getItem(Item $item): Item
+	 */
+	
+	public function testGetItemNoItemId(): void {
+		unset($_SESSION);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Item($pdo);
+		$item = $system->getItem($sut);
+		$this->assertSame(0, $item->itemID);
+		$this->assertEmpty($item->title);
+		$this->assertEmpty($item->description);
+		$this->assertEmpty($item->quantity);
+		$this->assertEmpty($item->itemcondition);
+		$this->assertEmpty($item->price);
+		$this->assertEmpty($item->status);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_ITEM_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testGetItemInvalidItemId(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$sut = new Item($pdo, [self::ITEM_ID => self::ITEM_ID_INVALID]);
+		$item = $system->getItem($sut);
+		$this->assertSame('400', $item->itemID);
+		$this->assertEmpty($item->title);
+		$this->assertEmpty($item->description);
+		$this->assertEmpty($item->quantity);
+		$this->assertEmpty($item->itemcondition);
+		$this->assertEmpty($item->price);
+		$this->assertEmpty($item->status);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_ITEM_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testGetItemValidItemId(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$this->populateItems();
+		$sut = new Item($pdo, [self::ITEM_ID => self::ITEM_ID_2]);
+		$item = $system->getItem($sut);
+		$this->assertSame('2', $item->itemID);
+		$this->assertSame(self::TITLE_2, $item->title);
+		$this->assertSame(self::DESCRIPTION_2, $item->description);
+		$this->assertSame(self::QUANTITY_2, $item->quantity);
+		$this->assertSame(self::CONDITION_2, $item->itemcondition);
+		$this->assertSame(self::PRICE_2, $item->price);
+		$this->assertSame(self::STATUS_2, $item->status);
+	}
 	
 }
