@@ -51,8 +51,16 @@ class CategoryController {
 			$view->SetData('currentCategoryName', $h ->getCategory($categoryId)['category']);
 		}
 
-		$view->SetData('subCategories', $h->getCategoriesIn($categoryId));
-		$view->SetData('items', $h->getCategoryItemsByPage($categoryId, $pagerData->pageNumber, $pagerData->itemsPerPage ));
+		$subCategories = $h->getCategoriesIn($categoryId);
+		if (count($subCategories) > 0) {
+			$view->SetData('subCategories', $subCategories);
+		}
+
+		$items =  $h->getCategoryItemsByPage($categoryId, $pagerData->pageNumber, $pagerData->itemsPerPage );
+		if (count($items) > 0) {
+			$view->SetData('items', $items);
+		}
+
 		$view->SetData('pagerData', $pagerData);
 		$view->Render('category');
 	}

@@ -12,7 +12,7 @@
 <div class="container-fluid">
   <h1><?php echo $this->data['currentCategoryName'] ?></h1>
 
-	<?php if (isset ( $this->data['subCategories'] ) && count($this->data['subCategories']) != 0) { ?>
+	<?php if (isset ( $this->data['subCategories'] )) { ?>
   <div class="jumbotron">
     <div class="row">
       <!-- Left margin -->
