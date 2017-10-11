@@ -56,9 +56,14 @@ class CategoryController {
 			$view->SetData('subCategories', $subCategories);
 		}
 
-		$items =  $h->getCategoryItemsByPage($categoryId, $pagerData->pageNumber, $pagerData->itemsPerPage );
+		$items =  $h->getCategoryItemsByPage($categoryId, $pagerData->pageNumber, $pagerData->itemsPerPage, "ForSale" );
 		if (count($items) > 0) {
-			$view->SetData('items', $items);
+			$view->SetData('forSaleItems', $items);
+		}
+
+		$items =  $h->getCategoryItemsByPage($categoryId, $pagerData->pageNumber, $pagerData->itemsPerPage, "Wanted" );
+		if (count($items) > 0) {
+			$view->SetData('wantedItems', $items);
 		}
 
 		$view->SetData('pagerData', $pagerData);

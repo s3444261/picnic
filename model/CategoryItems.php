@@ -263,7 +263,7 @@ class CategoryItems {
 	 * The getCategoryItemsByPage() method retrieves all items held by the category and returns
 	 * them as an array of item objects.
 	 */
-	public function getCategoryItemsByPage(int $pageNumber, int $itemsPerPage): array {
+	public function getCategoryItemsByPage(int $pageNumber, int $itemsPerPage, string $status): array {
 		$v = new Validation();
 		
 		try {
@@ -277,12 +277,14 @@ class CategoryItems {
 			
 			$pn = ($pn - 1)*$ipp;
 		
-			$query = "SELECT * FROM Category_items 
-					WHERE categoryID = :categoryID
+			$query = "SELECT Category_items.itemID FROM Category_items INNER JOIN items ON Category_items.itemID = items.itemID
+					WHERE Category_items.categoryID = :categoryID
+					AND items.itemStatus = :status
 					LIMIT " . $pn . "," . $ipp; 
 
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
+			$stmt->bindParam ( ':status', $status );
 			$stmt->execute (); 
 			$objects = array();
 			while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
@@ -299,7 +301,6 @@ class CategoryItems {
 			return $objects;
 		} catch (ValidationException $e) {
 			throw new CategoryItemsException($e->getMessage());
-			return $objects;
 		}
 	}
 	

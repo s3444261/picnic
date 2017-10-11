@@ -34,7 +34,7 @@
 	<?php } ?>
 
   <?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], true); ?>
-	<?php if (isset ( $this->data['items'] )) { ?>
+	<?php if (isset ( $this->data['forSaleItems'] ) || isset ( $this->data['wantedItems'] )) { ?>
   <div class="row">
     <!-- Left margin -->
     <div class="col"></div>
@@ -52,7 +52,7 @@
       <div class="tab-content ">
         <div class="tab-pane active" id="1">
           <div class="row">
-            <?php foreach ( $this->data['items'] as $item ) { ?>
+            <?php foreach ( $this->data['forSaleItems'] as $item ) { ?>
 
               <div class="col-sm-6 col-md-4 col-xl-3 top-n-tail">
                 <div class="card">
@@ -70,7 +70,7 @@
 
         <div class="tab-pane active" id="2">
           <div class="row">
-            <?php foreach ( $this->data['items'] as $item ) { ?>
+            <?php foreach ( $this->data['wantedItems'] as $item ) { ?>
 
               <div class="col-sm-6 col-md-4 col-xl-3 top-n-tail">
                 <div class="card">

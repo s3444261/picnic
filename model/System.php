@@ -399,14 +399,14 @@ class System {
 	/*
 	 * The getCategoryItemsByPage() function retrieves all items linked to a Category.
 	 */
-	public function getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage): array {
+	public function getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage, string $status): array {
 		$pn = $pageNumber;
 		$ipp = $itemsPerPage;
 		$categoryItemsArray = array ();
 		$categoryItems = new CategoryItems ( $this->db);
 		$categoryItems->categoryID = $category->categoryID;
 		try {
-			$categoryItemsArray= $categoryItems->getCategoryItemsByPage($pn, $ipp);
+			$categoryItemsArray= $categoryItems->getCategoryItemsByPage($pn, $ipp, $status);
 		} catch ( CategoryItemsException $e ) {
 			$_SESSION ['error'] = $e->getMessage (); 
 		}

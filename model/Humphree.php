@@ -319,10 +319,10 @@ class Humphree {
 	/*
 	 * The getCategoryItems() function retrieves all items linked to a Category.
 	 */
-	public function getCategoryItemsByPage(int $categoryID, int $pageNumber , int $itemsPerPage): array {
+	public function getCategoryItemsByPage(int $categoryID, int $pageNumber , int $itemsPerPage, string $status): array {
 		$category = new Category ( $this->db );
 		$category->categoryID = $categoryID;
-		$categoryItems = $this->system->getCategoryItemsByPage( $category, $pageNumber , $itemsPerPage);
+		$categoryItems = $this->system->getCategoryItemsByPage( $category, $pageNumber , $itemsPerPage, $status);
 		$its = array ();
 		
 		foreach ( $categoryItems as $item ) {
