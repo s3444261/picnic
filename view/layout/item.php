@@ -40,18 +40,13 @@
                       <div class="col-md-3">Status</div>
                   </div>
                   <div class="row">
-                      <div class="col-md-3"><span class="badge badge-pill badge-primary">Primary<?php echo $this->data['item']['quantity'] ?></span></div>
-                      <div class="col-md-3"><span class="badge badge-pill badge-success">Success<?php echo $this->data['item']['itemcondition'] ?></span></div>
-                      <div class="col-md-3"><span class="badge badge-pill badge-warning">Success<?php echo $this->data['item']['status'] ?></span></div>
+                      <div class="col-md-3"><span class="badge badge-pill badge-primary"><?php echo $this->data['item']['quantity'] ?></span></div>
+                      <div class="col-md-3"><span class="badge badge-pill badge-success"><?php echo $this->data['item']['itemcondition'] ?></span></div>
+                      <div class="col-md-3"><span class="badge badge-pill badge-warning"><?php echo $this->data['item']['status'] ?></span></div>
                   </div>
                   <div class="row">
 
                   </div>
-                  <div class="row">
-                      <div class="col-md-3">ID</div>
-                      <div class="col-md-9"><?php echo $this->data['item']['itemID'] ?></div>
-                  </div>
-
               <?php } ?>
           </div>
       </div> <!-- end .row -->
