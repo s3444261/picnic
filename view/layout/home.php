@@ -25,7 +25,7 @@
                         <label for="exampleInputEmail1">Search</label>
                         <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="What are you looking for?">
                         <small id="emailHelp" class="form-text text-muted">e.g. smartphone, lawnmower, hat</small>
-                        <small id="adv-search" class="form-text text-right"><a href="#">Advanced search</a></small>
+                        <small id="adv-search" class="form-text text-right"><a href="#" data-toggle="tooltip" data-placement="top" title="Coming soon">Advanced search</a></small>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-lg btn-block">Search</button>
