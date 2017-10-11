@@ -40,13 +40,14 @@
 </div> <!-- end .container-fluid -->
 
 <div class="container-fluid">
-  <div class="row">
-    <div class="col"></div>
-    <div class="col-md-9">
-      <?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], true); ?>
-    </div>
-    <div class="col"></div>
-  </div>
+<!-- temporarily disabled paging -->
+<!--  <div class="row">-->
+<!--    <div class="col"></div>-->
+<!--    <div class="col-md-9">-->
+<!--      --><?php //echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], true); ?>
+<!--    </div>-->
+<!--    <div class="col"></div>-->
+<!--  </div>-->
 	<?php if (isset ( $this->data['forSaleItems'] ) || isset ( $this->data['wantedItems'] )) { ?>
   <div class="row">
     <!-- Left margin -->
@@ -105,11 +106,12 @@
   <div class="col"></div>
 </div> <!-- end .row -->
 	<?php } ?>
-  <div class="row">
-    <div class="col"></div>
-    <div class="col-md-9">
-      <?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], false); ?>
-    </div>
-    <div class="col"></div>
-  </div>
+<!-- temporarily disabled paging -->
+<!--  <div class="row">-->
+<!--    <div class="col"></div>-->
+<!--    <div class="col-md-9">-->
+<!--      --><?php //echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], false); ?>
+<!--    </div>-->
+<!--    <div class="col"></div>-->
+<!--  </div>-->
 </div> <!-- end .container-fluid -->

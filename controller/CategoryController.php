@@ -9,6 +9,7 @@
  */
 
 require_once  __DIR__ . '/../config/Picnic.php';
+require_once  __DIR__ . '/../view/Pager.php';
 
 class CategoryController {
 
@@ -40,7 +41,11 @@ class CategoryController {
 
 		$h = new Humphree(Picnic::getInstance());
 
-		$pagerData = Pager::ParsePagerDataFromQuery();
+		// temporarily disabled paging
+	//	$pagerData = Pager::ParsePagerDataFromQuery();
+		$pagerData = new PagerData();
+		$pagerData->pageNumber = 1;
+		$pagerData->itemsPerPage = 200;
 		$pagerData->totalItems = $h->countCategoryItems($categoryId);
 
 		$view = new View();
