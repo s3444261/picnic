@@ -10,8 +10,13 @@
  ?>
 
 <div class="container-fluid">
-  <h1><?php echo $this->data['currentCategoryName'] ?></h1>
-
+  <div class="row">
+    <div class="col"></div> <!-- Left margin -->
+    <div class="col-md-9">
+      <h1><?php echo $this->data['currentCategoryName'] ?></h1>
+    </div>
+    <div class="col"></div> <!-- Right margin -->
+  </div> <!-- end .row -->
 	<?php if (isset ( $this->data['subCategories'] )) { ?>
   <div class="jumbotron">
     <div class="row">
@@ -30,10 +35,18 @@
       <!-- Right margin -->
       <div class="col"></div>
     </div> <!-- end .row -->
-  </div>
+  </div> <!-- end .jumbotron -->
 	<?php } ?>
+</div> <!-- end .container-fluid -->
 
-  <?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], true); ?>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col"></div>
+    <div class="col-md-9">
+      <?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], true); ?>
+    </div>
+    <div class="col"></div>
+  </div>
 	<?php if (isset ( $this->data['forSaleItems'] ) || isset ( $this->data['wantedItems'] )) { ?>
   <div class="row">
     <!-- Left margin -->
@@ -94,32 +107,3 @@
 	<?php } ?>
   <?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], false); ?>
 </div> <!-- end .container-fluid -->
-
-<!-- <div class="container-fluid">
-  <h1><?php echo $this->data['currentCategory']['category'] ?></h1>
-
-  <?php if (isset ( $this->data['subCategories'] ) && count($this->data['subCategories']) != 0) { ?>
-  <div class="jumbotron">
-    <div class="container">
-      <?php foreach ( $this->data['subCategories'] as $category ) { ?>
-        <div class="col-md-4">
-          <a class="btn btn-secondary" href="<?php echo BASE.'/Category/View/'.$category->categoryID ?>" role="button"><?php echo $category->category ?></a>
-        </div>
-      <?php } ?>
-    </div>
-  </div>
-  <?php } ?>
-
-  <?php if (isset ( $this->data['items'] )) { ?>
-    <div class="container">
-      <?php foreach ( $this->data['items'] as $item ) { ?>
-        <div class="col-sm-12">
-          <a class="btn btn-secondary" href="<?php echo BASE.'/Item/View/'.$item['itemID'] ?>" role="button">
-            <img src="<?php echo BASE.'/Item/Thumb/'.$item['itemID'] ?>" />
-            <?php echo $item['title'] ?>
-          </a>
-        </div>
-      <?php } ?>
-    </div>
-  <?php } ?>
-</div> -->
