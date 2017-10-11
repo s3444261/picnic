@@ -277,9 +277,9 @@ class CategoryItems {
 			
 			$pn = ($pn - 1)*$ipp;
 		
-			$query = "SELECT Category_items.itemID FROM Category_items INNER JOIN items ON Category_items.itemID = items.itemID
+			$query = "SELECT Category_items.itemID FROM Category_items INNER JOIN Items ON Category_items.itemID = Items.itemID
 					WHERE Category_items.categoryID = :categoryID
-					AND items.itemStatus = :status
+					AND Items.itemStatus = :status
 					LIMIT " . $pn . "," . $ipp; 
 
 			$stmt = $this->db->prepare ( $query );
