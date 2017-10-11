@@ -9,7 +9,12 @@
  */
 ?>
 <div class="container-fluid">
-<h1>About</h1>
+    <h1>Humphree</h1>
+    <div class="jumbotron">
+        <div class="row">
+            <h2>About Humphree</h2>
+        </div>
+    </div>
 </div>
 
 

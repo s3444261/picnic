@@ -19,6 +19,7 @@
                  */
 
                 echo '<ul class="nav justify-content-center top-n-tail">';
+				echo '<li><a href="' . BASE . '/About">About</a></li>';
                 echo '<li><a href="' . BASE . '/TermsOfService">Terms of Service</a></li>';
                 echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/PrivacyPolicy">Privacy policy</a></li>';
                 echo '<li class="nav-item"><a class="nav-link" href="#">Search</a></li>';
