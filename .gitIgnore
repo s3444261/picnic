@@ -13,3 +13,7 @@
 \.idea/vcs\.xml
 
 \.idea/workspace\.xml
+
+\.phpintel/
+
+*.codekit3
