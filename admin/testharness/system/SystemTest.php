@@ -509,7 +509,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					self::QUANTITY 		=> 'quantity' . $i,
 					self::CONDITION 	=> 'condition' . $i,
 					self::PRICE 		=> 'price' . $i,
-					self::STATUS 		=> 'status' . $i
+					self::STATUS 		=> ''
 			]);
 			try {
 				$item->set();
@@ -1581,7 +1581,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$c = new Category($pdo);
 		$c->categoryID = self::CATEGORY_ID_3;
-		$ci = $system->getCategoryItemsByPage($c, self::ITEMS_PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE);
+		$ci = $system->getCategoryItemsByPage($c, self::ITEMS_PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE, '');
 		if(isset($_SESSION['error'])){ 
 			$this->assertEquals(self::ERROR_ZERO, $_SESSION['error']);
 		}
@@ -1593,7 +1593,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$c = new Category($pdo);
 		$c->categoryID = self::CATEGORY_ID_3;
-		$ci = $system->getCategoryItemsByPage($c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO);
+		$ci = $system->getCategoryItemsByPage($c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO, '');
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_ZERO, $_SESSION['error']);
 		}
@@ -1605,7 +1605,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->populateCategoryItems();
 		$c = new Category($pdo);
 		$c->categoryID = self::CATEGORY_ID_3;
-		$ci = $system->getCategoryItemsByPage($c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE);
+		$ci = $system->getCategoryItemsByPage($c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE, '');
 		$start = 47;
 		foreach($ci as $item){
 			$this->assertEquals($start, $item->itemID);

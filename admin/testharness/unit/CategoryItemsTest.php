@@ -134,7 +134,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 					self::QUANTITY 		=> 'quantity' . $i,
 					self::CONDITION 	=> 'condition' . $i,
 					self::PRICE 		=> 'price' . $i,
-					self::STATUS 		=> 'status' . $i
+					self::STATUS 		=> ''
 			]);
 			try {
 				$item->set();
@@ -167,20 +167,20 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	public function testGetCategoryItemsPageNumberZero(): void {
 		$sut = $this->createDefaultSut();
 		$this->expectExceptionMessage(self::ERROR_ZERO);
-		$sut->getCategoryItemsByPage(self::PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE);
+		$sut->getCategoryItemsByPage(self::PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE, '');
 	}
 	
 	public function testGetCategoryItemsItemsPerPageZero(): void {
 		$sut = $this->createDefaultSut();
 		$this->expectExceptionMessage(self::ERROR_ZERO);
-		$sut->getCategoryItemsByPage(self::PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO);
+		$sut->getCategoryItemsByPage(self::PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO, '');
 	}
 	
 	public function testGetCategoryItemsSuccess(): void {
 		 $sut = $this->createDefaultSut();
 		 $sut->categoryID = self::CATEGORY_ID_3;
 		 try {
-		 	$items = $sut->getCategoryItemsByPage(self::PAGE_NUMBER, self::ITEMS_PER_PAGE);
+		 	$items = $sut->getCategoryItemsByPage(self::PAGE_NUMBER, self::ITEMS_PER_PAGE, '');
 		 	
 		 	$pn = self::PAGE_NUMBER;
 		 	$upp = self::ITEMS_PER_PAGE;
