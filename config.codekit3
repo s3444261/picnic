@@ -63,6 +63,12 @@
 		"oAP": "\/.idea\/workspace.xml",
 		"oF": 0
 		},
+	"\/.phpintel\/330790a60b961573c8b9bab3c3eea827": {
+		"ft": 8192,
+		"oA": 2,
+		"oAP": "\/.phpintel\/330790a60b961573c8b9bab3c3eea827",
+		"oF": 0
+		},
 	"\/.phpintel\/85a1884d9eccc8173db259ea84de60d3": {
 		"ft": 8192,
 		"oA": 2,
@@ -219,10 +225,10 @@
 		"oAP": "\/admin\/createDB\/insertItems9.sql",
 		"oF": 0
 		},
-	"\/admin\/createDB\/insertItemUsers.sql": {
+	"\/admin\/createDB\/insertItemUsers1.sql": {
 		"ft": 8192,
 		"oA": 2,
-		"oAP": "\/admin\/createDB\/insertItemUsers.sql",
+		"oAP": "\/admin\/createDB\/insertItemUsers1.sql",
 		"oF": 0
 		},
 	"\/admin\/createDB\/insertItemUsers2.sql": {
