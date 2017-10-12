@@ -14,8 +14,8 @@ class ItemController {
 
 	const THUMB_DIRECTORY = __DIR__ . "/../../item_thumbs/";
 	const IMAGE_DIRECTORY = __DIR__ . "/../../item_images/";
-	const DEFAULT_THUMB = __DIR__ . "/../../default_thumb.png";
-	const DEFAULT_IMAGE = __DIR__ . "/../../default_image.png";
+	const DEFAULT_THUMB = __DIR__ . "/../img/default_thumb.png";
+	const DEFAULT_IMAGE = __DIR__ . "/../img/default_image.png";
 
 
 	/**
