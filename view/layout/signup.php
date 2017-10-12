@@ -14,5 +14,8 @@
 		<div class="row">
 			<h2>Create Account</h2>
 		</div>
+        <div class="row">
+            <h4>Coming soon!</h4>
+        </div>
 	</div>
 </div>
