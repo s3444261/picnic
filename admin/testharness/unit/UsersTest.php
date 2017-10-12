@@ -73,7 +73,11 @@ class UsersTest extends PHPUnit\Framework\TestCase {
 			} catch (UserException $e) {}
 		} 
 	}
-	
+
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
+	}
+
 	protected function createDefaultSut() {
 		return new Users(TestPDO::getInstance());
 	}

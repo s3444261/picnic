@@ -257,6 +257,10 @@ class UserTest extends PicnicTestCase {
 		$_SESSION = array();
 	}
 
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
+	}
+
 	protected function createDefaultSut() {
 		return new User(TestPDO::getInstance());
 	}

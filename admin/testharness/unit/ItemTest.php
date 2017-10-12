@@ -140,6 +140,10 @@ class ItemTest extends PicnicTestCase
 		} catch (ItemException $e) {}
 	}
 
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
+	}
+
 	protected function createDefaultSut() {
 		return new Item(TestPDO::getInstance());
 	}

@@ -386,7 +386,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			${'u' . $i}->activate();
 		}	
 	}
-	
+
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
+	}
+
 	protected function populateCategories(): void {
 		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser();

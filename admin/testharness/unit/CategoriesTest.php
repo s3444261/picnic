@@ -76,6 +76,10 @@ final class CategoriesTest extends PHPUnit\Framework\TestCase {
 		}
 	}
 
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
+	}
+
 	protected function createDefaultSut(){
 		return new Categories(TestPDO::getInstance());
 	}

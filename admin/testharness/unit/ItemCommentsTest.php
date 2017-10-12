@@ -64,6 +64,10 @@ class ItemCommentsTest extends PicnicTestCaseOld {
 		}
 	}
 
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
+	}
+
 	protected function createDefaultSut(){
 		return new ItemComments(TestPDO::getInstance());
 	}

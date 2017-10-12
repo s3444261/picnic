@@ -32,15 +32,9 @@ class TestPDO extends PDO {
 
 	public static function CreateTestDatabaseAndUser() {
 
+		TestPDO::CleanUp();
+
 		$rootPDO =  new PDO ( 'mysql:host=' . getenv("DB_HOST") , getenv("ADMIN_DB_USER"), getenv("ADMIN_DB_PW"));
-
-		$query = "DROP DATABASE IF EXISTS ".getenv("TEST_DB_NAME").";";
-		$stmt = $rootPDO->prepare ( $query );
-		$stmt->execute ();
-
-		$query = "DROP USER IF EXISTS ".getenv("TEST_DB_USER")."@".getenv("DB_HOST").";";
-		$stmt = $rootPDO->prepare ( $query );
-		$stmt->execute ();
 
 		$query = "CREATE USER '".getenv("TEST_DB_USER")."'@'".getenv("DB_HOST")."' IDENTIFIED BY '".getenv("TEST_DB_PW")."';";
 		$stmt = $rootPDO->prepare ( $query );
@@ -55,5 +49,17 @@ class TestPDO extends PDO {
 		$stmt->execute ();
 		
 		return true;
+	}
+
+	public static function CleanUp() {
+		$rootPDO =  new PDO ( 'mysql:host=' . getenv("DB_HOST") , getenv("ADMIN_DB_USER"), getenv("ADMIN_DB_PW"));
+
+		$query = "DROP DATABASE IF EXISTS ".getenv("TEST_DB_NAME").";";
+		$stmt = $rootPDO->prepare ( $query );
+		$stmt->execute ();
+
+		$query = "DROP USER IF EXISTS ".getenv("TEST_DB_USER")."@".getenv("DB_HOST").";";
+		$stmt = $rootPDO->prepare ( $query );
+		$stmt->execute ();
 	}
 }

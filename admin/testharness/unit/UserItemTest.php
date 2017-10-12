@@ -54,6 +54,10 @@ class UserItemTest extends PicnicTestCaseOld {
 		}
 	}
 
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
+	}
+
 	protected function createDefaultSut(){
 		return new UserItems(TestPDO::getInstance());
 	}

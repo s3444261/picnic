@@ -36,6 +36,10 @@ class NoteTest extends PicnicTestCaseOld {
 		$root->set();
 	}
 
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
+	}
+
 	protected function createDefaultSut(){
 		return new Note(TestPDO::getInstance());
 	}
