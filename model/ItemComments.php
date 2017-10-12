@@ -59,7 +59,7 @@ class ItemComments {
 			$this->_commentID = $row ['commentID'];
 			return $this;
 		} else {
-			throw new ItemCommentsException ( 'Could not retrieve Item comment.' );
+			throw new ModelException ( 'Could not retrieve Item comment.' );
 		}
 	}
 	
@@ -239,7 +239,7 @@ class ItemComments {
 			$this->_itemID = $row ['itemID'];
 			return $this;
 		} else {
-			throw new ItemCommentsException ( 'Could not retrieve itemComment.' );
+			throw new ModelException ( 'Could not retrieve itemComment.' );
 		}
 	}
 	

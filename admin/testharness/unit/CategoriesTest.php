@@ -28,10 +28,9 @@ declare(strict_types=1);
 require_once 'TestPDO.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Category.php';
-require_once dirname(__FILE__) . '/../../../model/CategoryException.php';
 require_once dirname(__FILE__) . '/../../../model/Categories.php';
-require_once dirname(__FILE__) . '/../../../model/CategoriesException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 final class CategoriesTest extends PHPUnit\Framework\TestCase {
@@ -59,7 +58,7 @@ final class CategoriesTest extends PHPUnit\Framework\TestCase {
 		$root->{self::CATEGORY_NAME} = self::ROOT_CATEGORY_NAME;
 		try {
 			$root->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		// Insert additional categories
 		$j = 1;
@@ -72,7 +71,7 @@ final class CategoriesTest extends PHPUnit\Framework\TestCase {
 			$c->{self::CATEGORY_NAME} = 'cat' . $i;
 			try {
 				$c->set();
-			} catch (CategoryException $e) {}
+			} catch (ModelException $e) {}
 		}
 	}
 

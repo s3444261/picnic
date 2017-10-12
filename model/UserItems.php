@@ -71,7 +71,7 @@ class UserItems {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new UserException ( 'Could not retrieve user items.' );
+			throw new ModelException ( 'Could not retrieve user items.' );
 		}
 	}
 	

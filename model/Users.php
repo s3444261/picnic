@@ -70,7 +70,7 @@ class Users {
 				$users [] = $user;
 			}
 		} catch (ValidationException $e) { 
-			throw new UsersException($e->getMessage());
+			throw new ModelException($e->getMessage());
 		}
 		return $users;
 	}

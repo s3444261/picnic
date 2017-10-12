@@ -27,9 +27,8 @@ require_once 'TestPDO.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/Users.php';
-require_once dirname(__FILE__) . '/../../../model/UserException.php';
-require_once dirname(__FILE__) . '/../../../model/UsersException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 class UsersTest extends PHPUnit\Framework\TestCase {
@@ -64,13 +63,13 @@ class UsersTest extends PHPUnit\Framework\TestCase {
 			${'u' . $i} = new User($pdo, [self::USER => 'user' . $i, self::EMAIL => 'email' . $i . '@gmail.com', self::PASSWORD => 'PassWord' . $i]);
 			try { 
 				${'u' . $i}->set();
-			} catch (UserException $e) {}
+			} catch (ModelException $e) {}
 			try {
 				${'u' . $i}->get();
-			} catch (UserException $e) { }
+			} catch (ModelException $e) { }
 			try {
 				${'u' . $i}->activate();
-			} catch (UserException $e) {}
+			} catch (ModelException $e) {}
 		} 
 	}
 
@@ -114,6 +113,6 @@ class UsersTest extends PHPUnit\Framework\TestCase {
 		 		$start++;
 		 	}
 		 	
-		 } catch (UsersException $e) {}	 
+		 } catch (ModelException $e) {}	 
 	}
 }

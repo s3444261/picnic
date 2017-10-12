@@ -52,9 +52,8 @@ require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/CategoryItems.php';
 require_once dirname(__FILE__) . '/../../../model/Category.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
-require_once dirname(__FILE__) . '/../../../model/CategoryItemsException.php';
-require_once dirname(__FILE__) . '/../../../model/ItemException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 class CategoryItemsTest extends PHPUnit\Framework\TestCase {
@@ -138,7 +137,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 			]);
 			try {
 				$item->set();
-			} catch (ItemException $e) {}			
+			} catch (ModelException $e) {}			
 		}
 		
 		// Populate the CategoryItems Table
@@ -150,7 +149,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 			]);
 			try {
 				$ci->set();
-			} catch (CategoryItemsExceptionException $e) {}
+			} catch (ModelExceptionException $e) {}
 			if($i % 34 == 0){
 				$j++;
 			}
@@ -196,6 +195,6 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 		 		$start++;
 		 	}
 		 	
-		 } catch (CategoryItemsException $e) {}	 
+		 } catch (ModelException $e) {}	 
 	}
 }

@@ -107,10 +107,10 @@ class User {
 				$this->_updated_at = $row ['updated_at'];
 				return $this;
 			} else {
-				throw new UserException ( self::ERROR_USER_NOT_EXIST);
+				throw new ModelException ( self::ERROR_USER_NOT_EXIST);
 			}			
 		} catch (ValidationException $e) {
-			throw new UserException ( $e->getMessage() );
+			throw new ModelException ( $e->getMessage() );
 		}
 	}
 	
@@ -133,11 +133,11 @@ class User {
 				$this->_userID = $row ['userID'];
 				return $this->userID;
 			} else {
-				throw new UserException ( self::ERROR_EMAIL_NOT_EXIST);
+				throw new ModelException ( self::ERROR_EMAIL_NOT_EXIST);
 				return 0;
 			}
 		} catch ( ValidationException $e ) {
-			throw new UserException ( $e->getMessage () );
+			throw new ModelException ( $e->getMessage () );
 			return 0;
 		}
 	}
@@ -182,11 +182,11 @@ class User {
 				$this->_userID = $this->db->lastInsertId ();
 				return $this->_userID;
 			} else {
-				throw new UserException ( self::ERROR_USER_SET);
+				throw new ModelException ( self::ERROR_USER_SET);
 				return 0;
 			}
 		} catch ( ValidationException $e ) {
-			throw new UserException ( $e->getMessage () );
+			throw new ModelException ( $e->getMessage () );
 			return 0;
 		}
 	}
@@ -217,8 +217,8 @@ class User {
 				if ($this->user != $row ['user']) {
 					try {
 						$this->checkUserExist ();
-					} catch ( UserException $e ) {
-						throw new UserException ( $e->getMessage () );
+					} catch ( ModelException $e ) {
+						throw new ModelException ( $e->getMessage () );
 						return false;
 					}
 				}
@@ -226,8 +226,8 @@ class User {
 				if ($this->email != $row ['email']) {
 					try {
 						$this->checkEmailExist ();
-					} catch ( UserException $e ) {
-						throw new UserException ( $e->getMessage () );
+					} catch ( ModelException $e ) {
+						throw new ModelException ( $e->getMessage () );
 						return false;
 					}
 				}
@@ -251,15 +251,15 @@ class User {
 				if($stmt->rowCount() > 0){
 					return true;
 				} else {
-					throw new UserException ( self::ERROR_USER_NOT_UPDATED);
+					throw new ModelException ( self::ERROR_USER_NOT_UPDATED);
 					return false;
 				}
 			} catch ( ValidationException $e ) {
-				throw new UserException ( $e->getMessage () );
+				throw new ModelException ( $e->getMessage () );
 				return false;
 			}
 		} else {
-			throw new UserException ( self::ERROR_USER_NOT_EXIST);
+			throw new ModelException ( self::ERROR_USER_NOT_EXIST);
 			return false;
 		}
 	}
@@ -291,19 +291,19 @@ class User {
 					if ($stmt->rowCount () > 0) {
 						return true;
 					} else {
-						throw new UserException ( self::ERROR_PASSWORD_NOT_UPDATED);
+						throw new ModelException ( self::ERROR_PASSWORD_NOT_UPDATED);
 						return false;
 					}
 				} catch ( ValidationException $e ) {
-					throw new UserException ( $e->getMessage () );
+					throw new ModelException ( $e->getMessage () );
 					return false;
 				}
 			} else {
-				throw new UserException ( self::ERROR_USER_NOT_EXIST);
+				throw new ModelException ( self::ERROR_USER_NOT_EXIST);
 				return false;
 			}
 		} catch (ValidationException $e) {
-			throw new UserException ( $e->getMessage () );
+			throw new ModelException ( $e->getMessage () );
 			return false;
 		}
 	}
@@ -333,15 +333,15 @@ class User {
 					} else {
 						return false;
 					}
-				} catch (UserException $e) {
-					throw new UserException($e->getMessage());
+				} catch (ModelException $e) {
+					throw new ModelException($e->getMessage());
 				}
 			} else {
-				throw new UserException(self::ERROR_USER_ID_INVALID);
+				throw new ModelException(self::ERROR_USER_ID_INVALID);
 				return false;
 			}
 		} catch (ValidationException $e) {
-			throw new UserException($e->getMessage());
+			throw new ModelException($e->getMessage());
 			return false;
 		}
 	}
@@ -370,11 +370,11 @@ class User {
 					return false;
 				}
 			} else {
-				throw new UserException(self::ERROR_USER_ID_NOT_INT);
+				throw new ModelException(self::ERROR_USER_ID_NOT_INT);
 				return false;
 			}
 		} catch (ValidationException $e) {
-			throw new UserException($e->getMessage());
+			throw new ModelException($e->getMessage());
 			return false;
 		}
 	}
@@ -402,7 +402,7 @@ class User {
 			return $row ['numUsers'];
 			
 		} catch (ValidationException $e) {
-			throw new UserException($e->getMessage());
+			throw new ModelException($e->getMessage());
 			return 0;
 		}
 	}
@@ -429,7 +429,7 @@ class User {
 			return $row ['numUsers'];
 			
 		} catch (ValidationException $e) { 
-			throw new UserException($e->getMessage());
+			throw new ModelException($e->getMessage());
 			return 0;
 		}
 	}
@@ -468,11 +468,11 @@ class User {
 				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 				return $row['userID'];
 			} else {
-				throw new UserException ( self::ERROR_ACTIVATION_CODE_RETRIEVE);
+				throw new ModelException ( self::ERROR_ACTIVATION_CODE_RETRIEVE);
 				return 0;
 			}
 		} catch (ValidationException $e) {
-			throw new UserException($e->getMessage());
+			throw new ModelException($e->getMessage());
 			return 0;
 		}
 	}
@@ -505,19 +505,19 @@ class User {
 					if(is_null($this->activate)){
 						return true;
 					} else {
-						throw new UserException(self::ERROR_ACTIVATION_FAILURE);
+						throw new ModelException(self::ERROR_ACTIVATION_FAILURE);
 						return false;
 					}
-				} catch (UserException $e) {
-					throw new UserException($e->getMessage());
+				} catch (ModelException $e) {
+					throw new ModelException($e->getMessage());
 					return false;
 				}
-			} catch (UserException $e) {
-				throw new UserException($e->getMessage());
+			} catch (ModelException $e) {
+				throw new ModelException($e->getMessage());
 				return false;
 			}
 		} catch (ValidationException $e) {
-			throw new UserException($e->getMessage());
+			throw new ModelException($e->getMessage());
 			return false;
 		}
 	}
@@ -570,7 +570,7 @@ class User {
 				return false;
 			}
 		} catch ( ValidationException $e ) {
-			throw new UserException ( $e->getMessage () );
+			throw new ModelException ( $e->getMessage () );
 		}
 	}
 	
@@ -672,7 +672,7 @@ class User {
 		$numUser = $stmt->rowCount ();
 		
 		if ($numUser > 0) {
-			throw new UserException ( self::ERROR_USER_DUPLICATE);
+			throw new ModelException ( self::ERROR_USER_DUPLICATE);
 			return true;
 		} else {
 			return false;
@@ -691,7 +691,7 @@ class User {
 		$numEmail = $stmt->rowCount ();
 		
 		if ($numEmail > 0) {
-			throw new UserException ( self::ERROR_EMAIL_DUPLICATE);
+			throw new ModelException ( self::ERROR_EMAIL_DUPLICATE);
 			return true;
 		} else {
 			return false;

@@ -15,8 +15,9 @@ require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Note.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
-require_once dirname(__FILE__) . '/../../../model/CommentException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
+require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 class CommentTest extends PicnicTestCaseOld{
 
@@ -73,11 +74,11 @@ class CommentTest extends PicnicTestCaseOld{
 	}
 	
 	protected function getExpectedExceptionTypeForUnknownId() {
-		return CommentException::class;
+		return ModelException::class;
 	}
 	
 	protected function getExpectedExceptionTypeForUnsetId() {
-		return CommentException::class;
+		return ModelException::class;
 	}
 
 	protected function getExpectedAttributesForGet() {

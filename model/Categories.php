@@ -85,7 +85,7 @@ class Categories {
 				$c->categoryID = $parentID;
 
 				if (!$c->exists()) {
-					throw new CategoriesException(self::PARENT_ID_NOT_EXIST);
+					throw new ModelException(self::PARENT_ID_NOT_EXIST);
 				}
 			}
 
@@ -114,7 +114,7 @@ class Categories {
 				$objects[] = $object;
 			}
 		} catch (ValidationException $e) {
-			throw new CategoriesException($e->getMessage());
+			throw new ModelException($e->getMessage());
 		}
 		return $objects;
 	}

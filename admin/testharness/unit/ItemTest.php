@@ -48,7 +48,7 @@ require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
-require_once dirname(__FILE__) . '/../../../model/ItemException.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
 
 class ItemTest extends PicnicTestCase
 {
@@ -107,7 +107,7 @@ class ItemTest extends PicnicTestCase
 		$item = new Item($pdo, $args);
 		try {
 			$item->set();
-		} catch (ItemException $e) {}
+		} catch (ModelException $e) {}
 		
 		$args2 = [
 				self::ITEM_ID 		=> self::ITEM_ID_2,
@@ -122,7 +122,7 @@ class ItemTest extends PicnicTestCase
 		$item = new Item($pdo, $args2);
 		try {
 			$item->set();
-		} catch (ItemException $e) {}
+		} catch (ModelException $e) {}
 		
 		$args3 = [
 				self::ITEM_ID 		=> self::ITEM_ID_3,
@@ -137,7 +137,7 @@ class ItemTest extends PicnicTestCase
 		$item = new Item($pdo, $args3);
 		try {
 			$item->set();
-		} catch (ItemException $e) {}
+		} catch (ModelException $e) {}
 	}
 
 	protected function tearDown(): void {
@@ -208,7 +208,7 @@ class ItemTest extends PicnicTestCase
 		$sut = $this->createSutWithId(self::ITEM_ID_2);
 		try {
 			$sut->get();
-		} catch (ItemException $e) {}
+		} catch (ModelException $e) {}
 		$this->assertEquals(self::ITEM_ID_2, $sut->itemID);
 		$this->assertEquals(self::TITLE_2, $sut->title);
 		$this->assertEquals(self::DESCRIPTION_2, $sut->description);

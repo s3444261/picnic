@@ -13,7 +13,7 @@ require_once 'TestPDO.php';
 require_once 'PicnicTestCaseOld.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Note.php';
-require_once dirname(__FILE__) . '/../../../model/NoteException.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
 
 class NoteTest extends PicnicTestCaseOld {
 
@@ -57,11 +57,11 @@ class NoteTest extends PicnicTestCaseOld {
 	}
 
 	protected function getExpectedExceptionTypeForUnsetId() {
-		return NoteException::class;
+		return ModelException::class;
 	}
 	
 	protected function getExpectedExceptionTypeForUnknownId() {
-		return NoteException::class;
+		return ModelException::class;
 	}
 
 	protected function getExpectedAttributesForGet() {

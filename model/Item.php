@@ -8,7 +8,7 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-require_once dirname(__FILE__) . '/ItemException.php';
+require_once dirname(__FILE__) . '/ModelException.php';
 
 /**
  *
@@ -81,7 +81,7 @@ class Item {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new ItemException ( self::ERROR_ITEM_NOT_EXIST);
+			throw new ModelException ( self::ERROR_ITEM_NOT_EXIST);
 		}
 	}
 	

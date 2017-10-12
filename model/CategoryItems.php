@@ -61,7 +61,7 @@ class CategoryItems {
 			$this->_categoryID = $row ['categoryID'];
 			$this->_itemID = $row ['itemID'];
 		} else {
-			throw new CategoryItemsException ( self::ERROR_CATEGORYITEMS_NOT_EXIST );
+			throw new ModelException ( self::ERROR_CATEGORYITEMS_NOT_EXIST );
 		}
 		return $this;
 	}
@@ -104,15 +104,15 @@ class CategoryItems {
 						return 0;
 					}
 				} else {
-					throw new CategoryItemsException ( self::ERROR_CATEGORYITEM_EXISTS );
+					throw new ModelException ( self::ERROR_CATEGORYITEM_EXISTS );
 					return 0;
 				}
 			} else {
-				throw new CategoryItemsException ( self::ERROR_ITEM_ID_NOT_EXIST );
+				throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
 				return 0;
 			}
 		} else {
-			throw new CategoryItemsException ( self::ERROR_CATEGORY_ID_NOT_EXIST );
+			throw new ModelException ( self::ERROR_CATEGORY_ID_NOT_EXIST );
 			return 0;
 		}
 	}
@@ -293,14 +293,14 @@ class CategoryItems {
 				try {
 					$item->get();
 				} catch (ItemException $e) {
-					throw new CategoryItemsException($e->getMessage());
+					throw new ModelException($e->getMessage());
 				}
 				
 				$objects[] = $item;
 			}
 			return $objects;
 		} catch (ValidationException $e) {
-			throw new CategoryItemsException($e->getMessage());
+			throw new ModelException($e->getMessage());
 		}
 	}
 	

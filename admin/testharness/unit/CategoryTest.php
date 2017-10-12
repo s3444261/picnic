@@ -56,8 +56,8 @@ require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Category.php';
-require_once dirname(__FILE__) . '/../../../model/CategoryException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 final class CategoryTest extends PicnicTestCase{
@@ -100,7 +100,7 @@ final class CategoryTest extends PicnicTestCase{
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		// Insert additional categories
 		$c = new Category($pdo);
@@ -108,11 +108,11 @@ final class CategoryTest extends PicnicTestCase{
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 	}
 
 	protected function tearDown(): void {
@@ -175,7 +175,7 @@ final class CategoryTest extends PicnicTestCase{
 		$sut = $this->createSutWithId(self::CATEGORY_ID_2);
 		try {
 			$sut->get();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		$this->assertEquals(self::CATEGORY_ID_2, $sut->categoryID);
 		$this->assertEquals(self::PARENT_ID_1, $sut->parentID);
 		$this->assertEquals(self::CATEGORY_2, $sut->category);
@@ -212,14 +212,14 @@ final class CategoryTest extends PicnicTestCase{
 		$sut->category = self::CATEGORY_4;
 		try {
 			$sut->categoryID = $sut->set(); 
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		$sut = $this->createSutWithId($sut->categoryID); 
 		try {
 			$sut->get();
 			$this->assertEquals(self::CATEGORY_ID_4, $sut->categoryID);
 			$this->assertEquals(self::PARENT_ID_3, $sut->parentID);
 			$this->assertEquals(self::CATEGORY_4, $sut->category);
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 	}
 	
 	/*

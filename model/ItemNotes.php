@@ -59,7 +59,7 @@ class ItemNotes {
 			$this->_noteID = $row ['noteID'];
 			return $this;
 		} else {
-			throw new ItemNotesException ( 'Could not retrieve Item note.' );
+			throw new ModelException ( 'Could not retrieve Item note.' );
 		}
 	}
 	
@@ -239,7 +239,7 @@ class ItemNotes {
 			$this->_itemID = $row ['itemID']; 
 			return true;
 		} else {
-			throw new ItemNotesException ( 'Could not retrieve itemNote.' );
+			throw new ModelException ( 'Could not retrieve itemNote.' );
 		}
 	}
 	

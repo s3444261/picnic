@@ -33,7 +33,7 @@ class System {
 			} else {
 				return false;
 			}
-		} catch ( UserException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage();
 			return false;
 		}
@@ -45,7 +45,7 @@ class System {
 	public function getUserIdByActivationCode( User $user ): int{
 		try {
 			return $user->getUserIdByActivationCode();
-		} catch (UserException $e) {
+		} catch (ModelException $e) {
 			$_SESSION ['error'] = $e->getMessage();
 			return 0;
 		}
@@ -70,7 +70,7 @@ class System {
 	public function changePassword(User $user): bool {
 		try {
 			return $user->updatePassword();
-		} catch (UserException $e) {
+		} catch (ModelException $e) {
 			$_SESSION ['error'] = $e->getMessage();
 			return false;
 		}
@@ -89,11 +89,11 @@ class System {
 				$user->updatePassword(); 
 				$user->password = $randomPassword;
 				return $user;
-			} catch (UserException $e) {
+			} catch (ModelException $e) {
 				$_SESSION ['error'] = $e->getMessage();
 				return $user;
 			}
-		} catch (UserException $e) {
+		} catch (ModelException $e) {
 			$_SESSION ['error'] = $e->getMessage();
 			return $user;
 		}
@@ -110,11 +110,11 @@ class System {
 			try {
 				$user->get ();
 				return true;
-			} catch ( UserException $e ) {
+			} catch ( ModelException $e ) {
 				$_SESSION ['error'] = $e->getMessage(); 
 				return false;
 			}
-		} catch ( UserException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage(); 
 			return false;
 		}
@@ -127,7 +127,7 @@ class System {
 		try {
 			$user->update();
 			return true;
-		} catch (UserException $e) {
+		} catch (ModelException $e) {
 			$_SESSION ['error'] = $e->getError ();
 			return false;
 		}
@@ -141,7 +141,7 @@ class System {
 		$u->userID = $user->userID;
 		try {
 			$u = $u->get ();
-		} catch ( UserException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 		}
 		return $u;
@@ -155,7 +155,7 @@ class System {
 		$users = new Users ( $this->db );
 		try {
 			$usersArray = $users->getUsers ($pageNumber, $usersPerPage);
-		} catch ( UsersException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 			return $usersArray;
 		}
@@ -173,7 +173,7 @@ class System {
 			try { 
 				$user->update();
 				return true;
-			} catch (UserException $e) {
+			} catch (ModelException $e) {
 				return false;
 			}
 		} else {
@@ -250,11 +250,11 @@ class System {
 			try {
 				$category->get ();
 				return true;
-			} catch ( CategoryException $e ) {
+			} catch ( ModelException $e ) {
 				$_SESSION ['error'] = $e->getMessage();
 				return false;
 			}
-		} catch ( CategoryException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage();
 			return false;
 		}
@@ -330,7 +330,7 @@ class System {
 		$c = $category;
 		try {
 			$c = $c->get ();
-		} catch ( CategoryException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage ();
 		}
 		return $c;
@@ -354,7 +354,7 @@ class System {
 		$cat = new Categories ( $this->db );
 		try {
 			$c = $cat->getCategoriesIn ( $parentID );
-		} catch ( CategoriesException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage ();
 		}
 		return $c;
@@ -407,7 +407,7 @@ class System {
 		$categoryItems->categoryID = $category->categoryID;
 		try {
 			$categoryItemsArray= $categoryItems->getCategoryItemsByPage($pn, $ipp, $status);
-		} catch ( CategoryItemsException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage (); 
 		}
 		return $categoryItemsArray;
@@ -444,7 +444,7 @@ class System {
 		$i->itemID = $item->itemID;
 		try {
 			$i = $i->get ();
-		} catch ( ItemException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 		}
 		return $i;
@@ -547,7 +547,7 @@ class System {
 		$c->commentID = $comment->commentID;
 		try {
 			$c = $c->get ();
-		} catch ( UserException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 		}
 		return $c;
@@ -623,7 +623,7 @@ class System {
 			$note->noteID = $inid->noteID;
 			try {
 				$note->get ();
-			} catch ( NoteException $e ) {
+			} catch ( ModelException $e ) {
 				$_SESSION ['error'] = $e->getError ();
 			}
 			$notes [] = $note;
@@ -639,7 +639,7 @@ class System {
 		$n->noteID = $note->noteID;
 		try {
 			$n->get ();
-		} catch ( NoteException $e ) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 		}
 		return $n;

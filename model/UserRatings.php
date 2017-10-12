@@ -72,7 +72,7 @@ class UserRatings {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new UserRatingsException ( 'Could not retrieve userrating.' );
+			throw new ModelException ( 'Could not retrieve userrating.' );
 		}
 	}
 	

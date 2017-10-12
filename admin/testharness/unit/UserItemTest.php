@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/UserItems.php';
-require_once dirname(__FILE__) . '/../../../model/UserException.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
 
 class UserItemTest extends PicnicTestCaseOld {
 
@@ -75,11 +75,11 @@ class UserItemTest extends PicnicTestCaseOld {
 	}
 
 	protected function getExpectedExceptionTypeForUnknownId() {
-		return UserException::class;
+		return ModelException::class;
 	}
 	
 	protected function getExpectedExceptionTypeForUnsetId() {
-		return UserException::class;
+		return ModelException::class;
 	}
 
 	protected function getExpectedAttributesForGet() {
