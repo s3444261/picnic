@@ -26,7 +26,7 @@
 				if (isset ( $_SESSION [MODULE] )) {
 					echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/Logout">Logout</a></li>';
 				} else {
-					echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/SignIn">Login</a></li>';
+					echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/Signin">Login</a></li>';
                 }
                 echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/Category/View">View catalogue</a></li>';
                 echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/CreateDB">Create DB</a></li>';
