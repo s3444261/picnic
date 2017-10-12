@@ -22,9 +22,9 @@
                 </div>
                 <form>
                     <div class="form-group">
-                        <label for="exampleInputEmail1">Search</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="What are you looking for?">
-                        <small id="emailHelp" class="form-text text-muted">e.g. smartphone, lawnmower, hat</small>
+                        <label for="exampleInputTest">Search</label>
+                        <input type="text" class="form-control" id="exampleInputText" aria-describedby="searchHelp" placeholder="What are you looking for?">
+                        <small id="searchHelp" class="form-text text-muted">e.g. smartphone, lawnmower, hat</small>
                         <small id="adv-search" class="form-text text-right"><a href="#" data-toggle="tooltip" data-placement="top" title="Coming soon">Advanced search</a></small>
                     </div>
 
@@ -35,23 +35,4 @@
         <!-- Right margin -->
         <div class="col"></div>
     </div> <!-- end row -->
-
-<!--	--><?php //if (isset ( $this->data['categories'] ) && count($this->data['categories']) != 0) { ?>
-<!--        <div class="jumbotron">-->
-<!--            <h2>Categories</h2>-->
-<!--            <div class="container">-->
-<!--                --><?php //foreach ( $this->data['categories'] as $category ) { ?>
-<!--                    <div class="col-md-4">-->
-<!--                        <a class="btn btn-secondary" href="--><?php //echo BASE.'/Category/View/'.$category->categoryID ?><!--" role="button">--><?php //echo $category->category ?><!--</a>-->
-<!--                    </div>-->
-<!--                --><?php //} ?>
-<!--            </div>-->
-<!--        </div>-->
-<!--    --><?php //} ?>
-<!---->
-<!--	<div class="jumbotron">-->
-<!--		<div class="row">-->
-<!--			<h2>Search Results</h2>-->
-<!--		</div>-->
-<!--	</div>-->
 </div>
