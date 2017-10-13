@@ -96,7 +96,6 @@ class Category {
 				$this->categoryID = $this->parentID;
 				if(!$this->exists()){
 					throw new ModelException ( self::ERROR_PARENT_ID_NOT_EXIST);
-					return 0;
 				}
 				$this->categoryID = NULL;
 			}
@@ -109,7 +108,6 @@ class Category {
 			
 			if($row['numCategories'] > 1 && $this->parentID == 0){
 				throw new ModelException ( self::ERROR_PARENT_ID_NONE);
-				return 0;
 			}
 			
 			$query = "INSERT INTO Categories
@@ -126,11 +124,9 @@ class Category {
 				return $this->_categoryID = $this->db->lastInsertId ();
 			} else {
 				throw new ModelException ( self::ERROR_CATEGORY_NOT_CREATED);
-				return 0;
 			}
 		} catch (ValidationException $e) {
 			throw new ModelException ( $e->getMessage() );
-			return 0;
 		}
 	}
 	

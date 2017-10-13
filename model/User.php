@@ -134,11 +134,9 @@ class User {
 				return $this->userID;
 			} else {
 				throw new ModelException ( self::ERROR_EMAIL_NOT_EXIST);
-				return 0;
 			}
 		} catch ( ValidationException $e ) {
 			throw new ModelException ( $e->getMessage () );
-			return 0;
 		}
 	}
 	/*
@@ -183,11 +181,9 @@ class User {
 				return $this->_userID;
 			} else {
 				throw new ModelException ( self::ERROR_USER_SET);
-				return 0;
 			}
 		} catch ( ValidationException $e ) {
 			throw new ModelException ( $e->getMessage () );
-			return 0;
 		}
 	}
 	
@@ -219,7 +215,6 @@ class User {
 						$this->checkUserExist ();
 					} catch ( ModelException $e ) {
 						throw new ModelException ( $e->getMessage () );
-						return false;
 					}
 				}
 						
@@ -228,7 +223,6 @@ class User {
 						$this->checkEmailExist ();
 					} catch ( ModelException $e ) {
 						throw new ModelException ( $e->getMessage () );
-						return false;
 					}
 				}
 								
@@ -252,15 +246,12 @@ class User {
 					return true;
 				} else {
 					throw new ModelException ( self::ERROR_USER_NOT_UPDATED);
-					return false;
 				}
 			} catch ( ValidationException $e ) {
 				throw new ModelException ( $e->getMessage () );
-				return false;
 			}
 		} else {
 			throw new ModelException ( self::ERROR_USER_NOT_EXIST);
-			return false;
 		}
 	}
 	
@@ -292,19 +283,15 @@ class User {
 						return true;
 					} else {
 						throw new ModelException ( self::ERROR_PASSWORD_NOT_UPDATED);
-						return false;
 					}
 				} catch ( ValidationException $e ) {
 					throw new ModelException ( $e->getMessage () );
-					return false;
 				}
 			} else {
 				throw new ModelException ( self::ERROR_USER_NOT_EXIST);
-				return false;
 			}
 		} catch (ValidationException $e) {
 			throw new ModelException ( $e->getMessage () );
-			return false;
 		}
 	}
 	
@@ -338,11 +325,9 @@ class User {
 				}
 			} else {
 				throw new ModelException(self::ERROR_USER_ID_INVALID);
-				return false;
 			}
 		} catch (ValidationException $e) {
 			throw new ModelException($e->getMessage());
-			return false;
 		}
 	}
 	
@@ -371,11 +356,9 @@ class User {
 				}
 			} else {
 				throw new ModelException(self::ERROR_USER_ID_NOT_INT);
-				return false;
 			}
 		} catch (ValidationException $e) {
 			throw new ModelException($e->getMessage());
-			return false;
 		}
 	}
 	
@@ -403,7 +386,6 @@ class User {
 			
 		} catch (ValidationException $e) {
 			throw new ModelException($e->getMessage());
-			return 0;
 		}
 	}
 	
@@ -430,7 +412,6 @@ class User {
 			
 		} catch (ValidationException $e) { 
 			throw new ModelException($e->getMessage());
-			return 0;
 		}
 	}
 	
@@ -469,11 +450,9 @@ class User {
 				return $row['userID'];
 			} else {
 				throw new ModelException ( self::ERROR_ACTIVATION_CODE_RETRIEVE);
-				return 0;
 			}
 		} catch (ValidationException $e) {
 			throw new ModelException($e->getMessage());
-			return 0;
 		}
 	}
 	
@@ -506,19 +485,15 @@ class User {
 						return true;
 					} else {
 						throw new ModelException(self::ERROR_ACTIVATION_FAILURE);
-						return false;
 					}
 				} catch (ModelException $e) {
 					throw new ModelException($e->getMessage());
-					return false;
 				}
 			} catch (ModelException $e) {
 				throw new ModelException($e->getMessage());
-				return false;
 			}
 		} catch (ValidationException $e) {
 			throw new ModelException($e->getMessage());
-			return false;
 		}
 	}
 	
@@ -673,7 +648,6 @@ class User {
 		
 		if ($numUser > 0) {
 			throw new ModelException ( self::ERROR_USER_DUPLICATE);
-			return true;
 		} else {
 			return false;
 		}
@@ -692,7 +666,6 @@ class User {
 		
 		if ($numEmail > 0) {
 			throw new ModelException ( self::ERROR_EMAIL_DUPLICATE);
-			return true;
 		} else {
 			return false;
 		}

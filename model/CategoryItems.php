@@ -105,15 +105,12 @@ class CategoryItems {
 					}
 				} else {
 					throw new ModelException ( self::ERROR_CATEGORYITEM_EXISTS );
-					return 0;
 				}
 			} else {
 				throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
-				return 0;
 			}
 		} else {
 			throw new ModelException ( self::ERROR_CATEGORY_ID_NOT_EXIST );
-			return 0;
 		}
 	}
 	
