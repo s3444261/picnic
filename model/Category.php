@@ -1,11 +1,10 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <edwanhp@gmail.com>
  */
 
 
@@ -57,10 +56,11 @@ class Category {
 		$this->$name = $value;
 	}
 	
-	/*
-	 * The get() function first confirms that the item object exists in the database.
+	/**
+	 * The get() method first confirms that the item object exists in the database.
 	 * It then retrieves the attributes from the database. The attributes are set and
-	 * true is returned.
+	 * returned as a Category object.  If the category doesn't exist, an exception is 
+	 * thrown.
 	 */
 	public function get(): Category {
 		if ($this->exists ()) {
@@ -80,9 +80,10 @@ class Category {
 		return $this;
 	}
 	
-	/*
-	 * The set() function inserts the item paramaters into the
-	 * database. The categoryID is returned.
+	/**
+	 * The set() method inserts the category paramaters into the
+	 * database. The categoryID is returned.  If the parentID doesn't
+	 * exist or the category parameter is empty, an exception is thrown.
 	 */
 	public function set(): int {
 		$v = new Validation();
@@ -130,11 +131,11 @@ class Category {
 		}
 	}
 	
-	/*
-	 * The update() function confirms the object already exists in the database.
+	/**
+	 * The update() method confirms the object already exists in the database.
 	 * If it does, all the current attributes are retrieved. Where the new
 	 * attributes have not been set, they are set with the values already existing in
-	 * the database.
+	 * the database.  The method returns a boolean.
 	 */
 	public function update(): bool {
 		if ($this->exists ()) {
@@ -177,9 +178,9 @@ class Category {
 		}
 	}
 	
-	/*
-	 * The delete() checks the object exists in the database. If it does,
-	 * true is returned.
+	/**
+	 * The delete() method checks the object exists in the database. If it does,
+	 * it is deleted and true is returned.
 	 */
 	public function delete(): bool {
 		if ($this->exists ()) {
@@ -200,8 +201,8 @@ class Category {
 		}
 	}
 	
-	/*
-	 * The exists() function checks to see if the id exists in the database,
+	/**
+	 * The exists() method checks to see if the id exists in the database,
 	 * if it does, true is returned.
 	 */
 	public function exists(): bool {

@@ -1,11 +1,10 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <edwanhp@gmail.com>
  */
 
 
@@ -40,7 +39,7 @@ class Categories {
 		$this->$name = $value;
 	}
 	
-	/*
+	/**
 	 * The getCategories() method retrieves all categories and returns them as an array
 	 * of category objects.
 	 */
@@ -65,9 +64,11 @@ class Categories {
 		return $objects;
 	}
 
-	/*
-	 * The getCategories() method retrieves all categories for the given parent category and
+	/**
+	 * The getCategoriesIn(int $parentID) method retrieves all categories for the given parent category and
 	 * returns them as an array of category objects.
+	 * 
+	 * @param $parentID		The ID of the parent category.
 	 */
 	public function getCategoriesIn(int $parentID): array {
 		$v = new Validation();

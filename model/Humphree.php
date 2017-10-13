@@ -1,16 +1,19 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <edwanhp@gmail.com>
  */
-
 if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }
+
+/**
+ * The Humphree class is the application programming interface for
+ * the model.
+ */
 class Humphree {
 	private $db;
 	private $system;
@@ -21,10 +24,17 @@ class Humphree {
 		$this->system = new System ( $pdo );
 	}
 	
-	/*
-	 * The createAccount() function allows a user to create their
-	 * own account and join Humphree granting them access to add
+	/**
+	 * Allows a user to create their own account and join Humphree granting them access to add
 	 * and update items as well as view.
+	 *
+	 * @param string $userName
+	 *        	Provides the User Name for the account.
+	 * @param string $email
+	 *        	Provides an email address for the account.
+	 * @param string $password
+	 *        	Provides a password for the account.
+	 * @return bool
 	 */
 	public function createAccount(string $userName, string $email, string $password): bool {
 		$user = new User ( $this->db );
@@ -39,16 +49,26 @@ class Humphree {
 		}
 	}
 	
+	/**
+	 * Returns a UserID on receipt of an activation code.
+	 *
+	 * @param string $activationCode
+	 *        	A 32bit string passed through a URL.
+	 * @return int
+	 */
 	public function getUserIdByActivationCode(string $activationCode): int {
 		$user = new User ( $this->db );
 		$user->activate = $activationCode;
 		
-		return $this->system->getUserIdByActivationCode( $user );
+		return $this->system->getUserIdByActivationCode ( $user );
 	}
 	
-	/*
-	 * The activateAccount() fucntion verfies the email address
-	 * of the new user and makes the account active.
+	/**
+	 * Verfies the email address of the new user and makes the account active.
+	 *
+	 * @param int $userID
+	 *        	The userID of the account holder.
+	 * @return bool
 	 */
 	public function activateAccount(int $userID): bool {
 		$user = new User ( $this->db );
@@ -60,9 +80,14 @@ class Humphree {
 		}
 	}
 	
-	/*
-	 * The changePassword() function allows a user or administrator to
-	 * change a password for an account.
+	/**
+	 * Allows a user or administrator to change a password for an account.
+	 *
+	 * @param int $userID
+	 *        	UserID of the account.
+	 * @param string $password
+	 *        	Password of the account.
+	 * @return bool
 	 */
 	public function changePassword(int $userID, string $password): bool {
 		$user = new User ( $this->db );
@@ -75,24 +100,34 @@ class Humphree {
 		}
 	}
 	
-	/*
-	 * The forgotPassword() function allows a user to generate a new password
-	 * which is sent to the users account via email.
+	/**
+	 * Allows a user to generate a new password which is sent to the users account via email.
+	 *
+	 * @param string $email
+	 *        	Email address of the account.
+	 * @return array
 	 */
 	public function forgotPassword(string $email): array {
 		$user = new User ( $this->db );
 		$user->email = $email;
 		$user = $this->system->forgotPassword ( $user );
-		$userArray = array();
-		$userArray['userID'] = $user->userID;
-		$userArray['email'] = $user->email;
-		$userArray['password'] = $user->password;
+		$userArray = array ();
+		$userArray ['userID'] = $user->userID;
+		$userArray ['email'] = $user->email;
+		$userArray ['password'] = $user->password;
 		return $userArray;
 	}
 	
-	/*
-	 * The addUser() function allows an administrator to add a user and
-	 * pre-activate the account.
+	/**
+	 * Allows an administrator to add a user and pre-activate the account.
+	 *
+	 * @param string $userName
+	 *        	User name of the account.
+	 * @param string $email
+	 *        	Email address of the account.
+	 * @param string $password
+	 *        	Password of the account.
+	 * @return bool
 	 */
 	public function addUser(string $userName, string $email, string $password): bool {
 		$user = new User ( $this->db );
@@ -106,8 +141,12 @@ class Humphree {
 		}
 	}
 	
-	/*
-	 * The updateUser() function allows an administrator to update a user.
+	/**
+	 * Allows an administrator to update a users details.
+	 *
+	 * @param array $userArray
+	 *        	An array of user attributes.
+	 * @return bool
 	 */
 	public function updateUser(array $userArray): bool {
 		$user = new User ( $this->db );
@@ -122,8 +161,12 @@ class Humphree {
 		}
 	}
 	
-	/*
-	 * The getUser() function allows an administrator to retrieve a user.
+	/**
+	 * Allows an administrator to retrieve a user.
+	 *
+	 * @param int $userID
+	 *        	ID of a user.
+	 * @return array
 	 */
 	public function getUser(int $userID): array {
 		$userArray = array ();
@@ -138,12 +181,18 @@ class Humphree {
 		return $userArray;
 	}
 	
-	/*
-	 * The getUsers() function allows an administrator to retrieve all users.
+	/**
+	 * Allows an administrator to retrieve all users and display them paginated.
+	 *
+	 * @param int $page
+	 *        	The number of pages to be displayed
+	 * @param int $usersPerPage
+	 *        	The number of users to be displayed on each page.
+	 * @return array
 	 */
-	public function getUsers($page, $itemsPerPage): array {
+	public function getUsers(int $page, int $usersPerPage): array {
 		$usersArray = array ();
-		$users = $this->system->getUsers ($page, $itemsPerPage);
+		$users = $this->system->getUsers ( $page, $usersPerPage );
 		
 		foreach ( $users as $user ) {
 			$userArray = array ();
@@ -157,9 +206,12 @@ class Humphree {
 		return $usersArray;
 	}
 	
-	/*
-	 * The disableUser() function allows an administrator to disable a users
-	 * account.
+	/**
+	 * Allows an administrator to suspend a users account.
+	 *
+	 * @param int $userID
+	 *        	The ID of the user.
+	 * @return bool
 	 */
 	public function disableUser(int $userID): bool {
 		$user = new User ( $this->db );
@@ -171,9 +223,12 @@ class Humphree {
 		}
 	}
 	
-	/*
-	 * The deleteUser() function allows an administrator to completely delete
-	 * an account and all associated database entries.
+	/**
+	 * Allows an administrator to delete a user from the database.
+	 *
+	 * @param int $userID
+	 *        	ID of the user.
+	 * @return bool
 	 */
 	public function deleteUser(int $userID): bool {
 		$user = new User ( $this->db );
@@ -185,9 +240,14 @@ class Humphree {
 		}
 	}
 	
-	/*
-	 * The addCategory() function allows and administrator to add a Category and
-	 * specify its position in the heirachy.
+	/**
+	 * Allows an administrator to add a category and specify it's position in the heirachy.
+	 *
+	 * @param int $parentID
+	 *        	The ID of the parent category.
+	 * @param string $category
+	 *        	The name of the category.
+	 * @return bool
 	 */
 	public function addCategory(int $parentID, string $category): bool {
 		$cat = new Category ( $this->db );
@@ -200,9 +260,16 @@ class Humphree {
 		}
 	}
 	
-	/*
-	 * The updateCategory() function allows and administrator to update a Category and
-	 * its position in the heirachy.
+	/**
+	 * Allows an administrator to update a categories name and its position in the heirachy.
+	 *
+	 * @param int $categoryID
+	 *        	The ID of a category.
+	 * @param int $parentID
+	 *        	The ID of the parent category.
+	 * @param string $category
+	 *        	The name of the category.
+	 * @return bool
 	 */
 	public function updateCategory(int $categoryID, int $parentID, string $category): bool {
 		$cat = new Category ( $this->db );
@@ -216,9 +283,12 @@ class Humphree {
 		}
 	}
 	
-	/*
-	 * The deleteCategory() function allows and administrator to delete a Category and
-	 * all associated database content.
+	/**
+	 * Allows an administrator to completely delete a category and its associated content.
+	 *
+	 * @param int $categoryID
+	 *        	The ID of the category.
+	 * @return bool
 	 */
 	public function deleteCategory(int $categoryID): bool {
 		$category = new Category ( $this->db );
@@ -230,8 +300,12 @@ class Humphree {
 		}
 	}
 	
-	/*
-	 * The getCategory() function retrieves a Category.
+	/**
+	 * Retrieves a category and its attributes from the database.
+	 *
+	 * @param int $categoryID
+	 *        	The ID of the category.
+	 * @return array
 	 */
 	public function getCategory(int $categoryID): array {
 		$cat = array ();
@@ -245,8 +319,10 @@ class Humphree {
 		return $cat;
 	}
 	
-	/*
-	 * The getCategories() function retrieves all Categories.
+	/**
+	 * Returns all categories.
+	 * 
+	 * @return array
 	 */
 	public function getCategories(): array {
 		$cats = array ();
@@ -264,8 +340,11 @@ class Humphree {
 		return $cats;
 	}
 	
-	/*
-	 * The getCategoriesIn() method retrieves all Categories in the given parent category.
+	/**
+	 * Returns all categories belonging to a parent category.
+	 * 
+	 * @param int $parentID		The ID of the parent category.
+	 * @return array
 	 */
 	public function getCategoriesIn(int $parentID): array {
 		$cats = array ();
@@ -283,8 +362,11 @@ class Humphree {
 		return $cats;
 	}
 	
-	/*
-	 * The countCategoryItems() method counts the number of items in a category.
+	/**
+	 * Returns the number of items in a category.
+	 * 
+	 * @param int $categoryID	The ID of a category.
+	 * @return int
 	 */
 	public function countCategoryItems(int $categoryID): int {
 		$category = new Category ( $this->db );
@@ -294,7 +376,7 @@ class Humphree {
 		return $numCategoryItems;
 	}
 	
-	/*
+	/**
 	 * The countItemComments() method counts the number of items in a category.
 	 */
 	public function countItemComments(int $itemID): int {
@@ -305,7 +387,7 @@ class Humphree {
 		return $numItemComments;
 	}
 	
-	/*
+	/**
 	 * The countItemNotes() method counts the number of items in a category.
 	 */
 	public function countItemNotes(int $itemID): int {
@@ -316,13 +398,13 @@ class Humphree {
 		return $numItemNotes;
 	}
 	
-	/*
+	/**
 	 * The getCategoryItems() function retrieves all items linked to a Category.
 	 */
-	public function getCategoryItemsByPage(int $categoryID, int $pageNumber , int $itemsPerPage, string $status): array {
+	public function getCategoryItemsByPage(int $categoryID, int $pageNumber, int $itemsPerPage, string $status): array {
 		$category = new Category ( $this->db );
 		$category->categoryID = $categoryID;
-		$categoryItems = $this->system->getCategoryItemsByPage( $category, $pageNumber , $itemsPerPage, $status);
+		$categoryItems = $this->system->getCategoryItemsByPage ( $category, $pageNumber, $itemsPerPage, $status );
 		$its = array ();
 		
 		foreach ( $categoryItems as $item ) {
@@ -375,7 +457,7 @@ class Humphree {
 		return $its;
 	}
 	
-	/*
+	/**
 	 * The countUserItems() method counts the number of items in a user.
 	 */
 	public function countUserItems(int $userID): int {
@@ -386,7 +468,7 @@ class Humphree {
 		return $numUserItems;
 	}
 	
-	/*
+	/**
 	 * The getUserItems() function retrieves all items linked to a User.
 	 */
 	public function getUserItems(int $userID): array {
@@ -445,7 +527,7 @@ class Humphree {
 		return $its;
 	}
 	
-	/*
+	/**
 	 * The getItem() function retrieves an item.
 	 */
 	public function getItem(int $itemID): array {
@@ -498,7 +580,7 @@ class Humphree {
 		return $it;
 	}
 	
-	/*
+	/**
 	 * The addItem() function adds an item.
 	 */
 	public function addItem(int $userID, array $item): bool {
@@ -518,7 +600,7 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The updateItem() function updates an item.
 	 */
 	public function updateItem(array $item): bool {
@@ -537,7 +619,7 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The deleteItem() function deletes an item and all associated database content.
 	 */
 	public function deleteItem(int $itemID): bool {
@@ -550,7 +632,7 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The getItemComments() function retrieves all comments for an item.
 	 */
 	public function getItemComments(int $itemID): array {
@@ -575,7 +657,7 @@ class Humphree {
 		return $cs;
 	}
 	
-	/*
+	/**
 	 * The getItemComment() function retrieves a comment.
 	 */
 	public function getItemComment(int $commentID): array {
@@ -590,11 +672,11 @@ class Humphree {
 		$user = $this->system->getUser ( $user );
 		$c ['user'] = $user->user;
 		$c ['comment'] = $itemComment->comment;
-
+		
 		return $c;
 	}
 	
-	/*
+	/**
 	 * The addItemComment() function adds an itemComment.
 	 */
 	public function addItemComment(int $userID, int $itemID, string $comment): bool {
@@ -611,7 +693,7 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The updateItemComment() function updates an itemComment.
 	 */
 	public function updateItemComment(array $c): bool {
@@ -626,7 +708,7 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The deleteItemComment() function deletes an itemComment and all associated database content.
 	 */
 	public function deleteItemComment(int $commentID): bool {
@@ -639,7 +721,7 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The getItemNotes() retrieves all notes for an item.
 	 */
 	public function getItemNotes(int $itemID): array {
@@ -659,7 +741,7 @@ class Humphree {
 		return $ns;
 	}
 	
-	/*
+	/**
 	 * The getItemNote() function retrieves a note for an item.
 	 */
 	public function getItemNote(int $noteID): array {
@@ -674,7 +756,7 @@ class Humphree {
 		return $n;
 	}
 	
-	/*
+	/**
 	 * The addItemNote() function adds an itemNote.
 	 */
 	public function addItemNote(int $itemID, string $note): bool {
@@ -689,7 +771,7 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The updateItemNote() function updates an itemNote.
 	 */
 	public function updateItemNote(int $noteID, string $note): bool {
@@ -703,7 +785,7 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The deleteItemNote() function deletes an itemNote and all associated database content.
 	 */
 	public function deleteItemNote(int $noteID): bool {
@@ -716,7 +798,7 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
 	 */
 	public function addSellerRating(int $itemID, int $sellRating): bool {
@@ -734,7 +816,7 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
 	 */
 	public function addBuyerRating(string $transaction, int $buyRating, int $userID): bool {
@@ -754,14 +836,14 @@ class Humphree {
 		}
 	}
 	
-	/*
+	/**
 	 * The search() function searches the database and returns matches.
 	 */
 	public function search(): bool {
 		// TO DO
 		// Convert arrays to objects if necessary and call equivalent System Function
 		$this->system->search ();
-
+		
 		return true;
 	}
 }

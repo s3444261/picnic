@@ -1,15 +1,20 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <edwanhp@gmail.com>
  */
 if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }
+
+/**
+ * The System class transmits information from the Humphree
+ * Programming Interface to the model and back to Humphree.
+ *
+ */
 class System {
 	
 	private $db;
@@ -21,10 +26,11 @@ class System {
 		$this->db = $pdo;
 	}
 	
-	/*
-	 * The createAccount() function allows a user to create their
-	 * own account and join Humphree granting them access to add
-	 * and update items as well as view.
+	/**
+	 * Creates an account for a user.
+	 * 
+	 * @param User $user	User Object.
+	 * @return bool
 	 */
 	public function createAccount(User $user): bool {
 		try {
@@ -39,8 +45,11 @@ class System {
 		}
 	}
 	
-	/*
-	 * This method retrieves a userID from a users activation code.
+	/**
+	 * Returns a UserID based on a 32bit activation code.
+	 * 
+	 * @param User $user	User object.
+	 * @return int
 	 */
 	public function getUserIdByActivationCode( User $user ): int{
 		try {
@@ -51,9 +60,11 @@ class System {
 		}
 	}
 	
-	/*
-	 * The activateAccount() fucntion verfies the email address
-	 * of the new user and makes the account active.
+	/**
+	 * Activates a user account.
+	 * 
+	 * @param User $user	User Object.
+	 * @return bool
 	 */
 	public function activateAccount(User $user): bool {
 		if($user->activate()){
@@ -63,9 +74,11 @@ class System {
 		}
 	}
 	
-	/*
-	 * The changePassword() function allows a user or administrator to
-	 * change a password for an account.
+	/**
+	 * Allows a password to be changed for the account.
+	 * 
+	 * @param User $user	User object.
+	 * @return bool
 	 */
 	public function changePassword(User $user): bool {
 		try {
@@ -76,9 +89,11 @@ class System {
 		}
 	}
 	
-	/*
-	 * The forgotPassword() function allows a user to generate a new password
-	 * which is sent to the users account via email.
+	/**
+	 * Allows a user to have a new random password sent to their email address.
+	 * 
+	 * @param User $user	User Object.
+	 * @return User
 	 */
 	public function forgotPassword(User $user): User {
 		try {
@@ -99,9 +114,11 @@ class System {
 		}
 	}
 	
-	/*
-	 * The addUser() function allows an administrator to add a user and
-	 * pre-activate the account.
+	/**
+	 * Allows an administrator to add a user to the system.
+	 * 
+	 * @param User $user	User object.
+	 * @return bool
 	 */
 	public function addUser(User $user): bool {
 		
@@ -120,8 +137,11 @@ class System {
 		}
 	}
 	
-	/*
-	 * The updateUser() function allows an administrator to update a user.
+	/**
+	 * Allows an administrator to update a user.
+	 * 
+	 * @param User $user	User Object.
+	 * @return bool
 	 */
 	public function updateUser(User $user): bool {
 		try {
@@ -133,8 +153,11 @@ class System {
 		}
 	}
 	
-	/*
-	 * The getUser() function allows an administrator to retrieve a user.
+	/**
+	 * Retrieves a user based on the users ID.
+	 * 
+	 * @param User $user	User Object.
+	 * @return User
 	 */
 	public function getUser(User $user): User {
 		$u = new User ( $this->db );
@@ -147,8 +170,13 @@ class System {
 		return $u;
 	}
 	
-	/*
-	 * The getUsers() function allows an administrator to retrieve all users.
+	/**
+	 * Retrieves all users and returns them based on number of pages and number
+	 * of users per page.
+	 * 
+	 * @param int $pageNumber		The page number.
+	 * @param int $usersPerPage		The number of users listed on the page.
+	 * @return array
 	 */
 	public function getUsers(int $pageNumber, int $usersPerPage): array {
 		$usersArray = array();
@@ -162,9 +190,11 @@ class System {
 		return $usersArray;
 	}
 	
-	/*
-	 * The disableUser() function allows an administrator to disable a users
-	 * account.
+	/**
+	 * Allows an administrator to suspend an account.
+	 * 
+	 * @param User $user	User object.
+	 * @return bool
 	 */
 	public function disableUser(User $user): bool {
 		if ($user->userID > 0) {
@@ -181,9 +211,12 @@ class System {
 		}
 	}
 	
-	/*
-	 * The deleteUser() function allows an administrator to completely delete
-	 * an account and all associated database entries.
+	/**
+	 * Allows an administrator to completely delete an account and all its
+	 * associated entries.
+	 * 
+	 * @param User $user	User Object.
+	 * @return bool
 	 */
 	public function deleteUser(User $user): bool {
 		if ($user->userID > 0) {
@@ -240,9 +273,12 @@ class System {
 		}
 	}
 	
-	/*
-	 * The addCategory() function allows and administrator to add a Category and
+	/**
+	 * Allows and administrator to add a Category and
 	 * specify its position in the heirachy.
+	 * 
+	 * @param Category $category	Category Object.
+	 * @return bool
 	 */
 	public function addCategory(Category $category): bool {
 		try {
@@ -260,9 +296,12 @@ class System {
 		}
 	}
 	
-	/*
-	 * The updateCategory() function allows and administrator to update a Category and
+	/**
+	 * Allows and administrator to update a Category and
 	 * its position in the heirachy.
+	 * 
+	 * @param Category $category	Category object.
+	 * @return bool
 	 */
 	public function updateCategory(Category $category): bool {
 		if ($category->update ()) {
@@ -272,9 +311,12 @@ class System {
 		}
 	}
 	
-	/*
-	 * The deleteCategory() function allows and administrator to delete a Category and
+	/**
+	 * Allows and administrator to delete a Category and
 	 * all associated database content.
+	 * 
+	 * @param Category $category	Category object.
+	 * @return bool
 	 */
 	public function deleteCategory(Category $category): bool {
 		if ($category->categoryID > 0) {
@@ -322,8 +364,11 @@ class System {
 		}
 	}
 	
-	/*
-	 * The getCategory() function retrieves a Category.
+	/**
+	 * Retrieves a Category.
+	 * 
+	 * @param Category $category	Category object.
+	 * @return Category
 	 */
 	public function getCategory(Category $category): Category {
 		$c = new Category ( $this->db );
@@ -336,8 +381,10 @@ class System {
 		return $c;
 	}
 	
-	/*
-	 * The getCategories() function retrieves all Categories.
+	/**
+	 * Retrieves all Categories.
+	 * 
+	 * @return array
 	 */
 	public function getCategories(): array {
 		$c = array ();
@@ -346,8 +393,11 @@ class System {
 		return $c;
 	}
 	
-	/*
-	 * The getCategoriesIn() method retrieves all Categories for the given parent category.
+	/**
+	 * Retrieves all Categories for the given parent category.
+	 * 
+	 * @param int $parentID		The ID of the parent category.
+	 * @return array
 	 */
 	public function getCategoriesIn(int $parentID): array {
 		$c = array ();
@@ -360,8 +410,11 @@ class System {
 		return $c;
 	}
 	
-	/*
-	 * The countCategoryItems() method counts the number of items in a category.
+	/**
+	 * Counts the number of items in a category.
+	 * 
+	 * @param Category $category	Category object.
+	 * @return int
 	 */
 	public function countCategoryItems(Category $category): int {
 		$numCategoryItems = 0;
