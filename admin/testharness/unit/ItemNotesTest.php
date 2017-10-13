@@ -17,8 +17,9 @@ require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/Note.php';
 require_once dirname(__FILE__) . '/../../../model/ItemNotes.php';
-require_once dirname(__FILE__) . '/../../../model/ItemNotesException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
+require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 class ItemNotesTest extends PicnicTestCaseOld {
 
@@ -63,6 +64,10 @@ class ItemNotesTest extends PicnicTestCaseOld {
 		}
 	}
 
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
+	}
+
 	protected function createDefaultSut(){
 		return new ItemNotes(TestPDO::getInstance());
 	}
@@ -80,11 +85,11 @@ class ItemNotesTest extends PicnicTestCaseOld {
 	}
 
 	protected function getExpectedExceptionTypeForUnknownId() {
-		return ItemNotesException::class;
+		return ModelException::class;
 	}
 	
 	protected function getExpectedExceptionTypeForUnsetId() {
-		return ItemNotesException::class;
+		return ModelException::class;
 	}
 
 	protected function getExpectedAttributesForGet() {
@@ -176,7 +181,7 @@ class ItemNotesTest extends PicnicTestCaseOld {
 			$sut->getItemNote();
 			$this->assertEquals(2, $sut->item_noteID);
 			$this->assertEquals(1, $sut->itemID);
-		} catch (ItemNotesException $e) {
+		} catch (ModelException $e) {
 			// Do Nothing
 		}
 	} 

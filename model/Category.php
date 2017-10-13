@@ -75,7 +75,7 @@ class Category {
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
 		} else {
-			throw new CategoryException ( self::ERROR_CATEGORY_NOT_EXIST );
+			throw new ModelException ( self::ERROR_CATEGORY_NOT_EXIST );
 		}
 		return $this;
 	}
@@ -95,8 +95,7 @@ class Category {
 			if($this->parentID > 0){
 				$this->categoryID = $this->parentID;
 				if(!$this->exists()){
-					throw new CategoryException ( self::ERROR_PARENT_ID_NOT_EXIST);
-					return 0;
+					throw new ModelException ( self::ERROR_PARENT_ID_NOT_EXIST);
 				}
 				$this->categoryID = NULL;
 			}
@@ -108,8 +107,7 @@ class Category {
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
 			if($row['numCategories'] > 1 && $this->parentID == 0){
-				throw new CategoryException ( self::ERROR_PARENT_ID_NONE);
-				return 0;
+				throw new ModelException ( self::ERROR_PARENT_ID_NONE);
 			}
 			
 			$query = "INSERT INTO Categories
@@ -125,12 +123,10 @@ class Category {
 			if($stmt->rowCount() > 0){
 				return $this->_categoryID = $this->db->lastInsertId ();
 			} else {
-				throw new CategoryException ( self::ERROR_CATEGORY_NOT_CREATED);
-				return 0;
+				throw new ModelException ( self::ERROR_CATEGORY_NOT_CREATED);
 			}
 		} catch (ValidationException $e) {
-			throw new CategoryException ( $e->getMessage() );
-			return 0;
+			throw new ModelException ( $e->getMessage() );
 		}
 	}
 	

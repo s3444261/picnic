@@ -8,7 +8,7 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class CategoryItemsException extends Exception {
+class ModelException extends Exception {
 	protected $message;
 	function __construct($message) {
 		$this->message = $message;

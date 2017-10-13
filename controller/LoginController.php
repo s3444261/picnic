@@ -50,7 +50,6 @@ class LoginController extends BaseController {
 						try {
 							if ($user->login ())
 							{
-								$_SESSION ['message'] = 'Logged In';
 								$_SESSION[MODULE] = true;
 							} else {
 								$_SESSION ['error'] = 'Not Logged In - No current session.';

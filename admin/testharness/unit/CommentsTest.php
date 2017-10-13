@@ -15,8 +15,9 @@ require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
 require_once dirname(__FILE__) . '/../../../model/Comments.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
-require_once dirname(__FILE__) . '/../../../model/CommentException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
+require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 class CommentsTest extends PHPUnit\Framework\TestCase{
 
@@ -81,9 +82,13 @@ class CommentsTest extends PHPUnit\Framework\TestCase{
 				try {
 					$c->set();
 					$k++;
-				} catch (CommentException $e) {	}
+				} catch (ModelException $e) {	}
 			}
 		}
+	}
+
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
 	}
 
 	protected function createDefaultSut(){

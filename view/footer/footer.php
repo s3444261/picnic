@@ -1,3 +1,13 @@
+<?php
+/*
+ * Authors:
+ * Derrick, Troy - s3202752@student.rmit.edu.au
+ * Foster, Diane - s3387562@student.rmit.edu.au
+ * Goodreds, Allen - s3492264@student.rmit.edu.au
+ * Kinkead, Grant - s3444261@student.rmit.edu.au
+ * Putro, Edwan - edwanhp@gmail.com
+ */
+?>
 
 <!--<hr />-->
 <div class="container-fluid">
@@ -8,26 +18,21 @@
         <div class="col-9">
             <!-- Footer -->
             <footer>
-                <?php
-                /*
-                 * Authors:
-                 * Derrick, Troy - s3202752@student.rmit.edu.au
-                 * Foster, Diane - s3387562@student.rmit.edu.au
-                 * Goodreds, Allen - s3492264@student.rmit.edu.au
-                 * Kinkead, Grant - s3444261@student.rmit.edu.au
-                 * Putro, Edwan - edwanhp@gmail.com
-                 */
+                <ul class="nav justify-content-center top-n-tail">
+                    <li class="nav-item"><a class="nav-link" href="<?php echo BASE . '/About' ?>">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo BASE . '/TermsOfService' ?>">Terms of Service</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo  BASE . '/PrivacyPolicy' ?>">Privacy policy</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo  BASE . '/Home' ?>">Search</a></li>
 
-                echo '<ul class="nav justify-content-center top-n-tail">';
-				echo '<li><a href="' . BASE . '/About">About</a></li>';
-                echo '<li><a href="' . BASE . '/TermsOfService">Terms of Service</a></li>';
-                echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/PrivacyPolicy">Privacy policy</a></li>';
-                echo '<li class="nav-item"><a class="nav-link" href="#">Search</a></li>';
-                echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/Signin">Login</a></li>';
-                echo '<li class="nav-item"><a class="nav-link" href="' . BASE . '/Category/View">View catalogue</a></li>';
+                    <?php if (isset ( $_SESSION [MODULE] )) { ?>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo BASE  . '/Logout' ?>">Logout</a></li>
+                    <?php } else { ?>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo BASE . '/Signin' ?>">Login</a></li>
+                    <?php } ?>
 
-                echo '</ul>';
-                ?>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo BASE  . '/Category/View' ?>">View catalogue</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo BASE  . '/CreateDB' ?>">Create DB</a></li>
+                </ul>
             </footer>
         </div> <!-- end col-9 -->
         <!-- Right margin -->

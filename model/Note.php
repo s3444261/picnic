@@ -62,7 +62,7 @@ class Note {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new NoteException('Could not retrieve note.');
+			throw new ModelException('Could not retrieve note.');
 		}
 	}
 	

@@ -65,7 +65,7 @@ class Comment {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new CommentException('Could not retrieve comment.');
+			throw new ModelException('Could not retrieve comment.');
 		}
 	}
 	

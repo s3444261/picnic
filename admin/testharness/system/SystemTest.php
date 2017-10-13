@@ -191,17 +191,7 @@ require_once dirname(__FILE__) . '/../../../model/UserItems.php';
 require_once dirname(__FILE__) . '/../../../model/UserRatings.php';
 require_once dirname(__FILE__) . '/../../../model/Users.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
-require_once dirname(__FILE__) . '/../../../model/CategoryException.php';
-require_once dirname(__FILE__) . '/../../../model/CategoriesException.php';
-require_once dirname(__FILE__) . '/../../../model/CategoryItemsException.php';
-require_once dirname(__FILE__) . '/../../../model/CommentException.php';
-require_once dirname(__FILE__) . '/../../../model/ItemException.php';
-require_once dirname(__FILE__) . '/../../../model/ItemCommentsException.php';
-require_once dirname(__FILE__) . '/../../../model/ItemNotesException.php';
-require_once dirname(__FILE__) . '/../../../model/NoteException.php';
-require_once dirname(__FILE__) . '/../../../model/UserException.php';
-require_once dirname(__FILE__) . '/../../../model/UsersException.php';
-require_once dirname(__FILE__) . '/../../../model/UserRatingsException.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 class SystemTest extends PHPUnit\Framework\TestCase {
@@ -341,7 +331,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		// Insert additional categories
 		$c = new Category($pdo);
@@ -349,11 +339,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		$args1 = [
 				self::USER 			=> self::USER_ONE,
@@ -379,14 +369,18 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			${'u' . $i} = new User($pdo, ${'args' . $i});
 			try {
 				${'u' . $i}->set();
-			} catch (UserException $e) { }
+			} catch (ModelException $e) { }
 			try {
 				${'u' . $i}->get();
-			} catch (UserException $e) { }
+			} catch (ModelException $e) { }
 			${'u' . $i}->activate();
 		}	
 	}
-	
+
+	protected function tearDown(): void {
+		TestPDO::CleanUp();
+	}
+
 	protected function populateCategories(): void {
 		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser();
@@ -399,7 +393,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$root->{self::CATEGORY_NAME} = self::ROOT_CATEGORY_NAME;
 		try {
 			$root->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		// Insert additional categories
 		$j = 1;
@@ -412,7 +406,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			$c->{self::CATEGORY_NAME} = 'cat' . $i;
 			try {
 				$c->set();
-			} catch (CategoryException $e) {}
+			} catch (ModelException $e) {}
 		}
 	}
 	
@@ -436,7 +430,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$item = new Item($pdo, $args);
 		try {
 			$item->set();
-		} catch (ItemException $e) {}
+		} catch (ModelException $e) {}
 		
 		$args2 = [
 				self::ITEM_ID 		=> self::ITEM_ID_2,
@@ -451,7 +445,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$item = new Item($pdo, $args2);
 		try {
 			$item->set();
-		} catch (ItemException $e) {}
+		} catch (ModelException $e) {}
 		
 		$args3 = [
 				self::ITEM_ID 		=> self::ITEM_ID_3,
@@ -466,7 +460,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$item = new Item($pdo, $args3);
 		try {
 			$item->set();
-		} catch (ItemException $e) {}
+		} catch (ModelException $e) {}
 	}
 	
 	protected function populateCategoryItems(): void {
@@ -482,7 +476,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		// Insert additional categories
 		$c = new Category($pdo);
@@ -490,16 +484,16 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		$c->{self::PARENT_ID} = self::PARENT_ID_2;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_4;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		// Populate the Items Table
 		for($i = 1; $i <= 100; $i++){
@@ -513,7 +507,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			]);
 			try {
 				$item->set();
-			} catch (ItemException $e) {}
+			} catch (ModelException $e) {}
 		}
 		
 		// Populate the CategoryItems Table
@@ -525,7 +519,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			]);
 			try {
 				$ci->set();
-			} catch (CategoryItemsExceptionException $e) {}
+			} catch (ModelExceptionException $e) {}
 			if($i % 34 == 0){
 				$j++;
 			}
@@ -544,7 +538,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		// Insert additional categories
 		$c = new Category($pdo);
@@ -552,24 +546,24 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		// Populate the Users table.
 		for($i = 1; $i <= 400; $i++){
 			${'u' . $i} = new User($pdo, [self::USER => 'user' . $i, self::EMAIL => 'email' . $i . '@gmail.com', self::PASSWORD => 'PassWord' . $i]);
 			try {
 				${'u' . $i}->set();
-			} catch (UserException $e) {}
+			} catch (ModelException $e) {}
 			try {
 				${'u' . $i}->get();
-			} catch (UserException $e) { }
+			} catch (ModelException $e) { }
 			try {
 				${'u' . $i}->activate();
-			} catch (UserException $e) {}
+			} catch (ModelException $e) {}
 		}
 	}
 	
@@ -587,7 +581,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		// Insert additional categories
 		$c = new Category($pdo);
@@ -595,11 +589,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
 		try {
 			$c->set();
-		} catch (CategoryException $e) {}
+		} catch (ModelException $e) {}
 		
 		// Populate the Users table.
 		
@@ -607,13 +601,13 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			${'u' . $i} = new User($pdo, [self::USER => 'user' . $i, self::EMAIL => 'email' . $i . '@gmail.com', self::PASSWORD => 'PassWord' . $i]);
 			try {
 				${'u' . $i}->set();
-			} catch (UserException $e) {}
+			} catch (ModelException $e) {}
 			try {
 				${'u' . $i}->get();
-			} catch (UserException $e) { }
+			} catch (ModelException $e) { }
 			try {
 				${'u' . $i}->activate();
-			} catch (UserException $e) {}
+			} catch (ModelException $e) {}
 		}
 	}
 	
@@ -762,7 +756,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		try {
 			$sut->set();
 			$sut->userID = $sut->get();
-		} catch (UserException $e) {}
+		} catch (ModelException $e) {}
 		$sut->activate = self::INVALID_ACTIVATION_CODE;
 		$system->getUserIdByActivationCode($sut);
 		if(isset($_SESSION['error'])){
@@ -780,7 +774,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		try {
 			$sut->set();
 			$sut->userID = $sut->get();
-		} catch (UserException $e) {}
+		} catch (ModelException $e) {}
 		$this->assertGreaterThan(0, $system->getUserIdByActivationCode($sut));
 	}
 	
@@ -794,12 +788,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
 		try {
 			$sut->userID = $sut->set();
-		} catch (UserException $e) {
+		} catch (ModelException $e) {
 			$this->assertFalse(true);
 		}
 		try {
 			$sut->get();
-		} catch (UserException $e) {
+		} catch (ModelException $e) {
 			$this->assertFalse(true);
 		}
 		$sut->userID = self::INVALID_ID;
@@ -813,12 +807,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
 		try {
 			$sut->userID = $sut->set();
-		} catch (UserException $e) {
+		} catch (ModelException $e) {
 			$this->assertFalse(true);
 		}
 		try {
 			$sut->get();
-		} catch (UserException $e) {
+		} catch (ModelException $e) {
 			$this->assertFalse(true);
 		}
 		$this->assertTrue($system->activateAccount($sut));
@@ -890,13 +884,13 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = new User($pdo, [self::USER_ID => 1, self::PASSWORD => self::PASSWORD_ADD]);
 		try {
 			$sut->get();
-		} catch (UserException $e) {}
+		} catch (ModelException $e) {}
 		$oldPassword = $sut->password;
 		$sut->password = self::PASSWORD_ADD;
 		$this->assertTrue($system->changePassword($sut));
 		try {
 			$sut->get();
-		} catch (UserException $e) {}
+		} catch (ModelException $e) {}
 		$newPassword = $sut->get()->password;
 		if(strlen($oldPassword) > 0 && strlen($newPassword) > 0 && $oldPassword != $newPassword){
 			$this->assertTrue(true);
@@ -1283,7 +1277,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		 		$start++;
 		 	}
 		 	
-		} catch (UsersException $e) {}	 
+		} catch (ModelException $e) {}	 
 	}
 	
 	/*

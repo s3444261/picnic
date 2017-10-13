@@ -20,10 +20,24 @@
           <a class="nav-link active" href="<?php echo BASE; ?>/Home">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">View listings</a>
+          <a class="nav-link" href="<?php echo BASE; ?>/Category/View">View listings</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">My account</a>
+        <li class="nav-item">
+          <a class="nav-link
+            <?php if (isset ( $_SESSION [MODULE] )) {
+                echo 'dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"';
+            } else {
+                echo '" href="' . BASE . '/Signin"';
+            } ?>">
+
+			  <?php
+			  if (isset ( $_SESSION [MODULE] )) {
+				  echo 'My account ( ' . $_SESSION ['user'] .' )';
+			  } else {
+			      echo 'Log In';
+              }
+			  ?>
+          </a>
           <div class="dropdown-menu">
             <?php
             if (isset ( $_SESSION [MODULE] )) {
@@ -48,21 +62,6 @@
                       <a class="dropdown-item" href="' . BASE . '/Signin">Sign-in</a>';
                   }
             ?>
-            <?php
-            if (isset ( $_SESSION [MODULE] )) {
-                echo '<div class="dropdown-divider"></div>
-                      <a class="dropdown-item disabled" href="' . BASE . '/CreateDB">Create DB</a>';
-            } else {
-                // Remove this on the Production Server
-                echo '<div class="dropdown-divider"></div>
-                      <a class="dropdown-item disabled" href="' . BASE . '/CreateDB">Create DB</a>';
-            }
-            ?>
-            <a class="dropdown-item disabled" href="#">Test</a>
-            <a class="dropdown-item disabled" href="#">Create DB</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Logout</a>
-            <!--<a class="dropdown-item" href="#">Separated link</a>-->
           </div>
         </li>
       </ul>
