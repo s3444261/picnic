@@ -27,7 +27,7 @@
         <div class="container">
     			<?php foreach ( $this->data['subCategories'] as $category ) { ?>
             <div class="col-md-4">
-              <a class="btn btn-secondary" href="<?php echo BASE.'/Category/View/'.$category['categoryID'] ?>" role="button"><?php echo $category['category'] ?></a>
+              <a class="" href="<?php echo BASE.'/Category/View/'.$category['categoryID'] ?>" role="button"><?php echo $category['category'] ?></a>
             </div>
     			<?php } ?>
         </div>
