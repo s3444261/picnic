@@ -21,6 +21,8 @@ class Note {
 	private $_created_at;
 	private $_updated_at;
 	private $db;
+	
+	const ERROR_NOTE_ID_NOT_EXIST = 'The Note ID does not exist!';
 
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
@@ -43,12 +45,15 @@ class Note {
 		$this->$name = $value;
 	}
 	
-	/*
-	 * The get() function first confirms that the item object exists in the database.
-	 * It then retrieves the attributes from the database. The attributes are set and
-	 * true is returned.
+	/**
+	 * First confirms that the note object exists in the database.  If it doesn't, an
+	 * exception is thrown.  If it does exist, it then retrieves the attributes from 
+	 * the database. The attributes are set and true is returned.
+	 * 
+	 * @throws ModelException
+	 * @return Note
 	 */
-	public function get() {
+	public function get(): Note {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Notes WHERE noteID = :noteID";
 
@@ -61,37 +66,48 @@ class Note {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new ModelException('Could not retrieve note.');
+			throw new ModelException(self::ERROR_NOTE_ID_NOT_EXIST);
 		}
 	}
 	
-	/*
-	 * The set() function inserts the object paramaters into the
-	 * database. The objectID is returned.
+	/**
+	 * Inserts the Note object paramaters into the
+	 * database. The noteID is returned.
+	 * 
+	 * @return int
 	 */
-	public function set() {
-		$query = "INSERT INTO Notes
+	public function set(): int {
+		$v = new Validation();
+		try {
+			$v->emptyField($this->note);
+			
+			$query = "INSERT INTO Notes
 					SET note = :note,
 						created_at = NULL";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':note', $this->_note );
-		$stmt->execute ();
-		if($stmt->rowCount() > 0){
-			$this->_noteID = $this->db->lastInsertId ();
-			return $this->_noteID;
-		} else {
-			return 0;
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':note', $this->_note );
+			$stmt->execute ();
+			if($stmt->rowCount() > 0){
+				$this->_noteID = $this->db->lastInsertId ();
+				return $this->_noteID;
+			} else {
+				return 0;
+			}
+		} catch (ValidationException $e) {
+			throw new ModelException($e->getMessage());
 		}
 	}
 	
-	/*
-	 * The update() function confirms the object already exists in the database.
+	/**
+	 * Confirms the object already exists in the database.
 	 * If it does, all the current attributes are retrieved. Where the new
 	 * attributes have not been set, they are set with the values already existing in
 	 * the database.
+	 * 
+	 * @return bool
 	 */
-	public function update() {
+	public function update(): bool {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Notes WHERE noteID = :noteID";
@@ -115,15 +131,17 @@ class Note {
 			$stmt->execute ();
 			return true;
 		} else {
-			return false;
+			throw new ModelException(self::ERROR_NOTE_ID_NOT_EXIST);
 		}
 	}
 	
-	/*
-	 * The delete() checks the object exists in the database. If it does,
+	/**
+	 * Checks the object exists in the database. If it does,
 	 * true is returned.
+	 * 
+	 * @return bool
 	 */
-	public function delete() {
+	public function delete(): bool {
 		if ($this->exists ()) {
 			
 			$query = "DELETE FROM Notes
@@ -138,15 +156,17 @@ class Note {
 				return false;
 			}
 		} else {
-			return false;
+			throw new ModelException(self::ERROR_NOTE_ID_NOT_EXIST);
 		}
 	}
 	
-	/*
-	 * The exists() function checks to see if the id exists in the database,
+	/**
+	 * Checks to see if the noteID exists in the database,
 	 * if it does, true is returned.
+	 * 
+	 * @return bool
 	 */
-	public function exists() {
+	public function exists(): bool {
 		if ($this->_noteID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Notes WHERE noteID = :noteID";
 
