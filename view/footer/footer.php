@@ -25,9 +25,9 @@
                     <li class="nav-item"><a class="nav-link" href="<?php echo  BASE . '/Home' ?>">Search</a></li>
 
                     <?php if (isset ( $_SESSION [MODULE] )) { ?>
-                        <li class="nav-item"><a class="nav-link" href="<?php echo BASE  . '/Logout' ?>">Logout</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo BASE  . '/Account/Logout' ?>">Logout</a></li>
                     <?php } else { ?>
-                        <li class="nav-item"><a class="nav-link" href="<?php echo BASE . '/Signin' ?>">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo BASE . '/Account/Login' ?>">Login</a></li>
                     <?php } ?>
 
                     <li class="nav-item"><a class="nav-link" href="<?php echo BASE  . '/Category/View' ?>">View catalogue</a></li>

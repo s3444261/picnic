@@ -8,54 +8,56 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 ?>
-<div class="container-fluid">
-	<h1>Change Password</h1>
-	<div class="editUser">
-		<form data-toggle="validator" role="form" class="form-inline"
-			method="post" action="<?php echo BASE . '/ChangePassword'; ?>">
-			<div class="row">
-				<div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
-				<div class="col-xs-8 col-sm-8 col-md-4 col-lg-4 text-center">
-					<div class="form-group">
-						<label class="sr-only" for="password">Password</label> <input
-							type="password" class="form-control" name="password"
-							id="password" placeholder="Current Password">
-					</div>
-				</div>
-				<div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
-			</div>
-			<div class="row">
-				<div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
-				<div class="col-xs-8 col-sm-8 col-md-4 col-lg-4 text-center">
-					<div class="form-group">
-						<label class="sr-only" for="newPassword">Password</label> <input
-							type="password" class="form-control" name="newPassword"
-							id="newPassword" placeholder="New Password">
-					</div>
-				</div>
-				<div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
-			</div>
-			<div class="row">
-				<div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
-				<div class="col-xs-8 col-sm-8 col-md-4 col-lg-4 text-center">
-					<div class="form-group">
-						<label class="sr-only" for="confirm">Confirm Password</label> <input
-							type="password" class="form-control" name="confirm" id="confirm"
-							placeholder="Confirm Password">
-					</div>
-				</div>
-				<div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
-			</div>
-			<div class="row">
-				<div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
-				<div class="col-xs-8 col-sm-8 col-md-4 col-lg-4 text-center">
-					<div class="form-group">
-						<button type="submit" name="changePassword" id="changePassword"
-							class="btn btn-primary">Change Password</button>
-					</div>
-				</div>
-			</div>
-			<div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
-		</form>
-	</div>
+<div class="container">
+    <div class="jumbotron panel panel-default">
+        <h2>Change Password</h2>
+        <div class="editUser">
+            <form data-toggle="validator" role="form" method="post" action="DoChangePassword">
+                <div class="row">
+                    <div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
+                    <div class="col-xs-8 col-sm-8 col-md-4 col-lg-4 text-center">
+                        <div class="form-group">
+                            <label class="sr-only" for="password">Password</label> <input
+                                    type="password" class="form-control" name="password"
+                                    id="password" placeholder="Current Password">
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
+                    <div class="col-xs-8 col-sm-8 col-md-4 col-lg-4 text-center">
+                        <div class="form-group">
+                            <label class="sr-only" for="newPassword">Password</label> <input
+                                    type="password" class="form-control" name="newPassword"
+                                    id="newPassword" placeholder="New Password">
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
+                    <div class="col-xs-8 col-sm-8 col-md-4 col-lg-4 text-center">
+                        <div class="form-group">
+                            <label class="sr-only" for="confirm">Confirm Password</label> <input
+                                    type="password" class="form-control" name="confirm" id="confirm"
+                                    placeholder="Confirm Password">
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
+                    <div class="col-xs-8 col-sm-8 col-md-4 col-lg-4 text-center">
+                        <div class="form-group">
+                            <button type="submit" name="changePassword" id="changePassword"
+                                    class="btn btn-primary">Change Password
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-4 col-lg-4"></div>
+            </form>
+        </div>
+    </div>
 </div>

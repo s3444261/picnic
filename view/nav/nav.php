@@ -27,7 +27,7 @@
             <?php if (isset ( $_SESSION [MODULE] )) {
                 echo 'dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"';
             } else {
-                echo '" href="' . BASE . '/Signin"';
+                echo '" href="' . BASE . '/Account/Login"';
             } ?>">
 
 			  <?php
@@ -54,12 +54,12 @@
             <?php
             if (isset ( $_SESSION [MODULE] )) {
                 echo '<div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="' . BASE . '/ChangePassword">Change Password</a>
-                      <a class="dropdown-item" href="' . BASE . '/Logout">Logout</a>';
+                      <a class="dropdown-item" href="' . BASE . '/Account/ChangePassword">Change Password</a>
+                      <a class="dropdown-item" href="' . BASE . '/Account/Logout">Logout</a>';
             } else {
                 echo '<div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="' . BASE . '/Signup">Sign-up</a>
-                      <a class="dropdown-item" href="' . BASE . '/Signin">Sign-in</a>';
+                      <a class="dropdown-item" href="' . BASE . '/Account/Register">Sign-up</a>
+                      <a class="dropdown-item" href="' . BASE . '/Account/Login">Sign-in</a>';
                   }
             ?>
           </div>
