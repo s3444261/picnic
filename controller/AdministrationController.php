@@ -24,6 +24,11 @@ class AdministrationController {
 			$pagerData->totalItems = sizeof($h->getUsers(1, 1000000)); // temporary, until we get a countUsers() method.
 
 			$view = new View();
+
+			$navData = new NavData();
+			$navData->Selected = NavData::Account;
+			$view->SetData('navData', $navData);
+
 			$view->SetData('users', $h->getUsers($pagerData->pageNumber, $pagerData->itemsPerPage));
 			$view->SetData('pagerData', $pagerData);
 			$view->Render('administration');
