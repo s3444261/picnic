@@ -22,6 +22,7 @@ class CategoryItems {
 	
 	const ERROR_CATEGORY_NOT_EXIST = 'The categoryItem does not exist!';
 	const ERROR_CATEGORYITEM_EXISTS = 'The categoryItem already exists!';
+	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
 
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
@@ -44,10 +45,13 @@ class CategoryItems {
 		$this->$name = $value;
 	}
 	
-	/*
-	 * The get() function first confirms that the object exists in the database.
+	/**
+	 * Confirms that the object exists in the database.
 	 * It then retrieves the attributes from the database. The attributes are set and
 	 * true is returned.
+	 * 
+	 * @throws ModelException
+	 * @return CategoryItems
 	 */
 	public function get(): CategoryItems {
 		if ($this->exists ()) {
@@ -65,11 +69,14 @@ class CategoryItems {
 		return $this;
 	}
 	
-	/*
-	 * The set() function first checks to see if the object parameters already
+	/**
+	 * First checks to see if the object parameters already
 	 * exist.  If they do the objectID is retrieved and returned.  If they 
 	 * don't, they are insserted into the table and the objectID is
 	 * retrieved and returned.
+	 * 
+	 * @throws ModelException
+	 * @return int
 	 */
 	public function set(): int {
 		$c = new Category($this->db);
@@ -113,11 +120,13 @@ class CategoryItems {
 		}
 	}
 	
-	/*
-	 * The update() function confirms the object already exists in the database.
+	/**
+	 * Confirms the object already exists in the database.
 	 * If it does, all the current attributes are retrieved. Where the new
 	 * attributes have not been set, they are set with the values already existing in
 	 * the database.
+	 * 
+	 * @return bool
 	 */
 	public function update(): bool {
 		if ($this->exists ()) {
@@ -174,9 +183,11 @@ class CategoryItems {
 		}
 	}
 	
-	/*
-	 * The delete() checks the object exists in the database. If it does,
+	/**
+	 * Checks the object exists in the database. If it does,
 	 * true is returned.
+	 * 
+	 * @return bool
 	 */
 	public function delete(): bool {
 		if ($this->exists ()) {
@@ -197,9 +208,11 @@ class CategoryItems {
 		}
 	}
 	
-	/*
-	 * The exists() function checks to see if the id exists in the database,
+	/**
+	 * Checks to see if the id exists in the database,
 	 * if it does, true is returned.
+	 * 
+	 * @return bool
 	 */
 	public function exists(): bool {
 		if ($this->_category_itemID > 0) {
@@ -218,26 +231,37 @@ class CategoryItems {
 		}
 	}
 	
-	/*
-	 * Count number of occurrences of an item for a category.
+	/**
+	 * Counts number of occurrences of an item for a category.
+	 * 
+	 * @return int
 	 */
 	public function count(): int {
-		$query = "SELECT COUNT(*) as num
+		$category = new Category($this->db);
+		$category->categoryID = $this->categoryID;
+		if($category->exists()){
+			$query = "SELECT COUNT(*) as num
 							FROM Category_items
 							WHERE categoryID = :categoryID";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':categoryID', $this->_categoryID );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		return $row ['num'];
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':categoryID', $this->_categoryID );
+			$stmt->execute ();
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			return $row ['num'];
+		} else {
+			throw new ModelException(self::ERROR_CATEGORY_ID_NOT_EXIST);
+		}
 	}
 	
-	/*
-	 * getCategoryItems()
+	/**
+	 * Retrieves all the items for a the objects CategoryID.
+	 * 
+	 * @return array
 	 */
 	public function getCategoryItems(): array {
-			
+		
+		if($this->exists()){
 			$query = "SELECT * FROM Category_items
 					WHERE categoryID = :categoryID";
 			
@@ -253,11 +277,20 @@ class CategoryItems {
 				$objects[] = $item;
 			}
 			return $objects;
+		} else {
+			throw new ModelException(self::ERROR_CATEGORY_ID_NOT_EXIST);
+		}
 	}
 	
-	/*
-	 * The getCategoryItemsByPage() method retrieves all items held by the category and returns
+	/**
+	 * Retrieves all items held by the category and returns
 	 * them as an array of item objects.
+	 * 
+	 * @param int $pageNumber
+	 * @param int $itemsPerPage
+	 * @param string $status
+	 * @throws ModelException
+	 * @return array
 	 */
 	public function getCategoryItemsByPage(int $pageNumber, int $itemsPerPage, string $status): array {
 		$v = new Validation();
@@ -300,7 +333,9 @@ class CategoryItems {
 		}
 	}
 	
-	// Display Object Contents
+	/**
+	 * Prints the current instance attributes.
+	 */
 	public function printf() {
 		echo '<br /><strong>CategoryItem Object:</strong><br />';
 		
