@@ -37,7 +37,9 @@
  * TO DO
  * 
  * count(): int
- * TO DO
+ * -- testCountCategoryIDEmpty(): void
+ * -- testCountCategoryIDInvalid(): void
+ * -- testCountCategoryIDValid(): void
  * 
  * getCategoryItems(int $pageNumber, int $usersPerPage): array
  * -- testGetCategoryItemsPageNumberZero(): void
@@ -90,6 +92,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	const PAGE_NUMBER_ZERO = 0;
 	const ITEMS_PER_PAGE_ZERO = 0;
 	const ERROR_ZERO = 'Number must be greater than zero!';
+	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
 	
 
 	
@@ -162,6 +165,43 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 
 	protected function createDefaultSut() {
 		return new CategoryItems(TestPDO::getInstance());
+	}
+	
+	protected function createSutWithId($id){
+		return new CategoryItems(TestPDO::getInstance(), [self::CATEGORY_ITEM_ID=> $id]);
+	}
+	
+	protected function getValidId() {
+		return self::CATEGORY_ID_3;
+	}
+	
+	protected function getInvalidId() {
+		return 5000;
+	}
+	
+	/*
+	 * count(): int
+	 */
+	
+	public function testCountCategoryIDEmpty(): void {
+		$sut = $this->createDefaultSut();
+		$this->expectExceptionMessage(self::ERROR_CATEGORY_ID_NOT_EXIST);
+		$sut->count();
+	}
+	
+	public function testCountCategoryIDInvalid(): void {
+		$sut = $this->createDefaultSut();
+		$sut->categoryID = $this->getInvalidID();
+		$this->expectExceptionMessage(self::ERROR_CATEGORY_ID_NOT_EXIST);
+		$sut->count();
+	}
+	
+	public function testCountCategoryIDValid(): void {
+		$sut = $this->createDefaultSut();
+		$sut->categoryID = $this->getValidID();
+		try {
+			$this->assertEquals(34, $sut->count());
+		} catch (Exception $e) {}
 	}
 
 	/*

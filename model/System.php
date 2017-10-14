@@ -389,8 +389,12 @@ class System {
 	public function getCategories(): array {
 		$c = array ();
 		$cat = new Categories( $this->db );
-		$c = $cat->getCategories ();
-		return $c;
+		try {
+			$c = $cat->getCategories ();
+			return $c;
+		} catch (Exception $e) {
+			$_SESSION ['error'] = $e->getMessage ();
+		}
 	}
 	
 	/**
@@ -420,9 +424,13 @@ class System {
 		$numCategoryItems = 0;
 		$ci = new CategoryItems ( $this->db );
 		$ci->categoryID = $category->categoryID;
-		$numCategoryItems = $ci->count ();
-		
-		return $numCategoryItems;
+		try {
+			$numCategoryItems = $ci->count ();
+			return $numCategoryItems;
+		} catch (ModelException $e) {
+			$_SESSION ['error'] = $e->getMessage ();
+			return 0;
+		}
 	}
 	
 	/*
@@ -449,8 +457,13 @@ class System {
 		return $numItemNotes;
 	}
 	
-	/*
-	 * The getCategoryItemsByPage() function retrieves all items linked to a Category.
+	/**
+	 * Retrieves all items linked to a Category.
+	 * @param Category $category
+	 * @param int $pageNumber
+	 * @param int $itemsPerPage
+	 * @param string $status
+	 * @return array
 	 */
 	public function getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage, string $status): array {
 		$pn = $pageNumber;

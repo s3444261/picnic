@@ -142,7 +142,9 @@
  * -- testGetCategoriesInParentIdValid(): void
  * 
  * countCategoryItems(Category $category): int
- * TO DO
+ * -- testCountCategoryItemsCategoryIDEmpty(): void
+ * -- testCountCategoryItemsCategoryIDInvalid(): void
+ * -- testCountCategoryItemsCategoryIDValid(): void
  * 
  * countItemComments(Item $item): int
  * TO DO
@@ -237,7 +239,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ERROR_EMAIL_DUPLICATE = 'This email address is not available!';
 	const ERROR_PASSWORD_EMPTY = 'Password Error: Input is required!';
 	const ERROR_PASSWORD_INVALID = 'Password Error: Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!';
-	const INVALID_ID = 200;
+	const INVALID_ID = 2000;
 	const INVALID_ACTIVATION_CODE = 'ef4flslerlwldxl234lsdl3w';
 	const ERROR_ACTIVATION_CODE = 'Failed to retrieve UserID!';
 	const ERROR_ACTIVATION_CODE_SHORT = 'Activation code must the 32 characters in length!';
@@ -318,6 +320,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ITEMS_PER_PAGE = 6;
 	const ITEMS_PAGE_NUMBER_ZERO = 0;
 	const ITEMS_PER_PAGE_ZERO = 0;
+	
+	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
 	
 	protected function setUp(): void {
 		// Regenerate a fresh database.
@@ -1563,6 +1567,42 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			$this->assertSame('cat' . $number, $cat->category);
 			$i++;
 		}
+	}
+	
+	/*
+	 * countCategoryItems(Category $category): int
+	 */
+	public function testCountCategoryItemsCategoryIDEmpty(): void {
+		unset($_SESSION['error']);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$category = new Category($pdo);
+		$numItems = $system->countCategoryItems($category);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_CATEGORY_ID_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testCountCategoryItemsCategoryIDInvalid(): void {
+		unset($_SESSION['error']);
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$category = new Category($pdo);
+		$category->categoryID = self::INVALID_ID;
+		$numItems = $system->countCategoryItems($category);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_CATEGORY_ID_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testCountCategoryItemsCategoryIDValid(): void {
+		unset($_SESSION['error']);
+		$this->populateCategoryItems();
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$category = new Category($pdo);
+		$category->categoryID = self::CATEGORY_ID_3;
+		$this->assertEquals(34, $system->countCategoryItems($category));
 	}
 	
 	/*

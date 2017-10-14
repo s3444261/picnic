@@ -399,7 +399,14 @@ class Humphree {
 	}
 	
 	/**
-	 * The getCategoryItems() function retrieves all items linked to a Category.
+	 * Retrieves all items for an itemID and returns them based on the status of the item, the number
+	 * of items per page and the page of items requested.
+	 * 
+	 * @param int $categoryID
+	 * @param int $pageNumber
+	 * @param int $itemsPerPage
+	 * @param string $status
+	 * @return array
 	 */
 	public function getCategoryItemsByPage(int $categoryID, int $pageNumber, int $itemsPerPage, string $status): array {
 		$category = new Category ( $this->db );
