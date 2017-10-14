@@ -13,7 +13,7 @@
   <div class="row">
     <div class="col"></div> <!-- Left margin -->
     <div class="col-md-9">
-      <h1><?php echo $this->data['currentCategoryName'] ?></h1>
+      <h1 class="text-center"><?php echo $this->data['currentCategoryName'] ?></h1>
     </div>
     <div class="col"></div> <!-- Right margin -->
   </div> <!-- end .row -->
