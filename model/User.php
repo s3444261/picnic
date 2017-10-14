@@ -1,15 +1,10 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
- */
-
-/*
- * 
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <edwanhp@gmail.com>
  */
 require_once __DIR__ . '/../config/config.php';
 
@@ -107,10 +102,10 @@ class User {
 				$this->_updated_at = $row ['updated_at'];
 				return $this;
 			} else {
-				throw new UserException ( self::ERROR_USER_NOT_EXIST);
+				throw new ModelException ( self::ERROR_USER_NOT_EXIST);
 			}			
 		} catch (ValidationException $e) {
-			throw new UserException ( $e->getMessage() );
+			throw new ModelException ( $e->getMessage() );
 		}
 	}
 	
@@ -133,12 +128,10 @@ class User {
 				$this->_userID = $row ['userID'];
 				return $this->userID;
 			} else {
-				throw new UserException ( self::ERROR_EMAIL_NOT_EXIST);
-				return 0;
+				throw new ModelException ( self::ERROR_EMAIL_NOT_EXIST);
 			}
 		} catch ( ValidationException $e ) {
-			throw new UserException ( $e->getMessage () );
-			return 0;
+			throw new ModelException ( $e->getMessage () );
 		}
 	}
 	/*
@@ -182,12 +175,10 @@ class User {
 				$this->_userID = $this->db->lastInsertId ();
 				return $this->_userID;
 			} else {
-				throw new UserException ( self::ERROR_USER_SET);
-				return 0;
+				throw new ModelException ( self::ERROR_USER_SET);
 			}
 		} catch ( ValidationException $e ) {
-			throw new UserException ( $e->getMessage () );
-			return 0;
+			throw new ModelException ( $e->getMessage () );
 		}
 	}
 	
@@ -217,18 +208,16 @@ class User {
 				if ($this->user != $row ['user']) {
 					try {
 						$this->checkUserExist ();
-					} catch ( UserException $e ) {
-						throw new UserException ( $e->getMessage () );
-						return false;
+					} catch ( ModelException $e ) {
+						throw new ModelException ( $e->getMessage () );
 					}
 				}
 						
 				if ($this->email != $row ['email']) {
 					try {
 						$this->checkEmailExist ();
-					} catch ( UserException $e ) {
-						throw new UserException ( $e->getMessage () );
-						return false;
+					} catch ( ModelException $e ) {
+						throw new ModelException ( $e->getMessage () );
 					}
 				}
 								
@@ -251,16 +240,13 @@ class User {
 				if($stmt->rowCount() > 0){
 					return true;
 				} else {
-					throw new UserException ( self::ERROR_USER_NOT_UPDATED);
-					return false;
+					throw new ModelException ( self::ERROR_USER_NOT_UPDATED);
 				}
 			} catch ( ValidationException $e ) {
-				throw new UserException ( $e->getMessage () );
-				return false;
+				throw new ModelException ( $e->getMessage () );
 			}
 		} else {
-			throw new UserException ( self::ERROR_USER_NOT_EXIST);
-			return false;
+			throw new ModelException ( self::ERROR_USER_NOT_EXIST);
 		}
 	}
 	
@@ -291,20 +277,16 @@ class User {
 					if ($stmt->rowCount () > 0) {
 						return true;
 					} else {
-						throw new UserException ( self::ERROR_PASSWORD_NOT_UPDATED);
-						return false;
+						throw new ModelException ( self::ERROR_PASSWORD_NOT_UPDATED);
 					}
 				} catch ( ValidationException $e ) {
-					throw new UserException ( $e->getMessage () );
-					return false;
+					throw new ModelException ( $e->getMessage () );
 				}
 			} else {
-				throw new UserException ( self::ERROR_USER_NOT_EXIST);
-				return false;
+				throw new ModelException ( self::ERROR_USER_NOT_EXIST);
 			}
 		} catch (ValidationException $e) {
-			throw new UserException ( $e->getMessage () );
-			return false;
+			throw new ModelException ( $e->getMessage () );
 		}
 	}
 	
@@ -333,16 +315,14 @@ class User {
 					} else {
 						return false;
 					}
-				} catch (UserException $e) {
-					throw new UserException($e->getMessage());
+				} catch (ModelException $e) {
+					throw new ModelException($e->getMessage());
 				}
 			} else {
-				throw new UserException(self::ERROR_USER_ID_INVALID);
-				return false;
+				throw new ModelException(self::ERROR_USER_ID_INVALID);
 			}
 		} catch (ValidationException $e) {
-			throw new UserException($e->getMessage());
-			return false;
+			throw new ModelException($e->getMessage());
 		}
 	}
 	
@@ -370,12 +350,10 @@ class User {
 					return false;
 				}
 			} else {
-				throw new UserException(self::ERROR_USER_ID_NOT_INT);
-				return false;
+				throw new ModelException(self::ERROR_USER_ID_NOT_INT);
 			}
 		} catch (ValidationException $e) {
-			throw new UserException($e->getMessage());
-			return false;
+			throw new ModelException($e->getMessage());
 		}
 	}
 	
@@ -402,8 +380,7 @@ class User {
 			return $row ['numUsers'];
 			
 		} catch (ValidationException $e) {
-			throw new UserException($e->getMessage());
-			return 0;
+			throw new ModelException($e->getMessage());
 		}
 	}
 	
@@ -429,8 +406,7 @@ class User {
 			return $row ['numUsers'];
 			
 		} catch (ValidationException $e) { 
-			throw new UserException($e->getMessage());
-			return 0;
+			throw new ModelException($e->getMessage());
 		}
 	}
 	
@@ -468,12 +444,10 @@ class User {
 				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 				return $row['userID'];
 			} else {
-				throw new UserException ( self::ERROR_ACTIVATION_CODE_RETRIEVE);
-				return 0;
+				throw new ModelException ( self::ERROR_ACTIVATION_CODE_RETRIEVE);
 			}
 		} catch (ValidationException $e) {
-			throw new UserException($e->getMessage());
-			return 0;
+			throw new ModelException($e->getMessage());
 		}
 	}
 	
@@ -505,20 +479,16 @@ class User {
 					if(is_null($this->activate)){
 						return true;
 					} else {
-						throw new UserException(self::ERROR_ACTIVATION_FAILURE);
-						return false;
+						throw new ModelException(self::ERROR_ACTIVATION_FAILURE);
 					}
-				} catch (UserException $e) {
-					throw new UserException($e->getMessage());
-					return false;
+				} catch (ModelException $e) {
+					throw new ModelException($e->getMessage());
 				}
-			} catch (UserException $e) {
-				throw new UserException($e->getMessage());
-				return false;
+			} catch (ModelException $e) {
+				throw new ModelException($e->getMessage());
 			}
 		} catch (ValidationException $e) {
-			throw new UserException($e->getMessage());
-			return false;
+			throw new ModelException($e->getMessage());
 		}
 	}
 	
@@ -570,7 +540,7 @@ class User {
 				return false;
 			}
 		} catch ( ValidationException $e ) {
-			throw new UserException ( $e->getMessage () );
+			throw new ModelException ( $e->getMessage () );
 		}
 	}
 	
@@ -672,8 +642,7 @@ class User {
 		$numUser = $stmt->rowCount ();
 		
 		if ($numUser > 0) {
-			throw new UserException ( self::ERROR_USER_DUPLICATE);
-			return true;
+			throw new ModelException ( self::ERROR_USER_DUPLICATE);
 		} else {
 			return false;
 		}
@@ -691,8 +660,7 @@ class User {
 		$numEmail = $stmt->rowCount ();
 		
 		if ($numEmail > 0) {
-			throw new UserException ( self::ERROR_EMAIL_DUPLICATE);
-			return true;
+			throw new ModelException ( self::ERROR_EMAIL_DUPLICATE);
 		} else {
 			return false;
 		}

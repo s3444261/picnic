@@ -13,7 +13,7 @@
   <div class="row">
     <div class="col"></div> <!-- Left margin -->
     <div class="col-md-9">
-      <h1><?php echo $this->data['currentCategoryName'] ?></h1>
+      <h1 class="text-center"><?php echo $this->data['currentCategoryName'] ?></h1>
     </div>
     <div class="col"></div> <!-- Right margin -->
   </div> <!-- end .row -->
@@ -23,11 +23,11 @@
       <!-- Left margin -->
       <div class="col"></div>
       <!-- Central column -->
-      <div class="col-9">
+      <div class="col-md-9">
         <div class="container">
     			<?php foreach ( $this->data['subCategories'] as $category ) { ?>
             <div class="col-md-4">
-              <a class="btn btn-secondary" href="<?php echo BASE.'/Category/View/'.$category['categoryID'] ?>" role="button"><?php echo $category['category'] ?></a>
+              <a class="" href="<?php echo BASE.'/Category/View/'.$category['categoryID'] ?>" role="button"><?php echo $category['category'] ?></a>
             </div>
     			<?php } ?>
         </div>
@@ -53,8 +53,7 @@
     <!-- Left margin -->
     <div class="col"></div>
     <!-- Central column -->
-    <div class="col-9">
-      <div class="container">
+    <div class="col-md-9">
       <ul class="nav nav-tabs nav-justified">
         <li class="nav-item active">
           <a class="nav-link" href="#1" data-toggle="tab">For sale</a>
@@ -100,11 +99,10 @@
           </div>
         </div> <!-- end of tab pane #2 -->
       </div> <!-- end of .tab-content -->
-    </div> <!-- end .container -->
-  </div> <!-- end .col-9 -->
-  <!-- Right margin -->
-  <div class="col"></div>
-</div> <!-- end .row -->
+    </div> <!-- end .col-md-9 -->
+    <div class="col"></div> <!-- right margin -->
+  </div> <!-- end .row -->
+</div> <!-- end .container-fluid -->
 	<?php } ?>
 <!-- temporarily disabled paging -->
 <!--  <div class="row">-->

@@ -37,7 +37,9 @@
  * TO DO
  * 
  * count(): int
- * TO DO
+ * -- testCountCategoryIDEmpty(): void
+ * -- testCountCategoryIDInvalid(): void
+ * -- testCountCategoryIDValid(): void
  * 
  * getCategoryItems(int $pageNumber, int $usersPerPage): array
  * -- testGetCategoryItemsPageNumberZero(): void
@@ -52,9 +54,8 @@ require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/CategoryItems.php';
 require_once dirname(__FILE__) . '/../../../model/Category.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
-require_once dirname(__FILE__) . '/../../../model/CategoryItemsException.php';
-require_once dirname(__FILE__) . '/../../../model/ItemException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 class CategoryItemsTest extends PHPUnit\Framework\TestCase {
@@ -91,6 +92,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	const PAGE_NUMBER_ZERO = 0;
 	const ITEMS_PER_PAGE_ZERO = 0;
 	const ERROR_ZERO = 'Number must be greater than zero!';
+	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
 	
 
 	
@@ -138,7 +140,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 			]);
 			try {
 				$item->set();
-			} catch (ItemException $e) {}			
+			} catch (ModelException $e) {}			
 		}
 		
 		// Populate the CategoryItems Table
@@ -150,7 +152,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 			]);
 			try {
 				$ci->set();
-			} catch (CategoryItemsExceptionException $e) {}
+			} catch (ModelExceptionException $e) {}
 			if($i % 34 == 0){
 				$j++;
 			}
@@ -163,6 +165,43 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 
 	protected function createDefaultSut() {
 		return new CategoryItems(TestPDO::getInstance());
+	}
+	
+	protected function createSutWithId($id){
+		return new CategoryItems(TestPDO::getInstance(), [self::CATEGORY_ITEM_ID=> $id]);
+	}
+	
+	protected function getValidId() {
+		return self::CATEGORY_ID_3;
+	}
+	
+	protected function getInvalidId() {
+		return 5000;
+	}
+	
+	/*
+	 * count(): int
+	 */
+	
+	public function testCountCategoryIDEmpty(): void {
+		$sut = $this->createDefaultSut();
+		$this->expectExceptionMessage(self::ERROR_CATEGORY_ID_NOT_EXIST);
+		$sut->count();
+	}
+	
+	public function testCountCategoryIDInvalid(): void {
+		$sut = $this->createDefaultSut();
+		$sut->categoryID = $this->getInvalidID();
+		$this->expectExceptionMessage(self::ERROR_CATEGORY_ID_NOT_EXIST);
+		$sut->count();
+	}
+	
+	public function testCountCategoryIDValid(): void {
+		$sut = $this->createDefaultSut();
+		$sut->categoryID = $this->getValidID();
+		try {
+			$this->assertEquals(34, $sut->count());
+		} catch (Exception $e) {}
 	}
 
 	/*
@@ -196,6 +235,6 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 		 		$start++;
 		 	}
 		 	
-		 } catch (CategoryItemsException $e) {}	 
+		 } catch (ModelException $e) {}	 
 	}
 }

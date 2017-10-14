@@ -1,14 +1,13 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <edwanhp@gmail.com>
  */
 
-require_once dirname(__FILE__) . '/ItemException.php';
+require_once dirname(__FILE__) . '/ModelException.php';
 
 /**
  *
@@ -81,7 +80,7 @@ class Item {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new ItemException ( self::ERROR_ITEM_NOT_EXIST);
+			throw new ModelException ( self::ERROR_ITEM_NOT_EXIST);
 		}
 	}
 	

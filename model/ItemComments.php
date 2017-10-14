@@ -1,11 +1,10 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <edwanhp@gmail.com>
  */
 
 /**
@@ -59,7 +58,7 @@ class ItemComments {
 			$this->_commentID = $row ['commentID'];
 			return $this;
 		} else {
-			throw new ItemCommentsException ( 'Could not retrieve Item comment.' );
+			throw new ModelException ( 'Could not retrieve Item comment.' );
 		}
 	}
 	
@@ -239,7 +238,7 @@ class ItemComments {
 			$this->_itemID = $row ['itemID'];
 			return $this;
 		} else {
-			throw new ItemCommentsException ( 'Could not retrieve itemComment.' );
+			throw new ModelException ( 'Could not retrieve itemComment.' );
 		}
 	}
 	

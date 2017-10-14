@@ -16,8 +16,9 @@ require_once dirname(__FILE__) . '/../../../model/Comment.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/ItemComments.php';
-require_once dirname(__FILE__) . '/../../../model/ItemCommentsException.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ModelException.php';
+require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 class ItemCommentsTest extends PicnicTestCaseOld {
 
@@ -85,11 +86,11 @@ class ItemCommentsTest extends PicnicTestCaseOld {
 	}
 
 	protected function getExpectedExceptionTypeForUnknownId() {
-		return ItemCommentsException::class;
+		return ModelException::class;
 	}
 	
 	protected function getExpectedExceptionTypeForUnsetId() {
-		return ItemCommentsException::class;
+		return ModelException::class;
 	}
 
 	protected function getExpectedAttributesForGet() {
@@ -180,7 +181,7 @@ class ItemCommentsTest extends PicnicTestCaseOld {
 			$sut->getItemComment();
 			$this->assertEquals(2, $sut->item_commentID);
 			$this->assertEquals(1, $sut->itemID);
-		} catch (ItemCommentsException $e) {
+		} catch (ModelException $e) {
 			// Do Nothing
 		}
 	} 

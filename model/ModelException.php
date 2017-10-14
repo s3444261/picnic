@@ -7,7 +7,7 @@
  * @author Edwan Putro <edwanhp@gmail.com>
  */
 
-class SystemException extends Exception {
+class ModelException extends Exception {
 	protected $message;
 	function __construct($message) {
 		$this->message = $message;
