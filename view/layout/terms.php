@@ -14,11 +14,7 @@
         <div class="col"></div> <!-- left margin -->
         <div class="col-md-9">
             <h1 class="text-center">Humphree</h1>
-            <div class="jumbotron">
-                <div class="row">
-                    <h2>HUMPHREE.ORG WEBSITE TERMS AND CONDITIONS</h2>
-                </div>
-            </div> <!-- end jumbotron -->
+            <h2 class="text-center">HUMPHREE.ORG WEBSITE TERMS AND CONDITIONS</h2>
 
             <div>
                 <h2>Credit</h2>
