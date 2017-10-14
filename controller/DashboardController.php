@@ -8,13 +8,21 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class DashboardController extends BaseController {
+class DashboardController {
 	
 	// Displays the Dashboard Page.
 	public function index()
 	{
 		if ($this->auth()) {
-			$this->RenderInMainTemplate('view/layout/dashboard.php');
+
+			$view = new View();
+
+			$navData = new NavData();
+			$navData->Selected = NavData::Account;
+			$view->SetData('navData', $navData);
+
+			$view->Render('dashboard');
+
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
@@ -32,4 +40,3 @@ class DashboardController extends BaseController {
 		}
 	}
 }
-?>

@@ -8,12 +8,17 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class SigninController extends BaseController  {
+class SigninController {
 	
 	// Displays the Login Page.
 	public function index()
 	{
-		$this->RenderInMainTemplate('view/layout/signin.php');
+		$view = new View();
+
+		$navData = new NavData();
+		$navData->Selected = NavData::Account;
+		$view->SetData('navData', $navData);
+
+		$view->Render('signin');
 	}
 }
-?>

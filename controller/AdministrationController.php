@@ -10,7 +10,7 @@
 
 require_once  __DIR__ . '/../config/Picnic.php';
 
-class AdministrationController extends BaseController  {
+class AdministrationController {
 
 	/**
 	 * Displays the main admin page.
@@ -259,7 +259,13 @@ class AdministrationController extends BaseController  {
 				];
 			}
 
-			$this->RenderInMainTemplate('view/layout/editUser.php');
+			$view = new View();
+
+			$navData = new NavData();
+			$navData->Selected = NavData::Account;
+			$view->SetData('navData', $navData);
+
+			$view->Render('editUser');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
@@ -293,5 +299,4 @@ class AdministrationController extends BaseController  {
 			return false;
 		}
 	}
-
 }

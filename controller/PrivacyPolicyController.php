@@ -8,13 +8,17 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class PrivacyPolicyController extends BaseController  {
+class PrivacyPolicyController {
 
 	// Displays the Privacy Policy Page.
 	public function index()
 	{
-		$this->RenderInMainTemplate('view/layout/privacyPolicy.php');
+		$view = new View();
+
+		$navData = new NavData();
+		$navData->Selected = NavData::Home;
+		$view->SetData('navData', $navData);
+
+		$view->Render('privacyPolicy');
 	}
 }
-
-?>

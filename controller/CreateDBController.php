@@ -11,12 +11,18 @@
 require_once  __DIR__ . '/../admin/createDB/DatabaseGenerator.php';
 require_once  __DIR__ . '/../config/Picnic.php';
 
-class CreateDBController extends BaseController {
+class CreateDBController {
 	public function index()
 	{
 		DatabaseGenerator::Generate(Picnic::getInstance());
 		DatabaseGenerator::Populate(Picnic::getInstance());
 
-		$this->RenderInMainTemplate(__DIR__ . '/../view/layout/createDB.php');
+		$view = new View();
+
+		$navData = new NavData();
+		$navData->Selected = NavData::Account;
+		$view->SetData('navData', $navData);
+
+		$view->Render('createDB');
 	}
 }

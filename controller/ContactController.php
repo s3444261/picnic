@@ -8,12 +8,17 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class ContactController extends BaseController {
+class ContactController {
 	
 	// Displays the Contact Page.
 	public function index()
 	{
-		$this->RenderInMainTemplate('view/layout/contact.php');
+		$view = new View();
+
+		$navData = new NavData();
+		$navData->Selected = NavData::Home;
+		$view->SetData('navData', $navData);
+
+		$view->Render('contact');
 	}
 }
-?>

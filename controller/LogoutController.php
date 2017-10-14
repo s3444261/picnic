@@ -11,8 +11,7 @@
 require_once __DIR__ . '/../model/User.php';
 require_once __DIR__ . '/../config/Picnic.php';
 
-class LogoutController extends BaseController
-{
+class LogoutController {
 	// Log the user out.
 	public function index() {
 		$user = new User (Picnic::getInstance());
