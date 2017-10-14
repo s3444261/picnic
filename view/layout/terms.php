@@ -145,4 +145,4 @@
         </div> <!-- end .col-md-9 -->
         <div class="col"></div> <!-- right margin -->
     </div> <!-- end .row -->
-</div> end <!-- .container-fluid -->
+</div> <!-- .container-fluid -->
