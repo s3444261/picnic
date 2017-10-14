@@ -16,7 +16,7 @@
  */
 
 class Note {
-	private $_noteID = '';
+	private $_noteID = 0;
 	private $_note = '';
 	private $_created_at;
 	private $_updated_at;

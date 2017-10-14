@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../model/Validation.php';
 require_once dirname(__FILE__) . '/../../../model/ModelException.php';
 require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
-class CommentsTest extends PHPUnit\Framework\TestCase{
+class UserCommentsTest extends PHPUnit\Framework\TestCase{
 
 	const USER_ID       = 'userID';
 	const USER 			= 'user';
