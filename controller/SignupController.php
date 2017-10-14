@@ -8,12 +8,17 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class SignupController  extends BaseController {
+class SignupController {
 	
 	// Displays the Create Account Page.
 	public function index()
 	{
-		$this->RenderInMainTemplate('view/layout/signup.php');
+		$view = new View();
+
+		$navData = new NavData();
+		$navData->Selected = NavData::Account;
+		$view->SetData('navData', $navData);
+
+		$view->Render('signup');
 	}
 }
-?>

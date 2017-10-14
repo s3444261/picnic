@@ -8,12 +8,15 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class AboutController extends BaseController  {
+class AboutController  {
 	
 	// Displays the About Page.
 	public function index()
 	{
-		$this->RenderInMainTemplate('view/layout/about.php');
+		$view = new View();
+		$navData = new NavData();
+		$navData->Selected = NavData::Home;
+		$view->SetData('navData', $navData);
+		$view->Render('about');
 	}
 }
-?>

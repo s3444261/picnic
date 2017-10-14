@@ -10,7 +10,7 @@
 
 require_once  __DIR__ . '/../config/Picnic.php';
 
-class ChangePasswordController extends BaseController  {
+class ChangePasswordController {
 	
 	// Displays the Change Password Page.
 	public function index() {
@@ -91,7 +91,11 @@ class ChangePasswordController extends BaseController  {
 					}
 				}
 			} else {
-				$this->RenderInMainTemplate('view/layout/changePassword.php');
+				$view = new View();
+				$navData = new NavData();
+				$navData->Selected = NavData::Account;
+				$view->SetData('navData', $navData);
+				$view->Render('changePassword');
 			}
 		} else {
 			header('Location: ' . BASE . '/Home');
@@ -110,4 +114,3 @@ class ChangePasswordController extends BaseController  {
 		}
 	}
 }
-?>

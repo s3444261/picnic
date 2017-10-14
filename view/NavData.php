@@ -8,14 +8,11 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
-class BaseController {
+class NavData
+{
+	const Home = 0;
+	const ViewListings = 1;
+	const Account = 2;
 
-	protected function RenderInMainTemplate($includePath) {
-		include __DIR__ . '/../view/header/header.php';
-		include __DIR__ . '/../view/nav/nav.php';
-
-		include $includePath;
-
-		include __DIR__ . '/../view/footer/footer.php';
-	}
+	public $Selected = self::Home;
 }

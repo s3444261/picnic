@@ -46,14 +46,16 @@ class CategoryController {
 		$pagerData = new PagerData();
 		$pagerData->pageNumber = 1;
 		$pagerData->itemsPerPage = 200;
-		$pagerData->totalItems = $h->countCategoryItems($categoryId);
+
 
 		$view = new View();
 
 		if ($categoryId == Category::ROOT_CATEGORY) {
 			$view->SetData('currentCategoryName', "");
+			$pagerData->totalItems = 0;
 		} else {
 			$view->SetData('currentCategoryName', $h ->getCategory($categoryId)['category']);
+			$pagerData->totalItems = $h->countCategoryItems($categoryId);
 		}
 
 		$subCategories = $h->getCategoriesIn($categoryId);
@@ -72,6 +74,10 @@ class CategoryController {
 		}
 
 		$view->SetData('pagerData', $pagerData);
+
+		$navData = new NavData();
+		$navData->Selected = NavData::ViewListings;
+		$view->SetData('navData', $navData);
 		$view->Render('category');
 	}
 }

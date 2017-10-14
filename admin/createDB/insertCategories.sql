@@ -382,7 +382,7 @@ INSERT INTO Categories (categoryId, category, parentId) VALUES
   (367, 'Metaphysical Products', 361),
   (368, 'Religious Products', 361),
   (370, '3D TV Glasses & Accessories', 369),
-  (371, 'DVDs & Blu-rays Movies', 369),
+  (371, 'DVDs & Blu-ray Movies', 369),
   (372, 'Movie Film Stock', 369),
   (373, 'Movie LaserDiscs', 369),
   (374, 'Movie Memorabilia', 369),

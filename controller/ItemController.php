@@ -29,6 +29,11 @@ class ItemController {
 
 		$view = new View();
 		$view->SetData('item', $h ->getItem($itemId));
+
+		$navData = new NavData();
+		$navData->Selected = NavData::ViewListings;
+		$view->SetData('navData', $navData);
+
 		$view->Render('item');
 	}
 

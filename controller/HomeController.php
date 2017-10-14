@@ -20,6 +20,11 @@ class HomeController {
 
 		$view = new View();
 		$view->SetData('categories', $h ->getCategoriesIn(Category::ROOT_CATEGORY));
+
+		$navData = new NavData();
+		$navData->Selected = NavData::Home;
+		$view->SetData('navData', $navData);
+
 		$view->Render('home');
 	}
 }
