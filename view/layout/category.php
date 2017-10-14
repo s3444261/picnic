@@ -73,6 +73,7 @@
                   <div class="card-body">
                     <h4 class="card-title"><?php echo $item['title'] ?></h4>
                     <p class="card-text">Short description of item here. Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue.</p>
+                    <p class="card-text"><?php echo '$' . $item['price'] ?></p>
                     <a href="<?php echo BASE.'/Item/View/'.$item['itemID'] ?>" class="btn btn-primary btn-block">Info</a>
                   </div>
                 </div>
