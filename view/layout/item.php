@@ -17,15 +17,15 @@
 		<div class="col-9">
 			<div class="container">
 				<div class="row">
-					<div class="col-md-9">
+					<div class="col-md-12">
 						<?php if (isset ( $this->data['item'] )) { ?>
-						<h1 class="text-center"><?php echo $this->data['item']['title'] ?> </h1>
+						<h4><?php echo $this->data['item']['title'] ?> </h4>
 						<?php } ?>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-4">
-						<img src="<?php echo BASE.'/Item/Image/'.$this->data['item']['itemID'] ?>" style="min-width:300px; min-height:300px" />
+						<img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->data['item']['itemID'] ?>" style="min-width:300px; min-height:300px" />
 					</div>
 					<div class="col-md-5">
 						<?php if (isset ( $this->data['item'] )) { ?>

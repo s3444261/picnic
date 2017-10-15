@@ -103,3 +103,7 @@ p.truncate {
 .price {
 	color: #0079D5;
 }
+
+img.item-image {
+	max-width: 100%;
+}
