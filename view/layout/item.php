@@ -19,7 +19,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<?php if (isset ( $this->data['item'] )) { ?>
-						<h4><?php echo $this->data['item']['title'] ?> </h4>
+						<h4 class="item-header"><?php echo $this->data['item']['title'] ?> </h4>
 						<?php } ?>
 					</div>
 				</div>
@@ -30,8 +30,8 @@
 					<div class="col-md-8">
 						<?php if (isset ( $this->data['item'] )) { ?>
 						<div class="row">
-							<div class="col-md-12"><strong>Item description</strong></div>
-							<div class="col-md-12">
+							<div class="col-md-12 item-desc-header"><strong>Item description</strong></div>
+							<div class="col-md-12 item-desc">
 								<?php echo $this->data['item']['description'] ?> </div>
 						</div>
 						<div class="row">
@@ -39,7 +39,7 @@
 							<div class="col-md-12">
 								<h2>$<?php echo $this->data['item']['price'] ?></h2></div>
 						</div>
-						<div class="row">
+						<div class="row item-badges">
 							<div class="col-md-4">
 								<div class="row">
 									<div class="col-md-6 col-sm-4 col-4"><strong>Quantity</strong></div>

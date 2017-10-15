@@ -107,3 +107,19 @@ p.truncate {
 img.item-image {
 	max-width: 100%;
 }
+
+.item-header {
+	padding: 2em 0 1em;
+}
+
+.item-desc-header {
+
+}
+
+.item-desc {
+	padding-bottom: 1em;
+}
+
+.item-badges {
+	padding-top: 1em;
+}
