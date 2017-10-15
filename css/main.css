@@ -78,7 +78,7 @@
     padding-bottom: 1em;
 }
 
-.truncate {
+p.truncate {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
