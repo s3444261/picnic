@@ -42,20 +42,20 @@
 						<div class="row">
 							<div class="col-md-4">
 								<div class="row">
-									<div class="col-md-6 col-sm-4 col-4">Quantity</div>
+									<div class="col-md-6 col-sm-4 col-4"><strong>Quantity</strong></div>
 									<div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-primary"><?php echo $this->data['item']['quantity'] ?></span></div>
 								</div>
 							</div>
 							<div class="col-md-4">
 								<div class="row">
-									<div class="col-md-6 col-sm-4 col-4">Condition</div>
+									<div class="col-md-6 col-sm-4 col-4"><strong>Condition</strong></div>
 									<div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-success"><?php echo $this->data['item']['itemcondition'] ?></span></div>
 								</div>
 							</div>
 
 							<div class="col-md-4">
 								<div class="row">
-									<div class="col-md-6 col-sm-4 col-4">Status</div>
+									<div class="col-md-6 col-sm-4 col-4"><strong>Status</strong></div>
 									<div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-warning"><?php echo $this->data['item']['status'] ?></span></div>
 								</div>
 							</div>
