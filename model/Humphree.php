@@ -127,18 +127,15 @@ class Humphree {
 	 *        	Email address of the account.
 	 * @param string $password
 	 *        	Password of the account.
-	 * @return bool
+	 * @return int
+	 *          The new user's ID if successful. Zero means failure.
 	 */
-	public function addUser(string $userName, string $email, string $password): bool {
+	public function addUser(string $userName, string $email, string $password): int {
 		$user = new User ( $this->db );
 		$user->user = $userName;
 		$user->email = $email;
 		$user->password = $password;
-		if ($this->system->addUser ( $user )) {
-			return true;
-		} else {
-			return false;
-		}
+		return ($this->system->addUser ( $user ));
 	}
 	
 	/**

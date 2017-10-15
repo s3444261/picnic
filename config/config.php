@@ -16,24 +16,28 @@ date_default_timezone_set('Australia/Melbourne');
 
 define('MODULE', '');
 
-if(gethostname() == 'Grant-PC'){
+if(gethostname() == 'Grant-PC' ||
+	gethostname() == 'Newbie' ){
 	define('BASE', '/picnic');
 } else {
-	define('BASE', ''); 
+	define('BASE', '');
 }
 
-
-function __autoload($class) {
-	$dir = array (
+class PicnicAutoloader {
+	public static function picnicAutoload($class) {
+		$dir = array (
 			'controller/',
 			'model/',
-		    'view/'
-	);
-	
-	foreach ( $dir as $directory ) {
-		if (file_exists ( $directory . $class . '.php' )) {
-			require_once ($directory . $class . '.php');
-			return;
+			'view/'
+		);
+
+		foreach ( $dir as $directory ) {
+			if (file_exists ( $directory . $class . '.php' )) {
+				require_once ($directory . $class . '.php');
+				return;
+			}
 		}
 	}
 }
+
+spl_autoload_register(array('PicnicAutoloader', 'picnicAutoload'), true, true);

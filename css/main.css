@@ -77,3 +77,27 @@
     padding-top: 1em;
     padding-bottom: 1em;
 }
+
+.top_padding {
+	padding-top: 1em;
+}
+
+.truncate {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+h4.truncate {
+	font-weight: 700;
+}
+
+p.truncate {
+	text-overflow: ellipsis;
+	-webkit-line-clamp: 5;
+}
+
+.price {
+	color: #0079D5;
+}

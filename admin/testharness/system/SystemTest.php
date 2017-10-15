@@ -1104,7 +1104,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => NULL, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_USER_EMPTY, $_SESSION['error']);
 		}
@@ -1115,7 +1115,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_SHORT, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_USER_SHORT, $_SESSION['error']);
 		}
@@ -1126,7 +1126,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_TWO, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_USER_DUPLICATE, $_SESSION['error']);
 		}
@@ -1137,7 +1137,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => NULL, self::PASSWORD => self::PASSWORD_ADD]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_EMAIL_EMPTY, $_SESSION['error']);
 		}
@@ -1148,7 +1148,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_BAD, self::PASSWORD => self::PASSWORD_ADD]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_EMAIL_INVALID, $_SESSION['error']);
 		}
@@ -1159,7 +1159,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADDRESS_TWO, self::PASSWORD => self::PASSWORD_ADD]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_EMAIL_DUPLICATE, $_SESSION['error']);
 		}
@@ -1170,7 +1170,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => NULL]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_PASSWORD_EMPTY, $_SESSION['error']);
 		}
@@ -1181,7 +1181,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_SHORT]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_PASSWORD_INVALID, $_SESSION['error']);
 		}
@@ -1192,7 +1192,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_NO_UPPER]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_PASSWORD_INVALID, $_SESSION['error']);
 		}
@@ -1203,7 +1203,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_NO_LOWER]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_PASSWORD_INVALID, $_SESSION['error']);
 		}
@@ -1214,7 +1214,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_NO_NUMBER]);
-		$this->assertFalse($system->addUser($sut));
+		$this->assertEquals(0, $system->addUser($sut));
 		if(isset($_SESSION['error'])){
 			$this->assertEquals(self::ERROR_PASSWORD_INVALID, $_SESSION['error']);
 		}
@@ -1225,7 +1225,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new User($pdo, [self::USER => self::USER_ADD, self::EMAIL => self::EMAIL_ADD, self::PASSWORD => self::PASSWORD_ADD]);
-		$this->assertTrue($system->addUser($sut));
+		$this->assertNotEquals(0, $system->addUser($sut));
 	}
 	
 	/*

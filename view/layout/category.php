@@ -71,8 +71,10 @@
                 <div class="card">
                   <img class="card-img-top" src="<?php echo BASE.'/Item/Thumb/'.$item['itemID'] ?>" alt="Card image cap">
                   <div class="card-body">
-                    <h4 class="card-title"><?php echo $item['title'] ?></h4>
-                    <p class="card-text">Short description of item here. Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue.</p>
+                    <h4 class="card-title truncate"><?php echo $item['title'] ?></h4>
+                    <p class="card-text truncate"><?php echo $item['description'] ?></p>
+<!--                     <p class="card-text truncate">Short description of item here. Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue.</p>
+ -->                    <h3 class="card-text text-center price top-padding"><?php echo '$' . $item['price'] ?></h3>
                     <a href="<?php echo BASE.'/Item/View/'.$item['itemID'] ?>" class="btn btn-primary btn-block">Info</a>
                   </div>
                 </div>

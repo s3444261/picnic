@@ -118,22 +118,22 @@ class System {
 	 * Allows an administrator to add a user to the system.
 	 * 
 	 * @param User $user	User object.
-	 * @return bool
+	 * @return int			The new user's ID. Zero means failure.
 	 */
-	public function addUser(User $user): bool {
+	public function addUser(User $user): int {
 		
 		try {
 			$user->set ();
 			try {
 				$user->get ();
-				return true;
+				return $user->userID;
 			} catch ( ModelException $e ) {
 				$_SESSION ['error'] = $e->getMessage(); 
-				return false;
+				return 0;
 			}
 		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage(); 
-			return false;
+			return 0;
 		}
 	}
 	
