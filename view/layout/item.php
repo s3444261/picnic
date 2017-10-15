@@ -27,7 +27,7 @@
 					<div class="col-md-4">
 						<img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->data['item']['itemID'] ?>" style="min-width:300px; min-height:300px" />
 					</div>
-					<div class="col-md-5">
+					<div class="col-md-8">
 						<?php if (isset ( $this->data['item'] )) { ?>
 						<div class="row">
 							<div class="col-md-12"><strong>Item description</strong></div>
@@ -40,14 +40,27 @@
 								<h2>$<?php echo $this->data['item']['price'] ?></h2></div>
 						</div>
 						<div class="row">
-							<div class="col-md-3">Quantity</div>
-							<div class="col-md-3">Condition</div>
-							<div class="col-md-3">Status</div>
+							<div class="col-md-4">
+								<div class="row">
+									<div class="col-md-6 col-sm-4 col-4">Quantity</div>
+									<div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-primary"><?php echo $this->data['item']['quantity'] ?></span></div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="row">
+									<div class="col-md-6 col-sm-4 col-4">Condition</div>
+									<div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-success"><?php echo $this->data['item']['itemcondition'] ?></span></div>
+								</div>
+							</div>
+
+							<div class="col-md-4">
+								<div class="row">
+									<div class="col-md-6 col-sm-4 col-4">Status</div>
+									<div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-warning"><?php echo $this->data['item']['status'] ?></span></div>
+								</div>
+							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-3"><span class="badge badge-pill badge-primary"><?php echo $this->data['item']['quantity'] ?></span></div>
-							<div class="col-md-3"><span class="badge badge-pill badge-success"><?php echo $this->data['item']['itemcondition'] ?></span></div>
-							<div class="col-md-3"><span class="badge badge-pill badge-warning"><?php echo $this->data['item']['status'] ?></span></div>
 						</div>
 						<div class="row">
 						</div>
