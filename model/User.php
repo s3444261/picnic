@@ -602,7 +602,7 @@ class User {
 		$symbols ["lower_case"] = 'abcdefghijklmnopqrstuvwxyz';
 		$symbols ["upper_case"] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$symbols ["numbers"] = '1234567890';
-		$symbols ["special_symbols"] = '!?~@#-_+<>[]{}';
+		$symbols ["special_symbols"] = '!?~@#-_+[]{}';
 		
 		$characters = explode ( ",", $characters ); // get characters types to be used for the passsword
 		foreach ( $characters as $key => $value ) {
