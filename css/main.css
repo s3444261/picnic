@@ -91,11 +91,13 @@
 
 h4.truncate {
 	font-weight: 700;
+	max-height: 55px;
 }
 
 p.truncate {
 	text-overflow: ellipsis;
 	-webkit-line-clamp: 5;
+	max-height: 120px;
 }
 
 .price {
