@@ -16,11 +16,7 @@ class DashboardController {
 		if ($this->auth()) {
 
 			$view = new View();
-
-			$navData = new NavData();
-			$navData->Selected = NavData::Account;
-			$view->SetData('navData', $navData);
-
+			$view->SetData('navData',  new NavData(NavData::Account));
 			$view->Render('dashboard');
 
 		} else {

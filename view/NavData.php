@@ -14,5 +14,9 @@ class NavData
 	const ViewListings = 1;
 	const Account = 2;
 
+	function __construct(int $selected) {
+		$this->Selected = $selected;
+	}
+
 	public $Selected = self::Home;
 }

@@ -74,10 +74,7 @@ class CategoryController {
 		}
 
 		$view->SetData('pagerData', $pagerData);
-
-		$navData = new NavData();
-		$navData->Selected = NavData::ViewListings;
-		$view->SetData('navData', $navData);
+		$view->SetData('navData',  new NavData(NavData::ViewListings));
 		$view->Render('category');
 	}
 }

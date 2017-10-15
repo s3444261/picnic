@@ -10,15 +10,10 @@
 
 class TermsOfServiceController {
 
-	// Displays the Terms of Service Page.
 	public function index()
 	{
 		$view = new View();
-
-		$navData = new NavData();
-		$navData->Selected = NavData::Home;
-		$view->SetData('navData', $navData);
-
+		$view->SetData('navData', new NavData(NavData::Home));
 		$view->Render('terms');
 	}
 }

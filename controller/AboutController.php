@@ -14,9 +14,7 @@ class AboutController  {
 	public function index()
 	{
 		$view = new View();
-		$navData = new NavData();
-		$navData->Selected = NavData::Home;
-		$view->SetData('navData', $navData);
+		$view->SetData('navData', new NavData(NavData::Home));
 		$view->Render('about');
 	}
 }

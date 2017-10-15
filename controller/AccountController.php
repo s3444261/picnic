@@ -15,15 +15,9 @@ class AccountController {
 
 	public function Login()
 	{
-		if (!$this->auth()) {
-			$view = new View();
-			$navData = new NavData();
-			$navData->Selected = NavData::Account;
-			$view->SetData('navData', $navData);
-			$view->Render('signin');
-		} else {
-			header('Location: ' . BASE . '/Home');
-		}
+		$view = new View();
+		$view->SetData('navData', new NavData(NavData::Account));
+		$view->Render('signin');
 	}
 
 	public function DoLogin()
@@ -45,9 +39,7 @@ class AccountController {
 					if ($user->login()) {
 						$_SESSION[MODULE] = true;
 						$view = new View();
-						$navData = new NavData();
-						$navData->Selected = NavData::Account;
-						$view->SetData('navData', $navData);
+						$view->SetData('navData', new NavData(NavData::Account));
 						$view->Render('loggedIn');
 						return;
 					} else {
@@ -63,13 +55,12 @@ class AccountController {
 	}
 
 	public function Logout() {
+
 		$user = new User (Picnic::getInstance());
 		$user->logout();
 
 		$view = new View();
-		$navData = new NavData();
-		$navData->Selected = NavData::Account;
-		$view->SetData('navData', $navData);
+		$view->SetData('navData',  new NavData(NavData::Account));
 		$view->Render('loggedOut');
 	}
 
@@ -77,9 +68,7 @@ class AccountController {
 	{
 		if (!$this->auth()) {
 			$view = new View();
-			$navData = new NavData();
-			$navData->Selected = NavData::Account;
-			$view->SetData('navData', $navData);
+			$view->SetData('navData',  new NavData(NavData::Account));
 			$view->Render('register');
 		} else {
 			header('Location: ' . BASE . '/Home');
@@ -107,20 +96,21 @@ class AccountController {
 						unset ($_POST ['password2']);
 						unset ($_POST ['username']);
 
-					//	$this->sendActivationEmail($userID);
+						$this->sendActivationEmail($userID);
 
 						header('Location: ' . BASE . '/Account/RegisterSuccess');
 						return;
 					} else {
 						$_SESSION ['error'] = 'Registration failed.';
 						$view = new View();
-						$navData = new NavData();
-						$navData->Selected = NavData::Account;
-						$view->SetData('navData', $navData);
+						$view->SetData('navData',  new NavData(NavData::Account));
 						$view->Render('register');
 					}
 				} catch (ValidationException $e) {
 					$_SESSION ['error'] = $e->getError();
+					$view = new View();
+					$view->SetData('navData',  new NavData(NavData::Account));
+					$view->Render('register');
 				}
 			}
 		} else {
@@ -132,9 +122,7 @@ class AccountController {
 	{
 		if (!$this->auth()) {
 			$view = new View();
-			$navData = new NavData();
-			$navData->Selected = NavData::Account;
-			$view->SetData('navData', $navData);
+			$view->SetData('navData',  new NavData(NavData::Account));
 			$view->Render('registerSuccessful');
 		} else {
 			header('Location: ' . BASE . '/Home');
@@ -155,9 +143,7 @@ class AccountController {
 				if ($userId != 0) {
 					if ($h->activateAccount($userId)) {
 						$view = new View();
-						$navData = new NavData();
-						$navData->Selected = NavData::Account;
-						$view->SetData('navData', $navData);
+						$view->SetData('navData',  new NavData(NavData::Account));
 						$view->Render('accountActivated');
 						return;
 					}
@@ -168,18 +154,14 @@ class AccountController {
 		}
 
 		$view = new View();
-		$navData = new NavData();
-		$navData->Selected = NavData::Account;
-		$view->SetData('navData', $navData);
+		$view->SetData('navData',  new NavData(NavData::Account));
 		$view->Render('accountActivationFailed');
 	}
 
 	public function ForgotPassword() {
 		if (!$this->auth()) {
 			$view = new View();
-			$navData = new NavData();
-			$navData->Selected = NavData::Account;
-			$view->SetData('navData', $navData);
+			$view->SetData('navData', new NavData(NavData::Account));
 			$view->Render('forgotPassword');
 		} else {
 			header('Location: ' . BASE . '/Home');
@@ -188,11 +170,46 @@ class AccountController {
 
 	public function DoForgotPassword() {
 		if (!$this->auth()) {
-			$view = new View();
-			$navData = new NavData();
-			$navData->Selected = NavData::Account;
-			$view->SetData('navData', $navData);
-			$view->Render('passwordSent');
+			if (isset ($_POST ['email'])) {
+				try {
+					$validate = new Validation ();
+					$validate->email($_POST ['email']);
+
+					$h = new Humphree(Picnic::getInstance());
+					$userID = $h->getUserIdByEmailAddress($_POST ['email']);
+
+					if ($userID != 0) {
+						$user = new User(Picnic::getInstance());
+						$user->userID = $userID;
+
+						// bit of a hack until getRandomPassword() consistently
+						// generates valid passwords -- we'll keep generating until
+						// we get a good one.
+						$newPassword = '';
+						while (true) {
+							$newPassword = $user->getRandomPassword();
+
+							try {
+								$validate->password($newPassword);
+								break;
+							} catch (ValidationException $e) {
+							}
+						}
+
+						$user->password = $newPassword;
+						$user->updatePassword();
+
+						$this->sendForgotPasswordEmail($user->userID, $newPassword);
+					}
+
+					$view = new View();
+					$view->SetData('navData',  new NavData(NavData::Account));
+					$view->Render('passwordSent');
+
+				} catch (ValidationException $e) {
+					$_SESSION ['error'] = $e->getError();
+				}
+			}
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
@@ -201,9 +218,7 @@ class AccountController {
 	public function ChangePassword() {
 		if ($this->auth()) {
 			$view = new View();
-			$navData = new NavData();
-			$navData->Selected = NavData::Account;
-			$view->SetData('navData', $navData);
+			$view->SetData('navData',  new NavData(NavData::Account));
 			$view->Render('changePassword');
 		} else {
 			header('Location: ' . BASE . '/Home');
@@ -281,9 +296,7 @@ class AccountController {
 									unset ($_POST ['newPassword']);
 									unset ($_POST ['confirm']);
 									$view = new View();
-									$navData = new NavData();
-									$navData->Selected = NavData::Account;
-									$view->SetData('navData', $navData);
+									$view->SetData('navData',  new NavData(NavData::Account));
 									$view->Render('passwordChanged');
 								}
 							}
@@ -310,22 +323,13 @@ class AccountController {
 
 	private function sendActivationEmail($userID)
 	{
-		// THIS IS WORK IN PROGRESS>
 		$h = new Humphree(Picnic::getInstance());
 		$user = $h->getUser($userID);
 
-
-		$mail = new PHPMailer\PHPMailer\PHPMailer();
-		$mail->setFrom('no-reply@humphree.org', 'Humphree');
-		$mail->addAddress('s3202752@student.rmit.edu.au', 'Troy Derrick');
-		$mail->isHTML(true);
-		$mail->IsSMTP();
-		$mail->Host = "smtp.office365.com";
-		$mail->Port = 587;
-		$mail->SMTPSecure = 'tls';
-
+		$mail = $this->getMailer();
+		$mail->addAddress($user['email'], $user['user']);
 		$mail->Subject  = 'Activate your Humphree account';
-		$mail->Body     = '<a href="http://humphree.org/Account/Activate/' . $user['activate'] . '">Activate account</a>.';
+		$mail->Body     = 'Click here to <a href="http://humphree.org/Account/Activate/' . $user['activate'] . '">Activate your account</a>.';
 
 		if(!$mail->send()) {
 			echo 'Message was not sent.';
@@ -333,5 +337,38 @@ class AccountController {
 		} else {
 			echo 'Message has been sent.';
 		}
+	}
+
+	private function sendForgotPasswordEmail($userID, $password)
+	{
+		$h = new Humphree(Picnic::getInstance());
+		$user = $h->getUser($userID);
+
+		$mail = $this->getMailer();
+		$mail->addAddress($user['email'], $user['user']);
+		$mail->Subject  = 'Humphree password reset';
+		$mail->Body     = 'Your new password is <strong>' . $password . '</strong>.';
+
+		if(!$mail->send()) {
+			echo 'Message was not sent.';
+			echo 'Mailer error: ' . $mail->ErrorInfo;
+		} else {
+			echo 'Message has been sent.';
+		}
+	}
+
+	private function getMailer() : PHPMailer\PHPMailer\PHPMailer {
+		$mail = new PHPMailer\PHPMailer\PHPMailer();
+		$mail->setFrom('no-reply@humphree.org', 'Humphree');
+		$mail->isHTML(true);
+		$mail->IsSMTP();
+		$mail->Host = "smtp.office365.com";
+		$mail->SMTPAuth = true;
+		$mail->Username = 'no-reply@humphree.org';
+		$mail->Password = 'TestTest88';
+		$mail->Port = 587;
+		$mail->SMTPSecure = 'tls';
+
+		return $mail;
 	}
 }

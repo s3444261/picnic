@@ -62,7 +62,22 @@ class Humphree {
 		
 		return $this->system->getUserIdByActivationCode ( $user );
 	}
-	
+
+	/**
+	 * Returns the UserID for the given email address.
+	 *
+	 * @param string $emailAddress
+	 * 			The email address for which to search.
+	 * @return int
+	 * 			The UserID if one was found, otherwise zero.
+	 */
+	public function getUserIdByEmailAddress(string $emailAddress): int {
+		$user = new User ( $this->db );
+		$user->email = $emailAddress;
+
+		return $this->system->getUserIdByEmailAddress ( $user );
+	}
+
 	/**
 	 * Verfies the email address of the new user and makes the account active.
 	 *

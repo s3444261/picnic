@@ -59,7 +59,24 @@ class System {
 			return 0;
 		}
 	}
-	
+
+	/**
+	 * Returns the UserID for the given email address.
+	 *
+	 * @param User $user
+	 * 			User object containing the email address.
+	 * @return int
+	 * 			The UserID if one was found, otherwise zero.
+	 */
+	public function getUserIdByEmailAddress( User $user ): int{
+		try {
+			return $user->getUserIdByEmail();
+		} catch (ModelException $e) {
+			$_SESSION ['error'] = $e->getMessage();
+			return 0;
+		}
+	}
+
 	/**
 	 * Activates a user account.
 	 * 
