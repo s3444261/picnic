@@ -78,9 +78,17 @@
     padding-bottom: 1em;
 }
 
-p.truncate {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	max-height: 200px;
+.truncate {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.truncate_paragraph {
+  -webkit-line-clamp: 6;
+}
+
+.price {
+	color: #0079D5;
 }
