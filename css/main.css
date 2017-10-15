@@ -85,6 +85,10 @@
   -webkit-box-orient: vertical;
 }
 
+h4.truncate {
+	font-weight: 700;
+}
+
 .truncate_paragraph {
   -webkit-line-clamp: 6;
 }
