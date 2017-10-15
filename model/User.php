@@ -298,8 +298,8 @@ class User {
 		$v = new Validation ();
 		
 		try {
-			$v->emptyField($this->userID);
-			$v->number($this->userID);
+			$v->emptyField($this->_userID);
+			$v->number($this->_userID);
 			
 			if ($this->exists ()) {
 				

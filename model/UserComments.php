@@ -36,7 +36,7 @@ class UserComments {
 	 * Count number of occurences of comment for a user.
 	 */
 	public function count() {
-		$query = "SELECT COUNT(*) AS numComments FROM UserComments WHERE userID = :userID";
+		$query = "SELECT COUNT(*) AS numComments FROM Comments WHERE userID = :userID";
 		
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':userID', $this->_userID );
@@ -51,7 +51,7 @@ class UserComments {
 	 */
 	public function getUserComments(): array {
 		
-			$query = "SELECT * FROM UserComments WHERE userID = :userID"; 
+			$query = "SELECT * FROM Comments WHERE userID = :userID"; 
 
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );

@@ -87,7 +87,7 @@ final class CommentTest extends PicnicTestCase{
 	const COMMENT_3 = 'Comment3';
 	const COMMENT_ID_4 = 4;
 	const COMMENT_4 = 'Comment4';
-	const ERROR_COMMENT_ID_NOT_EXIST = 'The Comment ID does not exist!';
+	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
 	const ERROR_COMMENT_NOT_CREATED = 'The comment was not created!';
 	const ERROR_COMMENT_NOT_UPDATED = 'The comment was not updated!';
 	const ERROR_COMMENT_NONE = 'Input is required!';

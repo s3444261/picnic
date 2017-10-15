@@ -22,7 +22,7 @@ class Note {
 	private $_updated_at;
 	private $db;
 	
-	const ERROR_NOTE_ID_NOT_EXIST = 'The Note ID does not exist!';
+	const ERROR_NOTE_ID_NOT_EXIST = 'The NoteID does not exist!';
 
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {

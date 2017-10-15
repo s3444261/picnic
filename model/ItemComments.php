@@ -15,11 +15,16 @@
  */
 
 class ItemComments {
-	private $_item_commentID= '';
-	private $_itemID= '';
-	private $_commentID= '';
+	private $_item_commentID= 0;
+	private $_itemID= 0;
+	private $_commentID= 0;
 	private $db;
-
+	
+	const ERROR_ITEM_COMMENT_ID_NOT_EXIST = 'The ItemCommentID does not exist!';
+	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
+	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
+	const ERROR_COMMENT_ID_ALREADY_EXIST = 'The CommentID is already in Item_comments!';
+	
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
 
@@ -41,12 +46,15 @@ class ItemComments {
 		$this->$name = $value;
 	}
 	
-	/*
-	 * The get() function first confirms that the object exists in the database.
+	/**
+	 * First confirms that the object exists in the database.
 	 * It then retrieves the attributes from the database. The attributes are set and
-	 * true is returned.
+	 * the object returned.
+	 * 
+	 * @throws ModelException
+	 * @return ItemComments
 	 */
-	public function get() {
+	public function get(): ItemComments {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Item_comments WHERE item_commentID = :item_commentID";
 
@@ -58,55 +66,75 @@ class ItemComments {
 			$this->_commentID = $row ['commentID'];
 			return $this;
 		} else {
-			throw new ModelException ( 'Could not retrieve Item comment.' );
+			throw new ModelException ( self::ERROR_ITEM_COMMENT_ID_NOT_EXIST);
 		}
 	}
 	
-	/*
-	 * The set() function first checks to see if the object parameters already
-	 * exist.  If they do the objectID is retrieved and returned.  If they 
-	 * don't, they are insserted into the table and the objectID is
-	 * retrieved and returned.
+	/**
+	 * if itemID and/or commentID are invalid a ModelException is thrown.  If not,
+	 * a the database is checked to ensure the combination doesn't already exist.
+	 * If it does, the item_commentID of that entry is returned.  If not, the data is
+	 * entered into the database and the newly created item_commentID is returned.
+	 * 
+	 * @throws ModelException
+	 * @return int
 	 */
-	public function set() {
-		$query = "SELECT * FROM Item_comments 
+	public function set(): int {
+		$i = new Item($this->db);
+		$i->itemID = $this->_itemID;
+		$n = new Comment($this->db);
+		$n->commentID = $this->_commentID;
+		
+		if($i->exists()){
+			if($n->exists()){
+				if(!$this->existsCommentID()){
+					$query = "SELECT * FROM Item_comments
 					WHERE itemID = :itemID
 					AND commentID = :commentID";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':itemID', $this->_itemID );
-		$stmt->bindParam ( ':commentID', $this->_commentID );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		$this->_item_commentID = $row ['item_commentID'];
-		
-		if ($this->_item_commentID > 0) {
-			return $this->_item_commentID;
-		} else {
-			$query = "INSERT INTO Item_comments
+					
+					$stmt = $this->db->prepare ( $query );
+					$stmt->bindParam ( ':itemID', $this->_itemID );
+					$stmt->bindParam ( ':commentID', $this->_commentID );
+					$stmt->execute ();
+					if($stmt->rowCount() > 0){
+						$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+						$this->_item_commentID = $row ['item_commentID'];
+						return $this->_item_commentID;
+					} else {
+						$query = "INSERT INTO Item_comments
 					SET itemID = :itemID,
 						commentID = :commentID";
-
-			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
-			$stmt->bindParam ( ':commentID', $this->_commentID );
-			$stmt->execute ();
-			$this->_item_commentID = $this->db->lastInsertId ();
-			if ($this->_item_commentID > 0) {
-				return $this->_item_commentID;
+						
+						$stmt = $this->db->prepare ( $query );
+						$stmt->bindParam ( ':itemID', $this->_itemID );
+						$stmt->bindParam ( ':commentID', $this->_commentID );
+						$stmt->execute ();
+						$this->_item_commentID = $this->db->lastInsertId ();
+						if ($this->_item_commentID > 0) {
+							return $this->_item_commentID;
+						} else {
+							return 0;
+						}
+					}
+				} else {
+					throw new ModelException(self::ERROR_COMMENT_ID_ALREADY_EXIST);
+				}
 			} else {
-				return 0;
+				throw new ModelException(self::ERROR_COMMENT_ID_NOT_EXIST);
 			}
+		} else {
+			throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
 		}
 	}
 	
-	/*
-	 * The update() function confirms the object already exists in the database.
-	 * If it does, all the current attributes are retrieved. Where the new
-	 * attributes have not been set, they are set with the values already existing in
-	 * the database.
+	/**
+	 * First the existence of the item_commentID is confirmed.  If it exists, the
+	 * validity of both the itemID and commentID are checked.  If either are found
+	 * to be invalid, the update is carried out with the original values.
+	 * 
+	 * @return bool
 	 */
-	public function update() {
+	public function update(): bool {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Item_comments WHERE item_commentID = :item_commentID";
@@ -116,10 +144,17 @@ class ItemComments {
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
-			if (strlen ( $this->_itemID ) < 1) {
+			$i = new Item($this->db);
+			$i->itemID = $this->_itemID;
+			$n = new Comment($this->db);
+			$n->commentID = $this->_commentID;
+			
+			if (!$i->exists()) {
 				$this->_itemID = $row ['itemID'];
 			}
-			if (strlen ( $this->_commentID ) < 1) {
+			if (!$n->exists()) {
+				$this->_commentID = $row ['commentID'];
+			} elseif($this->existsCommentID()){
 				$this->_commentID = $row ['commentID'];
 			}
 			
@@ -139,34 +174,43 @@ class ItemComments {
 		}
 	}
 	
-	/*
-	 * The delete() checks the object exists in the database. If it does,
-	 * true is returned.
+	/**
+	 * Deletes the ItemComment from the database.
+	 * 
+	 * @return boolean
 	 */
-	public function delete() {
-		if ($this->exists ()) {
+	public function delete(): bool {
+		$v = new Validation ();
+		
+		try {
+			$v->emptyField($this->_item_commentID);
 			
-			$query = "DELETE FROM Item_comments
+			if ($this->exists ()) {
+				$query = "DELETE FROM Item_comments
 						WHERE item_commentID = :item_commentID";
-
-			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':item_commentID', $this->_item_commentID );
-			$stmt->execute ();
-			if (! $this->exists ()) {
-				return true;
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':item_commentID', $this->_item_commentID );
+				$stmt->execute ();
+				if (! $this->exists ()) {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
-				return false;
+				throw new ModelException(self::ERROR_ITEM_COMMENT_ID_NOT_EXIST);
 			}
-		} else {
-			return false;
+		} catch (ValidationException $e) {
+			throw new ModelException($e->getMessage());
 		}
 	}
 	
-	/*
-	 * The exists() function checks to see if the id exists in the database,
-	 * if it does, true is returned.
+	/**
+	 * Confirms the existence of the ItemComment in the database.
+	 * 
+	 * @return bool
 	 */
-	public function exists() {
+	public function exists(): bool {
 		if ($this->_item_commentID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Item_comments WHERE item_commentID = :item_commentID";
 
@@ -184,80 +228,157 @@ class ItemComments {
 		}
 	}
 	
-	/*
-	 * Count number of occurences of a comment for an item.
+	/**
+	 * Confirms the existence of commentID in ItemComments.
+	 *
+	 * @return bool
 	 */
-	public function count() {
-		$query = "SELECT COUNT(*) as num
-							FROM Item_comments
-							WHERE itemID = :itemID";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':itemID', $this->_itemID );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		return $row ['num'];
-	}
-	
-	/*
-	 * getComments() retrieves all Comment Objects for an Item.
-	 */
-	public function getComments(){
-		
-		$query = "SELECT * FROM Item_comments WHERE itemID = :itemID";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':itemID', $this->_itemID );
-		$stmt->execute ();
-		$objects = array();
-		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-			$itemComment = new ItemComments($this->db);
-			$itemComment->item_commentID = $row ['item_commentID'];
-			$itemComment->itemID = $row ['itemID'];
-			$itemComment->commentID = $row ['commentID'];
+	public function existsCommentID(): bool {
+		$n = new Comment($this->db);
+		$n->commentID = $this->_commentID; 
+		if($n->exists()){ 
+			$query = "SELECT COUNT(*) AS numRows FROM Item_comments WHERE commentID = :commentID";
 			
-			$objects[] = $itemComment;
-		}
-		
-		return $objects;
-	}
-	
-	/*
-	 * The getItemComment() method returns the object based on the itemID and the commentID.
-	 */
-	public function getItemComment() {
-		
-		$query = "SELECT * FROM Item_comments WHERE commentID = :commentID";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':commentID', $this->_commentID );
-		$stmt->execute ();
-		if($stmt->rowCount() > 0){
-			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			$this->_item_commentID = $row ['item_commentID'];
-			$this->_itemID = $row ['itemID'];
-			return $this;
-		} else {
-			throw new ModelException ( 'Could not retrieve itemComment.' );
-		}
-	}
-	
-	/*
-	 * The deleteComment() deletes a comment based on the commentID
-	 */
-	public function deleteComment() {
-		
-		$comment = new Comment($this->db);
-		$comment->commentID = $this->_commentID;
-			
-			$query = "DELETE FROM Item_comments
-						WHERE commentID = :commentID";
-
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
-			if (! $this->exists ()) {
-				if($comment->delete()){
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC ); 
+			if ($row ['numRows'] > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Confirms the existence of itemID in ItemComments.
+	 *
+	 * @return bool
+	 */
+	public function existsItemID(): bool {
+		$i = new Item($this->db);
+		$i->itemID = $this->_itemID;
+		if($i->exists()){
+			$query = "SELECT COUNT(*) AS numRows FROM Item_comments WHERE itemID = :itemID";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->execute ();
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			if ($row ['numRows'] > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Counts the number of comments for an item.
+	 * 
+	 * @return int
+	 */
+	public function count(): int {
+		$i = new Item($this->db);
+		$i->itemID = $this->_itemID;
+		
+		if($i->exists()){
+			$query = "SELECT COUNT(*) as num
+							FROM Item_comments
+							WHERE itemID = :itemID";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->execute ();
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			return $row ['num'];
+		} else {
+			return 0;
+		}
+	}
+	
+	/**
+	 * Retrieves all commentID's for an item and returns them as an
+	 * array of itemComment Objects.
+	 * 
+	 * @return array
+	 */
+	public function getItemComments(): array {
+		
+		$objects = array();
+		$i = new Item($this->db);
+		$i->itemID = $this->_itemID;
+		
+		if($i->exists()){
+			$query = "SELECT * FROM Item_comments WHERE itemID = :itemID";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->execute ();
+			while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
+				$itemComment = new ItemComments($this->db);
+				$itemComment->item_commentID = $row ['item_commentID'];
+				$itemComment->itemID = $row ['itemID'];
+				$itemComment->commentID = $row ['commentID'];
+				
+				$objects[] = $itemComment;
+			}
+		} else {
+			throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
+		}
+		return $objects;
+	}
+	
+	/**
+	 * Retrieves an ItemID for a comment and returns it as an itemComment
+	 * Object.
+	 * 
+	 * @return ItemComments
+	 */
+	public function getItemComment(): ItemComments {
+		$n = new Comment($this->db);
+		$n->commentID = $this->_commentID;
+		
+		if($n->exists()){
+			$query = "SELECT * FROM Item_comments WHERE commentID = :commentID";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':commentID', $this->_commentID );
+			$stmt->execute ();
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			$this->_item_commentID = $row ['item_commentID'];
+			$this->_itemID = $row ['itemID'];
+		} else {
+			throw new ModelException(self::ERROR_COMMENT_ID_NOT_EXIST);
+		}
+		return $this;
+	}
+	
+	/**
+	 * Deletes an ItemComment based on a commentID.
+	 * 
+	 * @return boolean
+	 */
+	public function deleteItemComment(): bool {
+		
+		$c = new Comment($this->db);
+		$c->commentID = $this->_commentID;
+		
+		if($c->exists()){
+			
+			$query = "DELETE FROM Item_comments
+					WHERE commentID = :commentID";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':commentID', $this->_commentID );
+			$stmt->execute ();
+			if($stmt->rowCount() > 0){
+				if($c->delete()){
 					return true;
 				} else {
 					return false;
@@ -265,6 +386,39 @@ class ItemComments {
 			} else {
 				return false;
 			}
+		} else {
+			throw new ModelException(self::ERROR_COMMENT_ID_NOT_EXIST);
+		}
+	}
+	
+	/**
+	 * Deletes an ItemComment and all associated comments based on an itemID.
+	 *
+	 * @return boolean
+	 */
+	public function deleteItemComments(): bool {
+		
+		if($this->existsItemID()){
+		
+			$itemComments = $this->getItemComments();
+			
+			foreach($itemComments as $itemComment){
+				$comment = new Comment($this->db);
+				$comment->commentID = $itemComment->commentID;
+				if($itemComment->delete()){
+					try {
+						$comment->delete();
+					} catch (ModelException $e) {
+						throw new ModelException($e->getMessage());
+					}
+				} else {
+					throw new ModelException(self::ERROR_ITEM_COMMENT_NOT_DELETED);
+				}
+			}
+			return true;
+		} else {
+			throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
+		}
 	}
 	
 	// Display Object Contents

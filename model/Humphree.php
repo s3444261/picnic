@@ -640,7 +640,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The getItemComments() function retrieves all comments for an item.
+	 * Retrieves all comments for an item.
+	 * 
+	 * @param int $itemID
+	 * @return array
 	 */
 	public function getItemComments(int $itemID): array {
 		$item = new Item ( $this->db );
@@ -665,35 +668,42 @@ class Humphree {
 	}
 	
 	/**
-	 * The getItemComment() function retrieves a comment.
+	 * Retrieves an item associated with a comment.
+	 * 
+	 * @param int $commentID
+	 * @return array
 	 */
 	public function getItemComment(int $commentID): array {
-		$c = array ();
-		
-		$comment = new Comment ( $this->db );
+		$comment = new Comment($pdo);
 		$comment->commentID = $commentID;
-		$itemComment = $this->system->getItemComment ( $comment );
-		$c ['userID'] = $itemComment->userID;
-		$user = new User ( $this->db );
-		$user->userID = $itemComment->userID;
-		$user = $this->system->getUser ( $user );
-		$c ['user'] = $user->user;
-		$c ['comment'] = $itemComment->comment;
+		$item = $this->system->getItemComment ( $comment );
+		$it = array();
+		$it['itemID'] = $item->itemID;
+		$it['title'] = $item->title;
+		$it['description'] = $item->description;
+		$it['quantity'] = $item->quantity;
+		$it['itemcondition'] = $item->itemcondition;
+		$it['price'] = $item->price;
+		$it['status'] = $item->status;
 		
-		return $c;
+		return $it;
 	}
 	
 	/**
-	 * The addItemComment() function adds an itemComment.
+	 * Adds a comment for an item.
+	 * 
+	 * @param int $userID
+	 * @param int $itemID
+	 * @param string $comment
+	 * @return bool
 	 */
 	public function addItemComment(int $userID, int $itemID, string $comment): bool {
-		$user = new User ( $this->db );
 		$item = new Item ( $this->db );
 		$c = new Comment ( $this->db );
-		$user->userID = $userID;
 		$item->itemID = $itemID;
 		$c->comment = $comment;
-		if ($this->system->addItemComment ( $user, $item, $c )) {
+		$c->userID = $userID;
+		if ($this->system->addItemNote ( $item, $c )) {
 			return true;
 		} else {
 			return false;
@@ -701,7 +711,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The updateItemComment() function updates an itemComment.
+	 * Updates a comment.
+	 * 
+	 * @param array $c
+	 * @return bool
 	 */
 	public function updateItemComment(array $c): bool {
 		$comment = new Comment ( $this->db );
@@ -716,7 +729,9 @@ class Humphree {
 	}
 	
 	/**
-	 * The deleteItemComment() function deletes an itemComment and all associated database content.
+	 * Deletes a comment.
+	 * @param int $commentID
+	 * @return bool
 	 */
 	public function deleteItemComment(int $commentID): bool {
 		$comment = new Comment ( $this->db );
@@ -729,7 +744,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The getItemNotes() retrieves all notes for an item.
+	 * Retrieves all notes for an item.
+	 * 
+	 * @param int $itemID
+	 * @return array
 	 */
 	public function getItemNotes(int $itemID): array {
 		$item = new Item ( $this->db );
@@ -749,22 +767,33 @@ class Humphree {
 	}
 	
 	/**
-	 * The getItemNote() function retrieves a note for an item.
+	 * Retrieves an item based on a noteID
+	 * 
+	 * @param int $noteID
+	 * @return array
 	 */
 	public function getItemNote(int $noteID): array {
-		$n = array ();
-		
-		$note = new Note ( $this->db );
+		$note = new Note($pdo);
 		$note->noteID = $noteID;
-		$itemNote = $this->system->getItemNote ( $note );
-		$n ['noteID'] = $itemNote->noteID;
-		$n ['note'] = $itemNote->note;
+		$item = $this->system->getItemNote ( $note );
+		$it = array();
+		$it['itemID'] = $item->itemID;
+		$it['title'] = $item->title;
+		$it['description'] = $item->description;
+		$it['quantity'] = $item->quantity;
+		$it['itemcondition'] = $item->itemcondition;
+		$it['price'] = $item->price;
+		$it['status'] = $item->status;
 		
-		return $n;
+		return $it;
 	}
 	
 	/**
-	 * The addItemNote() function adds an itemNote.
+	 * Adds a note to a respective item.
+	 * 
+	 * @param int $itemID
+	 * @param string $note
+	 * @return bool
 	 */
 	public function addItemNote(int $itemID, string $note): bool {
 		$item = new Item ( $this->db );
@@ -779,7 +808,11 @@ class Humphree {
 	}
 	
 	/**
-	 * The updateItemNote() function updates an itemNote.
+	 * Updates a note.
+	 * 
+	 * @param int $noteID
+	 * @param string $note
+	 * @return bool
 	 */
 	public function updateItemNote(int $noteID, string $note): bool {
 		$n = new Note ( $this->db );
@@ -793,7 +826,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The deleteItemNote() function deletes an itemNote and all associated database content.
+	 * Deletes a note from the database.
+	 * 
+	 * @param int $noteID
+	 * @return bool
 	 */
 	public function deleteItemNote(int $noteID): bool {
 		$n = new Note ( $this->db );

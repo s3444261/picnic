@@ -69,7 +69,7 @@ final class NoteTest extends PicnicTestCase{
 	const NOTE_3 = 'Note3';
 	const NOTE_ID_4 = 4;
 	const NOTE_4 = 'Note4';
-	const ERROR_NOTE_ID_NOT_EXIST = 'The Note ID does not exist!';
+	const ERROR_NOTE_ID_NOT_EXIST = 'The NoteID does not exist!';
 	const ERROR_NOTE_NOT_CREATED = 'The note was not created!';
 	const ERROR_NOTE_NOT_UPDATED = 'The note was not updated!';
 	const ERROR_NOTE_NONE = 'Input is required!';

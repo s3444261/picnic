@@ -24,7 +24,7 @@ class Comment {
 	private $_updated_at;
 	private $db;
 	
-	const ERROR_COMMENT_ID_NOT_EXIST = 'The Comment ID does not exist!';
+	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
 	const ERROR_USER_ID_NOT_EXIST = 'The User ID does not exist!';
 
 	// Constructor
@@ -83,7 +83,6 @@ class Comment {
 	 */
 	public function set(): int {
 		$v = new Validation();
-		$v->emptyField($this->comment);
 		$user = new User($this->db);
 		$user->userID = $this->userID;
 		try {
@@ -108,7 +107,7 @@ class Comment {
 			} else {
 				throw new ModelException(self::ERROR_USER_ID_NOT_EXIST);
 			}
-		} catch (ModelException $e) {
+		} catch (ValidationException $e) {
 			throw new ModelException($e->getMessage());
 		}
 	}

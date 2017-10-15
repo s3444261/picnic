@@ -13,7 +13,7 @@ require_once 'TestPDO.php';
 require_once 'PicnicTestCaseOld.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Comment.php';
-require_once dirname(__FILE__) . '/../../../model/Comments.php';
+require_once dirname(__FILE__) . '/../../../model/UserComments.php';
 require_once dirname(__FILE__) . '/../../../model/User.php';
 require_once dirname(__FILE__) . '/../../../model/Validation.php';
 require_once dirname(__FILE__) . '/../../../model/ModelException.php';
@@ -92,11 +92,11 @@ class UserCommentsTest extends PHPUnit\Framework\TestCase{
 	}
 
 	protected function createDefaultSut(){
-		return new Comments(TestPDO::getInstance());
+		return new UserComments(TestPDO::getInstance());
 	}
 	
 	protected function createSutWithId($id) {
-		return new Comments(TestPDO::getInstance(), [self::USER_ID => $id]);
+		return new UserComments(TestPDO::getInstance(), [self::USER_ID => $id]);
 	}
 	
 	protected function getValidId() {

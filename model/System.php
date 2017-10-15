@@ -588,180 +588,240 @@ class System {
 		}
 	}
 	
-	/*
-	 * The getItemComments() function retrieves all comments for an item.
+	/**
+	 * Retrieves all comments for an item and returns them as an array of
+	 * Comments objects.
+	 * 
+	 * @param Item $item
+	 * @return array
 	 */
 	public function getItemComments(Item $item): array {
 		$ic = new ItemComments ( $this->db );
 		$ic->itemID = $item->itemID;
-		$icids = $ic->getComments ();
-		$comments = array ();
-		foreach ( $icids as $icid ) {
-			$comment = new Comment ( $this->db );
-			$comment->commentID = $icid->commentID;
-			$comment->get ();
-			$comments [] = $comment;
+		$comments = array();
+		try {
+			$comments = $ic->getItemComments();
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
 		}
 		return $comments;
 	}
 	
-	/*
-	 * The getItemComment() function retrieves an itemComment.
+	/**
+	 * Retrieves an Item associated with a comment.
+	 * 
+	 * @param Comment $comment
+	 * @return Item
 	 */
-	public function getItemComment(Comment $comment): Comment {
-		$c = new Comment ( $this->db );
-		$c->commentID = $comment->commentID;
-		try {
-			$c = $c->get ();
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getError ();
-		}
-		return $c;
-	}
-	
-	/*
-	 * The addItemComment() function adds an itemComment.
-	 */
-	public function addItemComment(User $user, Item $item, Comment $comment): bool {
-		$c = new Comment ( $this->db );
-		$c->userID = $user->userID;
-		$c->comment = $comment->comment;
-		$c->commentID = $c->set ();
-		if ($c->commentID > 0) {
-			$ic = new ItemComments ( $this->db );
-			$ic->itemID = $item->itemID;
-			$ic->commentID = $c->commentID;
-			$ic->item_commentID = $ic->set ();
-			if ($ic->item_commentID > 0) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-	
-	/*
-	 * The updateItemComment() function updates an itemComment.
-	 */
-	public function updateItemComment(Comment $comment): bool {
-		$c = new Comment ( $this->db );
-		$c->commentID = $comment->commentID;
-		$c->userID = $comment->userID;
-		$c->comment = $comment->comment;
-		if ($c->update ()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	/*
-	 * The deleteItemComment() function deletes an itemComment and all associated database content.
-	 */
-	public function deleteItemComment(Comment $comment): bool {
-		$c = new Comment ( $this->db );
-		$c->commentID = $comment->commentID;
+	public function getItemComment(Comment $comment): Item {
 		$ic = new ItemComments ( $this->db );
 		$ic->commentID = $comment->commentID;
-		if ($ic->deleteComment ()) {
-			if ($c->delete ()) {
+		$item = new Item($this->db);
+		try {
+			$item->itemID = $ic->getItemComment()->itemID;
+			$item->get();
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+		}
+		return $item;
+	}
+	
+	/**
+	 * Adds an item and a comment to ItemComments.
+	 * 
+	 * @param Item $item
+	 * @param Comment $comment
+	 * @return bool
+	 */
+	public function addItemComment(Item $item, Comment $comment): bool {
+		$itemComment = new ItemComments($this->db);
+		$itemComment->itemID = $item->itemID;
+		try {
+			$itemComment->commentID = $comment->set();
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+			return false;
+		}
+		try {
+			if($itemComment->item_commentID = $itemComment->set() > 0){
 				return true;
 			} else {
 				return false;
 			}
-		} else {
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
 			return false;
 		}
 	}
 	
-	/*
-	 * The getItemNotes() retrieves all notes for an item.
+	/**
+	 * Updates an ItemComment
+	 * 
+	 * @param ItemComments $itemComment
+	 * @return bool
+	 */
+	public function updateItemComment(Comment $comment): bool {
+		try {
+			$comment->update();
+			return true;
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+			return false;
+		}
+	}
+	
+	/**
+	 * Deletes a comment from both ItemComments and Comments
+	 * 
+	 * @param Comment $comment
+	 * @return bool
+	 */
+	public function deleteItemComment(Comment $comment): bool {
+		$itemComment = new ItemComments($this->db);
+		$itemComment->commentID = $comment->commentID;
+		try { 
+			$itemComment->deleteItemComment();
+			return true;
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+			return false;
+		}
+	}
+	
+	/**
+	 * Deletes all comments associated with an item and deletes their respective
+	 * entries in ItemComments
+	 * 
+	 * @param Item $item
+	 * @return bool
+	 */
+	public function deleteItemComments(Item $item): bool {
+		$itemComment = new ItemComments($this->db);
+		$itemComment->itemID = $item->itemID;
+		try {
+			$itemComment->deleteItemComments();
+			return true;
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+			return false;
+		}
+	}
+	
+	/**
+	 * Retrieves all notes for an item and returns them as an array of
+	 * Notes objects.
+	 * 
+	 * @param Item $item
+	 * @return array
 	 */
 	public function getItemNotes(Item $item): array {
 		$in = new ItemNotes ( $this->db );
 		$in->itemID = $item->itemID;
-		$inids = $in->getNotes ();
-		$notes = array ();
-		foreach ( $inids as $inid ) {
-			$note = new Note ( $this->db );
-			$note->noteID = $inid->noteID;
-			try {
-				$note->get ();
-			} catch ( ModelException $e ) {
-				$_SESSION ['error'] = $e->getError ();
-			}
-			$notes [] = $note;
+		$notes = array();
+		try {
+			$notes = $in->getItemNotes();
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
 		}
 		return $notes;
 	}
 	
-	/*
-	 * The getItemNote() retrieves a note.
+	/**
+	 * Retrieves an Item associated with a note.
+	 * 
+	 * @param Note $note
+	 * @return Item
 	 */
-	public function getItemNote(Note $note): Note {
-		$n = new Note ( $this->db );
-		$n->noteID = $note->noteID;
-		try {
-			$n->get ();
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getError ();
-		}
-		return $n;
-	}
-	
-	/*
-	 * The addItemNote() function adds an itemNote.
-	 */
-	public function addItemNote(Item $item, Note $note): bool {
-		$n = new Note ( $this->db );
-		$n->note = $note->note;
-		$n->noteID = $n->set ();
-		if ($n->noteID > 0) {
-			$ic = new ItemNotes ( $this->db );
-			$ic->itemID = $item->itemID;
-			$ic->noteID = $n->noteID;
-			$ic->item_noteID = $ic->set ();
-			if ($ic->item_noteID > 0) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-	
-	/*
-	 * The updateItemNote() function updates an itemNote.
-	 */
-	public function updateItemNote(Note $note): bool {
-		$n = new Note ( $this->db );
-		$n->noteID = $note->noteID;
-		$n->note = $note->note;
-		if ($n->update ()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	/*
-	 * The deleteItemNote() function deletes an itemNote and all associated database content.
-	 */
-	public function deleteItemNote(Note $note) {
-		$n = new Note ( $this->db );
-		$n->noteID = $note->noteID;
+	public function getItemNote(Note $note): Item {
 		$in = new ItemNotes ( $this->db );
 		$in->noteID = $note->noteID;
-		if ($in->deleteNote ()) {
-			if ($n->delete ()) {
+		$item = new Item($this->db);
+		try {
+			$item->itemID = $in->getItemNote()->itemID;
+			$item->get();
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+		}
+		return $item;
+	}
+	
+	/**
+	 * Adds an item and a note to ItemNotes.
+	 * 
+	 * @param Item $item
+	 * @param Note $note
+	 * @return bool
+	 */
+	public function addItemNote(Item $item, Note $note): bool {
+		$itemNote = new ItemNotes($this->db);
+		$itemNote->itemID = $item->itemID;
+		try {
+			$itemNote->noteID = $note->set();
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+			return false;
+		}
+		try {
+			if($itemNote->item_noteID = $itemNote->set() > 0){
 				return true;
 			} else {
 				return false;
 			}
-		} else {
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+			return false;
+		}
+	}
+	
+	/**
+	 * Updates an ItemNote
+	 * 
+	 * @param ItemNotes $itemNote
+	 * @return bool
+	 */
+	public function updateItemNote(Note $note): bool {
+		try {
+			$note->update();
+			return true;
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+			return false;
+		}
+	}
+	
+	/**
+	 * Deletes a note from both ItemNotes and Notes
+	 * 
+	 * @param Note $note
+	 * @return bool
+	 */
+	public function deleteItemNote(Note $note): bool {
+		$itemNote = new ItemNotes($this->db);
+		$itemNote->noteID = $note->noteID;
+		try { 
+			$itemNote->deleteItemNote();
+			return true;
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+			return false;
+		}
+	}
+	
+	/**
+	 * Deletes all notes associated with an item and deletes their respective
+	 * entries in ItemNotes
+	 * 
+	 * @param Item $item
+	 * @return bool
+	 */
+	public function deleteItemNotes(Item $item): bool {
+		$itemNote = new ItemNotes($this->db);
+		$itemNote->itemID = $item->itemID;
+		try {
+			$itemNote->deleteItemNotes();
+			return true;
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
 			return false;
 		}
 	}
