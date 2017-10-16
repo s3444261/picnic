@@ -19,7 +19,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<?php if (isset ( $this->data['item'] )) { ?>
-						<h2 class="item-header"><?php echo ucfirst ( $this->data['item']['title'] ) ?> </h2>
+						<h2 class="item-header"><?php echo ucwords (strtolower( ( $this->data['item']['title'] ) ) ) ?> </h2>
 						<?php } ?>
 					</div>
 				</div>

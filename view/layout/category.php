@@ -74,7 +74,7 @@
                 <div class="card">
                   <img class="card-img-top" src="<?php echo BASE.'/Item/Thumb/'.$item['itemID'] ?>" alt="Card image cap">
                   <div class="card-body">
-                    <h4 class="card-title truncate"><?php echo $item['title'] ?></h4>
+                    <h4 class="card-title truncate"><?php echo ucwords (strtolower( ( $item['title'] ) ) ) ?></h4>
                     <p class="card-text truncate"><?php echo $item['description'] ?></p>
 <!--                     <p class="card-text truncate">Short description of item here. Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue.</p>
  -->                    <h3 class="card-text text-center price top-padding"><?php echo '$' . $item['price'] ?></h3>
@@ -94,7 +94,7 @@
                 <div class="card">
                   <img class="card-img-top" src="<?php echo BASE.'/Item/Thumb/'.$item['itemID'] ?>" alt="Card image cap">
                   <div class="card-body">
-                    <h4 class="card-title truncate"><?php echo $item['title'] ?></h4>
+                    <h4 class="card-title truncate"><?php echo ucwords (strtolower( ( $item['title'] ) ) ) ?></h4>
                     <p class="card-text truncate"><?php echo $item['description'] ?></p>
                     <!-- <p class="card-text truncate">Short description of item here. Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue.</p> -->
                     <h3 class="card-text text-center price top-padding"><?php echo '$' . $item['price'] ?></h3>
