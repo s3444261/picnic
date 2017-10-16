@@ -389,7 +389,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The countItemComments() method counts the number of items in a category.
+	 * Counts the number of Comments for an Item.
+	 * 
+	 * @param int $itemID
+	 * @return int
 	 */
 	public function countItemComments(int $itemID): int {
 		$item = new Item ( $this->db );
@@ -400,7 +403,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The countItemNotes() method counts the number of items in a category.
+	 * Counts the number of notes for an Item.
+	 * 
+	 * @param int $itemID
+	 * @return int
 	 */
 	public function countItemNotes(int $itemID): int {
 		$item = new Item ( $this->db );

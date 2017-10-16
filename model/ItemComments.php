@@ -24,6 +24,7 @@ class ItemComments {
 	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
 	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
 	const ERROR_COMMENT_ID_ALREADY_EXIST = 'The CommentID is already in Item_comments!';
+	const ERROR_ITEM_COMMENT_NOT_DELETED = 'The ItemComment was not deleted!';
 	
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
@@ -88,33 +89,20 @@ class ItemComments {
 		if($i->exists()){
 			if($n->exists()){
 				if(!$this->existsCommentID()){
-					$query = "SELECT * FROM Item_comments
-					WHERE itemID = :itemID
-					AND commentID = :commentID";
+					
+					$query = "INSERT INTO Item_comments
+								SET itemID = :itemID,
+					commentID = :commentID";
 					
 					$stmt = $this->db->prepare ( $query );
 					$stmt->bindParam ( ':itemID', $this->_itemID );
 					$stmt->bindParam ( ':commentID', $this->_commentID );
 					$stmt->execute ();
-					if($stmt->rowCount() > 0){
-						$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-						$this->_item_commentID = $row ['item_commentID'];
+					$this->_item_commentID = $this->db->lastInsertId ();
+					if ($this->_item_commentID > 0) {
 						return $this->_item_commentID;
 					} else {
-						$query = "INSERT INTO Item_comments
-					SET itemID = :itemID,
-						commentID = :commentID";
-						
-						$stmt = $this->db->prepare ( $query );
-						$stmt->bindParam ( ':itemID', $this->_itemID );
-						$stmt->bindParam ( ':commentID', $this->_commentID );
-						$stmt->execute ();
-						$this->_item_commentID = $this->db->lastInsertId ();
-						if ($this->_item_commentID > 0) {
-							return $this->_item_commentID;
-						} else {
-							return 0;
-						}
+						return 0;
 					}
 				} else {
 					throw new ModelException(self::ERROR_COMMENT_ID_ALREADY_EXIST);

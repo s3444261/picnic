@@ -28,8 +28,23 @@
  * getCategory(Category $category): Category
  * getCategories(): array
  * getCategoriesIn(int $parentID): array
- * getItem(Item $item): Item
  * 
+ * countCategoryItems(Category $category): int
+ * countItemComments(Item $item): int
+ * countItemNotes(Item $item): int
+ * getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage, string $status): array 
+ * countUserItems(User $user): int
+ * getUserItems(User $user): array
+ * getItem(Item $item): Item
+ * addItem(User $user, Item $item): bool
+ * updateItem(Item $item): bool
+ * deleteItem(Item $item): bool
+ * getItemComments(Item $item): array
+ * getItemComment(Comment $comment): Item
+ * addItemComment(Item $item, Comment $comment): bool
+ * updateItemComment(Comment $comment): bool
+ * deleteItemComment(Comment $comment): bool
+ * deleteItemComments(Item $item): bool
  * getItemNotes(Item $item): array
  * getItemNote(Note $note): Note
  * addItemNote(Item $item, Note $note): bool
@@ -162,13 +177,15 @@
  * -- testCountItemNotesItemIdInvalid(): void
  * -- testCountItemNotesItemIdValid(): void
  * 
- * getCategoryItems(Category $category, int $pageNumber , int $itemsPerPage): array
- * -- testGetCategoryItemsPageNumberZero(): void
- * -- testGetCategoryItemsCategoryItemsPerPageZero(): void
- * -- testGetCategoryItemsSuccess(): void
+ * getCategoryItemsByPage(Category $category, int $pageNumber , int $itemsPerPage): array
+ * -- testGetCategoryItemsByPagePageNumberZero(): void
+ * -- testGetCategoryItemsByPageCategoryItemsPerPageZero(): void
+ * -- testGetCategoryItemsByPageSuccess(): void
  * 
  * countUserItems(User $user): int
- * TO DO
+ * -- testCountUserItemsUserIdEmpty(): void
+ * -- testCountUserItemsUserIdInvalid(): void
+ * -- testCountUserItemsUserIdValid(): void
  * 
  * getUserItems(User $user): array
  * TO DO
@@ -178,8 +195,49 @@
  * -- testGetItemInvalidItemId(): void
  * -- testGetItemValidItemId():
  * 
+ * addItem(User $user, Item $item): bool
+ * TO DO
  * 
+ * updateItem(Item $item): bool
+ * TO DO
  * 
+ * deleteItem(Item $item): bool 
+ * TO DO
+ * 
+ * getItemComments(Item $item): array
+ * -- testGetItemCommentsItemIdEmpty(): void
+ * -- testGetItemCommentsItemIdInvalid(): void
+ * -- testGetItemCommentsItemIdValid(): void
+ * 
+ * getItemComment(Comment $note): Comment
+ * -- testGetItemCommentCommentIdEmpty(): void
+ * -- testGetItemCommentCommentIdInvalid(): void
+ * -- testGetItemCommentCommentIdValid(): void
+ * 
+ * addItemComment(Item $item, Comment $note): bool
+ * -- testAddItemCommentEmpty(): void
+ * -- testAddItemCommentInvalidItemId(): void
+ * -- testAddItemCommentInvalidCommentId(): void
+ * -- testAddItemCommentExistingCommentId(): void
+ * -- testAddItemCommentSuccess(): void
+ * 
+ * updateItemComment(Comment $note): bool
+ * -- testUpdateItemCommentsNoItemCommentsId(): void
+ * -- testUpdateItemCommentsInvalidItemCommentsId(): void
+ * -- testUpdateItemCommentsInvalidItemId(): void
+ * -- testUpdateItemCommentsInvalidCommentId(): void
+ * -- testUpdateItemCommentsExistingCommentId(): void
+ * -- testUpdateItemCommentsSuccess(): void
+ * 
+ * deleteItemComment(Comment $note): bool
+ * -- testDeleteCommentCommentIdEmpty(): void
+ * -- testDeleteCommentCommentIdInvalid(): void
+ * -- testDeleteCommentCommentIdValid(): void
+ * 
+ * deleteItemComments(Item $item): bool
+ * -- testDeleteItemCommentsItemIdEmpty(): void
+ * -- testDeleteItemCommentsItemIdInvalid(): void
+ * -- testDeleteItemCommentsItemIdValid(): void
  * 
  * getItemNotes(Item $item): array
  * -- testGetItemNotesItemIdEmpty(): void
@@ -399,6 +457,20 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
 	const ERROR_COMMENT_ID_ALREADY_EXIST = 'The CommentID is already in Item_comments!';
 	const ERROR_COMMENT_EMPTY = 'Input is required!';
+	
+	const USER_ITEM_ID  = 'user_itemID';
+	const RELATIONSHIP  = 'relationship';
+	const USERSTATUS	= 'userStatus';
+	
+	const RELATIONSHIP_1 = 'Relationship1';
+	const RELATIONSHIP_2 = 'Relationship2';
+	const USERSTATUS_1 = 'UserStatus1';
+	const USERSTATUS_2 = 'UserStatus2';
+	
+	const ERROR_USER_ITEM_ID_NOT_EXIST = 'The UserItemID does not exist!';
+	const ERROR_USER_ID_NOT_EXIST = 'The UserID does not exist!';
+	const ERROR_USER_ID_NOT_INT = 'UserID must be an integer!';
+	const ERROR_ITEM_ID_ALREADY_EXIST = 'The ItemID is already in User_items!';
 	
 	protected function setUp(): void {
 		// Regenerate a fresh database.
@@ -645,6 +717,46 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			try {
 				${'u' . $i}->activate();
 			} catch (ModelException $e) {}
+		}
+	}
+	
+	protected function populateUserItems(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser();
+		$pdo = TestPDO::getInstance();
+		DatabaseGenerator::Generate($pdo);
+		
+		$l = 1;
+		for($i = 1; $i <= 3; $i++){
+			$user = new User($pdo);
+			$user->user = 'user' . $i;
+			$user->email = 'user' . $i . '@gmail.com';
+			$user->password = 'PassWord' . $i . $i;
+			try {
+				$user->set();
+			} catch (ModelException $e) {}
+			
+			for($j = 1; $j <= 5; $j++){
+				$item = new Item($pdo);
+				$item->title = 'title' . $l;
+				try {
+					$item->set();
+					$userItem = new UserItems($pdo);
+					$userItem->userID = $i;
+					$userItem->itemID = $l;
+					$userItem->relationship = 'relationship' . $i . $l;
+					$userItem->userStatus = 'userStatus' . $i . $l;
+					
+					try {
+						if($userItem->userID == 3 && $userItem->itemID == 15){
+							// Don't set.
+						} else {
+							$userItem->set();
+						}
+					} catch (ModelException $e) {}
+				} catch (Exception $e) {}
+				$l++;
+			}
 		}
 	}
 	
@@ -1820,7 +1932,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	
 	
 	/*
-	 * getCategoryItems(Category $category, int $pageNumber , int $itemsPerPage): array
+	 * getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage, string $status): array
 	 */
 	
 	public function testGetCategoryItemsByPagePageNumberZero(): void {
@@ -1860,6 +1972,39 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			$start++;
 		}
 	}
+	
+	/*
+	 * countUserItems(User $user): int
+	 */
+	public function testCountUserItemsUserIdEmpty(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$this->populateUserItems();
+		$ui = new UserItems($pdo);
+		$this->assertEquals(0, $ui->count());
+	}
+	
+	public function testCountUserItemsUserIdInvalid(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$this->populateUserItems();
+		$ui = new UserItems($pdo);
+		$ui->userID = self::INVALID_ID;
+		$this->assertEquals(0, $ui->count());
+	}
+	
+	public function testCountUserItemsUserIdValid(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$this->populateUserItems();
+		$ui = new UserItems($pdo);
+		$ui->userID = self::USER_ID_1;
+		$this->assertEquals(5, $ui->count());
+	}
+	
+	/*
+	 * getUserItems(User $user): array
+	 */
 	
 	/*
 	 * getItem(Item $item): Item
@@ -1913,9 +2058,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertSame(self::CONDITION_2, $item->itemcondition);
 		$this->assertSame(self::PRICE_2, $item->price);
 		$this->assertSame(self::STATUS_2, $item->status);
-	}
 	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+	}
 	
 	/*
 	 * getItemComments(Item $item): array
@@ -2167,8 +2311,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$item->itemID = self::ITEM_ID_1;
 		$this->assertTrue($system->deleteItemComments($item));
 	}
-	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	/*
 	 * getItemNotes(Item $item): array

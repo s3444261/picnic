@@ -15,6 +15,7 @@ if (session_status () == PHP_SESSION_NONE) {
  * Programming Interface to the model and back to Humphree.
  *
  */
+
 class System {
 	
 	private $db;
@@ -451,7 +452,7 @@ class System {
 	}
 	
 	/**
-	 * Counts the number of items for a comment.
+	 * Counts the number of comments for an Item.
 	 * 
 	 * @param Item $item
 	 * @return int
@@ -462,8 +463,11 @@ class System {
 		return $ic->count ();
 	}
 	
-	/*
-	 * The countItemNotes() method counts the number of notes for an item.
+	/**
+	 * Counts the number of notes for an item.
+	 * 
+	 * @param Item $item
+	 * @return int
 	 */
 	public function countItemNotes(Item $item): int {
 		$in = new ItemNotes ( $this->db );
