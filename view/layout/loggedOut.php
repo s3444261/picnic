@@ -11,7 +11,7 @@
 
 <div class="container">
     <div class="jumbotron panel panel-default">
-		<h2>Successfully logged out</h2>
-		<h4>See you next time!</h4>
+        <h1 class="display-3 text-center">Successfully logged out</h1>
+		<h4 class="text-center">See you next time!</h4>
 	</div>
 </div>

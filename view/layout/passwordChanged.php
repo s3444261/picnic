@@ -11,9 +11,9 @@
 
 <div class="container">
     <div class="jumbotron panel panel-default">
-		<h2>Password changed</h2>
-		<div>
-			<p>Your password was successfully changed.</p>
+        <h1 class="display-3 text-center">Password Changed</h1>
+        <div class="alert alert-success text-center">
+			Your password was successfully changed.
 		</div>
 	</div>
 </div>
