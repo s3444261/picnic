@@ -11,9 +11,9 @@
 
 <div class="container">
     <div class="jumbotron panel panel-default">
-		<div class="row">
-			<h2>Forgot Password</h2>
-		</div>
-		<p>A new password has been sent to the given email address, if the email address was found.</p>
+        <h1 class="display-3 text-center">Forgot Password</h1>
+        <div class="alert alert-info">
+            A new password has been sent to the given email address, if the email address was found.
+        </div>
 	</div>
 </div>

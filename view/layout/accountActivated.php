@@ -11,13 +11,13 @@
 
 <div class="container">
 	<div class="jumbotron panel panel-default">
-		<h2>Account activated</h2>
-		<div>
-			<p>Congratulations! Your account is now activated and you may contact sellers or list your own items for sale..</p>
+        <h1 class="display-3 text-center">Account activated</h1>
+        <div class="alert alert-success text-center">
+			Congratulations! Your account is now activated and you may contact sellers or list your own items for sale.
 		</div>
-
-		<a type="submit" class="btn btn-primary" href="<?php echo BASE . '/Category/View'; ?>" role="button">View Listings</a>
-
-		<a type="submit" class="btn btn-primary" href="<?php echo BASE . '/Item/Create/' ?>" role="button">Sell Items</a>
+        <div class="text-center">
+            <a type="submit" class="btn btn-primary" href="<?php echo BASE . '/Category/View'; ?>" role="button">View Listings</a>
+            <a type="submit" class="btn btn-primary" href="<?php echo BASE . '/Item/Create/' ?>" role="button">Sell Items</a>
+        </div>
 	</div>
 </div>

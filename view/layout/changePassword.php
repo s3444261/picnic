@@ -10,7 +10,12 @@
 ?>
 <div class="container">
     <div class="jumbotron panel panel-default">
-        <h2>Change Password</h2>
+        <h1 class="display-3 text-center">Change Password</h1>
+
+		<?php if (isset ($this->data['error'])) { ?>
+            <div class="alert alert-danger"><?php echo $this->data['error'] ?></div>
+		<?php } ?>
+
         <div class="editUser">
             <form data-toggle="validator" role="form" method="post" action="DoChangePassword">
                 <div class="row">

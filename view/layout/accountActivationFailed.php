@@ -11,9 +11,12 @@
 
 <div class="container">
     <div class="jumbotron panel panel-default">
-		<h2>Account activation failed</h2>
-		<div>
-			<p>The account could not be activated.</p>
+        <h1 class="display-3 text-center">Account activation failed</h1>
+        <div class="alert alert-danger text-center">
+			The account could not be activated.
+			<?php if (isset ($this->data['error'])) {
+                echo $this->data['error'];
+            } ?>
 		</div>
 	</div>
 </div>

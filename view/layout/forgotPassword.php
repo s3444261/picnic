@@ -11,13 +11,11 @@
 
 <div class="container">
     <div class="jumbotron panel panel-default">
-		<div class="row">
-			<h2>Forgot Password</h2>
-		</div>
+        <h1 class="display-3 text-center">Forgot Password</h1>
 		<form data-toggle="validator" role="form" method="post" action="DoForgotPassword">
 			<div class="form-group">
 				<label for="email">Enter your email address and we'll email you a new password.</label>
-				<input type="email" class="form-control" name="email" id="email" placeholder="Email"  required>
+				<input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
 			</div>
 			<button type="submit" class="btn btn-primary">Send</button>
 		</form>

@@ -12,17 +12,21 @@
 <div class="container">
     <div class="jumbotron panel panel-default">
 		<?php if (!isset ($_SESSION [MODULE])) { ?>
-            <h2>Register</h2>
+            <h1 class="display-3 text-center">Register</h1>
+
+			<?php if (isset ($this->data['error'])) { ?>
+                <div class="alert alert-danger"><?php echo $this->data['error'] ?></div>
+			<?php } ?>
 
             <form data-toggle="validator" role="form" method="post" action="DoRegister">
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Email"  required>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
                     <p><small>We'll never share your email with anyone else.</small></p>
                 </div>
                 <div class="form-group">
-                    <label for="email">User name</label>
-                    <input type="text" class="form-control" name="username" id="username" placeholder="User name"  required>
+                    <label for="test">User name</label>
+                    <input type="text" class="form-control" name="username" id="username" placeholder="User name" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>

@@ -11,18 +11,36 @@
 require_once  __DIR__ . '/../config/Picnic.php';
 require_once  __DIR__ . '/../vendor/autoload.php';
 
+/**
+ * Class AccountController
+ *
+ * Controller for account-related functions.
+ */
 class AccountController {
 
-	public function Login()
-	{
-		$view = new View();
-		$view->SetData('navData', new NavData(NavData::Account));
-		$view->Render('signin');
+	/**
+	 * Presents the Login page.
+	 */
+	public function Login() : void 	{
+
+		if (!$this->auth()) {
+			$view = new View();
+			$view->SetData('navData', new NavData(NavData::Account));
+			$view->Render('signin');
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
 	}
 
-	public function DoLogin()
-	{
+	/**
+	 *	Logs the user in, using posted form data.
+	 */
+	public function DoLogin() : void {
+
 		if (!$this->auth()) {
+			$view = new View();
+			$view->SetData('navData', new NavData(NavData::Account));
+
 			if (isset ($_POST ['email']) && isset ($_POST ['password'])) {
 				try {
 					$validate = new Validation ();
@@ -38,23 +56,31 @@ class AccountController {
 
 					if ($user->login()) {
 						$_SESSION[MODULE] = true;
-						$view = new View();
-						$view->SetData('navData', new NavData(NavData::Account));
 						$view->Render('loggedIn');
 						return;
 					} else {
-						$_SESSION ['error'] = 'Not Logged In - No current session.';
+						$view->SetData('error', 'Invalid username or password.');
+						$view->Render('signin');
 					}
 				} catch (ValidationException $e) {
-					$_SESSION ['error'] = $e->getError();
+					$view->SetData('error', $e->getError());
+					$view->Render('signin');
+				} catch (ModelException $e) {
+					$view->SetData('error', $e->getError());
+					$view->Render('signin');
 				}
+			} else {
+				header('Location: ' . BASE . '/Account/Login');
 			}
+		} else {
+			header('Location: ' . BASE . '/Home');
 		}
-
-		header('Location:Login');
 	}
 
-	public function Logout() {
+	/**
+	 *	Logs the user out.
+	 */
+	public function Logout() : void {
 
 		$user = new User (Picnic::getInstance());
 		$user->logout();
@@ -64,10 +90,19 @@ class AccountController {
 		$view->Render('loggedOut');
 	}
 
-	public function Register()
-	{
+	/**
+	 * Presents the Registration page.
+	 */
+	public function Register() : void {
+
 		if (!$this->auth()) {
 			$view = new View();
+
+			if (isset($_SESSION['error'])) {
+				$view->SetData('error', $_SESSION['error']);
+				unset($_SESSION['error']);
+			}
+
 			$view->SetData('navData',  new NavData(NavData::Account));
 			$view->Render('register');
 		} else {
@@ -75,8 +110,11 @@ class AccountController {
 		}
 	}
 
-	public function DoRegister()
-	{
+	/**
+	 *	Registers a new user, using posted form data.
+	 */
+	public function DoRegister() : void	{
+
 		if (!$this->auth()) {
 			if (isset ($_POST ['email']) && isset ($_POST ['password']) && isset ($_POST ['password2']) && isset ($_POST ['username'])) {
 				try {
@@ -99,27 +137,34 @@ class AccountController {
 						$this->sendActivationEmail($userID);
 
 						header('Location: ' . BASE . '/Account/RegisterSuccess');
-						return;
 					} else {
-						$_SESSION ['error'] = 'Registration failed.';
 						$view = new View();
+
+						if (isset($_SESSION['error'])) {
+							$view->SetData('error', $_SESSION['error']);
+							unset($_SESSION['error']);
+						}
+
 						$view->SetData('navData',  new NavData(NavData::Account));
 						$view->Render('register');
 					}
 				} catch (ValidationException $e) {
-					$_SESSION ['error'] = $e->getError();
-					$view = new View();
-					$view->SetData('navData',  new NavData(NavData::Account));
-					$view->Render('register');
+					$_SESSION['error'] =  $e->getError();
+					header('Location: ' . BASE . '/Account/Register');
 				}
+			} else {
+				header('Location: ' . BASE . '/Account/Register');
 			}
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
 	}
 
-	public function RegisterSuccess()
-	{
+	/**
+	 *	Presents the Registration Successful page.
+	 */
+	public function RegisterSuccess() : void {
+
 		if (!$this->auth()) {
 			$view = new View();
 			$view->SetData('navData',  new NavData(NavData::Account));
@@ -129,8 +174,14 @@ class AccountController {
 		}
 	}
 
-	public function Activate($activationCode)
-	{
+	/**
+	 *    Activates a user, using the given activation code.
+	 *
+	 * @param string $activationCode
+	 * 			The activation code that was emailed to the user on registering.
+	 */
+	public function Activate(string $activationCode) : void	{
+
 		try {
 			$h = new Humphree(Picnic::getInstance());
 			$validate = new Validation();
@@ -153,12 +204,30 @@ class AccountController {
 			$_SESSION ['error'] = $e->getError();
 		}
 
+		header('Location: ' . BASE . '/Account/ActivationFailed');
+	}
+
+	/**
+	 * Presents the Activation Failed page.
+	 */
+	public function ActivationFailed() : void {
+
 		$view = new View();
+
+		if (isset($_SESSION['error'])) {
+			$view->SetData('error', $_SESSION['error']);
+			unset($_SESSION['error']);
+		}
+
 		$view->SetData('navData',  new NavData(NavData::Account));
 		$view->Render('accountActivationFailed');
 	}
 
-	public function ForgotPassword() {
+	/**
+	 * Presents the Forgot Password page.
+	 */
+	public function ForgotPassword() : void {
+
 		if (!$this->auth()) {
 			$view = new View();
 			$view->SetData('navData', new NavData(NavData::Account));
@@ -168,7 +237,11 @@ class AccountController {
 		}
 	}
 
-	public function DoForgotPassword() {
+	/**
+	 *	Sets a new password and emails it to the user.
+	 */
+	public function DoForgotPassword() : void {
+
 		if (!$this->auth()) {
 			if (isset ($_POST ['email'])) {
 				try {
@@ -202,127 +275,122 @@ class AccountController {
 						$this->sendForgotPasswordEmail($user->userID, $newPassword);
 					}
 
-					$view = new View();
-					$view->SetData('navData',  new NavData(NavData::Account));
-					$view->Render('passwordSent');
+					header('Location: ' . BASE . '/Account/PasswordSent');
 
 				} catch (ValidationException $e) {
 					$_SESSION ['error'] = $e->getError();
 				}
+			} else {
+				header('Location: ' . BASE . '/Account/ForgotPassword');
 			}
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
 	}
 
-	public function ChangePassword() {
+	/**
+	 *	Presents the Password Sent page.
+	 */
+	public function PasswordSent() : void {
+
+		$view = new View();
+		$view->SetData('navData',  new NavData(NavData::Account));
+		$view->Render('passwordSent');
+	}
+
+	/**
+	 * Presents the Change Password page.
+	 */
+	public function ChangePassword() : void {
+
 		if ($this->auth()) {
 			$view = new View();
-			$view->SetData('navData',  new NavData(NavData::Account));
+
+			if (isset($_SESSION['error'])) {
+				$view->SetData('error', $_SESSION['error']);
+				unset($_SESSION['error']);
+			}
+
+			$view->SetData('navData', new NavData(NavData::Account));
 			$view->Render('changePassword');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
 	}
 
-	public function DoChangePassword() {
+	/**
+	 * Changes the user's password, using posted form data.
+	 */
+	public function DoChangePassword() : void {
+
 		if ($this->auth()) {
 			if (isset ($_POST ['changePassword'])) {
 				unset ($_POST ['changePassword']);
-				$user = new User (Picnic::getInstance());
-				$v = new Validation ();
 
 				if (isset ($_POST ['password']) && isset ($_POST ['newPassword']) && isset ($_POST ['confirm'])) {
-
-					// Validate the password.
 					try {
+						$v = new Validation ();
 						$v->password($_POST ['password']);
-					} catch (ValidationException $e) {
-						$_SESSION ['error'] = $e->getError();
-					}
+						$v->password($_POST ['newPassword']);
+						$v->comparePasswords($_POST ['newPassword'], $_POST ['confirm']);
 
-					if (isset ($_SESSION ['error'])) {
-						unset ($_POST ['password']);
-						unset ($_POST ['newPassword']);
-						unset ($_POST ['confirm']);
-						header('Location: ChangePassword');
-					} else {
+						// Confirm current password is correct.
+						$user = new User (Picnic::getInstance());
+						$user->userID = $_SESSION['userID'];
+						$user->user = $_SESSION['user'];
+						$user->email = $_SESSION['email'];
+						$user->password = $_POST ['password'];
 
-						// Validate the new password.
-						try {
-							$v->password($_POST ['newPassword']);
-						} catch (ValidationException $e) {
-							$_SESSION ['error'] = $e->getError();
-						}
-
-						if (isset ($_SESSION ['error'])) {
-							unset ($_POST ['password']);
-							unset ($_POST ['newPassword']);
-							unset ($_POST ['confirm']);
-							header('Location: ChangePassword');
+						if ($user->checkPassword()) {
+							$user->password = $_POST ['newPassword'];
+							$user->updatePassword();
+							header('Location: ' . BASE . '/Account/PasswordChanged');
 						} else {
-
-							// Compare passwords.
-							try {
-								$v->comparePasswords($_POST ['newPassword'], $_POST ['confirm']);
-							} catch (ValidationException $e) {
-								$_SESSION ['error'] = $e->getError();
-							}
-
-							if (isset ($_SESSION ['error'])) {
-								unset ($_POST ['password']);
-								unset ($_POST ['newPassword']);
-								unset ($_POST ['confirm']);
-								header('Location: ChangePassword');
-							} else {
-
-								// Confirm current password is correct.
-								$user->userID = $_SESSION['userID'];
-								$user->user = $_SESSION['user'];
-								$user->email = $_SESSION['email'];
-								$user->password = $_POST ['password'];
-								$user->checkPassword();
-								if ($user->userID != $_SESSION['userID']) {
-									$_SESSION ['error'] = 'Password Error: Incorrect Password!';
-									unset ($_POST ['password']);
-									unset ($_POST ['newPassword']);
-									unset ($_POST ['confirm']);
-									header('Location: ChangePassword');
-
-								} else {
-									$user->password = $_POST ['newPassword'];
-									$user->updatePassword();
-									unset ($_POST ['password']);
-									unset ($_POST ['newPassword']);
-									unset ($_POST ['confirm']);
-									$view = new View();
-									$view->SetData('navData',  new NavData(NavData::Account));
-									$view->Render('passwordChanged');
-								}
-							}
+							$_SESSION['error'] = 'Password Error: Incorrect Password!';
+							header('Location: ' . BASE . '/Account/ChangePassword');
 						}
+					} catch (ValidationException $e) {
+						$_SESSION['error'] = $e->getError();
+						header('Location: ' . BASE . '/Account/ChangePassword');
 					}
+				} else {
+					header('Location: ' . BASE . '/Account/ChangePassword');
 				}
+			} else {
+				header('Location: ' . BASE . '/Account/ChangePassword');
 			}
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
 	}
 
-	private function auth(){
-		if(isset($_SESSION[MODULE]) && isset($_SESSION['userID'])){
-			if($_SESSION['userID'] > 0){
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
+	/**
+	 * Presents the Password Changed page.
+	 */
+	public function PasswordChanged() : void {
+		$view = new View();
+		$view->SetData('navData', new NavData(NavData::Account));
+		$view->Render('passwordChanged');
 	}
 
-	private function sendActivationEmail($userID)
-	{
+	/**
+	 * Determines whether the user is currently logged in.
+	 */
+	private function auth() : bool {
+
+		return (isset($_SESSION[MODULE]))
+			&& (isset($_SESSION['userID']))
+			&& ($_SESSION['userID'] > 0);
+	}
+
+	/**
+	 * Sends an email to the given user, with a link to activate their new account.
+	 *
+	 * @param int $userID
+	 * 			The ID of the user to whom the email will be sent.
+	 */
+	private function sendActivationEmail(int $userID) : void {
+
 		$h = new Humphree(Picnic::getInstance());
 		$user = $h->getUser($userID);
 
@@ -339,8 +407,17 @@ class AccountController {
 		}
 	}
 
-	private function sendForgotPasswordEmail($userID, $password)
-	{
+	/**
+	 * Sends an email to the given user, with a new password.
+	 *
+	 * @param int $userID
+	 * 			The ID of the user to whom the email will be sent.
+	 *
+	 * @param string $password
+	 * 			The new password to be sent to the user.
+	 */
+	private function sendForgotPasswordEmail(int $userID, string $password) : void {
+
 		$h = new Humphree(Picnic::getInstance());
 		$user = $h->getUser($userID);
 
@@ -357,7 +434,11 @@ class AccountController {
 		}
 	}
 
+	/**
+	 * Creates a mailer object that can be used to send mail.
+	 */
 	private function getMailer() : PHPMailer\PHPMailer\PHPMailer {
+
 		$mail = new PHPMailer\PHPMailer\PHPMailer();
 		$mail->setFrom('no-reply@humphree.org', 'Humphree');
 		$mail->isHTML(true);

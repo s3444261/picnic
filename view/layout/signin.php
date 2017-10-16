@@ -12,7 +12,11 @@
 <div class="container">
     <div class="jumbotron panel panel-default">
         <?php if (!isset ($_SESSION [MODULE])) { ?>
-            <h2>Login</h2>
+            <h1 class="display-3 text-center">Login</h1>
+
+		    <?php if (isset ($this->data['error'])) { ?>
+                <div class="alert alert-danger"><?php echo $this->data['error'] ?></div>
+			<?php } ?>
 
             <form data-toggle="validator" role="form" method="post" action="DoLogin">
                 <div class="form-group">
@@ -20,6 +24,7 @@
                     <input type="email" class="form-control" name="email" id="email" placeholder="Email"  required>
                     <p><small>We'll never share your email with anyone else.</small></p>
                 </div>
+
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" class="form-control" name="password" id="password" placeholder="Password" minlength="8" required>
