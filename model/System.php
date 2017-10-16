@@ -454,12 +454,9 @@ class System {
 	 * The countItemComments() method counts the number of comments for an item.
 	 */
 	public function countItemComments(Item $item): int {
-		$numItemComments = 0;
-		$ci = new ItemComments ( $this->db );
-		$ci->itemID = $item->itemID;
-		$numItemComments = $ci->count ();
-		
-		return $numItemComments;
+		$ic = new ItemComments ( $this->db );
+		$ic->itemID = $item->itemID;
+		return $ic->count ();
 	}
 	
 	/*

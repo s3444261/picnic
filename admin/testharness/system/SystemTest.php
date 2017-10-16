@@ -153,7 +153,9 @@
  * -- testCountCategoryItemsCategoryIDValid(): void
  * 
  * countItemComments(Item $item): int
- * TO DO
+ * -- testCountItemCommentsItemIdEmpty(): void
+ * -- testCountItemCommentsItemIdInvalid(): void
+ * -- testCountItemCommentsItemIdValid(): void
  * 
  * countItemNotes(Item $item): int
  * TO DO
@@ -455,7 +457,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 
 	protected function tearDown(): void {
-		TestPDO::CleanUp();
+		//TestPDO::CleanUp();
 	}
 
 	protected function populateCategories(): void {
@@ -1747,6 +1749,40 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$category->categoryID = self::CATEGORY_ID_3;
 		$this->assertEquals(34, $system->countCategoryItems($category));
 	}
+	
+	/*
+	 * countItemComments(Item $item): int
+	 */
+	
+	public function testCountItemCommentsItemIdEmpty(): void {
+		$pdo = TestPDO::getInstance();
+		$this->populateItemComments();
+		$system = new System ( $pdo );
+		$item = new Item($pdo);
+		$numItems = $system->countItemComments($item);
+		$this->assertEquals(0, $numItems);
+	}
+	
+	public function testCountItemCommentsItemIdInvalid(): void {
+		$pdo = TestPDO::getInstance();
+		$this->populateItemComments();
+		$system = new System ( $pdo );
+		$item = new Item($pdo);
+		$item->itemID = self::INVALID_ID;
+		$numItems = $system->countItemComments($item);
+		$this->assertEquals(0, $numItems);
+	}
+	
+	public function testCountItemCommentsItemIdValid(): void {
+		$pdo = TestPDO::getInstance();
+		$this->populateItemComments();
+		$system = new System ( $pdo );
+		$item = new Item($pdo);
+		$item->itemID = self::ITEM_ID_2;
+		$numItems = $system->countItemComments($item);
+		$this->assertEquals(5, $numItems);
+	}
+	
 	
 	/*
 	 * getCategoryItems(Category $category, int $pageNumber , int $itemsPerPage): array
