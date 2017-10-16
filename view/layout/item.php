@@ -19,7 +19,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<?php if (isset ( $this->data['item'] )) { ?>
-						<h4 class="item-header"><?php echo $this->data['item']['title'] ?> </h4>
+						<h2 class="item-header"><?php echo ucfirst ( $this->data['item']['title'] ) ?> </h2>
 						<?php } ?>
 					</div>
 				</div>
