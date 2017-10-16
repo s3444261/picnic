@@ -450,8 +450,11 @@ class System {
 		}
 	}
 	
-	/*
-	 * The countItemComments() method counts the number of comments for an item.
+	/**
+	 * Counts the number of items for a comment.
+	 * 
+	 * @param Item $item
+	 * @return int
 	 */
 	public function countItemComments(Item $item): int {
 		$ic = new ItemComments ( $this->db );
@@ -463,12 +466,9 @@ class System {
 	 * The countItemNotes() method counts the number of notes for an item.
 	 */
 	public function countItemNotes(Item $item): int {
-		$numItemNotes = 0;
-		$ci = new ItemNotes ( $this->db );
-		$ci->itemID = $item->itemID;
-		$numItemNotes = $ci->count ();
-		
-		return $numItemNotes;
+		$in = new ItemNotes ( $this->db );
+		$in->itemID = $item->itemID;
+		return $in->count ();
 	}
 	
 	/**

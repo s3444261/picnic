@@ -158,7 +158,9 @@
  * -- testCountItemCommentsItemIdValid(): void
  * 
  * countItemNotes(Item $item): int
- * TO DO
+ * -- testCountItemNotesItemIdEmpty(): void
+ * -- testCountItemNotesItemIdInvalid(): void
+ * -- testCountItemNotesItemIdValid(): void
  * 
  * getCategoryItems(Category $category, int $pageNumber , int $itemsPerPage): array
  * -- testGetCategoryItemsPageNumberZero(): void
@@ -1780,6 +1782,39 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$item = new Item($pdo);
 		$item->itemID = self::ITEM_ID_2;
 		$numItems = $system->countItemComments($item);
+		$this->assertEquals(5, $numItems);
+	}
+	
+	/*
+	 * countItemNotes(Item $item): int
+	 */
+	
+	public function testCountItemNotesItemIdEmpty(): void {
+		$pdo = TestPDO::getInstance();
+		$this->populateItemNotes();
+		$system = new System ( $pdo );
+		$item = new Item($pdo);
+		$numItems = $system->countItemNotes($item);
+		$this->assertEquals(0, $numItems);
+	}
+	
+	public function testCountItemNotesItemIdInvalid(): void {
+		$pdo = TestPDO::getInstance();
+		$this->populateItemNotes();
+		$system = new System ( $pdo );
+		$item = new Item($pdo);
+		$item->itemID = self::INVALID_ID;
+		$numItems = $system->countItemNotes($item);
+		$this->assertEquals(0, $numItems);
+	}
+	
+	public function testCountItemNotesItemIdValid(): void {
+		$pdo = TestPDO::getInstance();
+		$this->populateItemNotes();
+		$system = new System ( $pdo );
+		$item = new Item($pdo);
+		$item->itemID = self::ITEM_ID_2;
+		$numItems = $system->countItemNotes($item);
 		$this->assertEquals(5, $numItems);
 	}
 	
