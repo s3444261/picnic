@@ -198,10 +198,16 @@
  * -- testGetItemValidItemId():
  * 
  * addItem(User $user, Item $item): bool
- * TO DO
+ * -- testAddItemUserIdEmptyItemValid(): void
+ * -- testAddItemUserIdInvalidItemValid(): void
+ * -- testAddItemUserIdValidItemEmpty(): void
+ * -- testAddItemUserIdValidItemValid(): void
  * 
  * updateItem(Item $item): bool
- * TO DO
+ * -- testUpdateItemNoItemId(): void
+ * -- testUpdateItemInvalidItemId(): void
+ * -- testUpdateItemEmptyItem(): void
+ * -- testUpdateItemSuccess(): void
  * 
  * deleteItem(Item $item): bool 
  * TO DO
@@ -418,9 +424,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const CONDITION_3		= 'condition3';
 	const PRICE_3			= 'price3';
 	const STATUS_3			= 'active';
-	const ITEM_ID_INVALID = 400;
+	const ITEM_ID_16         = 16;
+	const TITLE_16			= 'title16';
+	const ITEM_ID_INVALID = 4000;
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
 	const ERROR_ITEM_ID_INVALID = 'The ItemID does not exist!';
+	const ERROR_ITEM_EMPTY = 'Input is required!';
 	
 	const ITEMS_PAGE_NUMBER = 3;
 	const ITEMS_PER_PAGE = 6;
@@ -464,6 +473,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const RELATIONSHIP  = 'relationship';
 	const USERSTATUS	= 'userStatus';
 	
+	const USER_ITEM_ID_1 = 1;
+	const USER_ITEM_ID_15 = 15;
 	const RELATIONSHIP_1 = 'Relationship1';
 	const RELATIONSHIP_2 = 'Relationship2';
 	const USERSTATUS_1 = 'UserStatus1';
@@ -533,7 +544,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 
 	protected function tearDown(): void {
-		TestPDO::CleanUp();
+		//TestPDO::CleanUp();
 	}
 
 	protected function populateCategories(): void {
@@ -2069,11 +2080,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	public function testGetItemInvalidItemId(): void {
+		unset($_SESSION['error']);
 		$pdo = TestPDO::getInstance();
 		$system = new System ( $pdo );
 		$sut = new Item($pdo, [self::ITEM_ID => self::ITEM_ID_INVALID]);
 		$item = $system->getItem($sut);
-		$this->assertSame('400', $item->itemID);
+		$this->assertSame('4000', $item->itemID);
 		$this->assertEmpty($item->title);
 		$this->assertEmpty($item->description);
 		$this->assertEmpty($item->quantity);
@@ -2100,6 +2112,139 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertSame(self::STATUS_2, $item->status);
 	
 	}
+	
+	/*
+	 * addItem(User $user, Item $item): bool
+	 */
+	
+	public function testAddItemUserIdEmptyItemValid(): void {
+		unset($_SESSION['error']);
+		$this->populateUserItems();
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$u = new User( $pdo );
+		$i = new Item( $pdo );
+		$i->title = self::TITLE_16;
+		$system->addItem($u, $i);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_USER_ID_EMPTY, $_SESSION['error']);
+		}
+		
+	}
+	
+	public function testAddItemUserIdInvalidItemValid(): void {
+		unset($_SESSION['error']);
+		$this->populateUserItems();
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$u = new User( $pdo );
+		$u->userID = self::INVALID_ID;
+		$i = new Item( $pdo );
+		$i->title = self::TITLE_16;
+		$system->addItem($u, $i);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_USER_ID_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testAddItemUserIdValidItemEmpty(): void {
+		unset($_SESSION['error']);
+		$this->populateUserItems();
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$u = new User( $pdo );
+		$u->userID = self::USER_ID_1;
+		$i = new Item( $pdo );
+		$system->addItem($u, $i);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_ITEM_EMPTY, $_SESSION['error']);
+		}
+	}
+	
+	public function testAddItemUserIdValidItemValid(): void {
+		unset($_SESSION['error']);
+		$this->populateUserItems();
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$u = new User( $pdo );
+		$u->userID = self::USER_ID_1;
+		$i = new Item( $pdo );
+		$i->title = self::TITLE_16;
+		$ui = new UserItems($pdo);
+		$ui->user_itemID = $system->addItem($u, $i);
+		try {
+			$ui->get();
+		} catch (ModelException $e) {}
+		$this->assertEquals(self::USER_ITEM_ID_15, $ui->user_itemID);
+		$this->assertEquals(self::USER_ID_1, $ui->userID);
+		$this->assertEquals(self::ITEM_ID_16, $ui->itemID);
+		try {
+			$i->itemID = self::ITEM_ID_16;
+			$i->get();
+		} catch (ModelException $e) {}
+		$this->assertEquals(self::ITEM_ID_16, $i->itemID);
+		$this->assertEquals(self::TITLE_16, $i->title);
+	}
+	
+	/*
+	 * updateItem(Item $item): bool
+	 */
+	public function testUpdateItemNoItemId(): void {
+		unset($_SESSION['error']);
+		$this->populateUserItems();
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$i = new Item( $pdo );
+		$i->title = self::TITLE_16;
+		$system->updateItem($i);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testUpdateItemInvalidItemId(): void {
+		unset($_SESSION['error']);
+		$this->populateUserItems();
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$i = new Item( $pdo );
+		$i->itemID = self::INVALID_ID;
+		$i->title = self::TITLE_16;
+		$system->updateItem($i);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testUpdateItemEmptyItem(): void {
+		unset($_SESSION['error']);
+		$this->populateUserItems();
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$i = new Item( $pdo );
+		$system->updateItem($i);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testUpdateItemSuccess(): void {
+		unset($_SESSION['error']);
+		$this->populateUserItems();
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$i = new Item( $pdo );
+		$i->itemID = self::ITEM_ID_1;
+		$i->title = self::TITLE_16;
+		$system->updateItem($i);
+		try {
+			$i->itemID = self::ITEM_ID_1;
+			$i->get();
+		} catch (ModelException $e) {}
+		$this->assertEquals(self::ITEM_ID_1, $i->itemID);
+		$this->assertEquals(self::TITLE_16, $i->title);
+	}
+		
 	
 	/*
 	 * getItemComments(Item $item): array

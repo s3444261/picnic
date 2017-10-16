@@ -35,6 +35,7 @@ class Item {
 	private $db;
 	
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
+	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
 
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
@@ -57,10 +58,13 @@ class Item {
 		$this->$name = $value;
 	}
 	
-	/*
-	 * The get() function first confirms that the item object exists in the database.
-	 * It then retrieves the attributes from the database. The attributes are set and
-	 * true is returned.
+	/**
+	 * First confirms the item object exists in the database.  If it doesn't, an
+	 * exception is thrown.  If it does exsit, it retrieves the attributes from the database.
+	 * The attributes are set and returnes+.
+	 * 
+	 * @throws ModelException
+	 * @return Item
 	 */
 	public function get(): Item {
 		if ($this->exists ()) {
@@ -84,41 +88,52 @@ class Item {
 		}
 	}
 	
-	/*
-	 * The set() function inserts the item paramaters into the
-	 * database. The itemID is returned.
+	/**
+	 * Checks that at a bare minimum the title has been completed.
+	 * If so, inserts the item into the database.  If not, throws an
+	 * exception.
+	 * 
+	 * @throws ModelException
+	 * @return int
 	 */
 	public function set(): int {
-		$query = "INSERT INTO Items
-					SET title = :title,
-						description = :description,
-						quantity = :quantity,
-						itemcondition = :itemcondition,
-						price = :price,
-						itemStatus = :status,
-						created_at = NULL";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':title', $this->_title );
-		$stmt->bindParam ( ':description', $this->_description );
-		$stmt->bindParam ( ':quantity', $this->_quantity );
-		$stmt->bindParam ( ':itemcondition', $this->_itemcondition );
-		$stmt->bindParam ( ':price', $this->_price );
-		$stmt->bindParam ( ':status', $this->_status );
-		$stmt->execute ();
-		$this->_itemID = $this->db->lastInsertId ();
-		if ($this->_itemID > 0) {
-			return $this->_itemID;
-		} else {
-			return 0;
+		$v = new Validation();
+		try {
+			$v->emptyField($this->title);
+			$query = "INSERT INTO Items
+						SET title = :title,
+							description = :description,
+							quantity = :quantity,
+							itemcondition = :itemcondition,
+							price = :price,
+							itemStatus = :status,
+							created_at = NULL";
+	
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':title', $this->_title );
+			$stmt->bindParam ( ':description', $this->_description );
+			$stmt->bindParam ( ':quantity', $this->_quantity );
+			$stmt->bindParam ( ':itemcondition', $this->_itemcondition );
+			$stmt->bindParam ( ':price', $this->_price );
+			$stmt->bindParam ( ':status', $this->_status );
+			$stmt->execute ();
+			$this->_itemID = $this->db->lastInsertId ();
+			if ($this->_itemID > 0) {
+				return $this->_itemID;
+			} else {
+				return 0;
+			}
+		} catch (ValidationException $e) {
+			throw new ModelException($e->getMessage());
 		}
 	}
 	
-	/*
-	 * The update() function confirms the object already exists in the database.
-	 * If it does, all the current attributes are retrieved. Where the new
-	 * attributes have not been set, they are set with the values already existing in
-	 * the database.
+	/**
+	 * Confirms the item exists in the database.  If it does, any modified
+	 * attributes are updated.
+	 * 
+	 * @throws ModelException
+	 * @return bool
 	 */
 	public function update(): bool {
 		if ($this->exists ()) {
@@ -169,13 +184,16 @@ class Item {
 			$stmt->execute ();
 			return true;
 		} else {
-			return false;
+			throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
 		}
 	}
 	
-	/*
-	 * The delete() checks the object exists in the database. If it does,
-	 * true is returned.
+	/**
+	 * Checks the item exsits in the database.  If it does, it is
+	 * deleted and true is returned.
+	 * 
+	 * @throws ModelException
+	 * @return bool
 	 */
 	public function delete(): bool{
 		if ($this->exists ()) {
@@ -192,13 +210,15 @@ class Item {
 				return false;
 			}
 		} else {
-			return false;
+			throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
 		}
 	}
 	
-	/*
-	 * The exists() function checks to see if the id exists in the database,
-	 * if it does, true is returned.
+	/**
+	 * Checks to see if the itemID exists in the database, if it does
+	 * true is returned.
+	 * 
+	 * @return bool
 	 */
 	public function exists(): bool{
 		if ($this->_itemID > 0) {

@@ -618,7 +618,7 @@ class Humphree {
 		$it->itemcondition = $item ['itemcondition'];
 		$it->price = $item ['price'];
 		$it->status = $item ['status'];
-		if ($this->system->addItem ( $user, $it )) {
+		if ($this->system->addItem ( $user, $it ) > 0) {
 			return true;
 		} else {
 			return false;

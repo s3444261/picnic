@@ -24,19 +24,21 @@
  * -- testGetItemValidItemId():
  *
  * set(): int
- * TO DO 
+ * -- testSetItemEmptyItem(): void
+ * -- testSetItemSuccess(): void
  *
  * update(): bool
- * TO DO
+ * -- testUpdateItemNoItemId(): void
+ * -- testUpdateItemInvalidItemId(): void
+ * -- testUpdateItemEmptyItem(): void
+ * -- testUpdateItemSuccess(): void
  *
  * delete(): bool
- * TO DO
  * -- testDeleteItemItemIdEmpty(): void
  * -- testDeleteItemItemIdInvalid(): void
  * -- testDeleteItemItemIdValid(): void
  *
  * exists(): bool
- * TO DO
  * -- testExistsItemItemIdEmpty(): void
  * -- testExistsItemItemIdInvalid(): void
  * -- testExistsItemItemIdValid(): void
@@ -49,6 +51,8 @@ require_once 'PicnicTestCase.php';
 require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname(__FILE__) . '/../../../model/Item.php';
 require_once dirname(__FILE__) . '/../../../model/ModelException.php';
+require_once dirname(__FILE__) . '/../../../model/Validation.php';
+require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
 
 class ItemTest extends PicnicTestCase
 {
@@ -83,12 +87,22 @@ class ItemTest extends PicnicTestCase
 	const CONDITION_3		= 'condition3';
 	const PRICE_3			= 'price3';
 	const STATUS_3			= 'active';
+	const ITEM_ID_4         = 4;
+	const TITLE_4			= 'title4';
+	const DESCRIPTION_4		= 'description4';
+	const QUANTITY_4		= 'quantity4';
+	const CONDITION_4		= 'condition4';
+	const PRICE_4			= 'price4';
+	const STATUS_4			= 'active';
 	
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
+	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
+	const ERROR_ITEM_NOT_CREATED = 'The item was not created!';
+	const ERROR_ITEM_NOT_UPDATED = 'The item was not updated!';
+	const ERROR_ITEM_NONE = 'Input is required!';
 
 	protected function setUp(): void {
-		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
-		// Be nice if we could mock out the database, but let's see how we go with that.
+		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser();
 		$pdo = TestPDO::getInstance();
 		DatabaseGenerator::Generate($pdo);
@@ -216,5 +230,116 @@ class ItemTest extends PicnicTestCase
 		$this->assertEquals(self::CONDITION_2, $sut->itemcondition);
 		$this->assertEquals(self::PRICE_2, $sut->price);
 		$this->assertEquals(self::STATUS_2, $sut->status);
+	}
+	
+	/*
+	 * set(): int
+	 */
+	public function testSetItemEmptyItem(): void {
+		$sut = $this->createDefaultSut();
+		$this->expectExceptionMessage(self::ERROR_ITEM_NONE);
+		$sut->set();
+	}
+	
+	public function testSetItemSuccess(): void {
+		$sut = $this->createDefaultSut();
+		$sut->title = self::TITLE_4;
+		$sut->description = self::DESCRIPTION_4;
+		$sut->quantity = self::QUANTITY_4;
+		$sut->itemcondition = self::CONDITION_4;
+		$sut->price = self::PRICE_4;
+		$sut->status = self::STATUS_4;
+		try {
+			$sut->itemID = $sut->set();
+		} catch (ModelException $e) {}
+		$sut = $this->createSutWithId($sut->itemID);
+		try {
+			$sut->get();
+			$this->assertEquals(self::ITEM_ID_4, $sut->itemID);
+			$this->assertEquals(self::TITLE_4, $sut->title);
+			$this->assertEquals(self::DESCRIPTION_4, $sut->description);
+			$this->assertEquals(self::QUANTITY_4, $sut->quantity);
+			$this->assertEquals(self::CONDITION_4, $sut->itemcondition);
+			$this->assertEquals(self::PRICE_4, $sut->price);
+			$this->assertEquals(self::STATUS_4, $sut->status);
+		} catch (ModelException $e) {}
+	}
+	
+	/*
+	 * update(): bool
+	 */
+	public function testUpdateItemNoItemId(): void {
+		$sut = $this->createDefaultSut();
+		$this->expectExceptionMessage(self::ERROR_ITEM_ID_NOT_EXIST);
+		$sut->update();
+	}
+	
+	public function testUpdateItemInvalidItemId(): void {
+		$sut = $this->createSutWithId($this->getInvalidId());
+		$this->expectExceptionMessage(self::ERROR_ITEM_ID_NOT_EXIST);
+		$sut->update();
+	}
+	
+	public function testUpdateItemNoItem(): void {
+		$sut = $this->createSutWithId(self::ITEM_ID_3);
+		$this->assertTrue($sut->update());
+	}
+	
+	public function testUpdateItemSuccess(): void {
+		$sut = $this->createSutWithId(self::ITEM_ID_3);
+		$sut->title = self::TITLE_4;
+		$sut->description = self::DESCRIPTION_4;
+		$sut->quantity = self::QUANTITY_4;
+		$sut->itemcondition = self::CONDITION_4;
+		$sut->price = self::PRICE_4;
+		$sut->status = self::STATUS_4;
+		$this->assertTrue($sut->update());
+		$this->assertEquals(self::ITEM_ID_3, $sut->itemID);
+		$this->assertEquals(self::TITLE_4, $sut->title);
+		$this->assertEquals(self::DESCRIPTION_4, $sut->description);
+		$this->assertEquals(self::QUANTITY_4, $sut->quantity);
+		$this->assertEquals(self::CONDITION_4, $sut->itemcondition);
+		$this->assertEquals(self::PRICE_4, $sut->price);
+		$this->assertEquals(self::STATUS_4, $sut->status);
+	}
+	
+	/*
+	 * delete(): bool
+	 */
+	public function testDeleteItemItemIdEmpty(): void {
+		$sut = $this->createDefaultSut();
+		$this->expectExceptionMessage(self::ERROR_ITEM_ID_NOT_EXIST);
+		$sut->delete();
+	}
+	
+	public function testDeleteItemItemIdInvalid(): void {
+		$sut = $this->createSutWithId($this->getInvalidId());
+		$this->expectExceptionMessage(self::ERROR_ITEM_ID_NOT_EXIST);
+		$sut->delete();
+	}
+	
+	public function testDeleteItemItemIdValid(): void {
+		$sut = $this->createSutWithId(self::ITEM_ID_3);
+		$this->assertTrue($sut->delete());
+		$this->expectExceptionMessage(self::ERROR_ITEM_NOT_EXIST);
+		$sut->get();
+	}
+	
+	/*
+	 * exists(): bool
+	 */
+	public function testExistsItemItemIdEmpty(): void {
+		$sut = $this->createDefaultSut();
+		$this->assertFalse($sut->exists());
+	}
+	
+	public function testExistsItemItemIdInvalid(): void {
+		$sut = $this->createSutWithId($this->getInvalidId());
+		$this->assertFalse($sut->exists());
+	}
+	
+	public function testExistsItemItemIdValid(): void {
+		$sut = $this->createSutWithId(self::ITEM_ID_2);
+		$this->assertTrue($sut->exists());
 	}
 }

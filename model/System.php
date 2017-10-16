@@ -497,8 +497,11 @@ class System {
 		return $categoryItemsArray;
 	}
 	
-	/*
-	 * The countUserItems() method counts the number of items in a user.
+	/**
+	 * Counts the number of items held by a user.
+	 * 
+	 * @param User $user
+	 * @return int
 	 */
 	public function countUserItems(User $user): int {
 		$numUserItems = 0;
@@ -509,8 +512,11 @@ class System {
 		return $numUserItems;
 	}
 	
-	/*
-	 * The getUserItems() function retrieves all items linked to a User.
+	/**
+	 * Retrieves all items linked to a user.
+	 * 
+	 * @param User $user
+	 * @return array
 	 */
 	public function getUserItems(User $user): array {
 		$ui = array ();
@@ -524,8 +530,11 @@ class System {
 		return $ui;
 	}
 	
-	/*
-	 * The getItem() function retrieves an item.
+	/**
+	 * Retrieves an item
+	 * 
+	 * @param Item $item
+	 * @return Item
 	 */
 	public function getItem(Item $item): Item {
 		$i = new Item ( $this->db );
@@ -538,37 +547,55 @@ class System {
 		return $i;
 	}
 	
-	/*
-	 * The addItem() function adds an item.
+	/**
+	 * Adds an item to the items table and then adds the id's to
+	 * the UserItems table.
+	 * 
+	 * @param User $user
+	 * @param Item $item
+	 * @return bool
 	 */
-	public function addItem(User $user, Item $item): bool {
+	public function addItem(User $user, Item $item): int {
 		$i = new Item ( $this->db );
 		$ui = new UserItems ( $this->db );
 		$i = $item;
-		$i->itemID = $i->set ();
+		try {
+			$i->itemID = $i->set ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
 		if ($i->itemID > 1) {
 			$ui->userID = $user->userID;
 			$ui->itemID = $i->itemID;
-			$ui->user_itemID = $ui->set ();
+			try {
+				$ui->user_itemID = $ui->set ();
+			} catch ( ModelException $e ) {
+				$_SESSION ['error'] = $e->getError ();
+			}
 			if ($ui->user_itemID > 0) {
-				return true;
+				return $ui->user_itemID;
 			} else {
-				return false;
+				return 0;
 			}
 		} else {
-			return false;
+			return 0;
 		}
 	}
 	
-	/*
-	 * The updateItem() function updates an item.
+	/**
+	 * Updates an item.
+	 * 
+	 * @param Item $item
+	 * @return bool
 	 */
 	public function updateItem(Item $item): bool {
 		$i = new Item ( $this->db );
 		$i = $item;
-		if ($i->update ()) {
+		try {
+			$i->update ();
 			return true;
-		} else {
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getError ();
 			return false;
 		}
 	}

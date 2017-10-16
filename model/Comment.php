@@ -51,7 +51,7 @@ class Comment {
 	/**
 	 * First confirms that the comment object exists in the database.  If it doesn't, an
 	 * exception is thrown.  If it does exist, it then retrieves the attributes from 
-	 * the database. The attributes are set and true is returned.
+	 * the database. The attributes are set and returned.
 	 * 
 	 * @throws ModelException
 	 * @return Comment
@@ -163,7 +163,7 @@ class Comment {
 	
 	/**
 	 * Checks the object exists in the database. If it does,
-	 * true is returned.
+	 * it is deleted and true is returned.
 	 * 
 	 * @return bool
 	 */
