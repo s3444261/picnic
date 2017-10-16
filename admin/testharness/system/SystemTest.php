@@ -188,7 +188,9 @@
  * -- testCountUserItemsUserIdValid(): void
  * 
  * getUserItems(User $user): array
- * TO DO
+ * -- testGetUserItemsUserIdEmpty(): void
+ * -- testGetUserItemsUserIdInvalid(): void
+ * -- testGetUserItemsUserIdValid(): void
  * 
  * getItem(Item $item): Item
  * -- testGetItemNoItemId(): void
@@ -531,7 +533,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 
 	protected function tearDown(): void {
-		//TestPDO::CleanUp();
+		TestPDO::CleanUp();
 	}
 
 	protected function populateCategories(): void {
@@ -2005,6 +2007,44 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	/*
 	 * getUserItems(User $user): array
 	 */
+	public function testGetUserItemsUserIdEmpty(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$this->populateUserItems();
+		$u = new User($pdo);
+		$system->getUserItems($u);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_USER_ID_EMPTY, $_SESSION['error']);
+		}
+	}
+	
+	public function testGetUserItemsUserIdInvalid(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$this->populateUserItems();
+		$u = new User($pdo);
+		$u->userID = self::INVALID_ID;
+		$system->getUserItems($u);
+		if(isset($_SESSION['error'])){
+			$this->assertEquals(self::ERROR_USER_ID_NOT_EXIST, $_SESSION['error']);
+		}
+	}
+	
+	public function testGetUserItemsUserIdValid(): void {
+		$pdo = TestPDO::getInstance();
+		$system = new System ( $pdo );
+		$this->populateUserItems();
+		$u = new User($pdo);
+		$u->userID = self::USER_ID_2;
+		$sut = $system->getUserItems($u);
+		$i = 6;
+		foreach($sut as $obj){
+			$this->assertEquals($i, $obj->user_itemID);
+			$this->assertEquals(2, $obj->userID);
+			$this->assertEquals($i, $obj->itemID);
+			$i++;
+		}
+	}
 	
 	/*
 	 * getItem(Item $item): Item

@@ -516,7 +516,11 @@ class System {
 		$ui = array ();
 		$u = new UserItems ( $this->db );
 		$u->userID = $user->userID;
-		$ui = $u->getUserItems ();
+		try {
+			$ui = $u->getUserItems ();
+		} catch (ModelException $e) {
+			$_SESSION ['error'] = $e->getError ();
+		}
 		return $ui;
 	}
 	
