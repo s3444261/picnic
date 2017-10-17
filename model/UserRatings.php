@@ -19,15 +19,34 @@
  * @property string $_updated_at;
  */
 class UserRatings {
-	private $_user_ratingID = '';
-	private $_itemID = '';
+	private $_user_ratingID = 0;
+	private $_itemID = 0;
 	private $_sellrating = 0;
-	private $_userID = '';
+	private $_userID = 0;  
 	private $_buyrating = 0;
 	private $_transaction = '';
 	private $_created_at;
 	private $_updated_at;
 	private $db;
+	
+	/*
+	 * The sellrating is the rating of a buyer made by the seller.
+	 * 
+	 * The userID listed above is the userID of the buyer.
+	 * The userID of the seller is already tied to the item through the
+	 * UserItems Table.
+	 * 
+	 * The buyrating is the rating of a seller made by the buyer.
+	 * 
+	 * The transaction string is an md5 hash used to identify the transaction.
+	 * It will be received through a URL.
+	 */
+	
+	const ERROR_USER_RATING_ID_NOT_EXIST = 'The UserRatingID does not exist!';
+	const ERROR_USER_ID_NOT_EXIST = 'The UserID does not exist!';
+	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
+	const ERROR_RATING_NOT_SET = 'The rating has not been set!';
+	const ERROR_INCORRECT_TRANSACTION_ID = 'The TransactionID is incorrect!';
 
 	function __construct(PDO $pdo, $args = array()) {
 
@@ -49,12 +68,14 @@ class UserRatings {
 		$this->$name = $value;
 	}
 	
-	/*
-	 * The get() function first confirms that the user object exists in the database.
-	 * It then retrieves the attributes from the database. The attributes are set and
-	 * true is returned.
+	/**
+	 * First the existence of the UserRatings object is confirmed.  Attributes of the
+	 * rating are then retrieved from the database.
+	 * 
+	 * @throws ModelException
+	 * @return UserRatings
 	 */
-	public function get() {
+	public function get(): UserRatings {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM User_ratings WHERE user_ratingID = :user_ratingID";
 
@@ -62,6 +83,7 @@ class UserRatings {
 			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			$this->_user_ratingID = $row ['user_ratingID'];
 			$this->_itemID = $row ['itemID'];
 			$this->_sellrating = $row ['sellrating'];
 			$this->_userID = $row ['userID'];
@@ -71,18 +93,20 @@ class UserRatings {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new ModelException ( 'Could not retrieve userrating.' );
+			throw new ModelException ( self::ERROR_USER_RATING_ID_NOT_EXIST );
 		}
 	}
 	
-	/*
-	 * The set() function inserts the objects paramaters into the
-	 * database. The objectID is returned.
+	/**
+	 * Inserts attributes into the database.
+	 * 
+	 * @return int
 	 */
-	public function set() {
+	public function set(): int {
 		$query = "INSERT INTO User_ratings
 					SET itemID = :itemID,
 						sellrating = :sellrating,
+						userID = :userID,
 						buyrating = :buyrating,
 						transaction = :transaction,
 						created_at = NULL";
@@ -90,6 +114,7 @@ class UserRatings {
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':itemID', $this->_itemID );
 		$stmt->bindParam ( ':sellrating', $this->_sellrating );
+		$stmt->bindParam ( ':userID', $this->_userID );
 		$stmt->bindParam ( ':buyrating', $this->_buyrating );
 		$transactionCode = $this->transactionCode();
 		$stmt->bindParam ( ':transaction', $transactionCode);
@@ -102,13 +127,13 @@ class UserRatings {
 		}
 	}
 	
-	/*
-	 * The update() function confirms the object already exists in the database.
-	 * If it does, all the current attributes are retrieved. Where the new
-	 * attributes have not been set, they are set with the values already existing in
-	 * the database.
+	/**
+	 * Updates any attributes that have been altered.
+	 * 
+	 * @throws ModelException
+	 * @return bool
 	 */
-	public function update() {
+	public function update(): bool {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM User_ratings WHERE user_ratingID = :user_ratingID";
@@ -118,19 +143,19 @@ class UserRatings {
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
-			if (strlen ( $this->_itemID ) < 1) {
+			if ($this->_itemID < 1) {
 				$this->_itemID = $row ['itemID'];
 			}
-			if (strlen ( $this->_sellrating ) < 1) {
+			if ($this->_sellrating < 1) {
 				$this->_sellrating = $row ['sellrating'];
 			}
-			if (strlen ( $this->_userID ) < 1) {
+			if ($this->_userID < 1) {
 				$this->_userID = $row ['userID'];
 			}
-			if (strlen ( $this->_buyrating ) < 1) {
+			if ($this->_buyrating < 1) {
 				$this->_buyrating = $row ['buyrating'];
 			}
-			if (strlen ( $this->_transaction ) < 1) {
+			if (strlen ( $this->_transaction ) != 32) {
 				$this->_transaction = $row ['transaction'];
 			}
 			
@@ -152,15 +177,17 @@ class UserRatings {
 			$stmt->execute ();
 			return true;
 		} else {
-			return false;
+			throw new ModelException ( self::ERROR_USER_RATING_ID_NOT_EXIST );
 		}
 	}
 	
-	/*
-	 * The delete() checks the object exists in the database. If it does,
-	 * true is returned.
+	/**
+	 * Deletes UserRating based on user_ratingID.
+	 * 
+	 * @throws ModelException
+	 * @return boolean
 	 */
-	public function delete() {
+	public function delete(): bool {
 		if ($this->exists ()) {
 			
 			$query = "DELETE FROM User_ratings
@@ -175,15 +202,70 @@ class UserRatings {
 				return false;
 			}
 		} else {
-			return false;
+			throw new ModelException ( self::ERROR_USER_RATING_ID_NOT_EXIST );
 		}
 	}
 	
-	/*
-	 * The exists() function checks to see if the id exists in the database,
-	 * if it does, true is returned.
+	/**
+	 * Deletes a UserRating based on itemID
+	 * 
+	 * @throws ModelException
+	 * @return bool
 	 */
-	public function exists() {
+	public function deleteItemId(): bool {
+		$i = new Item($this->db);
+		$i->itemID = $this->_itemID;
+		if ($i->exists ()) {
+			
+			$query = "DELETE FROM User_ratings
+						WHERE itemID = :itemID";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->execute ();
+			if($stmt->rowCount() > 0){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
+		}
+	}
+	
+	/**
+	 * Deletes a UserRating based on userID
+	 *
+	 * @throws ModelException
+	 * @return bool
+	 */
+	public function deleteUserId(): bool {
+		$u = new User($this->db);
+		$u->userID = $this->_userID;
+		if ($u->exists ()) {
+			
+			$query = "DELETE FROM User_ratings
+						WHERE userID = :userID";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':userID', $this->_userID );
+			$stmt->execute ();
+			if($stmt->rowCount() > 0){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			throw new ModelException ( self::ERROR_USER_ID_NOT_EXIST );
+		}
+	}
+	
+	/**
+	 * Confirms if UserRating exists.
+	 * 
+	 * @return bool
+	 */
+	public function exists(): bool {
 		if ($this->_user_ratingID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM User_ratings WHERE user_ratingID = :user_ratingID";
 
@@ -201,46 +283,64 @@ class UserRatings {
 		}
 	}
 	
-	/*
-	 * Count number of occurences of sellrating for a user.
+	/**
+	 * Adds a seller rating for a buyer.
+	 * 
+	 * @throws ModelException
+	 * @return UserRatings
 	 */
-	public function count() {
-		$query = "SELECT COUNT(*) as num
-							FROM User_ratings
-							WHERE itemID = :itemID";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':itemID', $this->_itemID );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		return $row ['num'];
+	public function addSellerRating(): UserRatings {
+		$u = new User($this->db);
+		$u->userID = $this->_userID;
+		try {
+			if($u->exists()){ 
+				$i = new Item($this->db);
+				$i->itemID = $this->_itemID;
+				if($i->exists()){ 
+					if($this->_sellrating > 0 && $this->_sellrating < 6){
+						$this->_user_ratingID = $this->set();
+						try {
+							return $this->get();
+						} catch (ModelException $e) {
+							throw new ModelException ( $e->getMessage() );
+						}
+					} else {
+						throw new ModelException(self::ERROR_RATING_NOT_SET);
+					}
+				} else { 
+					throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
+				}
+			} else { 
+				throw new ModelException(self::ERROR_USER_ID_NOT_EXIST);
+			}
+		} catch (ModelException $e) { 
+			throw new ModelException ( $e->getMessage() );
+		}
 	}
 	
-	/*
-	 * The update() function confirms the object already exists in the database.
-	 * If it does, all the current attributes are retrieved. Where the new
-	 * attributes have not been set, they are set with the values already existing in
-	 * the database.
-	 */
-	public function updateTransaction(): bool {
-		$query = "SELECT * FROM User_ratings WHERE transaction = :transaction";
-
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':transaction', $this->_transaction );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		$this->_user_ratingID = $row ['user_ratingID'];
-		$this->_itemID = $row ['itemID'];
-		$this->_sellrating = $row ['sellrating'];
-		$this->_transaction = NULL; 
-		if ($this->_userID > 0 && $this->_buyrating > 0) {
-			if ($this->update ()) {
-				return true;
+	public function addBuyerRating(): bool {
+		if(strlen($this->_transaction) <= 32 && strlen($this->_transaction) > 0){
+			if($this->_buyrating > 0  && $this->_buyrating < 6){
+				
+				$query = "UPDATE User_ratings
+							SET buyrating = :buyrating,
+								transaction = NULL
+							WHERE transaction = :transaction";
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':buyrating', $this->_buyrating );
+				$stmt->bindParam ( ':transaction', $this->_transaction );
+				$stmt->execute ();
+				if($stmt->rowCount() > 0){
+					return true;
+				} else {
+					throw new ModelException(self::ERROR_INCORRECT_TRANSACTION_ID);
+				}
 			} else {
-				return false;
+				throw new ModelException(self::ERROR_RATING_NOT_SET);
 			}
 		} else {
-			return false;
+			throw new ModelException(self::ERROR_INCORRECT_TRANSACTION_ID);
 		}
 	}
 	

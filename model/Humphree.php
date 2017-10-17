@@ -1,4 +1,6 @@
 <?php
+use phpDocumentor\Reflection\Types\Array_;
+
 /**
  * @author Troy Derrick <s3202752@student.rmit.edu.au>
  * @author Diane Foster <s3387562@student.rmit.edu.au>
@@ -861,13 +863,59 @@ class Humphree {
 	
 	/**
 	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
+	 * The intention is that on receipt of the seller rating, the information returned
+	 * will be sufficient for the relevent controller to send an email to the buyer 
+	 * requesting the buyer rate the seller.
+	 * 
+	 * The email will contain a link with a transaction string that will be passed
+	 * through a URL to identify the relevant transaction.
+	 * 
+	 * @param int $itemID
+	 * @param int $sellRating
+	 * @return array
 	 */
-	public function addSellerRating(int $itemID, int $sellRating): bool {
-		if (($itemID > 0) && ($sellRating > 0)) {
-			$s = new UserRatings ( $this->db );
-			$s->itemID = $itemID;
-			$s->sellrating = $sellRating;
-			if ($this->system->addSellerRating ( $s )) {
+	public function addSellerRating(int $userID, int $itemID, int $sellRating): array {
+		$buyerArray = new Array_();
+		$s = new UserRatings ( $this->db );
+		$s->userID = $userID;
+		$s->itemID = $itemID;
+		$s->sellrating = $sellRating;
+		$ur = $this->system->addSellerRating($s);
+		$u = new User($this->db);
+		$u->userID = $ur->userID;
+		$i = new Item($this->db);
+		$i->itemID = $ur->itemID;
+		try {
+			$u->get();
+			$i->get();
+			$buyerArray['userID'] = $u->userID;
+			$buyerArray['user'] = $u->user;
+			$buyerArray['email'] = $u->email;
+			$buyerArray['itemID'] = $i->itemID;
+			$buyerArray['title'] = $i->title;
+			$buyerArray['transaction'] = $i->transaction;
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+			return $buyerArray;
+		}
+	}
+		
+	
+	/**
+	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
+	 * The transaction string is received through a URL and is used to identifiy
+	 * the relevant transaction.
+	 * 
+	 * @param string $transaction	A transaction identifier passed through a URL.
+	 * @param int $buyRating
+	 * @return bool
+	 */
+	public function addBuyerRating(string $transaction, int $buyRating): bool {
+		if (strlen ( $transaction > 0 ) && ($buyRating > 0) && ($userID > 0)) {
+			$br = new UserRatings ( $this->db );
+			$br->buyrating = $buyRating;
+			$br->transaction = $transaction;
+			if ($this->system->addBuyerRating ( $br )) {
 				return true;
 			} else {
 				return false;
@@ -878,23 +926,13 @@ class Humphree {
 	}
 	
 	/**
-	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
+	 * Returns a users rating stats as an array.
+	 * 
+	 * @param int $userID
+	 * @return array
 	 */
-	public function addBuyerRating(string $transaction, int $buyRating, int $userID): bool {
-		if (strlen ( $transaction > 0 ) && ($buyRating > 0) && ($userID > 0)) {
-			$br = new UserRatings ( $this->db );
-			$br->userID = $userID;
-			$br->buyrating = $buyRating;
-			$br->transaction = $transaction;
-			unset ( $_SESSION ['user_rating'] );
-			if ($this->system->addBuyerRating ( $br )) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
+	public function getUserRatings(int $userID): array {
+		return $this->system->getUserRatings($userID);
 	}
 	
 	/**

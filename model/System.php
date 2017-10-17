@@ -21,6 +21,7 @@ class System {
 	private $db;
 	
 	const SUSPENDED = 'suspended';
+	const USER_RATING_NOT_ADDED = 'The UserRating was not added!';
 	
 	// Constructor
 	function __construct(PDO $pdo) {
@@ -875,34 +876,50 @@ class System {
 		}
 	}
 	
-	/*
+	/**
 	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
+	 * It returns a UserRating object with the information necessary to email the buyer.
+	 * 
+	 * @param UserRatings $sellerRating
+	 * @return bool
 	 */
-	public function addSellerRating(UserRatings $sellerRating): bool {
+	public function addSellerRating(UserRatings $sellerRating): UserRatings {
 		$ur = new UserRatings ( $this->db );
+		$ur->userID = $sellerRating->userID;
 		$ur->itemID = $sellerRating->itemID;
-		$ur->sellrating = $sellerRating->sellrating;
-		$ur->user_ratingID = $ur->set ();
-		if ($ur->user_ratingID > 0) {
-			return true;
-		} else {
+		$ur->sellrating = $sellerRating->sellrating; 
+		try {
+			return $ur->addSellerRating();
+		} catch (ModelException $e) { 
+			$_SESSION['error'] = $e->getMessage();
+			return $ur = new UserRatings ( $this->db );
+		}
+	}
+	
+	/**
+	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
+	 * 
+	 * @param UserRatings $buyerRating
+	 * @return bool
+	 */
+	public function addBuyerRating(UserRatings $buyerRating): bool {
+		try {
+			return $buyerRating->addBuyerRating();
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
 			return false;
 		}
 	}
 	
-	/*
-	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
+	/**
+	 * Returns a users rating stats.
+	 * 
+	 * @param int $userID
+	 * @return array
 	 */
-	public function addBuyerRating(UserRatings $buyerRating): bool {
-		$ur = new UserRatings ( $this->db );
-		$ur->userID = $buyerRating->userID;
-		$ur->buyrating = $buyerRating->buyrating;
-		$ur->transaction = $buyerRating->transaction;
-		if ($ur->updateTransaction ()) {
-			return true;
-		} else {
-			return false;
-		}
+	public function getUserRatings(int $userID): array {
+		$userRatings = array();
+		return $userRatings;
 	}
 	
 	/*
