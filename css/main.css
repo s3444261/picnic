@@ -13,64 +13,64 @@
  * Bootstrap css.
  */
 
- h1 {
-	text-align: right;
-	margin-right: 20px;
+h1 {
+    text-align: right;
+    margin-right: 20px;
 }
 
 .testHarness {
-	margin-left: 20px;
+    margin-left: 20px;
 }
 
 .smallHeight {
-	margin-top: 50px;
+    margin-top: 50px;
 }
 
 .error {
-	position: absolute;
-	top: 70px;
-	width: 100%;
-	color: red;
-	text-align: center;
+    position: absolute;
+    top: 70px;
+    width: 100%;
+    color: red;
+    text-align: center;
 }
 
 .message {
-	position: absolute;
-	top: 70px;
-	width: 100%;
-	color: blue;
-	text-align: center;
+    position: absolute;
+    top: 70px;
+    width: 100%;
+    color: blue;
+    text-align: center;
 }
 
 .addUser {
-	padding-top: 20px;
+    padding-top: 20px;
 }
 
 .listUser {
-	width: 90%;
-	margin-top: 40px;
-	margin-left: 5%;
-	margin-right: 5%;
+    width: 90%;
+    margin-top: 40px;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 .editUser input,
 .editUser select,
 .editUser button {
-	margin-top: 10px;
-	margin-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #update {
-	margin-bottom: 40px;
+    margin-bottom: 40px;
 }
+
+
+
 
 /* Customisation */
-.material-icons.md-light {
-	color: rgba(255, 255, 255, 1);
-}
 
-.logo {
-	/*padding: 1em 0;*/
+.material-icons.md-light {
+    color: rgba(255, 255, 255, 1);
 }
 
 .top-n-tail {
@@ -79,47 +79,45 @@
 }
 
 .top_padding {
-	padding-top: 1em;
+    padding-top: 1em;
 }
 
 .truncate {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 h4.truncate {
-	font-weight: 700;
-	max-height: 55px;
+    font-weight: 700;
+    max-height: 55px;
 }
 
 p.truncate {
-	text-overflow: ellipsis;
-	-webkit-line-clamp: 5;
-	max-height: 120px;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 5;
+    max-height: 120px;
 }
 
 .price {
-	color: #0079D5;
+    color: #0079D5;
 }
 
 img.item-image {
-	max-width: 100%;
+    max-width: 100%;
 }
 
 .item-header {
-	padding: 2em 0 1em;
+    padding: 2em 0 1em;
 }
 
-.item-desc-header {
-
-}
+.item-desc-header {}
 
 .item-desc {
-	padding-bottom: 1em;
+    padding-bottom: 1em;
 }
 
 .item-badges {
-	padding-top: 1em;
+    padding-top: 1em;
 }
