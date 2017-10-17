@@ -10,11 +10,18 @@
 ?>
 
 <div class="container">
-    <div class="jumbotron panel panel-default">
-        <h1 class="display-3 text-center">Successfully logged in</h1>
-		<div class="text-center">
-            <a type="submit" class="btn btn-primary" href="<?php echo BASE . '/Category/View'; ?>" role="button">View Listings</a>
-            <a type="submit" class="btn btn-primary" href="<?php echo BASE . '/Item/Create/' ?>" role="button">Sell Items</a>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col"></div> <!-- left margin -->
+        <div class="col">
+            <div class="jumbotron panel panel-default">
+                <h1 class="display-3 text-center">Successfully logged in</h1>
+                <div class="text-center">
+                    <a type="submit" class="btn btn-primary" href="<?php echo BASE . '/Category/View'; ?>" role="button">View Listings</a>
+                    <a type="submit" class="btn btn-primary" href="<?php echo BASE . '/Item/Create/' ?>" role="button">Sell Items</a>
+                </div>
+            </div>
+        </div>
+        <div class="col"></div> <!-- right margin -->
+    </div>
+
 </div>
