@@ -9,11 +9,17 @@
  */
 ?>
 
-<div class="container">
-    <div class="jumbotron panel panel-default">
-        <h1 class="display-3 text-center">Registration successful</h1>
-        <div class="alert alert-success text-center">
-			An email has been sent to the specified email address.<br />Please open your inbox and click the <strong>"Activate account"</strong> link.
-		</div>
-	</div>
-</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-9">
+            <div class="jumbotron panel panel-default">
+                <h1 class="display-3 text-center">Registration successful</h1>
+                <div class="alert alert-success text-center">
+                    An email has been sent to the specified email address.<br />Please open your inbox and click the <strong>"Activate account"</strong> link.
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div> <!-- end .row -->
+</div> <!-- end .container-fluid -->
