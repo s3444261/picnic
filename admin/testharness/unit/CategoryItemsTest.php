@@ -33,6 +33,9 @@
  * delete(): bool
  * TO DO 
  * 
+ * deleteItem(): bool
+ * TO DO
+ * 
  * exists(): bool
  * TO DO
  * 

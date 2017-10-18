@@ -627,19 +627,23 @@ class System {
 				$ur = new UserRatings($this->db);
 				$ur->itemID = $item->itemID;
 				$ur->deleteItemId();
+				$ci = new CategoryItems($this->db);
+				$ci->itemID = $item->itemID;
+				$ci->deleteItem();
+				$this->deleteItemNotes($item);
+				$this->deleteItemComments($item); 
 				$ui = new UserItems($this->db);
 				$ui->itemID = $item->itemID;
-				$ui->deleteUserItem();
-				$this->deleteItemNotes($item);
-				$this->deleteItemComments($item);
-				$item->delete();
-				return true;
+				return $ui->deleteUserItem();
 			} catch (ModelException $e) {
 				$_SESSION['error'] = $e->getMessage();
+				return false;
 			}
 		} else {
 			$_SESSION['error'] = self::ERROR_ITEM_NOT_EXIST;
+			return false;
 		}
+		return true;
 	}
 	
 	/**

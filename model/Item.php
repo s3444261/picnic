@@ -204,7 +204,7 @@ class Item {
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
-			if (! $this->exists ()) {
+			if (! $this->exists ()) { 
 				return true;
 			} else {
 				return false;

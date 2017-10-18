@@ -209,6 +209,32 @@ class CategoryItems {
 	}
 	
 	/**
+	 * Deletes all CategoryItems based on itemID.
+	 * 
+	 * @return bool
+	 */
+	public function deleteItem(): bool {
+		$item = new Item($this->db);
+		$item->itemID = $this->itemID;
+		if ($item->exists ()) {
+			
+			$query = "DELETE FROM Category_items
+						WHERE itemID = :itemID";
+			
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->execute ();
+			if (! $this->exists ()) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	/**
 	 * Checks to see if the id exists in the database,
 	 * if it does, true is returned.
 	 * 
