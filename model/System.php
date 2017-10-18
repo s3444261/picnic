@@ -22,6 +22,7 @@ class System {
 	
 	const SUSPENDED = 'suspended';
 	const USER_RATING_NOT_ADDED = 'The UserRating was not added!';
+	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
 	
 	// Constructor
 	function __construct(PDO $pdo) {
@@ -556,9 +557,10 @@ class System {
 	 * @param Item $item
 	 * @return bool
 	 */
-	public function addItem(User $user, Item $item): int {
+	public function addItem(User $user, Item $item, Category $category): int {
 		$i = new Item ( $this->db );
 		$ui = new UserItems ( $this->db );
+		$ci = new CategoryItems( $this->db );
 		$i = $item;
 		try {
 			$i->itemID = $i->set ();
@@ -566,15 +568,26 @@ class System {
 			$_SESSION ['error'] = $e->getError ();
 		}
 		if ($i->itemID > 1) {
-			$ui->userID = $user->userID;
-			$ui->itemID = $i->itemID;
+			$ci->categoryID = $category->categoryID;
+			$ci->itemID = $i->itemID;
 			try {
-				$ui->user_itemID = $ui->set ();
+				$ci->category_itemID = $ci->set ();
 			} catch ( ModelException $e ) {
 				$_SESSION ['error'] = $e->getError ();
 			}
-			if ($ui->user_itemID > 0) {
-				return $ui->user_itemID;
+			if ($ci->category_itemID> 0) {
+				$ui->userID = $user->userID;
+				$ui->itemID = $i->itemID;
+				try {
+					$ui->user_itemID = $ui->set ();
+				} catch ( ModelException $e ) {
+					$_SESSION ['error'] = $e->getError ();
+				}
+				if ($ui->user_itemID > 0) {
+					return $ui->user_itemID;
+				} else {
+					return 0;
+				}
 			} else {
 				return 0;
 			}
@@ -601,40 +614,31 @@ class System {
 		}
 	}
 	
-	/*
-	 * The deleteItem() function deletes an item and all associated database content.
+	/**
+	 * Deletes all references to the ItemID throughout the database and
+	 * then deletes the Item.
+	 * 
+	 * @param Item $item
+	 * @return bool
 	 */
 	public function deleteItem(Item $item): bool {
-		if ($item->itemID > 0) {
-			
-			$itemComments = new ItemComments ( $this->db );
-			$itemComments->itemID = $item->itemID;
-			$itComments = $itemComments->getComments ();
-			
-			foreach ( $itComments as $itComment ) {
-				$comment = new Comment ( $this->db );
-				$comment->commentID = $itComment->commentID;
-				$comment->delete ();
-				$itComment->delete ();
-			}
-			
-			$itemNotes = new ItemNotes ( $this->db );
-			$itemNotes->itemID = $item->itemID;
-			$itNotes = $itemNotes->getNotes ();
-			
-			foreach ( $itNotes as $itNote ) {
-				$note = new Note ( $this->db );
-				$note->noteID = $itNote->noteID;
-				$note->delete ();
-				$itNote->delete ();
-			}
-			
-			// Finally, delete the item.
-			if ($item->delete ()) {
+		if ($item->exists()) {
+			try {
+				$ur = new UserRatings($this->db);
+				$ur->itemID = $item->itemID;
+				$ur->deleteItemId();
+				$ui = new UserItems($this->db);
+				$ui->itemID = $item->itemID;
+				$ui->deleteUserItem();
+				$this->deleteItemNotes($item);
+				$this->deleteItemComments($item);
+				$item->delete();
 				return true;
-			} else {
-				return false;
+			} catch (ModelException $e) {
+				$_SESSION['error'] = $e->getMessage();
 			}
+		} else {
+			$_SESSION['error'] = self::ERROR_ITEM_NOT_EXIST;
 		}
 	}
 	

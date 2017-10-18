@@ -610,9 +610,11 @@ class Humphree {
 	/**
 	 * The addItem() function adds an item.
 	 */
-	public function addItem(int $userID, array $item): bool {
+	public function addItem(int $userID, array $item, int $categoryID): bool {
 		$user = new User ( $this->db );
 		$user->userID = $userID;
+		$category = new Category($this->db);
+		$category->categoryID = $categoryID;
 		$it = new Item ( $this->db );
 		$it->title = $item ['title'];
 		$it->description = $item ['description'];
@@ -620,7 +622,7 @@ class Humphree {
 		$it->itemcondition = $item ['itemcondition'];
 		$it->price = $item ['price'];
 		$it->status = $item ['status'];
-		if ($this->system->addItem ( $user, $it ) > 0) {
+		if ($this->system->addItem ( $user, $it, $category ) > 0) {
 			return true;
 		} else {
 			return false;

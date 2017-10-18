@@ -770,6 +770,47 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
 		
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Insert additional categories
+		$c = new Category ( $pdo );
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		$args1 = [
+				self::USER => self::USER_ONE,
+				self::EMAIL => self::EMAIL_ADDRESS_ONE,
+				self::PASSWORD => self::PASSWORD_ONE
+		];
+		
+		$args2 = [
+				self::USER => self::USER_TWO,
+				self::EMAIL => self::EMAIL_ADDRESS_TWO,
+				self::PASSWORD => self::PASSWORD_TWO
+		];
+		
+		$args3 = [
+				self::USER => self::USER_THREE,
+				self::EMAIL => self::EMAIL_ADDRESS_THREE,
+				self::PASSWORD => self::PASSWORD_THREE
+		];
+		
 		$l = 1;
 		for($i = 1; $i <= 3; $i ++) {
 			$user = new User ( $pdo );
@@ -1003,8 +1044,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();
-		} catch ( ModelException $e ) {
-		}
+		} catch ( ModelException $e ) {}
 		
 		// Insert additional categories
 		$c = new Category ( $pdo );
@@ -1012,13 +1052,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
 		try {
 			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		} catch ( ModelException $e ) {}
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
 		try {
 			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		} catch ( ModelException $e ) {}
 		
 		// Populate the Users table.
 		
@@ -1030,16 +1068,13 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			] );
 			try {
 				${'u' . $i}->set ();
-			} catch ( ModelException $e ) {
-			}
+			} catch ( ModelException $e ) {}
 			try {
 				${'u' . $i}->get ();
-			} catch ( ModelException $e ) {
-			}
+			} catch ( ModelException $e ) {}
 			try {
 				${'u' . $i}->activate ();
-			} catch ( ModelException $e ) {
-			}
+			} catch ( ModelException $e ) {}
 		}
 	}
 	
@@ -2426,9 +2461,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$u = new User ( $pdo );
+		$c = new Category ( $pdo );
+		$c->categoryID = self::CATEGORY_ID_1;
 		$i = new Item ( $pdo );
 		$i->title = self::TITLE_16;
-		$system->addItem ( $u, $i );
+		$system->addItem ( $u, $i, $c );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
 		}
@@ -2440,9 +2477,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$u = new User ( $pdo );
 		$u->userID = self::INVALID_ID;
+		$c = new Category ( $pdo );
+		$c->categoryID = self::CATEGORY_ID_1;
 		$i = new Item ( $pdo );
 		$i->title = self::TITLE_16;
-		$system->addItem ( $u, $i );
+		$system->addItem ( $u, $i, $c );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
 		}
@@ -2454,8 +2493,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$u = new User ( $pdo );
 		$u->userID = self::USER_ID_1;
+		$c = new Category ( $pdo );
+		$c->categoryID = self::CATEGORY_ID_1;
 		$i = new Item ( $pdo );
-		$system->addItem ( $u, $i );
+		$system->addItem ( $u, $i, $c );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_ITEM_EMPTY, $_SESSION ['error'] );
 		}
@@ -2467,10 +2508,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$u = new User ( $pdo );
 		$u->userID = self::USER_ID_1;
+		$c = new Category ( $pdo );
+		$c->categoryID = self::CATEGORY_ID_1;
 		$i = new Item ( $pdo );
 		$i->title = self::TITLE_16;
 		$ui = new UserItems ( $pdo );
-		$ui->user_itemID = $system->addItem ( $u, $i );
+		$ui->user_itemID = $system->addItem ( $u, $i, $c );
 		try {
 			$ui->get ();
 		} catch ( ModelException $e ) {
