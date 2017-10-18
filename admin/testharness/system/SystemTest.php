@@ -129,7 +129,9 @@
  * -- testDisableUserValidUserID(): void
  *
  * deleteUser(User $user): bool
- * TO DO
+ * -- testDeleteUserUserIdEmpty(): void
+ * -- testDeleteUserUserIdInvalid(): void
+ * -- testDeleteUserUserIdValid(): void
  *
  * addCategory(Category $category): bool
  * -- testAddCategoryNoParentId(): void
@@ -1986,6 +1988,40 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 * Will require a large number of tests once validation of all
 	 * other classes has been completed.
 	 */
+	public function testDeleteUserUserIdEmpty(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$u = new User ( $pdo );
+		$system->deleteUser($u);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
+		}
+	}
+	
+	public function testDeleteUserUserIdInvalid(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$u = new User ( $pdo );
+		$u->userID = self::INVALID_ID;
+		$system->deleteUser($u);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
+		}
+	}
+	
+	public function testDeleteUserUserIdValid(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$u = new User ( $pdo );
+		$u->userID = self::USER_ID_2;
+		$this->assertTrue($system->deleteUser($u));
+	}
 	
 	/*
 	 * addCategory(Category $category): bool

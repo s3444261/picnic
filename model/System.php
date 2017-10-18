@@ -23,6 +23,7 @@ class System {
 	const SUSPENDED = 'suspended';
 	const USER_RATING_NOT_ADDED = 'The UserRating was not added!';
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
+	const ERROR_USER_NOT_EXIST = 'User does not exist!';
 	
 	// Constructor
 	function __construct(PDO $pdo) {
@@ -239,7 +240,8 @@ class System {
 	 * @return bool
 	 */
 	public function deleteUser(User $user): bool {
-		if ($user->userID > 0) {
+		try {
+			$user->exists();
 			
 			// Delete any comments and notes for any items held by the user and then delete the item.
 			$userItems = new UserItems ( $this->db );
@@ -248,35 +250,14 @@ class System {
 			
 			foreach ( $items as $item ) {
 				if ($item->itemID > 0) {
-					$itemComments = new ItemComments ( $this->db );
-					$itemComments->itemID = $item->itemID;
-					$itComments = $itemComments->getComments ();
-					
-					foreach ( $itComments as $itComment ) {
-						
-						$comment = new Comment ( $this->db );
-						$comment->commentID = $itComment->commentID;
-						$comment->delete ();
-						$itComment->delete ();
-					}
-					
-					$itemNotes = new ItemNotes ( $this->db );
-					$itemNotes->itemID = $item->itemID;
-					$itNotes = $itemNotes->getNotes ();
-					
-					foreach ( $itNotes as $itNote ) {
-						$note = new Note ( $this->db );
-						$note->noteID = $itNote->noteID;
-						$note->delete ();
-						$itNote->delete ();
-					}
-					
-					$item->delete ();
+					$i = new Item($this->db);
+					$i->itemID = $item->itemID;
+					$this->deleteItem($i);
 				}
 			}
 			
 			// Delete any other comments made by the user
-			$comments = new Comments ( $this->db );
+			$comments = new UserComments ( $this->db );
 			$comments->userID = $user->userID;
 			$userComments = $comments->getUserComments ();
 			
@@ -285,11 +266,11 @@ class System {
 			}
 			
 			// Finally, delete the user.
-			if ($user->delete ()) {
-				return true;
-			} else {
-				return false;
-			}
+			return $user->delete ();
+			
+		} catch (ModelException $e) {
+			$_SESSION ['error'] = $e->getMessage();
+			return false;
 		}
 	}
 	
