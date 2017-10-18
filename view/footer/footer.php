@@ -33,6 +33,7 @@
                     <li class="nav-item"><a class="nav-link" href="<?php echo BASE  . '/Category/View' ?>">View catalogue</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?php echo BASE  . '/CreateDB' ?>">Create DB</a></li>
                 </ul>
+                <p class="small text-muted text-center">Created by Picnic</p>
             </footer>
         </div> <!-- end col-9 -->
         <!-- Right margin -->

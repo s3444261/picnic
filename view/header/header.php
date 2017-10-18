@@ -62,16 +62,20 @@ if(isset($_SESSION['message'])){
             <a href="<?php echo BASE."/Home" ?>">
                 <img src="<?php echo BASE; ?>/img/logo.png" class="logo img-fluid mx-auto d-block top-n-tail"  alt="Humphree logo">
             </a>
-            <form class="navbar-form" role="search">
-                <div class="input-group add-on">
-                    <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">
-                    <div class="input-group-btn">
-                        <button class="btn btn-default" type="submit">
-                            <i class="material-icons md-light">search</i>
-                        </button>
-                    </div> <!-- end .input-group-btn -->
-                </div> <!-- end .input-group .add-on -->
-            </form>
+            <div class="row">
+                <div class="col"></div>
+                <form class="navbar-form col-md-6 top-n-tail" role="search">
+                    <div class="input-group add-on">
+                        <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <i class="material-icons md-light">search</i>
+                            </button>
+                        </div> <!-- end .input-group-btn -->
+                    </div> <!-- end .input-group .add-on -->
+                </form>
+                <div class="col"></div>
+            </div> <!-- end .row -->
         </div> <!-- end col-9 -->
         <!-- Right margin -->
         <div class="col"></div>

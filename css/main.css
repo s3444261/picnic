@@ -1,5 +1,3 @@
-@CHARSET "ISO-8859-1";
-
 /*
  * Authors:
  * Derrick, Troy - s3202752@student.rmit.edu.au
@@ -68,6 +66,24 @@ h1 {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Customisation */
 
 .material-icons.md-light {
@@ -112,8 +128,6 @@ img.item-image {
 .item-header {
     padding: 2em 0 1em;
 }
-
-.item-desc-header {}
 
 .item-desc {
     padding-bottom: 1em;

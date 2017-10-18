@@ -53,33 +53,33 @@ class Pager{
 		$class      = ( $pagerData->pageNumber  == 1 ) ? "disabled" : "";
 
 		if ($pagerData->pageNumber == 1)  {
-			$html       .= '<li class="' . $class . '"><a href="?limit=' . $pagerData->itemsPerPage . '&page=1">&laquo;</a></li>';
+			$html       .= '<li class="list-inline-item ' . $class . '"><a href="?limit=' . $pagerData->itemsPerPage . '&page=1">&laquo;</a></li>';
 		} else {
-			$html       .= '<li class="' . $class . '"><a href="?limit=' . $pagerData->itemsPerPage . '&page=' . ( $pagerData->pageNumber - 1 ) . '">&laquo;</a></li>';
+			$html       .= '<li class="list-inline-item ' . $class . '"><a href="?limit=' . $pagerData->itemsPerPage . '&page=' . ( $pagerData->pageNumber - 1 ) . '">&laquo;</a></li>';
 		}
 
 
 		if ( $start > 1 ) {
-			$html   .= '<li><a href="?limit=' . $pagerData->itemsPerPage . '&page=1">1</a></li>';
-			$html   .= '<li class="disabled"><span>...</span></li>';
+			$html   .= '<li class="list-inline-item"><a href="?limit=' . $pagerData->itemsPerPage . '&page=1">1</a></li>';
+			$html   .= '<li class="list-inline-item disabled"><span>...</span></li>';
 		}
 
 		for ( $i = $start ; $i <= $end; $i++ ) {
 			$class  = ( $pagerData->pageNumber == $i ) ? "active" : "";
-			$html   .= '<li class="' . $class . '"><a href="?limit=' . $pagerData->itemsPerPage . '&page=' . $i . '">' . $i . '</a></li>';
+			$html   .= '<li class="list-inline-item ' . $class . '"><a href="?limit=' . $pagerData->itemsPerPage . '&page=' . $i . '">' . $i . '</a></li>';
 		}
 
 		if ( $end < $last ) {
-			$html   .= '<li class="disabled"><span>...</span></li>';
-			$html   .= '<li><a href="?limit=' . $pagerData->itemsPerPage . '&page=' . $last . '">' . $last . '</a></li>';
+			$html   .= '<li class="disabled list-inline-item "><span>...</span></li>';
+			$html   .= '<li class="list-inline-item"><a href="?limit=' . $pagerData->itemsPerPage . '&page=' . $last . '">' . $last . '</a></li>';
 		}
 
 		$class      = ( $pagerData->pageNumber == $last ) ? "disabled" : "";
 
 		if ( $pagerData->pageNumber  == $last) {
-			$html       .= '<li class="' . $class . '"><a href="?limit=' . $pagerData->itemsPerPage. '&page=' . $last . '">&raquo;</a></li>';
+			$html       .= '<li class="list-inline-item ' . $class . '"><a href="?limit=' . $pagerData->itemsPerPage. '&page=' . $last . '">&raquo;</a></li>';
 		} else {
-			$html       .= '<li class="' . $class . '"><a href="?limit=' . $pagerData->itemsPerPage. '&page=' . ( $pagerData->pageNumber + 1 ) . '">&raquo;</a></li>';
+			$html       .= '<li class="list-inline-item ' . $class . '"><a href="?limit=' . $pagerData->itemsPerPage. '&page=' . ( $pagerData->pageNumber + 1 ) . '">&raquo;</a></li>';
 		}
 
 
