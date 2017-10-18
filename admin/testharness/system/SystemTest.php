@@ -129,7 +129,9 @@
  * -- testDisableUserValidUserID(): void
  *
  * deleteUser(User $user): bool
- * TO DO
+ * -- testDeleteUserUserIdEmpty(): void
+ * -- testDeleteUserUserIdInvalid(): void
+ * -- testDeleteUserUserIdValid(): void
  *
  * addCategory(Category $category): bool
  * -- testAddCategoryNoParentId(): void
@@ -210,7 +212,9 @@
  * -- testUpdateItemSuccess(): void
  *
  * deleteItem(Item $item): bool
- * TO DO
+ * -- testDeleteItemItemIdEmpty(): void
+ * -- testDeleteItemItemIdInvalid(): void
+ * -- testDeleteItemItemIdValid(): void
  *
  * getItemComments(Item $item): array
  * -- testGetItemCommentsItemIdEmpty(): void
@@ -1052,29 +1056,89 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
 		try {
 			$c->set ();
-		} catch ( ModelException $e ) {}
+		} catch ( ModelException $e ) {
+		}
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
 		try {
 			$c->set ();
-		} catch ( ModelException $e ) {}
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::PARENT_ID} = self::PARENT_ID_2;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_4;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
 		
-		// Populate the Users table.
-		
+		$l = 1;
+		$k = 1;
 		for($i = 1; $i <= 3; $i ++) {
-			${'u' . $i} = new User ( $pdo, [ 
-					self::USER => 'user' . $i,
-					self::EMAIL => 'email' . $i . '@gmail.com',
-					self::PASSWORD => 'PassWord' . $i 
-			] );
+			$user = new User ( $pdo );
+			$user->user = 'user' . $i;
+			$user->email = 'user' . $i . '@gmail.com';
+			$user->password = 'PassWord' . $i . $i;
 			try {
-				${'u' . $i}->set ();
-			} catch ( ModelException $e ) {}
-			try {
-				${'u' . $i}->get ();
-			} catch ( ModelException $e ) {}
-			try {
-				${'u' . $i}->activate ();
-			} catch ( ModelException $e ) {}
+				$user->set ();
+			} catch ( ModelException $e ) {
+			}
+			for($j = 1; $j <= 5; $j++) {
+				$item = new Item ( $pdo );
+				$item->title = 'title' . $k;
+				try {
+					$item->set ();
+					$userItem = new UserItems ( $pdo );
+					$userItem->userID = $i;
+					$userItem->itemID = $k;
+					$userItem->relationship = 'relationship' . $i . $l;
+					$userItem->userStatus = 'userStatus' . $i . $l;
+					
+					$categoryItem = new CategoryItems($pdo);
+					$categoryItem->categoryID = $i + 1;
+					$categoryItem->itemID = $k;
+					
+					$userRating = new UserRatings($pdo);
+					$userRating->itemID = $k;
+					$userRating->sellrating = 5;
+					$userRating->userID = $i;
+					$userRating->buyrating = 4;
+					$userRating->set();
+					
+					for($m = 1; $m <= 5; $m ++) {
+						$note = new Note ( $pdo );
+						$note->note = 'note' . $l;
+						$comment = new Comment($pdo);
+						$comment->userID = $i;
+						$comment->comment = 'comment' . $l;
+						try {
+							$note->set ();
+							$itemNote = new ItemNotes ( $pdo );
+							$itemNote->itemID = $i;
+							$itemNote->noteID = $l;
+							$comment->set ();
+							$itemComment = new ItemComments ( $pdo );
+							$itemComment->itemID = $i;
+							$itemComment->commentID = $l;
+							try {
+								$itemNote->set ();
+								$itemComment->set ();
+								$l ++;
+							} catch ( ModelException $e ) {
+							}
+						} catch ( Exception $e ) {
+						}
+					}
+					
+					try {
+						$userItem->set ();
+						$categoryItem->set();
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$k++;
+			}
+			
+			$l++;
 		}
 	}
 	
@@ -1924,6 +1988,40 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 * Will require a large number of tests once validation of all
 	 * other classes has been completed.
 	 */
+	public function testDeleteUserUserIdEmpty(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$u = new User ( $pdo );
+		$system->deleteUser($u);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
+		}
+	}
+	
+	public function testDeleteUserUserIdInvalid(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$u = new User ( $pdo );
+		$u->userID = self::INVALID_ID;
+		$system->deleteUser($u);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
+		}
+	}
+	
+	public function testDeleteUserUserIdValid(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$u = new User ( $pdo );
+		$u->userID = self::USER_ID_2;
+		$this->assertTrue($system->deleteUser($u));
+	}
 	
 	/*
 	 * addCategory(Category $category): bool
@@ -2585,6 +2683,44 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		}
 		$this->assertEquals ( self::ITEM_ID_1, $i->itemID );
 		$this->assertEquals ( self::TITLE_16, $i->title );
+	}
+	
+	/*
+	 * deleteItem(Item $item): bool
+	 */
+	public function testDeleteItemItemIdEmpty(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$i = new Item ( $pdo );
+		$system->deleteItem($i);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
+		}
+	}
+	
+	public function testDeleteItemItemIdInvalid(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$i = new Item ( $pdo );
+		$i->itemID = self::INVALID_ID;
+		$system->deleteItem($i);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
+		}
+	}
+	
+	public function testDeleteItemItemIdValid(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$i = new Item ( $pdo );
+		$i->itemID = self::ITEM_ID_2;
+		$this->assertTrue($system->deleteItem($i));
 	}
 	
 	/*
