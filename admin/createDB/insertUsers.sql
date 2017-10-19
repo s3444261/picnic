@@ -500,4 +500,6 @@ INSERT INTO Users (userId, user, email, password, status, activate) VALUES
   (499, 'Troy Derrick', 's3202752@student.rmit.edu.au', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL),
   (500, 'Diane Foster', 's3387562@student.rmit.edu.au', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL),
   (501, 'Allen Goodreds', 's3492264@student.rmit.edu.au', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL),
-  (502, 'Edwan Putro', 'edwanhp@gmail.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL);
+  (502, 'Edwan Putro', 'edwanhp@gmail.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL),
+  (503, 'Admin', 'humphreex@gmail.com', '613b59f86203d9e986e08514d175a7d690f3b8f9', 'admin', NULL);
+  
