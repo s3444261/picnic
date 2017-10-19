@@ -9,10 +9,22 @@
  */
 ?>
 <div class="container-fluid">
-	<h1>Humphree</h1>
-	<div class="jumbotron">
-		<div class="row">
-			<h2>Dashboard</h2>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-9">
+            <h1 class="text-center">Humphree</h1>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-9">
+            <div class="jumbotron">
+                <div class="row">
+                    <h2>Dashboard</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
 </div>
