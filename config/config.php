@@ -20,7 +20,7 @@ if(gethostname() == 'Grant-PC' ||
 	gethostname() == 'Newbie' ){
 	define('BASE', '/picnic');
 } else {
-	define('BASE', '/');
+	define('BASE', '');
 }
 
 class PicnicAutoloader {
