@@ -494,19 +494,32 @@ class Humphree {
 		
 		return $numUserItems;
 	}
-	
+
 	/**
 	 * The getUserItems() function retrieves all items linked to a User.
+	 *
+	 * @param int $userID
+	 * 			The ID of the user whose items will be returned.
+	 *
+	 * @param string $userRole
+	 * 			The role that the user plays for the requested items.
+	 *
+	 * @return array
+	 * 			An array containing the results.
 	 */
-	public function getUserItems(int $userID): array {
+	public function getUserItems(int $userID, string $userRole): array {
 		$user = new User ( $this->db );
 		$user->userID = $userID;
-		$userItems = $this->system->getUserItems ( $user );
+		$userItems = $this->system->getUserItems ( $user, $userRole );
 		$its = array ();
 		
-		foreach ( $userItems as $item ) {
+		foreach ( $userItems as $userItem ) {
+
 			$it = array ();
-			
+
+			$item = new Item($this->db);
+			$item->itemID = $userItem->itemID;
+			$item = $this->system->getItem($item);
 			$it ['itemID'] = $item->itemID;
 			$it ['title'] = $item->title;
 			$it ['description'] = $item->description;
@@ -514,7 +527,7 @@ class Humphree {
 			$it ['itemcondition'] = $item->itemcondition;
 			$it ['price'] = $item->price;
 			$it ['status'] = $item->status;
-			
+
 			$comments = $this->system->getItemComments ( $item );
 			$cs = array ();
 			
