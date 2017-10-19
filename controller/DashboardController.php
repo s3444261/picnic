@@ -23,7 +23,8 @@ class DashboardController {
 			$h = new Humphree(Picnic::getInstance());
 
 			$view = new View();
-			$view->SetData('items',   $h->getUserItems($_SESSION['userID'], 'owner'));
+			$view->SetData('forSaleItems',   $h->getUserItems($_SESSION['userID'], 'owner', "ForSale"));
+			$view->SetData('wantedItems',   $h->getUserItems($_SESSION['userID'], 'owner', "Wanted"));
 			$view->SetData('navData',  new NavData(NavData::Account));
 			$view->Render('dashboard');
 
