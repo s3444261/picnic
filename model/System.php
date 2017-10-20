@@ -873,6 +873,48 @@ class System {
 	}
 	
 	/**
+	 * Retrieves everything known about a user with respect to an
+	 * item and returns them as an array.
+	 * 
+	 * @param Item $item
+	 * @return array
+	 */
+	public function getItemOwner(Item $item): array {
+		$owner = array();
+		
+		if ($item->exists()) {
+			try {
+				$userItem = new UserItems($this->db);
+				$userItem->itemID = $item->itemID;
+				$userItem = $userItem->getUserItem(); 
+				$user = new User($this->db);
+				$user->userID = $userItem->userID;
+				$user = $user->get();
+				$userRatings = new UserRatings($this->db);
+				$stats = $userRatings->getStats($user);
+				$owner['userID'] = $user->userID;
+				$owner['user'] = $user->user;
+				$owner['email'] = $user->email;
+				$owner['relationship'] = $userItem->relationship;
+				$owner['userStatus'] = $userItem->userStatus;
+				$owner['numSellRatings'] = $stats['numSellRatings'];
+				$owner['avgSellRating'] = $stats['avgSellRating'];
+				$owner['numBuyRatings'] = $stats['numBuyRatings'];
+				$owner['avgBuyRating'] = $stats['avgBuyRating'];
+				$owner['totalNumRatings'] = $stats['totalNumRatings'];
+				$owner['avgRating'] = $stats['avgRating'];
+				return $owner; 
+			} catch (ModelException $e) {
+				$_SESSION['error'] = $e->getMessage();
+				return $owner;
+			}
+		} else {
+			$_SESSION['error'] = self::ERROR_ITEM_NOT_EXIST;
+			return $owner;
+		}
+	}
+	
+	/**
 	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
 	 * It returns a UserRating object with the information necessary to email the buyer.
 	 * 
@@ -914,11 +956,13 @@ class System {
 	 * @return array
 	 */
 	public function getUserRatings($user): array {
+		$ur = array();
 		$userRatings = new UserRatings($this->db);
 		try {
 			return $userRatings->getStats($user);
 		} catch (ModelException $e) {
 			$_SESSION['error'] = $e->getMessage();
+			return $ur;
 		}
 	}
 	

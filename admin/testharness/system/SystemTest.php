@@ -50,6 +50,9 @@
  * addItemNote(Item $item, Note $note): bool
  * updateItemNote(Note $note): bool
  * deleteItemNote(Note $note): bool
+ * getItemOwner(Item $item): array
+ * addSellerRating(UserRatings $sellerRating): UserRatings
+ * addBuyerRating(UserRatings $buyerRating): bool
  * getUserRatings(int $userID): array
  *
  * -- System.php Test SubBlocks: --
@@ -291,6 +294,11 @@
  * -- testDeleteItemNotesItemIdEmpty(): void
  * -- testDeleteItemNotesItemIdInvalid(): void
  * -- testDeleteItemNotesItemIdValid(): void
+ * 
+ * getItemOwner(Item $item): array
+ * -- testGetItemOwnerItemIdEmpty(): void
+ * -- testGetItemOwnerItemIdInvalid(): void
+ * -- testGetItemOwnerItemIdValid(): void
  *
  * addSellerRating(UserRatings $sellerRating): UserRatings
  * -- testAddSellerRatingUserIdInvalid(): void
@@ -303,6 +311,12 @@
  * -- testAddBuyerRatingTransactionIdInvalid(): void
  * -- testAddBuyerRatingRatingInvalid(): void
  * -- testAddBuyerRatingSuccess(): void
+ * 
+ * getUserRatings(int $userID): array
+ * -- testGetUserRatingsUserIdInvalid(): void
+ * -- testGetUserRatingsUserIdValid(): void
+ * 
+ * 
  */
 declare ( strict_types = 1 )
 	;
@@ -3440,6 +3454,56 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	
 	/*
+	 * getItemOwner(Item $item): array
+	 */
+	public function testGetItemOwnerItemIdEmpty(): void {
+		$this->populateAdditionalUserRatings();
+		unset ( $_SESSION ['error'] );
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$i = new Item ( $pdo );
+		$system->getItemOwner($i);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
+		}
+	}
+	
+	public function testGetItemOwnerItemIdInvalid(): void {
+		$this->populateAdditionalUserRatings();
+		unset ( $_SESSION ['error'] );
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$i = new Item ( $pdo );
+		$i->itemID = self::INVALID_ID;
+		$system->getItemOwner($i);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
+		}
+	}
+	public function testGetItemOwnerItemIdValid(): void {
+		$this->populateAdditionalUserRatings();
+		unset ( $_SESSION ['error'] );
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$i = new Item ( $pdo );
+		$i->itemID = self::ITEM_ID_1;
+		try {
+			$sut = $system->getItemOwner($i);
+		} catch (ModelException $e) {}
+		$this->assertEquals(self::USER_ID_1, $sut['userID']);
+		$this->assertEquals('user1', $sut['user']);
+		$this->assertEquals('user1@gmail.com', $sut['email']);
+		$this->assertEquals('relationship11', $sut['relationship']);
+		$this->assertEquals('userStatus11', $sut['userStatus']);
+		$this->assertEquals(5, $sut['numSellRatings']);
+		$this->assertEquals(3.0, $sut['avgSellRating']);
+		$this->assertEquals(4, $sut['numBuyRatings']);
+		$this->assertEquals(2.5, $sut['avgBuyRating']);
+		$this->assertEquals(9, $sut['totalNumRatings']);
+		$this->assertEquals(2.8, $sut['avgRating']);
+	}
+	
+	/*
 	 * addSellerRating(UserRatings $sellerRating): UserRatings
 	 */
 	public function testAddSellerRatingUserIdInvalid(): void {
@@ -3556,7 +3620,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	/*
 	 * getUserRatings(int $userID): array
 	 */
-	public function estGetUserRatingsUserIdInvalid(): void {
+	public function testGetUserRatingsUserIdInvalid(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );

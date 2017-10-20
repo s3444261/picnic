@@ -901,6 +901,17 @@ class Humphree {
 	}
 	
 	/**
+	 * Returns details of the user that has posted the item.
+	 * 
+	 * @param int $itemID
+	 * @return array
+	 */
+	public function getItemOwner(int $itemID): array {
+		$i = new Item($this->db);
+		return $this->system->getItemOwner($i);
+	}
+	
+	/**
 	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
 	 * The intention is that on receipt of the seller rating, the information returned
 	 * will be sufficient for the relevent controller to send an email to the buyer 
