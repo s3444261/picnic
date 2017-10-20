@@ -913,9 +913,13 @@ class System {
 	 * @param int $userID
 	 * @return array
 	 */
-	public function getUserRatings(int $userID): array {
-		$userRatings = array();
-		return $userRatings;
+	public function getUserRatings($user): array {
+		$userRatings = new UserRatings($this->db);
+		try {
+			return $userRatings->getStats($user);
+		} catch (ModelException $e) {
+			$_SESSION['error'] = $e->getMessage();
+		}
 	}
 	
 	/*

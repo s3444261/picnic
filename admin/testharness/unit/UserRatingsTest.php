@@ -20,6 +20,7 @@
  * exists(): bool
  * addSellerRating(): UserRatings
  * addBuyerRating(): bool
+ * getUserRatings($user): array
  *
  * -- UserRatings.php Test SubBlocks: --
  * get(): UserRatings
@@ -67,6 +68,11 @@
  * -- testAddBuyerRatingTransactionIdInvalid(): void
  * -- testAddBuyerRatingRatingInvalid(): void
  * -- testAddBuyerRatingSuccess(): void
+ * 
+ * getUserRatings($user): array
+ * -- testGetUserRatingsUserIdEmpty(): void
+ * -- testGetUserRatingsUserIdInvalid(): void
+ * -- testGetUserRatingsUserIdValid(): void
  */
 
 declare(strict_types=1);
@@ -107,6 +113,10 @@ final class UserRatingsTest extends PicnicTestCase{
 	const USER_2 = 'mary';
 	const EMAIL_2 = 'mary@gmail.com';
 	const PASSWORD_2 = 'TestTest77';
+	const USER_ID_3 = '3';
+	const USER_3 = 'james';
+	const EMAIL_3 = 'james@gmail.com';
+	const PASSWORD_3 = 'TestTest66';
 	
 	const ITEM_ID_1         = 1;
 	const TITLE_1			= 'title1';
@@ -119,7 +129,6 @@ final class UserRatingsTest extends PicnicTestCase{
 	
 	const USER_RATING_ID_2   = 2;
 	const SELLRATING_2 = 4;
-	const USER_ID_3 = 3;
 	const BUYRATING_2 = 3;
 	
 	const ERROR_USER_RATING_ID_NOT_EXIST = 'The UserRatingID does not exist!';
@@ -128,6 +137,35 @@ final class UserRatingsTest extends PicnicTestCase{
 	const ERROR_RATING_NOT_SET = 'The rating has not been set!';
 	const ERROR_INCORRECT_TRANSACTION_ID = 'The TransactionID is incorrect!';
 	const ERROR_USER_ID_NOT_INT = 'UserID must be an integer!';
+	
+	const CATEGORY_ID = 'categoryID';
+	const PARENT_ID = 'parentID';
+	const CATEGORY_NAME = 'category';
+	const CATEGORY_ID_1 = 1;
+	const PARENT_ID_0 = 0;
+	const CATEGORY_1 = 'Category';
+	const CATEGORY_ID_2 = 2;
+	const PARENT_ID_1 = 1;
+	const PARENT_ID_2 = 2;
+	const CATEGORY_2 = 'Category2';
+	const CATEGORY_ID_3 = 3;
+	const CATEGORY_3 = 'Category3';
+	const PARENT_ID_3 = 3;
+	const CATEGORY_ID_4 = 4;
+	const CATEGORY_4 = 'Category4';
+	const CATEGORY_ID_INVALID = 400;
+	const PARENT_ID_INVALID = 300;
+	const ERROR_CATEGORY_NOT_EXIST = 'Category does not exist!';
+	const ERROR_CATEGORY_NOT_CREATED = 'The category was not created!';
+	const ERROR_CATEGORY_NOT_UPDATED = 'The category was not updated!';
+	const ERROR_PARENT_ID_NONE = 'Input is required!';
+	const ERROR_PARENT_ID_NOT_EXIST = 'The parent category does not exist!';
+	const ERROR_PARENT_ID_INVALID = 'Input is required!';
+	const ERROR_CATEGORY_NONE = 'Input is required!';
+	const ROOT_CATEGORY = 0;
+	const ROOT_CATEGORY_NAME = 'Category';
+	const PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
+	const ERROR_USER_ID_NONE = 'Input is required!';
 
 	protected function setUp(): void {
 		// Regenerate a fresh database.
@@ -151,6 +189,123 @@ final class UserRatingsTest extends PicnicTestCase{
 			$ui->set();
 			$ur->set();
 		} catch (ModelException $e) {}
+	}
+	
+	protected function populateAdditionalUserRatings(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Insert additional categories
+		$c = new Category ( $pdo );
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		$args1 = [
+				self::USER => self::USER_1,
+				self::EMAIL => self::EMAIL_1,
+				self::PASSWORD => self::PASSWORD_1
+		];
+		
+		$args2 = [
+				self::USER => self::USER_2,
+				self::EMAIL => self::EMAIL_2,
+				self::PASSWORD => self::PASSWORD_2
+		];
+		
+		$args3 = [
+				self::USER => self::USER_3,
+				self::EMAIL => self::EMAIL_3,
+				self::PASSWORD => self::PASSWORD_3
+		];
+		
+		$l = 1;
+		for($i = 1; $i <= 3; $i ++) {
+			$user = new User ( $pdo );
+			$user->user = 'user' . $i;
+			$user->email = 'user' . $i . '@gmail.com';
+			$user->password = 'PassWord' . $i . $i;
+			try {
+				$user->set ();
+			} catch ( ModelException $e ) {
+			}
+			
+			for($j = 1; $j <= 5; $j ++) {
+				$item = new Item ( $pdo );
+				$item->title = 'title' . $l;
+				try {
+					$item->set ();
+					$userItem = new UserItems ( $pdo );
+					$userItem->userID = $i;
+					$userItem->itemID = $l;
+					$userItem->relationship = 'relationship' . $i . $l;
+					$userItem->userStatus = 'userStatus' . $i . $l;
+					
+					try {
+						if ($userItem->userID == 3 && $userItem->itemID == 15) {
+							// Don't set.
+						} else {
+							$userItem->set ();
+						}
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$l ++;
+			}
+		}
+		
+		$k = 1;
+		$l = 5;
+		
+		for ($i = 1; $i <= 14; $i++){
+			if($i > 0 && $i < 6){
+				$j = 2;
+			} elseif($i > 5 && $i < 11){
+				$j = 3;
+			} else {
+				$j = 1;
+			}
+			
+			$ur = new UserRatings ( $pdo, [
+					self::ITEM_ID => $i,
+					self::SELLRATING => $k,
+					self::USER_ID => $j,
+					self::BUYRATING => $l
+			] );
+			
+			try {
+				$ur->set ();
+			} catch ( ModelException $e ) {}
+			
+			if($k == 5){
+				$k = 0;
+			}
+			$k++;
+			if($l == 1){
+				$l = 6;
+			}
+			$l--;
+		}
 	}
 	
 	protected function addSellerRating(): UserRatings {
@@ -465,6 +620,48 @@ final class UserRatingsTest extends PicnicTestCase{
 		} catch (Exception $e) {}
 		$this->assertEquals(self::BUYRATING_2, $sut->buyrating);
 		$this->assertNull($sut->transaction);
+	}
+	
+	/*
+	 * getUserRatings($user): array
+	 */
+	public function testGetUserRatingsUserIdEmpty(): void {
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		$this->populateAdditionalUserRatings();
+		$user = new User($pdo);
+		$sut = $this->createDefaultSut();
+		$this->expectExceptionMessage(self::ERROR_USER_ID_NONE);
+		$sut->getStats($user);
+	}
+	
+	public function testGetUserRatingsUserIdInvalid(): void {
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		$this->populateAdditionalUserRatings();
+		$user = new User($pdo);
+		$user->userID = $this->getInvalidId();
+		$sut = $this->createDefaultSut();
+		$this->expectExceptionMessage(self::ERROR_USER_ID_NOT_EXIST);
+		$sut->getStats($user);
+	}
+	
+	public function testGetUserRatingsUserIdValid(): void {
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		$this->populateAdditionalUserRatings();
+		$user = new User($pdo);
+		$user->userID = self::USER_ID_1;
+		$sut = $this->createDefaultSut();
+		try {
+			$stats = $sut->getStats($user);
+		} catch (ModelException $e) {}
+		$this->assertEquals(5, $stats['numSellRatings']);
+		$this->assertEquals(3.0, $stats['avgSellRating']);
+		$this->assertEquals(4, $stats['numBuyRatings']);
+		$this->assertEquals(2.5, $stats['avgBuyRating']);
+		$this->assertEquals(9, $stats['totalNumRatings']);
+		$this->assertEquals(2.8, $stats['avgRating']);
 	}
 
 }

@@ -50,6 +50,7 @@
  * addItemNote(Item $item, Note $note): bool
  * updateItemNote(Note $note): bool
  * deleteItemNote(Note $note): bool
+ * getUserRatings(int $userID): array
  *
  * -- System.php Test SubBlocks: --
  * createAccount(User $user): bool
@@ -1145,6 +1146,122 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		try {
 			return $sut->get();
 		} catch (ModelException $e) {}
+	}
+	protected function populateAdditionalUserRatings(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Insert additional categories
+		$c = new Category ( $pdo );
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		$args1 = [
+				self::USER => self::USER_ONE,
+				self::EMAIL => self::EMAIL_ADDRESS_ONE,
+				self::PASSWORD => self::PASSWORD_ONE
+		];
+		
+		$args2 = [
+				self::USER => self::USER_TWO,
+				self::EMAIL => self::EMAIL_ADDRESS_TWO,
+				self::PASSWORD => self::PASSWORD_TWO
+		];
+		
+		$args3 = [
+				self::USER => self::USER_THREE,
+				self::EMAIL => self::EMAIL_ADDRESS_THREE,
+				self::PASSWORD => self::PASSWORD_THREE
+		];
+		
+		$l = 1;
+		for($i = 1; $i <= 3; $i ++) {
+			$user = new User ( $pdo );
+			$user->user = 'user' . $i;
+			$user->email = 'user' . $i . '@gmail.com';
+			$user->password = 'PassWord' . $i . $i;
+			try {
+				$user->set ();
+			} catch ( ModelException $e ) {
+			}
+			
+			for($j = 1; $j <= 5; $j ++) {
+				$item = new Item ( $pdo );
+				$item->title = 'title' . $l;
+				try {
+					$item->set ();
+					$userItem = new UserItems ( $pdo );
+					$userItem->userID = $i;
+					$userItem->itemID = $l;
+					$userItem->relationship = 'relationship' . $i . $l;
+					$userItem->userStatus = 'userStatus' . $i . $l;
+					
+					try {
+						if ($userItem->userID == 3 && $userItem->itemID == 15) {
+							// Don't set.
+						} else {
+							$userItem->set ();
+						}
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$l ++;
+			}
+		}
+		
+		$k = 1;
+		$l = 5;
+		
+		for ($i = 1; $i <= 14; $i++){
+			if($i > 0 && $i < 6){
+				$j = 2;
+			} elseif($i > 5 && $i < 11){
+				$j = 3;
+			} else {
+				$j = 1;
+			}
+			
+			$ur = new UserRatings ( $pdo, [
+					self::ITEM_ID => $i,
+					self::SELLRATING => $k,
+					self::USER_ID => $j,
+					self::BUYRATING => $l
+			] );
+			
+			try {
+				$ur->set ();
+			} catch ( ModelException $e ) {}
+			
+			if($k == 5){
+				$k = 0;
+			}
+			$k++;
+			if($l == 1){
+				$l = 6;
+			}
+			$l--;
+		}
 	}
 	protected function populateAll(): void {
 		TestPDO::CreateTestDatabaseAndUser ();
@@ -3435,4 +3552,38 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertEquals(self::BUYRATING_2, $ur->buyrating);
 		$this->assertNull($ur->transaction);
 	}
+	
+	/*
+	 * getUserRatings(int $userID): array
+	 */
+	public function estGetUserRatingsUserIdInvalid(): void {
+		unset ( $_SESSION ['error'] );
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateAdditionalUserRatings();
+		$u = new User($pdo);
+		$u->userID = self::INVALID_ID;
+		$stats = $system->getUserRatings($u);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
+		}
+	}
+	public function testGetUserRatingsUserIdValid(): void {
+		unset ( $_SESSION ['error'] );
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateAdditionalUserRatings();
+		$u = new User($pdo);
+		$u->userID = self::USER_ID_1;
+		$stats = $system->getUserRatings($u);
+		$this->assertEquals(5, $stats['numSellRatings']);
+		$this->assertEquals(3.0, $stats['avgSellRating']);
+		$this->assertEquals(4, $stats['numBuyRatings']);
+		$this->assertEquals(2.5, $stats['avgBuyRating']);
+		$this->assertEquals(9, $stats['totalNumRatings']);
+		$this->assertEquals(2.8, $stats['avgRating']);
+	}
+	
+	
+	
 }

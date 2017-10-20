@@ -344,6 +344,59 @@ class UserRatings {
 		}
 	}
 	
+	public function getStats(User $user): array {
+		try {
+			if($user->exists()){ 
+				
+				$query = "SELECT COUNT(sellrating) AS numSellRatings,
+								ROUND(AVG(sellrating),1) AS avgSellRating
+							FROM User_items ui
+							JOIN User_ratings ur
+							ON ui.itemID = ur.itemID
+							WHERE ui.userID = :userID";
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':userID', $user->userID );
+				$stmt->execute ();
+				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+				
+				$stats = array();
+				$stats['numSellRatings'] = $row['numSellRatings'];
+				$stats['avgSellRating'] = $row['avgSellRating'];
+				
+				$query = "SELECT COUNT(buyrating) AS numBuyRatings,
+								ROUND(AVG(sellrating),1) AS avgBuyRating
+							FROM User_ratings
+							WHERE userID = :userID";
+				
+				$stmt = $this->db->prepare ( $query );
+				$stmt->bindParam ( ':userID', $user->userID);
+				$stmt->execute ();
+				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+				
+				$stats['numBuyRatings'] = $row['numBuyRatings'];
+				$stats['avgBuyRating'] = $row['avgBuyRating'];
+				
+				$stats['totalNumRatings'] = $stats['numSellRatings'] + $stats['numBuyRatings'];
+				
+				if($stats['totalNumRatings'] == 0){
+					$stats['avgRating'] = 0;
+				} else {
+					$stats['avgRating'] = round((($stats['numSellRatings']*$stats['avgSellRating']) +
+							($stats['numBuyRatings']*$stats['avgBuyRating']))/
+							($stats['numSellRatings'] + $stats['numBuyRatings']),1);
+				}
+														
+				return $stats;
+				
+			} else {
+				throw new ModelException(self::ERROR_USER_ID_NOT_EXIST);
+			}
+		} catch (ModelException $e) {
+			throw new ModelException ( $e->getMessage() );
+		}
+	}
+	
 	/*
 	 * Generate a random transaction code.
 	 */

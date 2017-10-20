@@ -971,7 +971,9 @@ class Humphree {
 	 * @return array
 	 */
 	public function getUserRatings(int $userID): array {
-		return $this->system->getUserRatings($userID);
+		$user = new User($this->db);
+		$user->userID = $userID;
+		return $this->system->getUserRatings($user);
 	}
 	
 	/**
