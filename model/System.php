@@ -24,6 +24,8 @@ class System {
 	const USER_RATING_NOT_ADDED = 'The UserRating was not added!';
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
 	const ERROR_USER_NOT_EXIST = 'User does not exist!';
+	const ERROR_CATEGORY_NOT_EXIST = 'Category does not exist!';
+	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
 	
 	// Constructor
 	function __construct(PDO $pdo) {
@@ -320,48 +322,49 @@ class System {
 	 * @return bool
 	 */
 	public function deleteCategory(Category $category): bool {
-		if ($category->categoryID > 0) {
+		
+		
+		if ($category->exists()) {
+			$cID = $category->categoryID;
+			$pID = $cID; 
 			
-			// Delete any comments and notes for any items held by the category and then delete the item.
-			$categoryItems = new CategoryItems ( $this->db );
-			$categoryItems->categoryID = $category->categoryID;
-			$items = $categoryItems->getCategoryItems ();
-			
-			foreach ( $items as $item ) {
-				if ($item->itemID > 0) {
-					$itemComments = new ItemComments ( $this->db );
-					$itemComments->itemID = $item->itemID;
-					$itComments = $itemComments->getComments ();
-					
-					foreach ( $itComments as $itComment ) {
-						
-						$comment = new Comment ( $this->db );
-						$comment->commentID = $itComment->commentID;
-						$comment->delete ();
-						$itComment->delete ();
+			$i = 1;
+			do{
+				$pID = $cID;
+				
+				do {
+					$cs = new Categories($this->db);
+					$csArray = $cs->getCategoriesIn($pID);
+					$num = count($csArray);
+					if($num > 0){
+						$pID = $csArray[0]->categoryID;
 					}
-					
-					$itemNotes = new ItemNotes ( $this->db );
-					$itemNotes->itemID = $item->itemID;
-					$itNotes = $itemNotes->getNotes ();
-					
-					foreach ( $itNotes as $itNote ) {
-						$note = new Note ( $this->db );
-						$note->noteID = $itNote->noteID;
-						$note->delete ();
-						$itNote->delete ();
+				} while ($num != 0); 
+				
+				$categoryItem = new CategoryItems($this->db);
+				$categoryItem->categoryID = $pID; 
+				try { 
+					$itemsArray = $categoryItem->getCategoryItems();  
+					foreach ($itemsArray as $item){
+						$ci = new CategoryItems($this->db);
+						$ci->itemID = $item->itemID;
+						$ci->deleteItem();
+						$this->deleteItem($item);
 					}
-					
-					$item->delete ();
-				}
-			}
-			
-			// Finally, delete the category.
-			if ($category->delete ()) {
-				return true;
-			} else {
-				return false;
-			}
+					$c = new Category($this->db);
+					$c->categoryID = $pID;
+					$c->delete();
+				} catch (ModelException $e) {
+					$_SESSION ['error'] = self::ERROR_CATEGORY_ID_NOT_EXIST;
+				} 
+				$i++;  
+				
+			} while ($pID != $cID); 
+		
+			return true;
+		} else {
+			$_SESSION ['error'] = self::ERROR_CATEGORY_NOT_EXIST;
+			return false;
 		}
 	}
 	

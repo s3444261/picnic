@@ -485,7 +485,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The countUserItems() method counts the number of items in a user.
+	 * Counts the number of items in a user.
+	 * 
+	 * @param int $userID
+	 * @return int
 	 */
 	public function countUserItems(int $userID): int {
 		$user = new User ( $this->db );
@@ -496,7 +499,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The getUserItems() function retrieves all items linked to a User.
+	 * Retrieves all items linked to a User.
+	 * 
+	 * @param int $userID
+	 * @return array
 	 */
 	public function getUserItems(int $userID): array {
 		$user = new User ( $this->db );
@@ -555,7 +561,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The getItem() function retrieves an item.
+	 * Retrieves an item.
+	 * 
+	 * @param int $itemID
+	 * @return array
 	 */
 	public function getItem(int $itemID): array {
 		$item = new Item ( $this->db );
@@ -608,7 +617,12 @@ class Humphree {
 	}
 	
 	/**
-	 * The addItem() function adds an item.
+	 * Adds an item.
+	 * 
+	 * @param int $userID
+	 * @param array $item
+	 * @param int $categoryID
+	 * @return bool
 	 */
 	public function addItem(int $userID, array $item, int $categoryID): bool {
 		$user = new User ( $this->db );
@@ -630,7 +644,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The updateItem() function updates an item.
+	 * Updates an item.
+	 * 
+	 * @param array $item
+	 * @return bool
 	 */
 	public function updateItem(array $item): bool {
 		$it = new Item ( $this->db );
@@ -649,7 +666,10 @@ class Humphree {
 	}
 	
 	/**
-	 * The deleteItem() function deletes an item and all associated database content.
+	 * Deletes an item and all associated database content.
+	 * 
+	 * @param int $itemID
+	 * @return bool
 	 */
 	public function deleteItem(int $itemID): bool {
 		$item = new Item ( $this->db );
@@ -752,6 +772,7 @@ class Humphree {
 	
 	/**
 	 * Deletes a comment.
+	 * 
 	 * @param int $commentID
 	 * @return bool
 	 */

@@ -27,7 +27,7 @@ class Category {
 	private $db;
 	
 	const ROOT_CATEGORY = 0;
-	const ERROR_CATEGORY_NOT_EXIST = 'The category does not exist!';
+	const ERROR_CATEGORY_NOT_EXIST = 'Category does not exist!';
 	const ERROR_CATEGORY_NOT_CREATED = 'The category was not created!';
 	const ERROR_CATEGORY_NOT_UPDATED = 'The category was not updated!';
 	const ERROR_PARENT_ID_NOT_EXIST = 'The parent category does not exist!';

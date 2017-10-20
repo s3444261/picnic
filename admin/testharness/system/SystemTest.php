@@ -28,7 +28,7 @@
  * getCategory(Category $category): Category
  * getCategories(): array
  * getCategoriesIn(int $parentID): array
- *
+ * deleteCategory(Category $category): bool
  * countCategoryItems(Category $category): int
  * countItemComments(Item $item): int
  * countItemNotes(Item $item): int
@@ -150,7 +150,9 @@
  * -- testUpdateCategoryAll(): void
  *
  * deleteCategory(Category $category): bool
- * TO DO
+ * -- testDeleteCategoryCategoryIdEmpty(): void
+ * -- testDeleteCategoryCategoryIdInvalid(): void
+ * -- testDeleteCategoryCategoryIdValid(): void
  *
  * getCategory(Category $category): Category
  * -- testGetCategoryNoCategoryId(): void
@@ -163,6 +165,9 @@
  * getCategoriesIn(int $parentID): array
  * -- testGetCategoriesInParentIdInvalid(): void
  * -- testGetCategoriesInParentIdValid(): void
+ * 
+ * deleteCategory(Category $category): bool
+ * IN PROGRESS
  *
  * countCategoryItems(Category $category): int
  * -- testCountCategoryItemsCategoryIDEmpty(): void
@@ -397,7 +402,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const CATEGORY_4 = 'Category4';
 	const CATEGORY_ID_INVALID = 400;
 	const PARENT_ID_INVALID = 300;
-	const ERROR_CATEGORY_NOT_EXIST = 'The category does not exist!';
+	const ERROR_CATEGORY_NOT_EXIST = 'Category does not exist!';
 	const ERROR_CATEGORY_NOT_CREATED = 'The category was not created!';
 	const ERROR_CATEGORY_NOT_UPDATED = 'The category was not updated!';
 	const ERROR_PARENT_ID_NONE = 'Input is required!';
@@ -565,7 +570,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		}
 	}
 	protected function tearDown(): void {
-		TestPDO::CleanUp ();
+		//TestPDO::CleanUp ();
 	}
 	protected function populateCategories(): void {
 		// Regenerate a fresh database.
@@ -718,6 +723,112 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				$j ++;
 			}
 		}
+	}
+	protected function populateDeleteCategory(): bool {
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Populate the Category Table
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {}
+		
+		// Insert additional categories
+		$j = 1;
+		for($i = 2; $i <= 101; $i++ ){
+			$c = new Category($pdo);
+			$c->parentID = $j;
+			$c->category = 'category' . $i;
+			try {
+				$c->set ();
+			} catch ( ModelException $e ) {}
+			
+			
+			if($i%3 == 0){
+				$j++;
+			}
+		}
+		
+		$l = 1;
+		$k = 1;
+		$n = 2;
+		for($i = 1; $i <= 100; $i ++) {
+			$user = new User ( $pdo );
+			$user->user = 'user' . $i;
+			$user->email = 'user' . $i . '@gmail.com';
+			$user->password = 'PassWord' . $i . $i;
+			try {
+				$user->set ();
+			} catch ( ModelException $e ) {
+			}
+			for($j = 1; $j <= 5; $j++) {
+				$item = new Item ( $pdo );
+				$item->title = 'title' . $k;
+				try {
+					$item->set ();
+					$userItem = new UserItems ( $pdo );
+					$userItem->userID = $i;
+					$userItem->itemID = $k;
+					$userItem->relationship = 'relationship' . $i . $l;
+					$userItem->userStatus = 'userStatus' . $i . $l;
+					
+					$categoryItem = new CategoryItems($pdo);
+					$categoryItem->categoryID = $n;
+					$categoryItem->itemID = $k;
+					if($j%5 == 0){
+						$n++;
+					}
+					
+					$userRating = new UserRatings($pdo);
+					$userRating->itemID = $k;
+					$userRating->sellrating = 5;
+					$userRating->userID = $i;
+					$userRating->buyrating = 4;
+					$userRating->set();
+					
+					for($m = 1; $m <= 5; $m ++) {
+						$note = new Note ( $pdo );
+						$note->note = 'note' . $l;
+						$comment = new Comment($pdo);
+						$comment->userID = $i;
+						$comment->comment = 'comment' . $l;
+						try {
+							$note->set ();
+							$itemNote = new ItemNotes ( $pdo );
+							$itemNote->itemID = $i;
+							$itemNote->noteID = $l;
+							$comment->set ();
+							$itemComment = new ItemComments ( $pdo );
+							$itemComment->itemID = $i;
+							$itemComment->commentID = $l;
+							try {
+								$itemNote->set ();
+								$itemComment->set ();
+								$l ++;
+							} catch ( ModelException $e ) {
+							}
+						} catch ( Exception $e ) {
+						}
+					}
+					
+					try {
+						$userItem->set ();
+						$categoryItem->set();
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$k++;
+			}
+			
+			$l++;
+		}
+		return true;
 	}
 	protected function populateUsers(): void {
 		TestPDO::CreateTestDatabaseAndUser ();
@@ -2193,8 +2304,43 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	
 	/*
 	 * deleteCategory(Category $category): bool
-	 * TO DO
 	 */
+	public function testDeleteCategoryCategoryIdEmpty(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$c = new Category ( $pdo );
+		$system->deleteCategory($c);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
+		}
+	}
+	
+	public function testDeleteCategoryCategoryIdInvalid(): void {
+		unset ( $_SESSION ['error'] );
+		$this->populateAll();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$c = new Category ( $pdo );
+		$c->categoryID = self::INVALID_ID;
+		$system->deleteCategory($c);
+		if (isset ( $_SESSION ['error'] )) {
+			$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
+		}
+	}
+	
+	public function testDeleteCategoryCategoryIdValid(): void {
+		unset ( $_SESSION ['error'] );
+		if($this->populateDeleteCategory ()){
+			$pdo = TestPDO::getInstance ();
+			$system = new System ( $pdo );
+			$c = new Category ( $pdo );
+			$c->categoryID = 2;
+			$system->deleteCategory($c);
+		}
+		$this->assertFalse($c->exists());
+	}
 	
 	/*
 	 * getCategory(Category $category): Category

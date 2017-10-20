@@ -286,19 +286,24 @@ class CategoryItems {
 	 * @return array
 	 */
 	public function getCategoryItems(): array {
-		
-		if($this->exists()){
+		$category = new Category($this->db);
+		$category->categoryID = $this->categoryID;
+		if($category->exists()){ 
 			$query = "SELECT * FROM Category_items
 					WHERE categoryID = :categoryID";
 			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
-			$objects = array();
+			$objects = array(); 
 			while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
 				$item = new Item($this->db);
 				$item->itemID = $row ['itemID'];
-				$item->get();
+				try {
+					$item->get();
+				} catch (ModelException $e) {
+					throw new ModelException($e->getMessage());
+				}
 				
 				$objects[] = $item;
 			}
