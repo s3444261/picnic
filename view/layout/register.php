@@ -39,7 +39,7 @@
                             <label for="password">Confirm Password</label>
                             <input type="password" class="form-control" name="password2" id="password2" placeholder="Password" minlength="8" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Register</button>
+                        <button type="submit" class="btn btn-primary btn-success">Register</button>
                     </form>
                 <?php } ?>
             </div>
