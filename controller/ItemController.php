@@ -33,6 +33,38 @@ class ItemController {
 		$view->Render('item');
 	}
 
+	public function Add() {
+		$h = new Humphree(Picnic::getInstance());
+
+		$view = new View();
+		$view->SetData('navData',  new NavData(NavData::ViewListings));
+		$view->Render('itemAdd');
+	}
+
+	public function Edit($itemId) {
+		$h = new Humphree(Picnic::getInstance());
+
+		$view = new View();
+		$view->SetData('item', $h ->getItem($itemId));
+		$view->SetData('navData',  new NavData(NavData::ViewListings));
+		$view->Render('itemEdit');
+	}
+
+	public function Delete($itemId) {
+		$h = new Humphree(Picnic::getInstance());
+		$h ->deleteItem($itemId);
+		header('Location: ' . BASE . '/Dashboard/View');
+	}
+
+	public function MarkFoundOrSold($itemId) {
+		$h = new Humphree(Picnic::getInstance());
+
+		$view = new View();
+		$view->SetData('item', $h ->getItem($itemId));
+		$view->SetData('navData',  new NavData(NavData::ViewListings));
+		$view->Render('itemMarkFoundOrSold');
+	}
+
 	/**
 	 * Sends the thumbnail image for the given item. If no thumb is found,
 	 * sends a default image. If THAT is not found, returns 404.

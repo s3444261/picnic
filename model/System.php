@@ -497,19 +497,23 @@ class System {
 		
 		return $numUserItems;
 	}
-	
+
 	/**
 	 * Retrieves all items linked to a user.
-	 * 
+	 *
 	 * @param User $user
+	 *  			The user whose items will be returned.
+	 * @param string $userRole
+	 * 				The role that the user plays for the requested items.
 	 * @return array
+	 * 				An array of UserItems objects.
 	 */
-	public function getUserItems(User $user): array {
+	public function getUserItems(User $user, string $userRole = ""): array {
 		$ui = array ();
 		$u = new UserItems ( $this->db );
 		$u->userID = $user->userID;
 		try {
-			$ui = $u->getUserItems ();
+			$ui = $u->getUserItems ($userRole);
 		} catch (ModelException $e) {
 			$_SESSION ['error'] = $e->getError ();
 		}

@@ -9,18 +9,15 @@
  */
 ?>
 
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col"></div>
         <div class="col-9">
             <div class="jumbotron panel panel-default">
-                <h1 class="display-3 text-center">Password Changed</h1>
-                <div class="alert alert-success text-center">
-                    Your password was successfully changed.
-                </div>
+                <h1 class="display-3 text-center">Add item</h1>
+                <h4 class="text-center">Coming soon!</h4>
             </div>
         </div>
         <div class="col"></div>
     </div>
-
 </div>

@@ -306,24 +306,39 @@ class UserItems {
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 		return $row ['num'];
 	}
-	
+
 	/**
-	 * Retrieves all itemID's for an user and returns them as an
+	 * Retrieves all itemID's for a user and returns them as an
 	 * array of userItem Objects.
-	 * 
+	 *
+	 * @param string $userRole
+	 * 				The role that the user plays for the requested items.
 	 * @return array
+	 * 				An array of UserItems objects.
+	 * @throws ModelException
 	 */
-	public function getUserItems(): array {
+	public function getUserItems(string $userRole = ""): array {
 		
 		$objects = array();
 		$i = new User($this->db);
 		$i->userID = $this->_userID;
 		
 		if($i->exists()){
-			$query = "SELECT * FROM User_items WHERE userID = :userID";
-			
+			if ($userRole == "") {
+				$query = "SELECT * FROM User_items WHERE userID = :userID";
+			} else {
+				$query = "SELECT * FROM User_items 
+				      WHERE userID = :userID 
+					  AND relationship = :userRole";
+			}
+
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':userID', $this->_userID );
+
+			if ($userRole != "") {
+				$stmt->bindParam ( ':userRole', $userRole );
+			}
+
 			$stmt->execute ();
 			while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
 				$userItem = new UserItems($this->db);

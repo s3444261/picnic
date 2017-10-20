@@ -497,64 +497,80 @@ class Humphree {
 		
 		return $numUserItems;
 	}
-	
+
 	/**
 	 * Retrieves all items linked to a User.
-	 * 
+	 *
 	 * @param int $userID
+	 *       	The ID of the user whose items will be returned.
+	 *
+	 * @param string $userRole
+	 *      		The role that the user plays for the requested items.
+	 *
+	 * @param string $itemStatus
+	 * 			The desired item status.
+	 *
 	 * @return array
+	 *  		An array containing the results.
 	 */
-	public function getUserItems(int $userID): array {
+	public function getUserItems(int $userID, string $userRole, string $itemStatus): array {
 		$user = new User ( $this->db );
 		$user->userID = $userID;
-		$userItems = $this->system->getUserItems ( $user );
+		$userItems = $this->system->getUserItems ( $user, $userRole );
 		$its = array ();
 		
-		foreach ( $userItems as $item ) {
+		foreach ( $userItems as $userItem ) {
+
 			$it = array ();
-			
-			$it ['itemID'] = $item->itemID;
-			$it ['title'] = $item->title;
-			$it ['description'] = $item->description;
-			$it ['quantity'] = $item->quantity;
-			$it ['itemcondition'] = $item->itemcondition;
-			$it ['price'] = $item->price;
-			$it ['status'] = $item->status;
-			
-			$comments = $this->system->getItemComments ( $item );
-			$cs = array ();
-			
-			foreach ( $comments as $comment ) {
-				$c = array ();
-				
-				$c ['commentID'] = $comment->commentID;
-				$c ['userID'] = $comment->userID;
-				$user = new User ( $this->db );
-				$user->userID = $comment->userID;
-				$user = $this->system->getUser ( $user );
-				$c ['user'] = $user->user;
-				$c ['comment'] = $comment->comment;
-				
-				$cs [] = $c;
+
+			$item = new Item($this->db);
+			$item->itemID = $userItem->itemID;
+			$item = $this->system->getItem($item);
+
+			if ($item->status == $itemStatus) {
+				$it ['itemID'] = $item->itemID;
+				$it ['title'] = $item->title;
+				$it ['description'] = $item->description;
+				$it ['quantity'] = $item->quantity;
+				$it ['itemcondition'] = $item->itemcondition;
+				$it ['price'] = $item->price;
+				$it ['status'] = $item->status;
+
+				$comments = $this->system->getItemComments ( $item );
+				$cs = array ();
+
+				foreach ( $comments as $comment ) {
+					$c = array ();
+
+					$c ['commentID'] = $comment->commentID;
+					$c ['userID'] = $comment->userID;
+					$user = new User ( $this->db );
+					$user->userID = $comment->userID;
+					$user = $this->system->getUser ( $user );
+					$c ['user'] = $user->user;
+					$c ['comment'] = $comment->comment;
+
+					$cs [] = $c;
+				}
+
+				$it ['comments'] = $cs;
+
+				$notes = $this->system->getItemNotes ( $item );
+				$ns = array ();
+
+				foreach ( $notes as $note ) {
+					$n = array ();
+
+					$n ['noteID'] = $note->noteID;
+					$n ['note'] = $note->note;
+
+					$ns [] = $n;
+				}
+
+				$it ['notes'] = $ns;
+
+				$its [] = $it;
 			}
-			
-			$it ['comments'] = $cs;
-			
-			$notes = $this->system->getItemNotes ( $item );
-			$ns = array ();
-			
-			foreach ( $notes as $note ) {
-				$n = array ();
-				
-				$n ['noteID'] = $note->noteID;
-				$n ['note'] = $note->note;
-				
-				$ns [] = $n;
-			}
-			
-			$it ['notes'] = $ns;
-			
-			$its [] = $it;
 		}
 		
 		return $its;

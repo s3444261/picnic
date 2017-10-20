@@ -8,14 +8,23 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 
+require_once  __DIR__ . '/../config/Picnic.php';
+
 class DashboardController {
-	
-	// Displays the Dashboard Page.
+
 	public function index()
 	{
+		header('Location: ' . BASE . '/Dashboard/View');
+	}
+
+	public function View() {
 		if ($this->auth()) {
 
+			$h = new Humphree(Picnic::getInstance());
+
 			$view = new View();
+			$view->SetData('forSaleItems',   $h->getUserItems($_SESSION['userID'], 'owner', "ForSale"));
+			$view->SetData('wantedItems',   $h->getUserItems($_SESSION['userID'], 'owner', "Wanted"));
 			$view->SetData('navData',  new NavData(NavData::Account));
 			$view->Render('dashboard');
 
