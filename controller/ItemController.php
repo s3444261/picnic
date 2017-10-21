@@ -33,7 +33,7 @@ class ItemController {
 		$view->Render('item');
 	}
 
-	public function Add() {
+	public function Create() {
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
