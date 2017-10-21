@@ -22,6 +22,7 @@
                     <li class="nav-item"><a class="nav-link" href="<?php echo BASE . '/About' ?>">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?php echo BASE . '/TermsOfService' ?>">Terms of Service</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?php echo  BASE . '/PrivacyPolicy' ?>">Privacy policy</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo  BASE . '/SiteMap' ?>">Site map</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?php echo  BASE . '/Home' ?>">Search</a></li>
 
                     <?php if (isset ( $_SESSION [MODULE] )) { ?>
