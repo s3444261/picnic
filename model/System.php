@@ -20,6 +20,7 @@ class System {
 	
 	private $db;
 	
+	const SEARCH_STRING = 'searchString';
 	const SUSPENDED = 'suspended';
 	const USER_RATING_NOT_ADDED = 'The UserRating was not added!';
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
@@ -966,11 +967,17 @@ class System {
 		}
 	}
 	
-	/*
-	 * The search() function searches the database and returns matches.
+	/**
+	 * Searches Item Titles and returns an array of Items.
+	 * 
+	 * @param string $searchString
+	 * @return array
 	 */
-	public function search() {
-		// TO DO
+	public function search(string $searchString): array {
+		$args = array();
+		$args[self::SEARCH_STRING] = $searchString;
+		$items = new Items($this->db, $args);
+		return $items->search();
 	}
 }
 ?>

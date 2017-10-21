@@ -988,13 +988,12 @@ class Humphree {
 	}
 	
 	/**
-	 * The search() function searches the database and returns matches.
+	 * Searches Item Titles based on search string and returns an array of Items.
+	 * 
+	 * @param string $searchString
+	 * @return array
 	 */
-	public function search(): bool {
-		// TO DO
-		// Convert arrays to objects if necessary and call equivalent System Function
-		$this->system->search ();
-		
-		return true;
+	public function search(string $searchString): array {
+		return $this->system->search ($searchString);
 	}
 }
