@@ -79,7 +79,7 @@
  * -- testActivateAccountValidId(): void
  *
  * changePassword(User $user): bool
- * testChangePasswordNoPassword(): void
+ * -- testChangePasswordNoPassword(): void
  * -- testChangePasswordShortPassword(): void
  * -- testChangePasswordNoUpperPassword(): void
  * -- testChangePasswordNoLowerPassword(): void
@@ -169,9 +169,11 @@
  * getCategoriesIn(int $parentID): array
  * -- testGetCategoriesInParentIdInvalid(): void
  * -- testGetCategoriesInParentIdValid(): void
- * 
+ *
  * deleteCategory(Category $category): bool
- * IN PROGRESS
+ * -- testDeleteCategoryCategoryIdEmpty(): void
+ * -- testDeleteCategoryCategoryIdInvalid(): void
+ * -- testDeleteCategoryCategoryIdValid(): void
  *
  * countCategoryItems(Category $category): int
  * -- testCountCategoryItemsCategoryIDEmpty(): void
@@ -294,7 +296,7 @@
  * -- testDeleteItemNotesItemIdEmpty(): void
  * -- testDeleteItemNotesItemIdInvalid(): void
  * -- testDeleteItemNotesItemIdValid(): void
- * 
+ *
  * getItemOwner(Item $item): array
  * -- testGetItemOwnerItemIdEmpty(): void
  * -- testGetItemOwnerItemIdInvalid(): void
@@ -311,12 +313,12 @@
  * -- testAddBuyerRatingTransactionIdInvalid(): void
  * -- testAddBuyerRatingRatingInvalid(): void
  * -- testAddBuyerRatingSuccess(): void
- * 
+ *
  * getUserRatings(int $userID): array
  * -- testGetUserRatingsUserIdInvalid(): void
  * -- testGetUserRatingsUserIdValid(): void
- * 
- * 
+ *
+ *
  */
 declare ( strict_types = 1 )
 	;
@@ -354,7 +356,82 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const STATUS = 'status';
 	const ACTIVATE = 'activate';
 	
-	// User Data
+	// Category Parameters
+	const CATEGORY_ID = 'categoryID';
+	const PARENT_ID = 'parentID';
+	const CATEGORY_NAME = 'category';
+	
+	// Item Parameters
+	const ITEM_ID = 'itemID';
+	const TITLE = 'title';
+	const DESCRIPTION = 'description';
+	const QUANTITY = 'quantity';
+	const CONDITION = 'itemcondition';
+	const PRICE = 'price';
+	const ITEM_STATUS = 'status';
+	
+	// User_item Parameters
+	const USER_ITEM_ID = 'user_itemID';
+	const RELATIONSHIP = 'relationship';
+	const USERSTATUS = 'userStatus';
+	
+	// Item_comment Parameters
+	const ITEM_COMMENT_ID = 'item_commentID';
+	const COMMENT_ID = 'commentID';
+	
+	// Item_note Parameters
+	const ITEM_NOTE_ID = 'item_noteID';
+	const NOTE_ID = 'noteID';
+	
+	// User_ratings Parameters
+	const USER_RATING_ID = 'user_ratingID';
+	const SELLRATING = 'sellrating';
+	const BUYRATING = 'buyrating';
+	const TRANSACTION = 'transaction';
+	
+	// Error Messages
+	const ERROR_ACTIVATION_CODE = 'Failed to retrieve UserID!';
+	const ERROR_ACTIVATION_CODE_SHORT = 'Activation code must the 32 characters in length!';
+	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
+	const ERROR_CATEGORY_NONE = 'Input is required!';
+	const ERROR_CATEGORY_NOT_CREATED = 'The category was not created!';
+	const ERROR_CATEGORY_NOT_EXIST = 'Category does not exist!';
+	const ERROR_CATEGORY_NOT_UPDATED = 'The category was not updated!';
+	const ERROR_COMMENT_EMPTY = 'Input is required!';
+	const ERROR_COMMENT_ID_ALREADY_EXIST = 'The CommentID is already in Item_comments!';
+	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
+	const ERROR_EMAIL_DUPLICATE = 'This email address is not available!';
+	const ERROR_EMAIL_EMPTY = 'Email Error: Input is required!';
+	const ERROR_EMAIL_INVALID = 'Email Error: Email address must be valid!';
+	const ERROR_INCORRECT_TRANSACTION_ID = 'The TransactionID is incorrect!';
+	const ERROR_ITEM_COMMENT_ID_NOT_EXIST = 'The ItemCommentID does not exist!';
+	const ERROR_ITEM_EMPTY = 'Input is required!';
+	const ERROR_ITEM_ID_ALREADY_EXIST = 'The ItemID is already in User_items!';
+	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
+	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
+	const ERROR_ITEM_NOTE_ID_NOT_EXIST = 'The ItemNoteID does not exist!';
+	const ERROR_NOTE_EMPTY = 'Input is required!';
+	const ERROR_NOTE_ID_ALREADY_EXIST = 'The NoteID is already in Item_notes!';
+	const ERROR_NOTE_ID_NOT_EXIST = 'The NoteID does not exist!';
+	const ERROR_PARENT_CATEGORY_NOT_EXIST = 'The parent category does not exist!';
+	const ERROR_PARENT_ID_INVALID = 'Input is required!';
+	const ERROR_PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
+	const ERROR_PASSWORD_EMPTY = 'Password Error: Input is required!';
+	const ERROR_PASSWORD_INVALID = 'Password Error: Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!';
+	const ERROR_USER_ADD_FAILED = 'Failed to add User.';
+	const ERROR_USER_EMPTY = 'Username Error: Input is required!';
+	const ERROR_USER_DUPLICATE = 'This user name is not available!';
+	const ERROR_USER_ID_EMPTY = 'Input is required!';
+	const ERROR_USER_ID_NOT_EXIST = 'The UserID does not exist!';
+	const ERROR_USER_ID_NOT_INT = 'UserID must be an integer!';
+	const ERROR_USER_ITEM_ID_NOT_EXIST = 'The UserItemID does not exist!';
+	const ERROR_USER_NOT_EXIST = 'User does not exist!';
+	const ERROR_USER_RATING_ID_NOT_EXIST = 'The UserRatingID does not exist!';
+	const ERROR_USER_RATING_NOT_SET = 'The rating has not been set!';
+	const ERROR_USER_SHORT = 'Username Error: Input must be atleast 4 characters in length!';
+	const ERROR_ZERO = 'Number must be greater than zero!';
+	
+	// Test Data
 	const USER_ID_1 = 1;
 	const USER_ONE = 'peter';
 	const EMAIL_ADDRESS_ONE = 'peter@gmail.com';
@@ -376,21 +453,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const PASSWORD_NO_UPPER = 'testtest88';
 	const PASSWORD_NO_LOWER = 'TESTTEST88';
 	const PASSWORD_NO_NUMBER = 'TestTestTest';
-	const FAILED_TO_ADD_USER = 'Failed to add User.';
-	const ERROR_USER_NOT_EXIST = 'User does not exist!';
-	const ERROR_USER_ID_EMPTY = 'Input is required!';
-	const ERROR_USER_EMPTY = 'Username Error: Input is required!';
-	const ERROR_USER_SHORT = 'Username Error: Input must be atleast 4 characters in length!';
-	const ERROR_USER_DUPLICATE = 'This user name is not available!';
-	const ERROR_EMAIL_EMPTY = 'Email Error: Input is required!';
-	const ERROR_EMAIL_INVALID = 'Email Error: Email address must be valid!';
-	const ERROR_EMAIL_DUPLICATE = 'This email address is not available!';
-	const ERROR_PASSWORD_EMPTY = 'Password Error: Input is required!';
-	const ERROR_PASSWORD_INVALID = 'Password Error: Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!';
 	const INVALID_ID = 2000;
 	const INVALID_ACTIVATION_CODE = 'ef4flslerlwldxl234lsdl3w';
-	const ERROR_ACTIVATION_CODE = 'Failed to retrieve UserID!';
-	const ERROR_ACTIVATION_CODE_SHORT = 'Activation code must the 32 characters in length!';
 	const EMAIL_NOT_EXIST = 'bandicoot@gumtree.net';
 	const STATUS_ADD = 'suspended';
 	const STATUS_ACTIVE = 'active';
@@ -399,10 +463,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const USERS_PER_PAGE = 20;
 	const PAGE_NUMBER_ZERO = 0;
 	const USERS_PER_PAGE_ZERO = 0;
-	const ERROR_ZERO = 'Number must be greater than zero!';
-	const CATEGORY_ID = 'categoryID';
-	const PARENT_ID = 'parentID';
-	const CATEGORY_NAME = 'category';
 	const CATEGORY_ID_1 = 1;
 	const PARENT_ID_0 = 0;
 	const CATEGORY_1 = 'Category';
@@ -417,23 +477,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const CATEGORY_4 = 'Category4';
 	const CATEGORY_ID_INVALID = 400;
 	const PARENT_ID_INVALID = 300;
-	const ERROR_CATEGORY_NOT_EXIST = 'Category does not exist!';
-	const ERROR_CATEGORY_NOT_CREATED = 'The category was not created!';
-	const ERROR_CATEGORY_NOT_UPDATED = 'The category was not updated!';
-	const ERROR_PARENT_ID_NONE = 'Input is required!';
-	const ERROR_PARENT_ID_NOT_EXIST = 'The parent category does not exist!';
-	const ERROR_PARENT_ID_INVALID = 'Input is required!';
-	const ERROR_CATEGORY_NONE = 'Input is required!';
 	const ROOT_CATEGORY = 0;
 	const ROOT_CATEGORY_NAME = 'Category';
-	const PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
-	const ITEM_ID = 'itemID';
-	const TITLE = 'title';
-	const DESCRIPTION = 'description';
-	const QUANTITY = 'quantity';
-	const CONDITION = 'itemcondition';
-	const PRICE = 'price';
-	const ITEM_STATUS = 'status';
 	const ITEM_ID_1 = 1;
 	const TITLE_1 = 'title1';
 	const DESCRIPTION_1 = 'description1';
@@ -458,70 +503,34 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ITEM_ID_16 = 16;
 	const TITLE_16 = 'title16';
 	const ITEM_ID_INVALID = 4000;
-	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
-	const ERROR_ITEM_ID_INVALID = 'The ItemID does not exist!';
-	const ERROR_ITEM_EMPTY = 'Input is required!';
 	const ITEMS_PAGE_NUMBER = 3;
 	const ITEMS_PER_PAGE = 6;
 	const ITEMS_PAGE_NUMBER_ZERO = 0;
 	const ITEMS_PER_PAGE_ZERO = 0;
-	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
-	const ITEM_NOTE_ID = 'item_noteID';
-	const NOTE_ID = 'noteID';
 	const ITEM_NOTE_ID_1 = 1;
 	const NOTE_ID_1 = 1;
 	const ITEM_NOTE_ID_2 = 2;
 	const NOTE_ID_2 = 2;
 	const NOTE_ID_15 = 15;
 	const NOTE_NEW = 'New Note';
-	const ERROR_ITEM_NOTE_ID_NOT_EXIST = 'The ItemNoteID does not exist!';
-	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
-	const ERROR_NOTE_ID_NOT_EXIST = 'The NoteID does not exist!';
-	const ERROR_NOTE_ID_ALREADY_EXIST = 'The NoteID is already in Item_notes!';
-	const ERROR_NOTE_EMPTY = 'Input is required!';
-	const ITEM_COMMENT_ID = 'item_commentID';
-	const COMMENT_ID = 'commentID';
 	const ITEM_COMMENT_ID_1 = 1;
 	const COMMENT_ID_1 = 1;
 	const ITEM_COMMENT_ID_2 = 2;
 	const COMMENT_ID_2 = 2;
 	const COMMENT_ID_15 = 15;
 	const COMMENT_NEW = 'New Note';
-	const ERROR_ITEM_COMMENT_ID_NOT_EXIST = 'The ItemCommentID does not exist!';
-	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
-	const ERROR_COMMENT_ID_ALREADY_EXIST = 'The CommentID is already in Item_comments!';
-	const ERROR_COMMENT_EMPTY = 'Input is required!';
-	const USER_ITEM_ID = 'user_itemID';
-	const RELATIONSHIP = 'relationship';
-	const USERSTATUS = 'userStatus';
 	const USER_ITEM_ID_1 = 1;
 	const USER_ITEM_ID_15 = 15;
 	const RELATIONSHIP_1 = 'Relationship1';
 	const RELATIONSHIP_2 = 'Relationship2';
 	const USERSTATUS_1 = 'UserStatus1';
 	const USERSTATUS_2 = 'UserStatus2';
-	const ERROR_USER_ITEM_ID_NOT_EXIST = 'The UserItemID does not exist!';
-	const ERROR_USER_ID_NOT_EXIST = 'The UserID does not exist!';
-	const ERROR_USER_ID_NOT_INT = 'UserID must be an integer!';
-	const ERROR_ITEM_ID_ALREADY_EXIST = 'The ItemID is already in User_items!';
-	
-	const USER_RATING_ID   = 'user_ratingID';
-	const SELLRATING = 'sellrating';
-	const BUYRATING = 'buyrating';
-	const TRANSACTION = 'transaction';
-	
-	const USER_RATING_ID_1   = 1;
+	const USER_RATING_ID_1 = 1;
 	const SELLRATING_1 = 3;
 	const BUYRATING_1 = 4;
-	
-	const USER_RATING_ID_2   = 2;
+	const USER_RATING_ID_2 = 2;
 	const SELLRATING_2 = 4;
 	const BUYRATING_2 = 3;
-	
-	const ERROR_USER_RATING_ID_NOT_EXIST = 'The UserRatingID does not exist!';
-	const ERROR_RATING_NOT_SET = 'The rating has not been set!';
-	const ERROR_INCORRECT_TRANSACTION_ID = 'The TransactionID is incorrect!';
-	
 	protected function setUp(): void {
 		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser ();
@@ -585,803 +594,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		}
 	}
 	protected function tearDown(): void {
-		//TestPDO::CleanUp ();
-	}
-	protected function populateCategories(): void {
-		// Regenerate a fresh database.
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		// Insert a root category
-		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::ROOT_CATEGORY;
-		$root->{self::CATEGORY_NAME} = self::ROOT_CATEGORY_NAME;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		// Insert additional categories
-		$j = 1;
-		for($i = 1; $i <= 99; $i ++) {
-			if ($i % 3 == 0) {
-				$j ++;
-			}
-			$c = new Category ( $pdo );
-			$c->{self::PARENT_ID} = $j;
-			$c->{self::CATEGORY_NAME} = 'cat' . $i;
-			try {
-				$c->set ();
-			} catch ( ModelException $e ) {
-			}
-		}
-	}
-	protected function populateItems(): void {
-		// Regenerate a fresh database.
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		// Insert items.
-		$args = [ 
-				self::ITEM_ID => self::ITEM_ID_1,
-				self::TITLE => self::TITLE_1,
-				self::DESCRIPTION => self::DESCRIPTION_1,
-				self::QUANTITY => self::QUANTITY_1,
-				self::CONDITION => self::CONDITION_1,
-				self::PRICE => self::PRICE_1,
-				self::ITEM_STATUS => self::STATUS_1 
-		];
-		
-		$item = new Item ( $pdo, $args );
-		try {
-			$item->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		$args2 = [ 
-				self::ITEM_ID => self::ITEM_ID_2,
-				self::TITLE => self::TITLE_2,
-				self::DESCRIPTION => self::DESCRIPTION_2,
-				self::QUANTITY => self::QUANTITY_2,
-				self::CONDITION => self::CONDITION_2,
-				self::PRICE => self::PRICE_2,
-				self::ITEM_STATUS => self::STATUS_2 
-		];
-		
-		$item = new Item ( $pdo, $args2 );
-		try {
-			$item->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		$args3 = [ 
-				self::ITEM_ID => self::ITEM_ID_3,
-				self::TITLE => self::TITLE_3,
-				self::DESCRIPTION => self::DESCRIPTION_3,
-				self::QUANTITY => self::QUANTITY_3,
-				self::CONDITION => self::CONDITION_3,
-				self::PRICE => self::PRICE_3,
-				self::ITEM_STATUS => self::STATUS_3 
-		];
-		
-		$item = new Item ( $pdo, $args3 );
-		try {
-			$item->set ();
-		} catch ( ModelException $e ) {
-		}
-	}
-	protected function populateCategoryItems(): void {
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		// Populate the Category Table
-		// Insert a root category
-		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
-		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		// Insert additional categories
-		$c = new Category ( $pdo );
-		$c->{self::PARENT_ID} = self::PARENT_ID_1;
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		$c->{self::PARENT_ID} = self::PARENT_ID_2;
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_4;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		// Populate the Items Table
-		for($i = 1; $i <= 100; $i ++) {
-			$item = new Item ( $pdo, [ 
-					self::TITLE => 'title' . $i,
-					self::DESCRIPTION => 'description' . $i,
-					self::QUANTITY => 'quantity' . $i,
-					self::CONDITION => 'condition' . $i,
-					self::PRICE => 'price' . $i,
-					self::STATUS => '' 
-			] );
-			try {
-				$item->set ();
-			} catch ( ModelException $e ) {
-			}
-		}
-		
-		// Populate the CategoryItems Table
-		$j = 2;
-		for($i = 1; $i <= 100; $i ++) {
-			$ci = new CategoryItems ( $pdo, [ 
-					self::CATEGORY_ID => $j,
-					SELF::ITEM_ID => $i 
-			] );
-			try {
-				$ci->set ();
-			} catch ( ModelExceptionException $e ) {
-			}
-			if ($i % 34 == 0) {
-				$j ++;
-			}
-		}
-	}
-	protected function populateDeleteCategory(): bool {
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		// Populate the Category Table
-		// Insert a root category
-		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
-		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {}
-		
-		// Insert additional categories
-		$j = 1;
-		for($i = 2; $i <= 101; $i++ ){
-			$c = new Category($pdo);
-			$c->parentID = $j;
-			$c->category = 'category' . $i;
-			try {
-				$c->set ();
-			} catch ( ModelException $e ) {}
-			
-			
-			if($i%3 == 0){
-				$j++;
-			}
-		}
-		
-		$l = 1;
-		$k = 1;
-		$n = 2;
-		for($i = 1; $i <= 100; $i ++) {
-			$user = new User ( $pdo );
-			$user->user = 'user' . $i;
-			$user->email = 'user' . $i . '@gmail.com';
-			$user->password = 'PassWord' . $i . $i;
-			try {
-				$user->set ();
-			} catch ( ModelException $e ) {
-			}
-			for($j = 1; $j <= 5; $j++) {
-				$item = new Item ( $pdo );
-				$item->title = 'title' . $k;
-				try {
-					$item->set ();
-					$userItem = new UserItems ( $pdo );
-					$userItem->userID = $i;
-					$userItem->itemID = $k;
-					$userItem->relationship = 'relationship' . $i . $l;
-					$userItem->userStatus = 'userStatus' . $i . $l;
-					
-					$categoryItem = new CategoryItems($pdo);
-					$categoryItem->categoryID = $n;
-					$categoryItem->itemID = $k;
-					if($j%5 == 0){
-						$n++;
-					}
-					
-					$userRating = new UserRatings($pdo);
-					$userRating->itemID = $k;
-					$userRating->sellrating = 5;
-					$userRating->userID = $i;
-					$userRating->buyrating = 4;
-					$userRating->set();
-					
-					for($m = 1; $m <= 5; $m ++) {
-						$note = new Note ( $pdo );
-						$note->note = 'note' . $l;
-						$comment = new Comment($pdo);
-						$comment->userID = $i;
-						$comment->comment = 'comment' . $l;
-						try {
-							$note->set ();
-							$itemNote = new ItemNotes ( $pdo );
-							$itemNote->itemID = $i;
-							$itemNote->noteID = $l;
-							$comment->set ();
-							$itemComment = new ItemComments ( $pdo );
-							$itemComment->itemID = $i;
-							$itemComment->commentID = $l;
-							try {
-								$itemNote->set ();
-								$itemComment->set ();
-								$l ++;
-							} catch ( ModelException $e ) {
-							}
-						} catch ( Exception $e ) {
-						}
-					}
-					
-					try {
-						$userItem->set ();
-						$categoryItem->set();
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
-				}
-				$k++;
-			}
-			
-			$l++;
-		}
-		return true;
-	}
-	protected function populateUsers(): void {
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		// Insert a root category
-		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
-		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		// Insert additional categories
-		$c = new Category ( $pdo );
-		$c->{self::PARENT_ID} = self::PARENT_ID_1;
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		// Populate the Users table.
-		for($i = 1; $i <= 400; $i ++) {
-			${'u' . $i} = new User ( $pdo, [ 
-					self::USER => 'user' . $i,
-					self::EMAIL => 'email' . $i . '@gmail.com',
-					self::PASSWORD => 'PassWord' . $i 
-			] );
-			try {
-				${'u' . $i}->set ();
-			} catch ( ModelException $e ) {
-			}
-			try {
-				${'u' . $i}->get ();
-			} catch ( ModelException $e ) {
-			}
-			try {
-				${'u' . $i}->activate ();
-			} catch ( ModelException $e ) {
-			}
-		}
-	}
-	protected function populateUserItems(): void {
-		// Regenerate a fresh database.
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		// Insert a root category
-		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
-		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		// Insert additional categories
-		$c = new Category ( $pdo );
-		$c->{self::PARENT_ID} = self::PARENT_ID_1;
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		$args1 = [
-				self::USER => self::USER_ONE,
-				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE
-		];
-		
-		$args2 = [
-				self::USER => self::USER_TWO,
-				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO
-		];
-		
-		$args3 = [
-				self::USER => self::USER_THREE,
-				self::EMAIL => self::EMAIL_ADDRESS_THREE,
-				self::PASSWORD => self::PASSWORD_THREE
-		];
-		
-		$l = 1;
-		for($i = 1; $i <= 3; $i ++) {
-			$user = new User ( $pdo );
-			$user->user = 'user' . $i;
-			$user->email = 'user' . $i . '@gmail.com';
-			$user->password = 'PassWord' . $i . $i;
-			try {
-				$user->set ();
-			} catch ( ModelException $e ) {
-			}
-			
-			for($j = 1; $j <= 5; $j ++) {
-				$item = new Item ( $pdo );
-				$item->title = 'title' . $l;
-				try {
-					$item->set ();
-					$userItem = new UserItems ( $pdo );
-					$userItem->userID = $i;
-					$userItem->itemID = $l;
-					$userItem->relationship = 'relationship' . $i . $l;
-					$userItem->userStatus = 'userStatus' . $i . $l;
-					
-					try {
-						if ($userItem->userID == 3 && $userItem->itemID == 15) {
-							// Don't set.
-						} else {
-							$userItem->set ();
-						}
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
-				}
-				$l ++;
-			}
-		}
-	}
-	protected function populateItemComments(): void {
-		// Regenerate a fresh database.
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		$user = new User ( $pdo, [ 
-				'user' => 'user',
-				'email' => 'user@gmai.com',
-				'password' => 'TestTest88' 
-		] );
-		try {
-			$user->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		$l = 1;
-		for($i = 1; $i <= 3; $i ++) {
-			$item = new Item ( $pdo );
-			$item->title = 'title' . $i;
-			$item->set ();
-			for($j = 1; $j <= 5; $j ++) {
-				$comment = new Comment ( $pdo );
-				$comment->userID = self::USER_ID_1;
-				$comment->comment = 'comment' . $l;
-				try {
-					$comment->set ();
-					$itemComment = new ItemComments ( $pdo );
-					$itemComment->itemID = $i;
-					$itemComment->commentID = $l;
-					try {
-						if ($itemComment->itemID == 3 && $itemComment->commentID == 15) {
-							// Don't set.
-						} else {
-							$itemComment->set ();
-						}
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
-				}
-				$l ++;
-			}
-		}
-	}
-	protected function populateItemNotes(): void {
-		// Regenerate a fresh database.
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		$l = 1;
-		for($i = 1; $i <= 3; $i ++) {
-			$item = new Item ( $pdo );
-			$item->title = 'title' . $i;
-			$item->set ();
-			for($j = 1; $j <= 5; $j ++) {
-				$note = new Note ( $pdo );
-				$note->note = 'note' . $l;
-				try {
-					$note->set ();
-					$itemNote = new ItemNotes ( $pdo );
-					$itemNote->itemID = $i;
-					$itemNote->noteID = $l;
-					try {
-						if ($itemNote->itemID == 3 && $itemNote->noteID == 15) {
-							// Don't set.
-						} else {
-							$itemNote->set ();
-						}
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
-				}
-				$l ++;
-			}
-		}
-	}
-	protected function populateUserRatings(): void {
-		// Regenerate a fresh database.
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		$u1 = new User ( $pdo, [ 
-				self::USER => self::USER_ONE,
-				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE 
-		] );
-		$u2 = new User ( $pdo, [ 
-				self::USER => self::USER_TWO,
-				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO 
-		] );
-		$i1 = new Item ( $pdo, [ 
-				self::TITLE => self::TITLE_1 
-		] );
-		$i2 = new Item ( $pdo, [ 
-				self::TITLE => self::TITLE_2 
-		] );
-		$ui = new UserItems ( $pdo, [ 
-				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_1 
-		] );
-		$ui = new UserItems ( $pdo, [ 
-				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_2 
-		] );
-		$ur = new UserRatings ( $pdo, [ 
-				self::ITEM_ID => self::ITEM_ID_1,
-				self::SELLRATING => self::SELLRATING_1,
-				self::USER_ID => self::USER_ID_1,
-				self::BUYRATING => self::BUYRATING_1 
-		] );
-		
-		try {
-			$u1->set ();
-			$u2->set ();
-			$i1->set ();
-			$i2->set ();
-			$ui->set ();
-			$ur->set ();
-		} catch ( ModelException $e ) {
-		}
-	}
-	protected function addSellerRating(): UserRatings {
-		// Regenerate a fresh database.
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		$u1 = new User ( $pdo, [
-				self::USER => self::USER_ONE,
-				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE
-		] );
-		$u2 = new User ( $pdo, [
-				self::USER => self::USER_TWO,
-				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO
-		] );
-		$i1 = new Item ( $pdo, [
-				self::TITLE => self::TITLE_1
-		] );
-		$i2 = new Item ( $pdo, [
-				self::TITLE => self::TITLE_2
-		] );
-		$ui = new UserItems ( $pdo, [
-				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_1
-		] );
-		$ui = new UserItems ( $pdo, [
-				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_2
-		] );
-		$ur = new UserRatings ( $pdo, [
-				self::ITEM_ID => self::ITEM_ID_1,
-				self::SELLRATING => self::SELLRATING_1,
-				self::USER_ID => self::USER_ID_1,
-				self::BUYRATING => self::BUYRATING_1
-		] );
-		
-		try {
-			$u1->set ();
-			$u2->set ();
-			$i1->set ();
-			$i2->set ();
-			$ui->set ();
-			$ur->set ();
-		} catch ( ModelException $e ) {
-			
-		}
-		$sut = new UserRatings($pdo);
-		$sut->userID = self::USER_ID_2;
-		$sut->itemID = self::ITEM_ID_2;
-		$sut->sellrating = self::SELLRATING_2;
-		try {
-			$sut->addSellerRating();
-		} catch (ModelException $e) {}
-		$sut = new UserRatings($pdo);
-		$sut->user_ratingID = self::USER_RATING_ID_2;
-		try {
-			return $sut->get();
-		} catch (ModelException $e) {}
-	}
-	protected function populateAdditionalUserRatings(): void {
-		// Regenerate a fresh database.
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		// Insert a root category
-		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
-		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		// Insert additional categories
-		$c = new Category ( $pdo );
-		$c->{self::PARENT_ID} = self::PARENT_ID_1;
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		$args1 = [
-				self::USER => self::USER_ONE,
-				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE
-		];
-		
-		$args2 = [
-				self::USER => self::USER_TWO,
-				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO
-		];
-		
-		$args3 = [
-				self::USER => self::USER_THREE,
-				self::EMAIL => self::EMAIL_ADDRESS_THREE,
-				self::PASSWORD => self::PASSWORD_THREE
-		];
-		
-		$l = 1;
-		for($i = 1; $i <= 3; $i ++) {
-			$user = new User ( $pdo );
-			$user->user = 'user' . $i;
-			$user->email = 'user' . $i . '@gmail.com';
-			$user->password = 'PassWord' . $i . $i;
-			try {
-				$user->set ();
-			} catch ( ModelException $e ) {
-			}
-			
-			for($j = 1; $j <= 5; $j ++) {
-				$item = new Item ( $pdo );
-				$item->title = 'title' . $l;
-				try {
-					$item->set ();
-					$userItem = new UserItems ( $pdo );
-					$userItem->userID = $i;
-					$userItem->itemID = $l;
-					$userItem->relationship = 'relationship' . $i . $l;
-					$userItem->userStatus = 'userStatus' . $i . $l;
-					
-					try {
-						if ($userItem->userID == 3 && $userItem->itemID == 15) {
-							// Don't set.
-						} else {
-							$userItem->set ();
-						}
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
-				}
-				$l ++;
-			}
-		}
-		
-		$k = 1;
-		$l = 5;
-		
-		for ($i = 1; $i <= 14; $i++){
-			if($i > 0 && $i < 6){
-				$j = 2;
-			} elseif($i > 5 && $i < 11){
-				$j = 3;
-			} else {
-				$j = 1;
-			}
-			
-			$ur = new UserRatings ( $pdo, [
-					self::ITEM_ID => $i,
-					self::SELLRATING => $k,
-					self::USER_ID => $j,
-					self::BUYRATING => $l
-			] );
-			
-			try {
-				$ur->set ();
-			} catch ( ModelException $e ) {}
-			
-			if($k == 5){
-				$k = 0;
-			}
-			$k++;
-			if($l == 1){
-				$l = 6;
-			}
-			$l--;
-		}
-	}
-	protected function populateAll(): void {
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-		
-		// Populate the Categories Table
-		
-		// Insert a root category
-		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
-		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {}
-		
-		// Insert additional categories
-		$c = new Category ( $pdo );
-		$c->{self::PARENT_ID} = self::PARENT_ID_1;
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		$c->{self::PARENT_ID} = self::PARENT_ID_2;
-		$c->{self::CATEGORY_NAME} = self::CATEGORY_4;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		$l = 1;
-		$k = 1;
-		for($i = 1; $i <= 3; $i ++) {
-			$user = new User ( $pdo );
-			$user->user = 'user' . $i;
-			$user->email = 'user' . $i . '@gmail.com';
-			$user->password = 'PassWord' . $i . $i;
-			try {
-				$user->set ();
-			} catch ( ModelException $e ) {
-			}
-			for($j = 1; $j <= 5; $j++) {
-				$item = new Item ( $pdo );
-				$item->title = 'title' . $k;
-				try {
-					$item->set ();
-					$userItem = new UserItems ( $pdo );
-					$userItem->userID = $i;
-					$userItem->itemID = $k;
-					$userItem->relationship = 'relationship' . $i . $l;
-					$userItem->userStatus = 'userStatus' . $i . $l;
-					
-					$categoryItem = new CategoryItems($pdo);
-					$categoryItem->categoryID = $i + 1;
-					$categoryItem->itemID = $k;
-					
-					$userRating = new UserRatings($pdo);
-					$userRating->itemID = $k;
-					$userRating->sellrating = 5;
-					$userRating->userID = $i;
-					$userRating->buyrating = 4;
-					$userRating->set();
-					
-					for($m = 1; $m <= 5; $m ++) {
-						$note = new Note ( $pdo );
-						$note->note = 'note' . $l;
-						$comment = new Comment($pdo);
-						$comment->userID = $i;
-						$comment->comment = 'comment' . $l;
-						try {
-							$note->set ();
-							$itemNote = new ItemNotes ( $pdo );
-							$itemNote->itemID = $i;
-							$itemNote->noteID = $l;
-							$comment->set ();
-							$itemComment = new ItemComments ( $pdo );
-							$itemComment->itemID = $i;
-							$itemComment->commentID = $l;
-							try {
-								$itemNote->set ();
-								$itemComment->set ();
-								$l ++;
-							} catch ( ModelException $e ) {
-							}
-						} catch ( Exception $e ) {
-						}
-					}
-					
-					try {
-						$userItem->set ();
-						$categoryItem->set();
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
-				}
-				$k++;
-			}
-			
-			$l++;
-		}
+		TestPDO::CleanUp ();
 	}
 	
 	/*
@@ -2232,37 +1445,35 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	public function testDeleteUserUserIdEmpty(): void {
 		unset ( $_SESSION ['error'] );
-		$this->populateAll();
+		$this->populateAll ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$u = new User ( $pdo );
-		$system->deleteUser($u);
+		$system->deleteUser ( $u );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
 		}
 	}
-	
 	public function testDeleteUserUserIdInvalid(): void {
 		unset ( $_SESSION ['error'] );
-		$this->populateAll();
+		$this->populateAll ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$u = new User ( $pdo );
 		$u->userID = self::INVALID_ID;
-		$system->deleteUser($u);
+		$system->deleteUser ( $u );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
 		}
 	}
-	
 	public function testDeleteUserUserIdValid(): void {
 		unset ( $_SESSION ['error'] );
-		$this->populateAll();
+		$this->populateAll ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$u = new User ( $pdo );
 		$u->userID = self::USER_ID_2;
-		$this->assertTrue($system->deleteUser($u));
+		$this->assertTrue ( $system->deleteUser ( $u ) );
 	}
 	
 	/*
@@ -2277,7 +1488,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		] );
 		$this->assertFalse ( $system->addCategory ( $sut ) );
 		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PARENT_ID_NONE, $_SESSION ['error'] );
+			$this->assertEquals ( self::ERROR_PARENT_ID_INVALID, $_SESSION ['error'] );
 		}
 	}
 	public function testAddCategoryInvalidParentId(): void {
@@ -2290,7 +1501,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		] );
 		$this->assertFalse ( $system->addCategory ( $sut ) );
 		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PARENT_ID_NOT_EXIST, $_SESSION ['error'] );
+			$this->assertEquals ( self::ERROR_PARENT_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
 		}
 	}
 	public function testAddCategoryNoCategory(): void {
@@ -2438,39 +1649,37 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	public function testDeleteCategoryCategoryIdEmpty(): void {
 		unset ( $_SESSION ['error'] );
-		$this->populateAll();
+		$this->populateAll ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$c = new Category ( $pdo );
-		$system->deleteCategory($c);
+		$system->deleteCategory ( $c );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
 		}
 	}
-	
 	public function testDeleteCategoryCategoryIdInvalid(): void {
 		unset ( $_SESSION ['error'] );
-		$this->populateAll();
+		$this->populateAll ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$c = new Category ( $pdo );
 		$c->categoryID = self::INVALID_ID;
-		$system->deleteCategory($c);
+		$system->deleteCategory ( $c );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
 		}
 	}
-	
 	public function testDeleteCategoryCategoryIdValid(): void {
 		unset ( $_SESSION ['error'] );
-		if($this->populateDeleteCategory ()){
+		if ($this->populateDeleteCategory ()) {
 			$pdo = TestPDO::getInstance ();
 			$system = new System ( $pdo );
 			$c = new Category ( $pdo );
 			$c->categoryID = 2;
-			$system->deleteCategory($c);
+			$system->deleteCategory ( $c );
 		}
-		$this->assertFalse($c->exists());
+		$this->assertFalse ( $c->exists () );
 	}
 	
 	/*
@@ -2553,7 +1762,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$cats = $system->getCategoriesIn ( self::INVALID_ID );
 		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::PARENT_ID_NOT_EXIST, $_SESSION ['error'] );
+			$this->assertEquals ( self::ERROR_PARENT_ID_NOT_EXIST, $_SESSION ['error'] );
 		}
 	}
 	public function testGetCategoriesInParentIdValid(): void {
@@ -2967,37 +2176,35 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	public function testDeleteItemItemIdEmpty(): void {
 		unset ( $_SESSION ['error'] );
-		$this->populateAll();
+		$this->populateAll ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
-		$system->deleteItem($i);
+		$system->deleteItem ( $i );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
 		}
 	}
-	
 	public function testDeleteItemItemIdInvalid(): void {
 		unset ( $_SESSION ['error'] );
-		$this->populateAll();
+		$this->populateAll ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
 		$i->itemID = self::INVALID_ID;
-		$system->deleteItem($i);
+		$system->deleteItem ( $i );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
 		}
 	}
-	
 	public function testDeleteItemItemIdValid(): void {
 		unset ( $_SESSION ['error'] );
-		$this->populateAll();
+		$this->populateAll ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
 		$i->itemID = self::ITEM_ID_2;
-		$this->assertTrue($system->deleteItem($i));
+		$this->assertTrue ( $system->deleteItem ( $i ) );
 	}
 	
 	/*
@@ -3457,50 +2664,50 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 * getItemOwner(Item $item): array
 	 */
 	public function testGetItemOwnerItemIdEmpty(): void {
-		$this->populateAdditionalUserRatings();
+		$this->populateAdditionalUserRatings ();
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
-		$system->getItemOwner($i);
+		$system->getItemOwner ( $i );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
 		}
 	}
-	
 	public function testGetItemOwnerItemIdInvalid(): void {
-		$this->populateAdditionalUserRatings();
+		$this->populateAdditionalUserRatings ();
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
 		$i->itemID = self::INVALID_ID;
-		$system->getItemOwner($i);
+		$system->getItemOwner ( $i );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
 		}
 	}
 	public function testGetItemOwnerItemIdValid(): void {
-		$this->populateAdditionalUserRatings();
+		$this->populateAdditionalUserRatings ();
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
 		$i->itemID = self::ITEM_ID_1;
 		try {
-			$sut = $system->getItemOwner($i);
-		} catch (ModelException $e) {}
-		$this->assertEquals(self::USER_ID_1, $sut['userID']);
-		$this->assertEquals('user1', $sut['user']);
-		$this->assertEquals('user1@gmail.com', $sut['email']);
-		$this->assertEquals('relationship11', $sut['relationship']);
-		$this->assertEquals('userStatus11', $sut['userStatus']);
-		$this->assertEquals(5, $sut['numSellRatings']);
-		$this->assertEquals(3.0, $sut['avgSellRating']);
-		$this->assertEquals(4, $sut['numBuyRatings']);
-		$this->assertEquals(2.5, $sut['avgBuyRating']);
-		$this->assertEquals(9, $sut['totalNumRatings']);
-		$this->assertEquals(2.8, $sut['avgRating']);
+			$sut = $system->getItemOwner ( $i );
+		} catch ( ModelException $e ) {
+		}
+		$this->assertEquals ( self::USER_ID_1, $sut ['userID'] );
+		$this->assertEquals ( 'user1', $sut ['user'] );
+		$this->assertEquals ( 'user1@gmail.com', $sut ['email'] );
+		$this->assertEquals ( 'relationship11', $sut ['relationship'] );
+		$this->assertEquals ( 'userStatus11', $sut ['userStatus'] );
+		$this->assertEquals ( 5, $sut ['numSellRatings'] );
+		$this->assertEquals ( 3.0, $sut ['avgSellRating'] );
+		$this->assertEquals ( 4, $sut ['numBuyRatings'] );
+		$this->assertEquals ( 2.5, $sut ['avgBuyRating'] );
+		$this->assertEquals ( 9, $sut ['totalNumRatings'] );
+		$this->assertEquals ( 2.8, $sut ['avgRating'] );
 	}
 	
 	/*
@@ -3515,7 +2722,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$ur->userID = self::INVALID_ID;
 		$ur->itemID = self::ITEM_ID_2;
 		$ur->sellrating = self::SELLRATING_2;
-		$sut->addSellerRating($ur);
+		$sut->addSellerRating ( $ur );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
 		}
@@ -3528,8 +2735,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$ur = new UserRatings ( $pdo );
 		$ur->userID = self::USER_ID_2;
 		$ur->itemID = self::INVALID_ID;
-		$ur->sellrating = self::SELLRATING_2; 
-		$sut->addSellerRating($ur);
+		$ur->sellrating = self::SELLRATING_2;
+		$sut->addSellerRating ( $ur );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 		}
@@ -3542,9 +2749,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$ur = new UserRatings ( $pdo );
 		$ur->userID = self::USER_ID_2;
 		$ur->itemID = self::ITEM_ID_2;
-		$sut->addSellerRating($ur);
+		$sut->addSellerRating ( $ur );
 		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_RATING_NOT_SET, $_SESSION ['error'] );
+			$this->assertEquals ( self::ERROR_USER_RATING_NOT_SET, $_SESSION ['error'] );
 		}
 	}
 	public function testAddSellerRatingSuccess(): void {
@@ -3555,12 +2762,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$ur = new UserRatings ( $pdo );
 		$ur->userID = self::USER_ID_2;
 		$ur->itemID = self::ITEM_ID_2;
-		$ur->sellrating = self::SELLRATING_2; 
-		$sut = $sut->addSellerRating($ur);
-		$this->assertEquals(self::USER_RATING_ID_2, $sut->user_ratingID);
-		$this->assertEquals(self::ITEM_ID_2, $sut->itemID);
-		$this->assertEquals(self::SELLRATING_2, $sut->sellrating);
-		$this->assertEquals(self::USER_ID_2, $sut->userID);
+		$ur->sellrating = self::SELLRATING_2;
+		$sut = $sut->addSellerRating ( $ur );
+		$this->assertEquals ( self::USER_RATING_ID_2, $sut->user_ratingID );
+		$this->assertEquals ( self::ITEM_ID_2, $sut->itemID );
+		$this->assertEquals ( self::SELLRATING_2, $sut->sellrating );
+		$this->assertEquals ( self::USER_ID_2, $sut->userID );
 	}
 	
 	/*
@@ -3570,10 +2777,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$sut = $this->addSellerRating();
+		$sut = $this->addSellerRating ();
 		$sut->transaction = '';
 		$sut->buyrating = self::BUYRATING_2;
-		$system->addBuyerRating($sut);
+		$system->addBuyerRating ( $sut );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_INCORRECT_TRANSACTION_ID, $_SESSION ['error'] );
 		}
@@ -3582,10 +2789,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$sut = $this->addSellerRating();
+		$sut = $this->addSellerRating ();
 		$sut->transaction = self::INVALID_ID;
 		$sut->buyrating = self::BUYRATING_2;
-		$system->addBuyerRating($sut);
+		$system->addBuyerRating ( $sut );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_INCORRECT_TRANSACTION_ID, $_SESSION ['error'] );
 		}
@@ -3594,27 +2801,28 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$sut = $this->addSellerRating();
+		$sut = $this->addSellerRating ();
 		$sut->buyrating = self::INVALID_ID;
-		$system->addBuyerRating($sut);
+		$system->addBuyerRating ( $sut );
 		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_RATING_NOT_SET, $_SESSION ['error'] );
+			$this->assertEquals ( self::ERROR_USER_RATING_NOT_SET, $_SESSION ['error'] );
 		}
 	}
 	public function testAddBuyerRatingSuccess(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$sut = $this->addSellerRating();
+		$sut = $this->addSellerRating ();
 		$sut->buyrating = self::BUYRATING_2;
-		$system->addBuyerRating($sut);
-		$ur = new UserRatings($pdo);
+		$system->addBuyerRating ( $sut );
+		$ur = new UserRatings ( $pdo );
 		$ur->user_ratingID = $sut->user_ratingID;
 		try {
-			$ur->get();
-		} catch (Exception $e) {}
-		$this->assertEquals(self::BUYRATING_2, $ur->buyrating);
-		$this->assertNull($ur->transaction);
+			$ur->get ();
+		} catch ( Exception $e ) {
+		}
+		$this->assertEquals ( self::BUYRATING_2, $ur->buyrating );
+		$this->assertNull ( $ur->transaction );
 	}
 	
 	/*
@@ -3624,10 +2832,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$this->populateAdditionalUserRatings();
-		$u = new User($pdo);
+		$this->populateAdditionalUserRatings ();
+		$u = new User ( $pdo );
 		$u->userID = self::INVALID_ID;
-		$stats = $system->getUserRatings($u);
+		$stats = $system->getUserRatings ( $u );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
 		}
@@ -3636,18 +2844,824 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$this->populateAdditionalUserRatings();
-		$u = new User($pdo);
+		$this->populateAdditionalUserRatings ();
+		$u = new User ( $pdo );
 		$u->userID = self::USER_ID_1;
-		$stats = $system->getUserRatings($u);
-		$this->assertEquals(5, $stats['numSellRatings']);
-		$this->assertEquals(3.0, $stats['avgSellRating']);
-		$this->assertEquals(4, $stats['numBuyRatings']);
-		$this->assertEquals(2.5, $stats['avgBuyRating']);
-		$this->assertEquals(9, $stats['totalNumRatings']);
-		$this->assertEquals(2.8, $stats['avgRating']);
+		$stats = $system->getUserRatings ( $u );
+		$this->assertEquals ( 5, $stats ['numSellRatings'] );
+		$this->assertEquals ( 3.0, $stats ['avgSellRating'] );
+		$this->assertEquals ( 4, $stats ['numBuyRatings'] );
+		$this->assertEquals ( 2.5, $stats ['avgBuyRating'] );
+		$this->assertEquals ( 9, $stats ['totalNumRatings'] );
+		$this->assertEquals ( 2.8, $stats ['avgRating'] );
 	}
 	
-	
-	
+	/*
+	 *
+	 *
+	 * ADDITIONAL DATABASE POPULARION METHODS FOR TESTS *
+	 *
+	 *
+	 *
+	 */
+	protected function populateCategories(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::ROOT_CATEGORY;
+		$root->{self::CATEGORY_NAME} = self::ROOT_CATEGORY_NAME;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Insert additional categories
+		$j = 1;
+		for($i = 1; $i <= 99; $i ++) {
+			if ($i % 3 == 0) {
+				$j ++;
+			}
+			$c = new Category ( $pdo );
+			$c->{self::PARENT_ID} = $j;
+			$c->{self::CATEGORY_NAME} = 'cat' . $i;
+			try {
+				$c->set ();
+			} catch ( ModelException $e ) {
+			}
+		}
+	}
+	protected function populateItems(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Insert items.
+		$args = [ 
+				self::ITEM_ID => self::ITEM_ID_1,
+				self::TITLE => self::TITLE_1,
+				self::DESCRIPTION => self::DESCRIPTION_1,
+				self::QUANTITY => self::QUANTITY_1,
+				self::CONDITION => self::CONDITION_1,
+				self::PRICE => self::PRICE_1,
+				self::ITEM_STATUS => self::STATUS_1 
+		];
+		
+		$item = new Item ( $pdo, $args );
+		try {
+			$item->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		$args2 = [ 
+				self::ITEM_ID => self::ITEM_ID_2,
+				self::TITLE => self::TITLE_2,
+				self::DESCRIPTION => self::DESCRIPTION_2,
+				self::QUANTITY => self::QUANTITY_2,
+				self::CONDITION => self::CONDITION_2,
+				self::PRICE => self::PRICE_2,
+				self::ITEM_STATUS => self::STATUS_2 
+		];
+		
+		$item = new Item ( $pdo, $args2 );
+		try {
+			$item->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		$args3 = [ 
+				self::ITEM_ID => self::ITEM_ID_3,
+				self::TITLE => self::TITLE_3,
+				self::DESCRIPTION => self::DESCRIPTION_3,
+				self::QUANTITY => self::QUANTITY_3,
+				self::CONDITION => self::CONDITION_3,
+				self::PRICE => self::PRICE_3,
+				self::ITEM_STATUS => self::STATUS_3 
+		];
+		
+		$item = new Item ( $pdo, $args3 );
+		try {
+			$item->set ();
+		} catch ( ModelException $e ) {
+		}
+	}
+	protected function populateCategoryItems(): void {
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Populate the Category Table
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Insert additional categories
+		$c = new Category ( $pdo );
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::PARENT_ID} = self::PARENT_ID_2;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_4;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Populate the Items Table
+		for($i = 1; $i <= 100; $i ++) {
+			$item = new Item ( $pdo, [ 
+					self::TITLE => 'title' . $i,
+					self::DESCRIPTION => 'description' . $i,
+					self::QUANTITY => 'quantity' . $i,
+					self::CONDITION => 'condition' . $i,
+					self::PRICE => 'price' . $i,
+					self::STATUS => '' 
+			] );
+			try {
+				$item->set ();
+			} catch ( ModelException $e ) {
+			}
+		}
+		
+		// Populate the CategoryItems Table
+		$j = 2;
+		for($i = 1; $i <= 100; $i ++) {
+			$ci = new CategoryItems ( $pdo, [ 
+					self::CATEGORY_ID => $j,
+					SELF::ITEM_ID => $i 
+			] );
+			try {
+				$ci->set ();
+			} catch ( ModelExceptionException $e ) {
+			}
+			if ($i % 34 == 0) {
+				$j ++;
+			}
+		}
+	}
+	protected function populateDeleteCategory(): bool {
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Populate the Category Table
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Insert additional categories
+		$j = 1;
+		for($i = 2; $i <= 101; $i ++) {
+			$c = new Category ( $pdo );
+			$c->parentID = $j;
+			$c->category = 'category' . $i;
+			try {
+				$c->set ();
+			} catch ( ModelException $e ) {
+			}
+			
+			if ($i % 3 == 0) {
+				$j ++;
+			}
+		}
+		
+		$l = 1;
+		$k = 1;
+		$n = 2;
+		for($i = 1; $i <= 100; $i ++) {
+			$user = new User ( $pdo );
+			$user->user = 'user' . $i;
+			$user->email = 'user' . $i . '@gmail.com';
+			$user->password = 'PassWord' . $i . $i;
+			try {
+				$user->set ();
+			} catch ( ModelException $e ) {
+			}
+			for($j = 1; $j <= 5; $j ++) {
+				$item = new Item ( $pdo );
+				$item->title = 'title' . $k;
+				try {
+					$item->set ();
+					$userItem = new UserItems ( $pdo );
+					$userItem->userID = $i;
+					$userItem->itemID = $k;
+					$userItem->relationship = 'relationship' . $i . $l;
+					$userItem->userStatus = 'userStatus' . $i . $l;
+					
+					$categoryItem = new CategoryItems ( $pdo );
+					$categoryItem->categoryID = $n;
+					$categoryItem->itemID = $k;
+					if ($j % 5 == 0) {
+						$n ++;
+					}
+					
+					$userRating = new UserRatings ( $pdo );
+					$userRating->itemID = $k;
+					$userRating->sellrating = 5;
+					$userRating->userID = $i;
+					$userRating->buyrating = 4;
+					$userRating->set ();
+					
+					for($m = 1; $m <= 5; $m ++) {
+						$note = new Note ( $pdo );
+						$note->note = 'note' . $l;
+						$comment = new Comment ( $pdo );
+						$comment->userID = $i;
+						$comment->comment = 'comment' . $l;
+						try {
+							$note->set ();
+							$itemNote = new ItemNotes ( $pdo );
+							$itemNote->itemID = $i;
+							$itemNote->noteID = $l;
+							$comment->set ();
+							$itemComment = new ItemComments ( $pdo );
+							$itemComment->itemID = $i;
+							$itemComment->commentID = $l;
+							try {
+								$itemNote->set ();
+								$itemComment->set ();
+								$l ++;
+							} catch ( ModelException $e ) {
+							}
+						} catch ( Exception $e ) {
+						}
+					}
+					
+					try {
+						$userItem->set ();
+						$categoryItem->set ();
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$k ++;
+			}
+			
+			$l ++;
+		}
+		return true;
+	}
+	protected function populateUsers(): void {
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Insert additional categories
+		$c = new Category ( $pdo );
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Populate the Users table.
+		for($i = 1; $i <= 400; $i ++) {
+			${'u' . $i} = new User ( $pdo, [ 
+					self::USER => 'user' . $i,
+					self::EMAIL => 'email' . $i . '@gmail.com',
+					self::PASSWORD => 'PassWord' . $i 
+			] );
+			try {
+				${'u' . $i}->set ();
+			} catch ( ModelException $e ) {
+			}
+			try {
+				${'u' . $i}->get ();
+			} catch ( ModelException $e ) {
+			}
+			try {
+				${'u' . $i}->activate ();
+			} catch ( ModelException $e ) {
+			}
+		}
+	}
+	protected function populateUserItems(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Insert additional categories
+		$c = new Category ( $pdo );
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		$args1 = [ 
+				self::USER => self::USER_ONE,
+				self::EMAIL => self::EMAIL_ADDRESS_ONE,
+				self::PASSWORD => self::PASSWORD_ONE 
+		];
+		
+		$args2 = [ 
+				self::USER => self::USER_TWO,
+				self::EMAIL => self::EMAIL_ADDRESS_TWO,
+				self::PASSWORD => self::PASSWORD_TWO 
+		];
+		
+		$args3 = [ 
+				self::USER => self::USER_THREE,
+				self::EMAIL => self::EMAIL_ADDRESS_THREE,
+				self::PASSWORD => self::PASSWORD_THREE 
+		];
+		
+		$l = 1;
+		for($i = 1; $i <= 3; $i ++) {
+			$user = new User ( $pdo );
+			$user->user = 'user' . $i;
+			$user->email = 'user' . $i . '@gmail.com';
+			$user->password = 'PassWord' . $i . $i;
+			try {
+				$user->set ();
+			} catch ( ModelException $e ) {
+			}
+			
+			for($j = 1; $j <= 5; $j ++) {
+				$item = new Item ( $pdo );
+				$item->title = 'title' . $l;
+				try {
+					$item->set ();
+					$userItem = new UserItems ( $pdo );
+					$userItem->userID = $i;
+					$userItem->itemID = $l;
+					$userItem->relationship = 'relationship' . $i . $l;
+					$userItem->userStatus = 'userStatus' . $i . $l;
+					
+					try {
+						if ($userItem->userID == 3 && $userItem->itemID == 15) {
+							// Don't set.
+						} else {
+							$userItem->set ();
+						}
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$l ++;
+			}
+		}
+	}
+	protected function populateItemComments(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		$user = new User ( $pdo, [ 
+				'user' => 'user',
+				'email' => 'user@gmai.com',
+				'password' => 'TestTest88' 
+		] );
+		try {
+			$user->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		$l = 1;
+		for($i = 1; $i <= 3; $i ++) {
+			$item = new Item ( $pdo );
+			$item->title = 'title' . $i;
+			$item->set ();
+			for($j = 1; $j <= 5; $j ++) {
+				$comment = new Comment ( $pdo );
+				$comment->userID = self::USER_ID_1;
+				$comment->comment = 'comment' . $l;
+				try {
+					$comment->set ();
+					$itemComment = new ItemComments ( $pdo );
+					$itemComment->itemID = $i;
+					$itemComment->commentID = $l;
+					try {
+						if ($itemComment->itemID == 3 && $itemComment->commentID == 15) {
+							// Don't set.
+						} else {
+							$itemComment->set ();
+						}
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$l ++;
+			}
+		}
+	}
+	protected function populateItemNotes(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		$l = 1;
+		for($i = 1; $i <= 3; $i ++) {
+			$item = new Item ( $pdo );
+			$item->title = 'title' . $i;
+			$item->set ();
+			for($j = 1; $j <= 5; $j ++) {
+				$note = new Note ( $pdo );
+				$note->note = 'note' . $l;
+				try {
+					$note->set ();
+					$itemNote = new ItemNotes ( $pdo );
+					$itemNote->itemID = $i;
+					$itemNote->noteID = $l;
+					try {
+						if ($itemNote->itemID == 3 && $itemNote->noteID == 15) {
+							// Don't set.
+						} else {
+							$itemNote->set ();
+						}
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$l ++;
+			}
+		}
+	}
+	protected function populateUserRatings(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		$u1 = new User ( $pdo, [ 
+				self::USER => self::USER_ONE,
+				self::EMAIL => self::EMAIL_ADDRESS_ONE,
+				self::PASSWORD => self::PASSWORD_ONE 
+		] );
+		$u2 = new User ( $pdo, [ 
+				self::USER => self::USER_TWO,
+				self::EMAIL => self::EMAIL_ADDRESS_TWO,
+				self::PASSWORD => self::PASSWORD_TWO 
+		] );
+		$i1 = new Item ( $pdo, [ 
+				self::TITLE => self::TITLE_1 
+		] );
+		$i2 = new Item ( $pdo, [ 
+				self::TITLE => self::TITLE_2 
+		] );
+		$ui = new UserItems ( $pdo, [ 
+				self::USER_ID => self::USER_ID_1,
+				self::ITEM_ID => self::ITEM_ID_1 
+		] );
+		$ui = new UserItems ( $pdo, [ 
+				self::USER_ID => self::USER_ID_1,
+				self::ITEM_ID => self::ITEM_ID_2 
+		] );
+		$ur = new UserRatings ( $pdo, [ 
+				self::ITEM_ID => self::ITEM_ID_1,
+				self::SELLRATING => self::SELLRATING_1,
+				self::USER_ID => self::USER_ID_1,
+				self::BUYRATING => self::BUYRATING_1 
+		] );
+		
+		try {
+			$u1->set ();
+			$u2->set ();
+			$i1->set ();
+			$i2->set ();
+			$ui->set ();
+			$ur->set ();
+		} catch ( ModelException $e ) {
+		}
+	}
+	protected function addSellerRating(): UserRatings {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		$u1 = new User ( $pdo, [ 
+				self::USER => self::USER_ONE,
+				self::EMAIL => self::EMAIL_ADDRESS_ONE,
+				self::PASSWORD => self::PASSWORD_ONE 
+		] );
+		$u2 = new User ( $pdo, [ 
+				self::USER => self::USER_TWO,
+				self::EMAIL => self::EMAIL_ADDRESS_TWO,
+				self::PASSWORD => self::PASSWORD_TWO 
+		] );
+		$i1 = new Item ( $pdo, [ 
+				self::TITLE => self::TITLE_1 
+		] );
+		$i2 = new Item ( $pdo, [ 
+				self::TITLE => self::TITLE_2 
+		] );
+		$ui = new UserItems ( $pdo, [ 
+				self::USER_ID => self::USER_ID_1,
+				self::ITEM_ID => self::ITEM_ID_1 
+		] );
+		$ui = new UserItems ( $pdo, [ 
+				self::USER_ID => self::USER_ID_1,
+				self::ITEM_ID => self::ITEM_ID_2 
+		] );
+		$ur = new UserRatings ( $pdo, [ 
+				self::ITEM_ID => self::ITEM_ID_1,
+				self::SELLRATING => self::SELLRATING_1,
+				self::USER_ID => self::USER_ID_1,
+				self::BUYRATING => self::BUYRATING_1 
+		] );
+		
+		try {
+			$u1->set ();
+			$u2->set ();
+			$i1->set ();
+			$i2->set ();
+			$ui->set ();
+			$ur->set ();
+		} catch ( ModelException $e ) {
+		}
+		$sut = new UserRatings ( $pdo );
+		$sut->userID = self::USER_ID_2;
+		$sut->itemID = self::ITEM_ID_2;
+		$sut->sellrating = self::SELLRATING_2;
+		try {
+			$sut->addSellerRating ();
+		} catch ( ModelException $e ) {
+		}
+		$sut = new UserRatings ( $pdo );
+		$sut->user_ratingID = self::USER_RATING_ID_2;
+		try {
+			return $sut->get ();
+		} catch ( ModelException $e ) {
+		}
+	}
+	protected function populateAdditionalUserRatings(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Insert additional categories
+		$c = new Category ( $pdo );
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		$args1 = [ 
+				self::USER => self::USER_ONE,
+				self::EMAIL => self::EMAIL_ADDRESS_ONE,
+				self::PASSWORD => self::PASSWORD_ONE 
+		];
+		
+		$args2 = [ 
+				self::USER => self::USER_TWO,
+				self::EMAIL => self::EMAIL_ADDRESS_TWO,
+				self::PASSWORD => self::PASSWORD_TWO 
+		];
+		
+		$args3 = [ 
+				self::USER => self::USER_THREE,
+				self::EMAIL => self::EMAIL_ADDRESS_THREE,
+				self::PASSWORD => self::PASSWORD_THREE 
+		];
+		
+		$l = 1;
+		for($i = 1; $i <= 3; $i ++) {
+			$user = new User ( $pdo );
+			$user->user = 'user' . $i;
+			$user->email = 'user' . $i . '@gmail.com';
+			$user->password = 'PassWord' . $i . $i;
+			try {
+				$user->set ();
+			} catch ( ModelException $e ) {
+			}
+			
+			for($j = 1; $j <= 5; $j ++) {
+				$item = new Item ( $pdo );
+				$item->title = 'title' . $l;
+				try {
+					$item->set ();
+					$userItem = new UserItems ( $pdo );
+					$userItem->userID = $i;
+					$userItem->itemID = $l;
+					$userItem->relationship = 'relationship' . $i . $l;
+					$userItem->userStatus = 'userStatus' . $i . $l;
+					
+					try {
+						if ($userItem->userID == 3 && $userItem->itemID == 15) {
+							// Don't set.
+						} else {
+							$userItem->set ();
+						}
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$l ++;
+			}
+		}
+		
+		$k = 1;
+		$l = 5;
+		
+		for($i = 1; $i <= 14; $i ++) {
+			if ($i > 0 && $i < 6) {
+				$j = 2;
+			} elseif ($i > 5 && $i < 11) {
+				$j = 3;
+			} else {
+				$j = 1;
+			}
+			
+			$ur = new UserRatings ( $pdo, [ 
+					self::ITEM_ID => $i,
+					self::SELLRATING => $k,
+					self::USER_ID => $j,
+					self::BUYRATING => $l 
+			] );
+			
+			try {
+				$ur->set ();
+			} catch ( ModelException $e ) {
+			}
+			
+			if ($k == 5) {
+				$k = 0;
+			}
+			$k ++;
+			if ($l == 1) {
+				$l = 6;
+			}
+			$l --;
+		}
+	}
+	protected function populateAll(): void {
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Populate the Categories Table
+		
+		// Insert a root category
+		$root = new Category ( $pdo );
+		$root->{self::PARENT_ID} = self::PARENT_ID_0;
+		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
+		try {
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		// Insert additional categories
+		$c = new Category ( $pdo );
+		$c->{self::PARENT_ID} = self::PARENT_ID_1;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		$c->{self::PARENT_ID} = self::PARENT_ID_2;
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_4;
+		try {
+			$c->set ();
+		} catch ( ModelException $e ) {
+		}
+		
+		$l = 1;
+		$k = 1;
+		for($i = 1; $i <= 3; $i ++) {
+			$user = new User ( $pdo );
+			$user->user = 'user' . $i;
+			$user->email = 'user' . $i . '@gmail.com';
+			$user->password = 'PassWord' . $i . $i;
+			try {
+				$user->set ();
+			} catch ( ModelException $e ) {
+			}
+			for($j = 1; $j <= 5; $j ++) {
+				$item = new Item ( $pdo );
+				$item->title = 'title' . $k;
+				try {
+					$item->set ();
+					$userItem = new UserItems ( $pdo );
+					$userItem->userID = $i;
+					$userItem->itemID = $k;
+					$userItem->relationship = 'relationship' . $i . $l;
+					$userItem->userStatus = 'userStatus' . $i . $l;
+					
+					$categoryItem = new CategoryItems ( $pdo );
+					$categoryItem->categoryID = $i + 1;
+					$categoryItem->itemID = $k;
+					
+					$userRating = new UserRatings ( $pdo );
+					$userRating->itemID = $k;
+					$userRating->sellrating = 5;
+					$userRating->userID = $i;
+					$userRating->buyrating = 4;
+					$userRating->set ();
+					
+					for($m = 1; $m <= 5; $m ++) {
+						$note = new Note ( $pdo );
+						$note->note = 'note' . $l;
+						$comment = new Comment ( $pdo );
+						$comment->userID = $i;
+						$comment->comment = 'comment' . $l;
+						try {
+							$note->set ();
+							$itemNote = new ItemNotes ( $pdo );
+							$itemNote->itemID = $i;
+							$itemNote->noteID = $l;
+							$comment->set ();
+							$itemComment = new ItemComments ( $pdo );
+							$itemComment->itemID = $i;
+							$itemComment->commentID = $l;
+							try {
+								$itemNote->set ();
+								$itemComment->set ();
+								$l ++;
+							} catch ( ModelException $e ) {
+							}
+						} catch ( Exception $e ) {
+						}
+					}
+					
+					try {
+						$userItem->set ();
+						$categoryItem->set ();
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$k ++;
+			}
+			
+			$l ++;
+		}
+	}
 }

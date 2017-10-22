@@ -13,22 +13,19 @@
  * @property integer $_categoryID;
  * @property integer $_itemID;
  */
-
 class CategoryItems {
-	private $_category_itemID= '';
-	private $_categoryID= '';
-	private $_itemID= '';
+	private $_category_itemID = 0;
+	private $_categoryID = 0;
+	private $_itemID = 0;
 	private $db;
-	
 	const ERROR_CATEGORY_NOT_EXIST = 'The categoryItem does not exist!';
 	const ERROR_CATEGORYITEM_EXISTS = 'The categoryItem already exists!';
 	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
-
+	
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
-
 		$this->db = $pdo;
-
+		
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -49,14 +46,14 @@ class CategoryItems {
 	 * Confirms that the object exists in the database.
 	 * It then retrieves the attributes from the database. The attributes are set and
 	 * true is returned.
-	 * 
+	 *
 	 * @throws ModelException
 	 * @return CategoryItems
 	 */
 	public function get(): CategoryItems {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Category_items WHERE category_itemID = :category_itemID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
 			$stmt->execute ();
@@ -71,21 +68,22 @@ class CategoryItems {
 	
 	/**
 	 * First checks to see if the object parameters already
-	 * exist.  If they do the objectID is retrieved and returned.  If they 
+	 * exist.
+	 * If they do the objectID is retrieved and returned. If they
 	 * don't, they are insserted into the table and the objectID is
 	 * retrieved and returned.
-	 * 
+	 *
 	 * @throws ModelException
 	 * @return int
 	 */
 	public function set(): int {
-		$c = new Category($this->db);
+		$c = new Category ( $this->db );
 		$c->categoryID = $this->categoryID;
-		$i = new Item($this->db);
+		$i = new Item ( $this->db );
 		$i->itemID = $this->itemID;
 		
-		if($c->exists()){
-			if($i->exists()){
+		if ($c->exists ()) {
+			if ($i->exists ()) {
 				$query = "SELECT * FROM Category_items
 					WHERE categoryID = :categoryID
 					AND itemID = :itemID";
@@ -94,7 +92,7 @@ class CategoryItems {
 				$stmt->bindParam ( ':categoryID', $this->_categoryID );
 				$stmt->bindParam ( ':itemID', $this->_itemID );
 				$stmt->execute ();
-				if($stmt->rowCount() == 0){
+				if ($stmt->rowCount () == 0) {
 					
 					$query = "INSERT INTO Category_items
 					SET categoryID = :categoryID,
@@ -104,7 +102,7 @@ class CategoryItems {
 					$stmt->bindParam ( ':categoryID', $this->_categoryID );
 					$stmt->bindParam ( ':itemID', $this->_itemID );
 					$stmt->execute ();
-					if($stmt->rowCount() > 0){
+					if ($stmt->rowCount () > 0) {
 						return $this->_category_itemID = $this->db->lastInsertId ();
 					} else {
 						return 0;
@@ -125,26 +123,26 @@ class CategoryItems {
 	 * If it does, all the current attributes are retrieved. Where the new
 	 * attributes have not been set, they are set with the values already existing in
 	 * the database.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function update(): bool {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Category_items WHERE category_itemID = :category_itemID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
-			if (is_numeric( $this->_categoryID ) && $this->_categoryID > 1) {
+			if (is_numeric ( $this->_categoryID ) && $this->_categoryID > 1) {
 				// Leave it as is
 			} else {
 				$this->_categoryID = $row ['categoryID'];
 			}
 			
-			if (is_numeric( $this->_categoryID ) && $this->_categoryID > 1) {
+			if (is_numeric ( $this->_categoryID ) && $this->_categoryID > 1) {
 				// Leave it as is
 			} else {
 				$this->_itemID = $row ['itemID'];
@@ -159,7 +157,7 @@ class CategoryItems {
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			
-			if($stmt->rowCount() == 0){
+			if ($stmt->rowCount () == 0) {
 				$query = "UPDATE Category_items
 						SET categoryID = :categoryID,
 							itemID = :itemID
@@ -170,7 +168,7 @@ class CategoryItems {
 				$stmt->bindParam ( ':categoryID', $this->_categoryID );
 				$stmt->bindParam ( ':itemID', $this->_itemID );
 				$stmt->execute ();
-				if($stmt->rowCount() > 0){
+				if ($stmt->rowCount () > 0) {
 					return true;
 				} else {
 					return false;
@@ -184,9 +182,10 @@ class CategoryItems {
 	}
 	
 	/**
-	 * Checks the object exists in the database. If it does,
+	 * Checks the object exists in the database.
+	 * If it does,
 	 * true is returned.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function delete(): bool {
@@ -194,7 +193,7 @@ class CategoryItems {
 			
 			$query = "DELETE FROM Category_items
 						WHERE category_itemID = :category_itemID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
 			$stmt->execute ();
@@ -210,11 +209,11 @@ class CategoryItems {
 	
 	/**
 	 * Deletes all CategoryItems based on itemID.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function deleteItem(): bool {
-		$item = new Item($this->db);
+		$item = new Item ( $this->db );
 		$item->itemID = $this->itemID;
 		if ($item->exists ()) {
 			
@@ -237,17 +236,17 @@ class CategoryItems {
 	/**
 	 * Checks to see if the id exists in the database,
 	 * if it does, true is returned.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function exists(): bool {
 		if ($this->_category_itemID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Category_items WHERE category_itemID = :category_itemID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
 			$stmt->execute ();
-			if ($stmt->rowCount() > 0) {
+			if ($stmt->rowCount () > 0) {
 				return true;
 			} else {
 				return false;
@@ -259,13 +258,13 @@ class CategoryItems {
 	
 	/**
 	 * Counts number of occurrences of an item for a category.
-	 * 
+	 *
 	 * @return int
 	 */
 	public function count(): int {
-		$category = new Category($this->db);
+		$category = new Category ( $this->db );
 		$category->categoryID = $this->categoryID;
-		if($category->exists()){
+		if ($category->exists ()) {
 			$query = "SELECT COUNT(*) as num
 							FROM Category_items
 							WHERE categoryID = :categoryID";
@@ -276,91 +275,91 @@ class CategoryItems {
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			return $row ['num'];
 		} else {
-			throw new ModelException(self::ERROR_CATEGORY_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_CATEGORY_ID_NOT_EXIST );
 		}
 	}
 	
 	/**
 	 * Retrieves all the items for a the objects CategoryID.
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getCategoryItems(): array {
-		$category = new Category($this->db);
+		$category = new Category ( $this->db );
 		$category->categoryID = $this->categoryID;
-		if($category->exists()){ 
+		if ($category->exists ()) {
 			$query = "SELECT * FROM Category_items
 					WHERE categoryID = :categoryID";
 			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
-			$objects = array(); 
-			while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-				$item = new Item($this->db);
+			$objects = array ();
+			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+				$item = new Item ( $this->db );
 				$item->itemID = $row ['itemID'];
 				try {
-					$item->get();
-				} catch (ModelException $e) {
-					throw new ModelException($e->getMessage());
+					$item->get ();
+				} catch ( ModelException $e ) {
+					throw new ModelException ( $e->getMessage () );
 				}
 				
-				$objects[] = $item;
+				$objects [] = $item;
 			}
 			return $objects;
 		} else {
-			throw new ModelException(self::ERROR_CATEGORY_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_CATEGORY_ID_NOT_EXIST );
 		}
 	}
 	
 	/**
 	 * Retrieves all items held by the category and returns
 	 * them as an array of item objects.
-	 * 
-	 * @param int $pageNumber
-	 * @param int $itemsPerPage
-	 * @param string $status
+	 *
+	 * @param int $pageNumber        	
+	 * @param int $itemsPerPage        	
+	 * @param string $status        	
 	 * @throws ModelException
 	 * @return array
 	 */
 	public function getCategoryItemsByPage(int $pageNumber, int $itemsPerPage, string $status): array {
-		$v = new Validation();
+		$v = new Validation ();
 		
 		try {
-			$v->number($pageNumber);
-			$v->number($itemsPerPage);
-			$v->numberGreaterThanZero($pageNumber);
-			$v->numberGreaterThanZero($itemsPerPage);
+			$v->number ( $pageNumber );
+			$v->number ( $itemsPerPage );
+			$v->numberGreaterThanZero ( $pageNumber );
+			$v->numberGreaterThanZero ( $itemsPerPage );
 			
 			$pn = $pageNumber;
 			$ipp = $itemsPerPage;
 			
-			$pn = ($pn - 1)*$ipp;
-		
+			$pn = ($pn - 1) * $ipp;
+			
 			$query = "SELECT Category_items.itemID FROM Category_items INNER JOIN Items ON Category_items.itemID = Items.itemID
 					WHERE Category_items.categoryID = :categoryID
 					AND Items.itemStatus = :status
-					LIMIT " . $pn . "," . $ipp; 
-
+					LIMIT " . $pn . "," . $ipp;
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->bindParam ( ':status', $status );
-			$stmt->execute (); 
-			$objects = array();
-			while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-				$item = new Item($this->db);
-				$item->itemID = $row ['itemID']; 
+			$stmt->execute ();
+			$objects = array ();
+			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+				$item = new Item ( $this->db );
+				$item->itemID = $row ['itemID'];
 				try {
-					$item->get();
-				} catch (ItemException $e) {
-					throw new ModelException($e->getMessage());
+					$item->get ();
+				} catch ( ItemException $e ) {
+					throw new ModelException ( $e->getMessage () );
 				}
 				
-				$objects[] = $item;
+				$objects [] = $item;
 			}
 			return $objects;
-		} catch (ValidationException $e) {
-			throw new ModelException($e->getMessage());
+		} catch ( ValidationException $e ) {
+			throw new ModelException ( $e->getMessage () );
 		}
 	}
 	

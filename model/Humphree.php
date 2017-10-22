@@ -2,6 +2,7 @@
 use phpDocumentor\Reflection\Types\Array_;
 
 /**
+ *
  * @author Troy Derrick <s3202752@student.rmit.edu.au>
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
@@ -64,22 +65,21 @@ class Humphree {
 		
 		return $this->system->getUserIdByActivationCode ( $user );
 	}
-
+	
 	/**
 	 * Returns the UserID for the given email address.
 	 *
 	 * @param string $emailAddress
-	 * 			The email address for which to search.
-	 * @return int
-	 * 			The UserID if one was found, otherwise zero.
+	 *        	The email address for which to search.
+	 * @return int The UserID if one was found, otherwise zero.
 	 */
 	public function getUserIdByEmailAddress(string $emailAddress): int {
 		$user = new User ( $this->db );
 		$user->email = $emailAddress;
-
+		
 		return $this->system->getUserIdByEmailAddress ( $user );
 	}
-
+	
 	/**
 	 * Verfies the email address of the new user and makes the account active.
 	 *
@@ -144,8 +144,7 @@ class Humphree {
 	 *        	Email address of the account.
 	 * @param string $password
 	 *        	Password of the account.
-	 * @return int
-	 *          The new user's ID if successful. Zero means failure.
+	 * @return int The new user's ID if successful. Zero means failure.
 	 */
 	public function addUser(string $userName, string $email, string $password): int {
 		$user = new User ( $this->db );
@@ -335,7 +334,7 @@ class Humphree {
 	
 	/**
 	 * Returns all categories.
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getCategories(): array {
@@ -356,8 +355,9 @@ class Humphree {
 	
 	/**
 	 * Returns all categories belonging to a parent category.
-	 * 
-	 * @param int $parentID		The ID of the parent category.
+	 *
+	 * @param int $parentID
+	 *        	The ID of the parent category.
 	 * @return array
 	 */
 	public function getCategoriesIn(int $parentID): array {
@@ -378,8 +378,9 @@ class Humphree {
 	
 	/**
 	 * Returns the number of items in a category.
-	 * 
-	 * @param int $categoryID	The ID of a category.
+	 *
+	 * @param int $categoryID
+	 *        	The ID of a category.
 	 * @return int
 	 */
 	public function countCategoryItems(int $categoryID): int {
@@ -392,8 +393,8 @@ class Humphree {
 	
 	/**
 	 * Counts the number of Comments for an Item.
-	 * 
-	 * @param int $itemID
+	 *
+	 * @param int $itemID        	
 	 * @return int
 	 */
 	public function countItemComments(int $itemID): int {
@@ -406,8 +407,8 @@ class Humphree {
 	
 	/**
 	 * Counts the number of notes for an Item.
-	 * 
-	 * @param int $itemID
+	 *
+	 * @param int $itemID        	
 	 * @return int
 	 */
 	public function countItemNotes(int $itemID): int {
@@ -421,11 +422,11 @@ class Humphree {
 	/**
 	 * Retrieves all items for an itemID and returns them based on the status of the item, the number
 	 * of items per page and the page of items requested.
-	 * 
-	 * @param int $categoryID
-	 * @param int $pageNumber
-	 * @param int $itemsPerPage
-	 * @param string $status
+	 *
+	 * @param int $categoryID        	
+	 * @param int $pageNumber        	
+	 * @param int $itemsPerPage        	
+	 * @param string $status        	
 	 * @return array
 	 */
 	public function getCategoryItemsByPage(int $categoryID, int $pageNumber, int $itemsPerPage, string $status): array {
@@ -486,8 +487,8 @@ class Humphree {
 	
 	/**
 	 * Counts the number of items in a user.
-	 * 
-	 * @param int $userID
+	 *
+	 * @param int $userID        	
 	 * @return int
 	 */
 	public function countUserItems(int $userID): int {
@@ -497,21 +498,20 @@ class Humphree {
 		
 		return $numUserItems;
 	}
-
+	
 	/**
 	 * Retrieves all items linked to a User.
 	 *
 	 * @param int $userID
-	 *       	The ID of the user whose items will be returned.
-	 *
+	 *        	The ID of the user whose items will be returned.
+	 *        	
 	 * @param string $userRole
-	 *      		The role that the user plays for the requested items.
-	 *
+	 *        	The role that the user plays for the requested items.
+	 *        	
 	 * @param string $itemStatus
-	 * 			The desired item status.
-	 *
-	 * @return array
-	 *  		An array containing the results.
+	 *        	The desired item status.
+	 *        	
+	 * @return array An array containing the results.
 	 */
 	public function getUserItems(int $userID, string $userRole, string $itemStatus): array {
 		$user = new User ( $this->db );
@@ -520,13 +520,13 @@ class Humphree {
 		$its = array ();
 		
 		foreach ( $userItems as $userItem ) {
-
+			
 			$it = array ();
-
-			$item = new Item($this->db);
+			
+			$item = new Item ( $this->db );
 			$item->itemID = $userItem->itemID;
-			$item = $this->system->getItem($item);
-
+			$item = $this->system->getItem ( $item );
+			
 			if ($item->status == $itemStatus) {
 				$it ['itemID'] = $item->itemID;
 				$it ['title'] = $item->title;
@@ -535,13 +535,13 @@ class Humphree {
 				$it ['itemcondition'] = $item->itemcondition;
 				$it ['price'] = $item->price;
 				$it ['status'] = $item->status;
-
+				
 				$comments = $this->system->getItemComments ( $item );
 				$cs = array ();
-
+				
 				foreach ( $comments as $comment ) {
 					$c = array ();
-
+					
 					$c ['commentID'] = $comment->commentID;
 					$c ['userID'] = $comment->userID;
 					$user = new User ( $this->db );
@@ -549,26 +549,26 @@ class Humphree {
 					$user = $this->system->getUser ( $user );
 					$c ['user'] = $user->user;
 					$c ['comment'] = $comment->comment;
-
+					
 					$cs [] = $c;
 				}
-
+				
 				$it ['comments'] = $cs;
-
+				
 				$notes = $this->system->getItemNotes ( $item );
 				$ns = array ();
-
+				
 				foreach ( $notes as $note ) {
 					$n = array ();
-
+					
 					$n ['noteID'] = $note->noteID;
 					$n ['note'] = $note->note;
-
+					
 					$ns [] = $n;
 				}
-
+				
 				$it ['notes'] = $ns;
-
+				
 				$its [] = $it;
 			}
 		}
@@ -578,8 +578,8 @@ class Humphree {
 	
 	/**
 	 * Retrieves an item.
-	 * 
-	 * @param int $itemID
+	 *
+	 * @param int $itemID        	
 	 * @return array
 	 */
 	public function getItem(int $itemID): array {
@@ -634,16 +634,16 @@ class Humphree {
 	
 	/**
 	 * Adds an item.
-	 * 
-	 * @param int $userID
-	 * @param array $item
-	 * @param int $categoryID
+	 *
+	 * @param int $userID        	
+	 * @param array $item        	
+	 * @param int $categoryID        	
 	 * @return bool
 	 */
 	public function addItem(int $userID, array $item, int $categoryID): bool {
 		$user = new User ( $this->db );
 		$user->userID = $userID;
-		$category = new Category($this->db);
+		$category = new Category ( $this->db );
 		$category->categoryID = $categoryID;
 		$it = new Item ( $this->db );
 		$it->title = $item ['title'];
@@ -661,8 +661,8 @@ class Humphree {
 	
 	/**
 	 * Updates an item.
-	 * 
-	 * @param array $item
+	 *
+	 * @param array $item        	
 	 * @return bool
 	 */
 	public function updateItem(array $item): bool {
@@ -683,8 +683,8 @@ class Humphree {
 	
 	/**
 	 * Deletes an item and all associated database content.
-	 * 
-	 * @param int $itemID
+	 *
+	 * @param int $itemID        	
 	 * @return bool
 	 */
 	public function deleteItem(int $itemID): bool {
@@ -699,8 +699,8 @@ class Humphree {
 	
 	/**
 	 * Retrieves all comments for an item.
-	 * 
-	 * @param int $itemID
+	 *
+	 * @param int $itemID        	
 	 * @return array
 	 */
 	public function getItemComments(int $itemID): array {
@@ -727,32 +727,32 @@ class Humphree {
 	
 	/**
 	 * Retrieves an item associated with a comment.
-	 * 
-	 * @param int $commentID
+	 *
+	 * @param int $commentID        	
 	 * @return array
 	 */
 	public function getItemComment(int $commentID): array {
-		$comment = new Comment($pdo);
+		$comment = new Comment ( $pdo );
 		$comment->commentID = $commentID;
 		$item = $this->system->getItemComment ( $comment );
-		$it = array();
-		$it['itemID'] = $item->itemID;
-		$it['title'] = $item->title;
-		$it['description'] = $item->description;
-		$it['quantity'] = $item->quantity;
-		$it['itemcondition'] = $item->itemcondition;
-		$it['price'] = $item->price;
-		$it['status'] = $item->status;
+		$it = array ();
+		$it ['itemID'] = $item->itemID;
+		$it ['title'] = $item->title;
+		$it ['description'] = $item->description;
+		$it ['quantity'] = $item->quantity;
+		$it ['itemcondition'] = $item->itemcondition;
+		$it ['price'] = $item->price;
+		$it ['status'] = $item->status;
 		
 		return $it;
 	}
 	
 	/**
 	 * Adds a comment for an item.
-	 * 
-	 * @param int $userID
-	 * @param int $itemID
-	 * @param string $comment
+	 *
+	 * @param int $userID        	
+	 * @param int $itemID        	
+	 * @param string $comment        	
 	 * @return bool
 	 */
 	public function addItemComment(int $userID, int $itemID, string $comment): bool {
@@ -770,8 +770,8 @@ class Humphree {
 	
 	/**
 	 * Updates a comment.
-	 * 
-	 * @param array $c
+	 *
+	 * @param array $c        	
 	 * @return bool
 	 */
 	public function updateItemComment(array $c): bool {
@@ -788,8 +788,8 @@ class Humphree {
 	
 	/**
 	 * Deletes a comment.
-	 * 
-	 * @param int $commentID
+	 *
+	 * @param int $commentID        	
 	 * @return bool
 	 */
 	public function deleteItemComment(int $commentID): bool {
@@ -804,8 +804,8 @@ class Humphree {
 	
 	/**
 	 * Retrieves all notes for an item.
-	 * 
-	 * @param int $itemID
+	 *
+	 * @param int $itemID        	
 	 * @return array
 	 */
 	public function getItemNotes(int $itemID): array {
@@ -827,31 +827,31 @@ class Humphree {
 	
 	/**
 	 * Retrieves an item based on a noteID
-	 * 
-	 * @param int $noteID
+	 *
+	 * @param int $noteID        	
 	 * @return array
 	 */
 	public function getItemNote(int $noteID): array {
-		$note = new Note($pdo);
+		$note = new Note ( $pdo );
 		$note->noteID = $noteID;
 		$item = $this->system->getItemNote ( $note );
-		$it = array();
-		$it['itemID'] = $item->itemID;
-		$it['title'] = $item->title;
-		$it['description'] = $item->description;
-		$it['quantity'] = $item->quantity;
-		$it['itemcondition'] = $item->itemcondition;
-		$it['price'] = $item->price;
-		$it['status'] = $item->status;
+		$it = array ();
+		$it ['itemID'] = $item->itemID;
+		$it ['title'] = $item->title;
+		$it ['description'] = $item->description;
+		$it ['quantity'] = $item->quantity;
+		$it ['itemcondition'] = $item->itemcondition;
+		$it ['price'] = $item->price;
+		$it ['status'] = $item->status;
 		
 		return $it;
 	}
 	
 	/**
 	 * Adds a note to a respective item.
-	 * 
-	 * @param int $itemID
-	 * @param string $note
+	 *
+	 * @param int $itemID        	
+	 * @param string $note        	
 	 * @return bool
 	 */
 	public function addItemNote(int $itemID, string $note): bool {
@@ -868,9 +868,9 @@ class Humphree {
 	
 	/**
 	 * Updates a note.
-	 * 
-	 * @param int $noteID
-	 * @param string $note
+	 *
+	 * @param int $noteID        	
+	 * @param string $note        	
 	 * @return bool
 	 */
 	public function updateItemNote(int $noteID, string $note): bool {
@@ -886,8 +886,8 @@ class Humphree {
 	
 	/**
 	 * Deletes a note from the database.
-	 * 
-	 * @param int $noteID
+	 *
+	 * @param int $noteID        	
 	 * @return bool
 	 */
 	public function deleteItemNote(int $noteID): bool {
@@ -902,62 +902,62 @@ class Humphree {
 	
 	/**
 	 * Returns details of the user that has posted the item.
-	 * 
-	 * @param int $itemID
+	 *
+	 * @param int $itemID        	
 	 * @return array
 	 */
 	public function getItemOwner(int $itemID): array {
-		$i = new Item($this->db);
-		return $this->system->getItemOwner($i);
+		$i = new Item ( $this->db );
+		return $this->system->getItemOwner ( $i );
 	}
 	
 	/**
 	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
 	 * The intention is that on receipt of the seller rating, the information returned
-	 * will be sufficient for the relevent controller to send an email to the buyer 
+	 * will be sufficient for the relevent controller to send an email to the buyer
 	 * requesting the buyer rate the seller.
-	 * 
+	 *
 	 * The email will contain a link with a transaction string that will be passed
 	 * through a URL to identify the relevant transaction.
-	 * 
-	 * @param int $itemID
-	 * @param int $sellRating
+	 *
+	 * @param int $itemID        	
+	 * @param int $sellRating        	
 	 * @return array
 	 */
 	public function addSellerRating(int $userID, int $itemID, int $sellRating): array {
-		$buyerArray = new Array_();
+		$buyerArray = new Array_ ();
 		$s = new UserRatings ( $this->db );
 		$s->userID = $userID;
 		$s->itemID = $itemID;
 		$s->sellrating = $sellRating;
-		$ur = $this->system->addSellerRating($s);
-		$u = new User($this->db);
+		$ur = $this->system->addSellerRating ( $s );
+		$u = new User ( $this->db );
 		$u->userID = $ur->userID;
-		$i = new Item($this->db);
+		$i = new Item ( $this->db );
 		$i->itemID = $ur->itemID;
 		try {
-			$u->get();
-			$i->get();
-			$buyerArray['userID'] = $u->userID;
-			$buyerArray['user'] = $u->user;
-			$buyerArray['email'] = $u->email;
-			$buyerArray['itemID'] = $i->itemID;
-			$buyerArray['title'] = $i->title;
-			$buyerArray['transaction'] = $i->transaction;
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+			$u->get ();
+			$i->get ();
+			$buyerArray ['userID'] = $u->userID;
+			$buyerArray ['user'] = $u->user;
+			$buyerArray ['email'] = $u->email;
+			$buyerArray ['itemID'] = $i->itemID;
+			$buyerArray ['title'] = $i->title;
+			$buyerArray ['transaction'] = $i->transaction;
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return $buyerArray;
 		}
 	}
-		
 	
 	/**
 	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
 	 * The transaction string is received through a URL and is used to identifiy
 	 * the relevant transaction.
-	 * 
-	 * @param string $transaction	A transaction identifier passed through a URL.
-	 * @param int $buyRating
+	 *
+	 * @param string $transaction
+	 *        	A transaction identifier passed through a URL.
+	 * @param int $buyRating        	
 	 * @return bool
 	 */
 	public function addBuyerRating(string $transaction, int $buyRating): bool {
@@ -977,27 +977,27 @@ class Humphree {
 	
 	/**
 	 * Returns a users rating stats as an array.
-	 * 
-	 * @param int $userID
+	 *
+	 * @param int $userID        	
 	 * @return array
 	 */
 	public function getUserRatings(int $userID): array {
-		$user = new User($this->db);
+		$user = new User ( $this->db );
 		$user->userID = $userID;
-		return $this->system->getUserRatings($user);
+		return $this->system->getUserRatings ( $user );
 	}
 	
 	/**
 	 * Searches Item Titles based on search string and returns an array of Items.
-	 * 
-	 * @param string $searchString
+	 *
+	 * @param string $searchString        	
 	 * @return array
 	 */
 	public function search(string $searchString): array {
-		$items = $this->system->search ($searchString);
-		$its = array();
-		foreach($items as $item){
-			$it = array();
+		$items = $this->system->search ( $searchString );
+		$its = array ();
+		foreach ( $items as $item ) {
+			$it = array ();
 			$it ['itemID'] = $item->itemID;
 			$it ['title'] = $item->title;
 			$it ['description'] = $item->description;
@@ -1006,7 +1006,7 @@ class Humphree {
 			$it ['price'] = $item->price;
 			$it ['status'] = $item->status;
 			
-			$its[] = $it;
+			$its [] = $it;
 		}
 		return $its;
 	}

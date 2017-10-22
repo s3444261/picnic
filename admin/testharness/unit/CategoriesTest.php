@@ -1,5 +1,6 @@
 <?php
-/* Authors:
+/*
+ * Authors:
  * Derrick, Troy - s3202752@student.rmit.edu.au
  * Foster, Diane - s3387562@student.rmit.edu.au
  * Goodreds, Allen - s3492264@student.rmit.edu.au
@@ -17,80 +18,74 @@
  * -- Categories.php Test SubBlocks: --
  * getCategories(): array
  * -- testGetCategories(): void
- * 
+ *
  * getCategoriesIn(int $parentID): array
  * -- testGetCategoriesInParentIdInvalid(): void
  * -- testGetCategoriesInParentIdValid(): void
  */
-
-declare(strict_types=1);
+declare ( strict_types = 1 )
+	;
 
 require_once 'TestPDO.php';
-require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
-require_once dirname(__FILE__) . '/../../../model/Category.php';
-require_once dirname(__FILE__) . '/../../../model/Categories.php';
-require_once dirname(__FILE__) . '/../../../model/Validation.php';
-require_once dirname(__FILE__) . '/../../../model/ModelException.php';
-require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
-
+require_once dirname ( __FILE__ ) . '/../../createDB/DatabaseGenerator.php';
+require_once dirname ( __FILE__ ) . '/../../../model/Category.php';
+require_once dirname ( __FILE__ ) . '/../../../model/Categories.php';
+require_once dirname ( __FILE__ ) . '/../../../model/Validation.php';
+require_once dirname ( __FILE__ ) . '/../../../model/ModelException.php';
+require_once dirname ( __FILE__ ) . '/../../../model/ValidationException.php';
 final class CategoriesTest extends PHPUnit\Framework\TestCase {
-
-	const CATEGORY_ID   = 'categoryID';
-	const PARENT_ID     = 'parentID';
+	const CATEGORY_ID = 'categoryID';
+	const PARENT_ID = 'parentID';
 	const CATEGORY_NAME = 'category';
 	const CREATION_DATE = 'created_at';
 	const MODIFIED_DATE = 'updated_at';
-	
 	const ROOT_CATEGORY = 0;
 	const ROOT_CATEGORY_NAME = 'Category';
-	const PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
-
+	const ERROR_PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
 	protected function setUp(): void {
-		// Regenerate a fresh database. This makes the tests sloooooooooooow but robust.
-		// Be nice if we could mock out the database, but let's see how we go with that.
-		TestPDO::CreateTestDatabaseAndUser();
-		$pdo = TestPDO::getInstance();
-		DatabaseGenerator::Generate($pdo);
-
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
 		// Insert a root category
-		$root = new Category($pdo);
+		$root = new Category ( $pdo );
 		$root->{self::PARENT_ID} = self::ROOT_CATEGORY;
 		$root->{self::CATEGORY_NAME} = self::ROOT_CATEGORY_NAME;
 		try {
-			$root->set();
-		} catch (ModelException $e) {}
+			$root->set ();
+		} catch ( ModelException $e ) {
+		}
 		
 		// Insert additional categories
 		$j = 1;
-		for($i = 1; $i <= 99; $i++){
-			if($i % 3 == 0){
-				$j++;
+		for($i = 1; $i <= 99; $i ++) {
+			if ($i % 3 == 0) {
+				$j ++;
 			}
-			$c = new Category($pdo);
+			$c = new Category ( $pdo );
 			$c->{self::PARENT_ID} = $j;
 			$c->{self::CATEGORY_NAME} = 'cat' . $i;
 			try {
-				$c->set();
-			} catch (ModelException $e) {}
+				$c->set ();
+			} catch ( ModelException $e ) {
+			}
 		}
 	}
-
 	protected function tearDown(): void {
-		TestPDO::CleanUp();
+		TestPDO::CleanUp ();
 	}
-
-	protected function createDefaultSut(){
-		return new Categories(TestPDO::getInstance());
+	protected function createDefaultSut() {
+		return new Categories ( TestPDO::getInstance () );
 	}
-
-	protected function createSutWithId($id){
-		return new Categories(TestPDO::getInstance(), [self::CATEGORY_ID => $id]);
+	protected function createSutWithId($id) {
+		return new Categories ( TestPDO::getInstance (), [ 
+				self::CATEGORY_ID => $id 
+		] );
 	}
-
 	protected function getValidId() {
 		return 1;
 	}
-
 	protected function getInvalidId() {
 		return 200;
 	}
@@ -98,28 +93,27 @@ final class CategoriesTest extends PHPUnit\Framework\TestCase {
 	/*
 	 * getCategories(): array
 	 */
-
 	public function testGetCategories(): void {
-		$sut = $this->createDefaultSut();
-		$cats = $sut->getCategories(); 
+		$sut = $this->createDefaultSut ();
+		$cats = $sut->getCategories ();
 		$i = 1;
 		$j = 0;
-		foreach($cats as $cat){
-			if($i == 1){
-				$this->assertEquals($i, $cat->categoryID);
-				$this->assertEquals($j, $cat->parentID);
-				$this->assertEquals('Category', $cat->category);
-				$j++;
+		foreach ( $cats as $cat ) {
+			if ($i == 1) {
+				$this->assertEquals ( $i, $cat->categoryID );
+				$this->assertEquals ( $j, $cat->parentID );
+				$this->assertEquals ( 'Category', $cat->category );
+				$j ++;
 			} else {
 				$number = $i - 1;
-				$this->assertEquals($i, $cat->categoryID);
-				$this->assertEquals($j, $cat->parentID);
-				$this->assertSame('cat' . $number, $cat->category);
+				$this->assertEquals ( $i, $cat->categoryID );
+				$this->assertEquals ( $j, $cat->parentID );
+				$this->assertSame ( 'cat' . $number, $cat->category );
 			}
-			if($i % 3 == 0){
-				$j++;
+			if ($i % 3 == 0) {
+				$j ++;
 			}
-			$i++;
+			$i ++;
 		}
 	}
 	
@@ -127,23 +121,21 @@ final class CategoriesTest extends PHPUnit\Framework\TestCase {
 	 * getCategoriesIn(int $parentID): array
 	 */
 	public function testGetCategoriesInParentIdInvalid(): void {
-		$parentID = $this->getInvalidId();
-		$sut = $this->createDefaultSut();
-		$this->expectExceptionMessage(self::PARENT_ID_NOT_EXIST);
-		$sut->getCategoriesIn($parentID); 
+		$parentID = $this->getInvalidId ();
+		$sut = $this->createDefaultSut ();
+		$this->expectExceptionMessage ( self::ERROR_PARENT_ID_NOT_EXIST );
+		$sut->getCategoriesIn ( $parentID );
 	}
-	
 	public function testGetCategoriesInParentIdValid(): void {
-		$sut = $this->createDefaultSut();
-		$cats = $sut->getCategoriesIn(4); 
+		$sut = $this->createDefaultSut ();
+		$cats = $sut->getCategoriesIn ( 4 );
 		$i = 10;
-		foreach($cats as $cat){
+		foreach ( $cats as $cat ) {
 			$number = $i - 1;
-			$this->assertEquals($i, $cat->categoryID);
-			$this->assertEquals(4, $cat->parentID);
-			$this->assertSame('cat' . $number, $cat->category);
-			$i++;
+			$this->assertEquals ( $i, $cat->categoryID );
+			$this->assertEquals ( 4, $cat->parentID );
+			$this->assertSame ( 'cat' . $number, $cat->category );
+			$i ++;
 		}
 	}
-
 }

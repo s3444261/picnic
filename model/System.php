@@ -13,13 +13,9 @@ if (session_status () == PHP_SESSION_NONE) {
 /**
  * The System class transmits information from the Humphree
  * Programming Interface to the model and back to Humphree.
- *
  */
-
 class System {
-	
 	private $db;
-	
 	const SEARCH_STRING = 'searchString';
 	const SUSPENDED = 'suspended';
 	const USER_RATING_NOT_ADDED = 'The UserRating was not added!';
@@ -35,63 +31,65 @@ class System {
 	
 	/**
 	 * Creates an account for a user.
-	 * 
-	 * @param User $user	User Object.
+	 *
+	 * @param User $user
+	 *        	User Object.
 	 * @return bool
 	 */
 	public function createAccount(User $user): bool {
 		try {
-			if($user->set () > 0){
+			if ($user->set () > 0) {
 				return true;
 			} else {
 				return false;
 			}
 		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage();
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
 	
 	/**
 	 * Returns a UserID based on a 32bit activation code.
-	 * 
-	 * @param User $user	User object.
+	 *
+	 * @param User $user
+	 *        	User object.
 	 * @return int
 	 */
-	public function getUserIdByActivationCode( User $user ): int{
+	public function getUserIdByActivationCode(User $user): int {
 		try {
-			return $user->getUserIdByActivationCode();
-		} catch (ModelException $e) {
-			$_SESSION ['error'] = $e->getMessage();
+			return $user->getUserIdByActivationCode ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return 0;
 		}
 	}
-
+	
 	/**
 	 * Returns the UserID for the given email address.
 	 *
 	 * @param User $user
-	 * 			User object containing the email address.
-	 * @return int
-	 * 			The UserID if one was found, otherwise zero.
+	 *        	User object containing the email address.
+	 * @return int The UserID if one was found, otherwise zero.
 	 */
-	public function getUserIdByEmailAddress( User $user ): int{
+	public function getUserIdByEmailAddress(User $user): int {
 		try {
-			return $user->getUserIdByEmail();
-		} catch (ModelException $e) {
-			$_SESSION ['error'] = $e->getMessage();
+			return $user->getUserIdByEmail ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return 0;
 		}
 	}
-
+	
 	/**
 	 * Activates a user account.
-	 * 
-	 * @param User $user	User Object.
+	 *
+	 * @param User $user
+	 *        	User Object.
 	 * @return bool
 	 */
 	public function activateAccount(User $user): bool {
-		if($user->activate()){
+		if ($user->activate ()) {
 			return true;
 		} else {
 			return false;
@@ -100,78 +98,81 @@ class System {
 	
 	/**
 	 * Allows a password to be changed for the account.
-	 * 
-	 * @param User $user	User object.
+	 *
+	 * @param User $user
+	 *        	User object.
 	 * @return bool
 	 */
 	public function changePassword(User $user): bool {
 		try {
-			return $user->updatePassword();
-		} catch (ModelException $e) {
-			$_SESSION ['error'] = $e->getMessage();
+			return $user->updatePassword ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
 	
 	/**
 	 * Allows a user to have a new random password sent to their email address.
-	 * 
-	 * @param User $user	User Object.
+	 *
+	 * @param User $user
+	 *        	User Object.
 	 * @return User
 	 */
 	public function forgotPassword(User $user): User {
 		try {
-			$user->userID = $user->getUserIdByEmail();
-			$user->password = $user->getRandomPassword(); 
+			$user->userID = $user->getUserIdByEmail ();
+			$user->password = $user->getRandomPassword ();
 			$randomPassword = $user->password;
 			try {
-				$user->updatePassword(); 
+				$user->updatePassword ();
 				$user->password = $randomPassword;
 				return $user;
-			} catch (ModelException $e) {
-				$_SESSION ['error'] = $e->getMessage();
+			} catch ( ModelException $e ) {
+				$_SESSION ['error'] = $e->getMessage ();
 				return $user;
 			}
-		} catch (ModelException $e) {
-			$_SESSION ['error'] = $e->getMessage();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return $user;
 		}
 	}
 	
 	/**
 	 * Allows an administrator to add a user to the system.
-	 * 
-	 * @param User $user	User object.
-	 * @return int			The new user's ID. Zero means failure.
+	 *
+	 * @param User $user
+	 *        	User object.
+	 * @return int The new user's ID. Zero means failure.
 	 */
 	public function addUser(User $user): int {
-		
 		try {
 			$user->set ();
 			try {
 				$user->get ();
 				return $user->userID;
 			} catch ( ModelException $e ) {
-				$_SESSION ['error'] = $e->getMessage(); 
+				$_SESSION ['error'] = $e->getMessage ();
 				return 0;
 			}
 		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage(); 
+			$_SESSION ['error'] = $e->getMessage ();
 			return 0;
 		}
 	}
 	
 	/**
 	 * Allows an administrator to update a user.
-	 * 
-	 * @param User $user	User Object.
+	 *
+	 * @param User $user
+	 *        	User Object.
 	 * @return bool
 	 */
 	public function updateUser(User $user): bool {
 		try {
-			$user->update();
+			$user->update ();
 			return true;
-		} catch (ModelException $e) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 			return false;
 		}
@@ -179,8 +180,9 @@ class System {
 	
 	/**
 	 * Retrieves a user based on the users ID.
-	 * 
-	 * @param User $user	User Object.
+	 *
+	 * @param User $user
+	 *        	User Object.
 	 * @return User
 	 */
 	public function getUser(User $user): User {
@@ -197,16 +199,18 @@ class System {
 	/**
 	 * Retrieves all users and returns them based on number of pages and number
 	 * of users per page.
-	 * 
-	 * @param int $pageNumber		The page number.
-	 * @param int $usersPerPage		The number of users listed on the page.
+	 *
+	 * @param int $pageNumber
+	 *        	The page number.
+	 * @param int $usersPerPage
+	 *        	The number of users listed on the page.
 	 * @return array
 	 */
 	public function getUsers(int $pageNumber, int $usersPerPage): array {
-		$usersArray = array();
+		$usersArray = array ();
 		$users = new Users ( $this->db );
 		try {
-			$usersArray = $users->getUsers ($pageNumber, $usersPerPage);
+			$usersArray = $users->getUsers ( $pageNumber, $usersPerPage );
 		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 			return $usersArray;
@@ -216,18 +220,19 @@ class System {
 	
 	/**
 	 * Allows an administrator to suspend an account.
-	 * 
-	 * @param User $user	User object.
+	 *
+	 * @param User $user
+	 *        	User object.
 	 * @return bool
 	 */
 	public function disableUser(User $user): bool {
 		if ($user->userID > 0) {
-			$user = $this->getUser($user);
+			$user = $this->getUser ( $user );
 			$user->status = self::SUSPENDED;
-			try { 
-				$user->update();
+			try {
+				$user->update ();
 				return true;
-			} catch (ModelException $e) {
+			} catch ( ModelException $e ) {
 				return false;
 			}
 		} else {
@@ -238,13 +243,14 @@ class System {
 	/**
 	 * Allows an administrator to completely delete an account and all its
 	 * associated entries.
-	 * 
-	 * @param User $user	User Object.
+	 *
+	 * @param User $user
+	 *        	User Object.
 	 * @return bool
 	 */
 	public function deleteUser(User $user): bool {
 		try {
-			$user->exists();
+			$user->exists ();
 			
 			// Delete any comments and notes for any items held by the user and then delete the item.
 			$userItems = new UserItems ( $this->db );
@@ -253,9 +259,9 @@ class System {
 			
 			foreach ( $items as $item ) {
 				if ($item->itemID > 0) {
-					$i = new Item($this->db);
+					$i = new Item ( $this->db );
 					$i->itemID = $item->itemID;
-					$this->deleteItem($i);
+					$this->deleteItem ( $i );
 				}
 			}
 			
@@ -270,9 +276,8 @@ class System {
 			
 			// Finally, delete the user.
 			return $user->delete ();
-			
-		} catch (ModelException $e) {
-			$_SESSION ['error'] = $e->getMessage();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
@@ -280,8 +285,9 @@ class System {
 	/**
 	 * Allows and administrator to add a Category and
 	 * specify its position in the heirachy.
-	 * 
-	 * @param Category $category	Category Object.
+	 *
+	 * @param Category $category
+	 *        	Category Object.
 	 * @return bool
 	 */
 	public function addCategory(Category $category): bool {
@@ -291,11 +297,11 @@ class System {
 				$category->get ();
 				return true;
 			} catch ( ModelException $e ) {
-				$_SESSION ['error'] = $e->getMessage();
+				$_SESSION ['error'] = $e->getMessage ();
 				return false;
 			}
 		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage();
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
@@ -303,8 +309,9 @@ class System {
 	/**
 	 * Allows and administrator to update a Category and
 	 * its position in the heirachy.
-	 * 
-	 * @param Category $category	Category object.
+	 *
+	 * @param Category $category
+	 *        	Category object.
 	 * @return bool
 	 */
 	public function updateCategory(Category $category): bool {
@@ -318,50 +325,48 @@ class System {
 	/**
 	 * Allows and administrator to delete a Category and
 	 * all associated database content.
-	 * 
-	 * @param Category $category	Category object.
+	 *
+	 * @param Category $category
+	 *        	Category object.
 	 * @return bool
 	 */
 	public function deleteCategory(Category $category): bool {
-		
-		
-		if ($category->exists()) {
+		if ($category->exists ()) {
 			$cID = $category->categoryID;
-			$pID = $cID; 
+			$pID = $cID;
 			
 			$i = 1;
-			do{
+			do {
 				$pID = $cID;
 				
 				do {
-					$cs = new Categories($this->db);
-					$csArray = $cs->getCategoriesIn($pID);
-					$num = count($csArray);
-					if($num > 0){
-						$pID = $csArray[0]->categoryID;
+					$cs = new Categories ( $this->db );
+					$csArray = $cs->getCategoriesIn ( $pID );
+					$num = count ( $csArray );
+					if ($num > 0) {
+						$pID = $csArray [0]->categoryID;
 					}
-				} while ($num != 0); 
+				} while ( $num != 0 );
 				
-				$categoryItem = new CategoryItems($this->db);
-				$categoryItem->categoryID = $pID; 
-				try { 
-					$itemsArray = $categoryItem->getCategoryItems();  
-					foreach ($itemsArray as $item){
-						$ci = new CategoryItems($this->db);
+				$categoryItem = new CategoryItems ( $this->db );
+				$categoryItem->categoryID = $pID;
+				try {
+					$itemsArray = $categoryItem->getCategoryItems ();
+					foreach ( $itemsArray as $item ) {
+						$ci = new CategoryItems ( $this->db );
 						$ci->itemID = $item->itemID;
-						$ci->deleteItem();
-						$this->deleteItem($item);
+						$ci->deleteItem ();
+						$this->deleteItem ( $item );
 					}
-					$c = new Category($this->db);
+					$c = new Category ( $this->db );
 					$c->categoryID = $pID;
-					$c->delete();
-				} catch (ModelException $e) {
+					$c->delete ();
+				} catch ( ModelException $e ) {
 					$_SESSION ['error'] = self::ERROR_CATEGORY_ID_NOT_EXIST;
-				} 
-				$i++;  
-				
-			} while ($pID != $cID); 
-		
+				}
+				$i ++;
+			} while ( $pID != $cID );
+			
 			return true;
 		} else {
 			$_SESSION ['error'] = self::ERROR_CATEGORY_NOT_EXIST;
@@ -371,8 +376,9 @@ class System {
 	
 	/**
 	 * Retrieves a Category.
-	 * 
-	 * @param Category $category	Category object.
+	 *
+	 * @param Category $category
+	 *        	Category object.
 	 * @return Category
 	 */
 	public function getCategory(Category $category): Category {
@@ -388,24 +394,25 @@ class System {
 	
 	/**
 	 * Retrieves all Categories.
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getCategories(): array {
 		$c = array ();
-		$cat = new Categories( $this->db );
+		$cat = new Categories ( $this->db );
 		try {
 			$c = $cat->getCategories ();
 			return $c;
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			$_SESSION ['error'] = $e->getMessage ();
 		}
 	}
 	
 	/**
 	 * Retrieves all Categories for the given parent category.
-	 * 
-	 * @param int $parentID		The ID of the parent category.
+	 *
+	 * @param int $parentID
+	 *        	The ID of the parent category.
 	 * @return array
 	 */
 	public function getCategoriesIn(int $parentID): array {
@@ -421,8 +428,9 @@ class System {
 	
 	/**
 	 * Counts the number of items in a category.
-	 * 
-	 * @param Category $category	Category object.
+	 *
+	 * @param Category $category
+	 *        	Category object.
 	 * @return int
 	 */
 	public function countCategoryItems(Category $category): int {
@@ -432,7 +440,7 @@ class System {
 		try {
 			$numCategoryItems = $ci->count ();
 			return $numCategoryItems;
-		} catch (ModelException $e) {
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage ();
 			return 0;
 		}
@@ -440,8 +448,8 @@ class System {
 	
 	/**
 	 * Counts the number of comments for an Item.
-	 * 
-	 * @param Item $item
+	 *
+	 * @param Item $item        	
 	 * @return int
 	 */
 	public function countItemComments(Item $item): int {
@@ -452,8 +460,8 @@ class System {
 	
 	/**
 	 * Counts the number of notes for an item.
-	 * 
-	 * @param Item $item
+	 *
+	 * @param Item $item        	
 	 * @return int
 	 */
 	public function countItemNotes(Item $item): int {
@@ -464,30 +472,31 @@ class System {
 	
 	/**
 	 * Retrieves all items linked to a Category.
-	 * @param Category $category
-	 * @param int $pageNumber
-	 * @param int $itemsPerPage
-	 * @param string $status
+	 * 
+	 * @param Category $category        	
+	 * @param int $pageNumber        	
+	 * @param int $itemsPerPage        	
+	 * @param string $status        	
 	 * @return array
 	 */
 	public function getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage, string $status): array {
 		$pn = $pageNumber;
 		$ipp = $itemsPerPage;
 		$categoryItemsArray = array ();
-		$categoryItems = new CategoryItems ( $this->db);
+		$categoryItems = new CategoryItems ( $this->db );
 		$categoryItems->categoryID = $category->categoryID;
 		try {
-			$categoryItemsArray= $categoryItems->getCategoryItemsByPage($pn, $ipp, $status);
+			$categoryItemsArray = $categoryItems->getCategoryItemsByPage ( $pn, $ipp, $status );
 		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage (); 
+			$_SESSION ['error'] = $e->getMessage ();
 		}
 		return $categoryItemsArray;
 	}
 	
 	/**
 	 * Counts the number of items held by a user.
-	 * 
-	 * @param User $user
+	 *
+	 * @param User $user        	
 	 * @return int
 	 */
 	public function countUserItems(User $user): int {
@@ -498,24 +507,23 @@ class System {
 		
 		return $numUserItems;
 	}
-
+	
 	/**
 	 * Retrieves all items linked to a user.
 	 *
 	 * @param User $user
-	 *  			The user whose items will be returned.
+	 *        	The user whose items will be returned.
 	 * @param string $userRole
-	 * 				The role that the user plays for the requested items.
-	 * @return array
-	 * 				An array of UserItems objects.
+	 *        	The role that the user plays for the requested items.
+	 * @return array An array of UserItems objects.
 	 */
 	public function getUserItems(User $user, string $userRole = ""): array {
 		$ui = array ();
 		$u = new UserItems ( $this->db );
 		$u->userID = $user->userID;
 		try {
-			$ui = $u->getUserItems ($userRole);
-		} catch (ModelException $e) {
+			$ui = $u->getUserItems ( $userRole );
+		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 		}
 		return $ui;
@@ -523,8 +531,8 @@ class System {
 	
 	/**
 	 * Retrieves an item
-	 * 
-	 * @param Item $item
+	 *
+	 * @param Item $item        	
 	 * @return Item
 	 */
 	public function getItem(Item $item): Item {
@@ -541,15 +549,15 @@ class System {
 	/**
 	 * Adds an item to the items table and then adds the id's to
 	 * the UserItems table.
-	 * 
-	 * @param User $user
-	 * @param Item $item
+	 *
+	 * @param User $user        	
+	 * @param Item $item        	
 	 * @return bool
 	 */
 	public function addItem(User $user, Item $item, Category $category): int {
 		$i = new Item ( $this->db );
 		$ui = new UserItems ( $this->db );
-		$ci = new CategoryItems( $this->db );
+		$ci = new CategoryItems ( $this->db );
 		$i = $item;
 		try {
 			$i->itemID = $i->set ();
@@ -564,7 +572,7 @@ class System {
 			} catch ( ModelException $e ) {
 				$_SESSION ['error'] = $e->getError ();
 			}
-			if ($ci->category_itemID> 0) {
+			if ($ci->category_itemID > 0) {
 				$ui->userID = $user->userID;
 				$ui->itemID = $i->itemID;
 				try {
@@ -587,8 +595,8 @@ class System {
 	
 	/**
 	 * Updates an item.
-	 * 
-	 * @param Item $item
+	 *
+	 * @param Item $item        	
 	 * @return bool
 	 */
 	public function updateItem(Item $item): bool {
@@ -606,30 +614,30 @@ class System {
 	/**
 	 * Deletes all references to the ItemID throughout the database and
 	 * then deletes the Item.
-	 * 
-	 * @param Item $item
+	 *
+	 * @param Item $item        	
 	 * @return bool
 	 */
 	public function deleteItem(Item $item): bool {
-		if ($item->exists()) {
+		if ($item->exists ()) {
 			try {
-				$ur = new UserRatings($this->db);
+				$ur = new UserRatings ( $this->db );
 				$ur->itemID = $item->itemID;
-				$ur->deleteItemId();
-				$ci = new CategoryItems($this->db);
+				$ur->deleteItemId ();
+				$ci = new CategoryItems ( $this->db );
 				$ci->itemID = $item->itemID;
-				$ci->deleteItem();
-				$this->deleteItemNotes($item);
-				$this->deleteItemComments($item); 
-				$ui = new UserItems($this->db);
+				$ci->deleteItem ();
+				$this->deleteItemNotes ( $item );
+				$this->deleteItemComments ( $item );
+				$ui = new UserItems ( $this->db );
 				$ui->itemID = $item->itemID;
-				return $ui->deleteUserItem();
-			} catch (ModelException $e) {
-				$_SESSION['error'] = $e->getMessage();
+				return $ui->deleteUserItem ();
+			} catch ( ModelException $e ) {
+				$_SESSION ['error'] = $e->getMessage ();
 				return false;
 			}
 		} else {
-			$_SESSION['error'] = self::ERROR_ITEM_NOT_EXIST;
+			$_SESSION ['error'] = self::ERROR_ITEM_NOT_EXIST;
 			return false;
 		}
 		return true;
@@ -638,99 +646,99 @@ class System {
 	/**
 	 * Retrieves all comments for an item and returns them as an array of
 	 * Comments objects.
-	 * 
-	 * @param Item $item
+	 *
+	 * @param Item $item        	
 	 * @return array
 	 */
 	public function getItemComments(Item $item): array {
 		$ic = new ItemComments ( $this->db );
 		$ic->itemID = $item->itemID;
-		$comments = array();
+		$comments = array ();
 		try {
-			$comments = $ic->getItemComments();
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+			$comments = $ic->getItemComments ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 		}
 		return $comments;
 	}
 	
 	/**
 	 * Retrieves an Item associated with a comment.
-	 * 
-	 * @param Comment $comment
+	 *
+	 * @param Comment $comment        	
 	 * @return Item
 	 */
 	public function getItemComment(Comment $comment): Item {
 		$ic = new ItemComments ( $this->db );
 		$ic->commentID = $comment->commentID;
-		$item = new Item($this->db);
+		$item = new Item ( $this->db );
 		try {
-			$item->itemID = $ic->getItemComment()->itemID;
-			$item->get();
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+			$item->itemID = $ic->getItemComment ()->itemID;
+			$item->get ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 		}
 		return $item;
 	}
 	
 	/**
 	 * Adds an item and a comment to ItemComments.
-	 * 
-	 * @param Item $item
-	 * @param Comment $comment
+	 *
+	 * @param Item $item        	
+	 * @param Comment $comment        	
 	 * @return bool
 	 */
 	public function addItemComment(Item $item, Comment $comment): bool {
-		$itemComment = new ItemComments($this->db);
+		$itemComment = new ItemComments ( $this->db );
 		$itemComment->itemID = $item->itemID;
 		try {
-			$itemComment->commentID = $comment->set();
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+			$itemComment->commentID = $comment->set ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 		try {
-			if($itemComment->item_commentID = $itemComment->set() > 0){
+			if ($itemComment->item_commentID = $itemComment->set () > 0) {
 				return true;
 			} else {
 				return false;
 			}
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
 	
 	/**
 	 * Updates an ItemComment
-	 * 
-	 * @param ItemComments $itemComment
+	 *
+	 * @param ItemComments $itemComment        	
 	 * @return bool
 	 */
 	public function updateItemComment(Comment $comment): bool {
 		try {
-			$comment->update();
+			$comment->update ();
 			return true;
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
 	
 	/**
 	 * Deletes a comment from both ItemComments and Comments
-	 * 
-	 * @param Comment $comment
+	 *
+	 * @param Comment $comment        	
 	 * @return bool
 	 */
 	public function deleteItemComment(Comment $comment): bool {
-		$itemComment = new ItemComments($this->db);
+		$itemComment = new ItemComments ( $this->db );
 		$itemComment->commentID = $comment->commentID;
-		try { 
-			$itemComment->deleteItemComment();
+		try {
+			$itemComment->deleteItemComment ();
 			return true;
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
@@ -738,18 +746,18 @@ class System {
 	/**
 	 * Deletes all comments associated with an item and deletes their respective
 	 * entries in ItemComments
-	 * 
-	 * @param Item $item
+	 *
+	 * @param Item $item        	
 	 * @return bool
 	 */
 	public function deleteItemComments(Item $item): bool {
-		$itemComment = new ItemComments($this->db);
+		$itemComment = new ItemComments ( $this->db );
 		$itemComment->itemID = $item->itemID;
 		try {
-			$itemComment->deleteItemComments();
+			$itemComment->deleteItemComments ();
 			return true;
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
@@ -757,99 +765,99 @@ class System {
 	/**
 	 * Retrieves all notes for an item and returns them as an array of
 	 * Notes objects.
-	 * 
-	 * @param Item $item
+	 *
+	 * @param Item $item        	
 	 * @return array
 	 */
 	public function getItemNotes(Item $item): array {
 		$in = new ItemNotes ( $this->db );
 		$in->itemID = $item->itemID;
-		$notes = array();
+		$notes = array ();
 		try {
-			$notes = $in->getItemNotes();
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+			$notes = $in->getItemNotes ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 		}
 		return $notes;
 	}
 	
 	/**
 	 * Retrieves an Item associated with a note.
-	 * 
-	 * @param Note $note
+	 *
+	 * @param Note $note        	
 	 * @return Item
 	 */
 	public function getItemNote(Note $note): Item {
 		$in = new ItemNotes ( $this->db );
 		$in->noteID = $note->noteID;
-		$item = new Item($this->db);
+		$item = new Item ( $this->db );
 		try {
-			$item->itemID = $in->getItemNote()->itemID;
-			$item->get();
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+			$item->itemID = $in->getItemNote ()->itemID;
+			$item->get ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 		}
 		return $item;
 	}
 	
 	/**
 	 * Adds an item and a note to ItemNotes.
-	 * 
-	 * @param Item $item
-	 * @param Note $note
+	 *
+	 * @param Item $item        	
+	 * @param Note $note        	
 	 * @return bool
 	 */
 	public function addItemNote(Item $item, Note $note): bool {
-		$itemNote = new ItemNotes($this->db);
+		$itemNote = new ItemNotes ( $this->db );
 		$itemNote->itemID = $item->itemID;
 		try {
-			$itemNote->noteID = $note->set();
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+			$itemNote->noteID = $note->set ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 		try {
-			if($itemNote->item_noteID = $itemNote->set() > 0){
+			if ($itemNote->item_noteID = $itemNote->set () > 0) {
 				return true;
 			} else {
 				return false;
 			}
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
 	
 	/**
 	 * Updates an ItemNote
-	 * 
-	 * @param ItemNotes $itemNote
+	 *
+	 * @param ItemNotes $itemNote        	
 	 * @return bool
 	 */
 	public function updateItemNote(Note $note): bool {
 		try {
-			$note->update();
+			$note->update ();
 			return true;
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
 	
 	/**
 	 * Deletes a note from both ItemNotes and Notes
-	 * 
-	 * @param Note $note
+	 *
+	 * @param Note $note        	
 	 * @return bool
 	 */
 	public function deleteItemNote(Note $note): bool {
-		$itemNote = new ItemNotes($this->db);
+		$itemNote = new ItemNotes ( $this->db );
 		$itemNote->noteID = $note->noteID;
-		try { 
-			$itemNote->deleteItemNote();
+		try {
+			$itemNote->deleteItemNote ();
 			return true;
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
@@ -857,18 +865,18 @@ class System {
 	/**
 	 * Deletes all notes associated with an item and deletes their respective
 	 * entries in ItemNotes
-	 * 
-	 * @param Item $item
+	 *
+	 * @param Item $item        	
 	 * @return bool
 	 */
 	public function deleteItemNotes(Item $item): bool {
-		$itemNote = new ItemNotes($this->db);
+		$itemNote = new ItemNotes ( $this->db );
 		$itemNote->itemID = $item->itemID;
 		try {
-			$itemNote->deleteItemNotes();
+			$itemNote->deleteItemNotes ();
 			return true;
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
@@ -876,41 +884,41 @@ class System {
 	/**
 	 * Retrieves everything known about a user with respect to an
 	 * item and returns them as an array.
-	 * 
-	 * @param Item $item
+	 *
+	 * @param Item $item        	
 	 * @return array
 	 */
 	public function getItemOwner(Item $item): array {
-		$owner = array();
+		$owner = array ();
 		
-		if ($item->exists()) {
+		if ($item->exists ()) {
 			try {
-				$userItem = new UserItems($this->db);
+				$userItem = new UserItems ( $this->db );
 				$userItem->itemID = $item->itemID;
-				$userItem = $userItem->getUserItem(); 
-				$user = new User($this->db);
+				$userItem = $userItem->getUserItem ();
+				$user = new User ( $this->db );
 				$user->userID = $userItem->userID;
-				$user = $user->get();
-				$userRatings = new UserRatings($this->db);
-				$stats = $userRatings->getStats($user);
-				$owner['userID'] = $user->userID;
-				$owner['user'] = $user->user;
-				$owner['email'] = $user->email;
-				$owner['relationship'] = $userItem->relationship;
-				$owner['userStatus'] = $userItem->userStatus;
-				$owner['numSellRatings'] = $stats['numSellRatings'];
-				$owner['avgSellRating'] = $stats['avgSellRating'];
-				$owner['numBuyRatings'] = $stats['numBuyRatings'];
-				$owner['avgBuyRating'] = $stats['avgBuyRating'];
-				$owner['totalNumRatings'] = $stats['totalNumRatings'];
-				$owner['avgRating'] = $stats['avgRating'];
-				return $owner; 
-			} catch (ModelException $e) {
-				$_SESSION['error'] = $e->getMessage();
+				$user = $user->get ();
+				$userRatings = new UserRatings ( $this->db );
+				$stats = $userRatings->getStats ( $user );
+				$owner ['userID'] = $user->userID;
+				$owner ['user'] = $user->user;
+				$owner ['email'] = $user->email;
+				$owner ['relationship'] = $userItem->relationship;
+				$owner ['userStatus'] = $userItem->userStatus;
+				$owner ['numSellRatings'] = $stats ['numSellRatings'];
+				$owner ['avgSellRating'] = $stats ['avgSellRating'];
+				$owner ['numBuyRatings'] = $stats ['numBuyRatings'];
+				$owner ['avgBuyRating'] = $stats ['avgBuyRating'];
+				$owner ['totalNumRatings'] = $stats ['totalNumRatings'];
+				$owner ['avgRating'] = $stats ['avgRating'];
+				return $owner;
+			} catch ( ModelException $e ) {
+				$_SESSION ['error'] = $e->getMessage ();
 				return $owner;
 			}
 		} else {
-			$_SESSION['error'] = self::ERROR_ITEM_NOT_EXIST;
+			$_SESSION ['error'] = self::ERROR_ITEM_NOT_EXIST;
 			return $owner;
 		}
 	}
@@ -918,66 +926,66 @@ class System {
 	/**
 	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
 	 * It returns a UserRating object with the information necessary to email the buyer.
-	 * 
-	 * @param UserRatings $sellerRating
+	 *
+	 * @param UserRatings $sellerRating        	
 	 * @return bool
 	 */
 	public function addSellerRating(UserRatings $sellerRating): UserRatings {
 		$ur = new UserRatings ( $this->db );
 		$ur->userID = $sellerRating->userID;
 		$ur->itemID = $sellerRating->itemID;
-		$ur->sellrating = $sellerRating->sellrating; 
+		$ur->sellrating = $sellerRating->sellrating;
 		try {
-			return $ur->addSellerRating();
-		} catch (ModelException $e) { 
-			$_SESSION['error'] = $e->getMessage();
+			return $ur->addSellerRating ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return $ur = new UserRatings ( $this->db );
 		}
 	}
 	
 	/**
 	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
-	 * 
-	 * @param UserRatings $buyerRating
+	 *
+	 * @param UserRatings $buyerRating        	
 	 * @return bool
 	 */
 	public function addBuyerRating(UserRatings $buyerRating): bool {
 		try {
-			return $buyerRating->addBuyerRating();
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+			return $buyerRating->addBuyerRating ();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return false;
 		}
 	}
 	
 	/**
 	 * Returns a users rating stats.
-	 * 
-	 * @param int $userID
+	 *
+	 * @param int $userID        	
 	 * @return array
 	 */
 	public function getUserRatings($user): array {
-		$ur = array();
-		$userRatings = new UserRatings($this->db);
+		$ur = array ();
+		$userRatings = new UserRatings ( $this->db );
 		try {
-			return $userRatings->getStats($user);
-		} catch (ModelException $e) {
-			$_SESSION['error'] = $e->getMessage();
+			return $userRatings->getStats ( $user );
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
 			return $ur;
 		}
 	}
 	
 	/**
 	 * Searches Item Titles and returns an array of Items.
-	 * 
-	 * @param string $searchString
+	 *
+	 * @param string $searchString        	
 	 * @return array
 	 */
 	public function search(string $searchString): array {
-		$args = array();
-		$args[self::SEARCH_STRING] = $searchString;
-		$items = new Items($this->db, $args);
-		return $items->search();
+		$args = array ();
+		$args [self::SEARCH_STRING] = $searchString;
+		$items = new Items ( $this->db, $args );
+		return $items->search ();
 	}
 }
 ?>

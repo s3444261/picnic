@@ -7,14 +7,28 @@
  * @author Kinkead, Grant - s3444261@student.rmit.edu.au
  * @author Putro, Edwan - edwanhp@gmail.com
  */
-
 class Validation {
+	const ERROR_PASSWORDS_NOT_MATCH = 'Password Error: Passwords do not match!';
+	const ERROR_FIELD_EMPTY = 'Input is required!';
+	const ERROR_NOT_NUMBER = 'Input must be a number!';
+	const ERROR_NOT_ZERO = 'Number must be greater than zero!';
+	const ERROR_UPPER_LOWER_NUMBER = 'Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!';
+	const ERROR_NOT_ALPHANUMERIC = 'Input must be a alphanumeric!';
+	const ERROR_NOT_ALPHA = 'Input must consist of letters only!';
+	const ERROR_NOT_NUMBER_OR_HYPHEN = 'Must only consist of numbers and/or hyphens!';
+	const ERROR_NOT_DATE = 'Input must be valid date!';
+	const ERROR_NOT_TODAY_OR_FUTURE = 'Date must be todays date or a future date!';
+	const ERROR_EMAIL_NOT_VALID = 'Email address must be valid!';
+	const ERROR_STRLEN_LESS_THAN_FOUR = 'Input must be atleast 4 characters in length!';
+	const ERROR_STRLEN_LESS_THAN_EIGHT = 'Input must be atleast 8 characters in length!';
+	const ERROR_ACTIVATION_STRLEN_NOT_THIRTY_TWO = 'Activation code must be 32 characters in length!';
 	
-	/*
-	 * Compiled Functions
+	/**
+	 * Validates a userName.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
 	 */
-	
-	// Validates a username.
 	public function userName($content) {
 		$errorMessage = null;
 		
@@ -35,7 +49,12 @@ class Validation {
 		}
 	}
 	
-	// Validates an email.
+	/**
+	 * Validates an email address.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function email($content) {
 		$errorMessage = null;
 		
@@ -55,7 +74,12 @@ class Validation {
 		}
 	}
 	
-	// Validates a password.
+	/**
+	 * Validates a password.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function password($content) {
 		$errorMessage = null;
 		
@@ -75,17 +99,28 @@ class Validation {
 		}
 	}
 	
-	// Compares two passwords
+	/**
+	 * Compares two passwords.
+	 *
+	 * @param unknown $password1        	
+	 * @param unknown $password2        	
+	 * @throws ValidationException
+	 */
 	public function comparePasswords($password1, $password2) {
 		$errorMessage = null;
 		
 		if (strcmp ( $password1, $password2 ) != 0) {
-			$errorMessage = 'Password Error: Passwords do not match!';
+			$errorMessage = self::ERROR_PASSWORDS_NOT_MATCH;
 			throw new ValidationException ( $errorMessage );
 		}
 	}
 	
-	// Validates a date.
+	/**
+	 * Validates a date.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function confirmDate($content) {
 		$errorMessage = null;
 		
@@ -105,73 +140,118 @@ class Validation {
 	}
 	
 	/*
-	 * Base Functions.
+	 * Base Methods.
 	 */
 	
-	// Tests for an empty field.
+	/**
+	 * Tests for an empty field.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function emptyField($content) {
 		if (strlen ( $content ) == 0) {
-			throw new ValidationException ( 'Input is required!' );
+			throw new ValidationException ( self::ERROR_FIELD_EMPTY );
 		}
 	}
 	
-	// Tests for a number.
+	/**
+	 * Tests for a number.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function number($content) {
 		if (! is_numeric ( $content ) && strlen ( $content ) > 0) {
-			throw new ValidationException ( 'Input must be a number!' );
+			throw new ValidationException ( self::ERROR_NOT_NUMBER );
 		}
 	}
 	
-	// Tests for a number greater than zero.
+	/**
+	 * Tests for a number greater than zero.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function numberGreaterThanZero($content) {
 		if (is_numeric ( $content ) && $content < 1) {
-			throw new ValidationException ( 'Number must be greater than zero!' );
+			throw new ValidationException ( self::ERROR_NOT_ZERO );
 		}
 	}
 	
-	// Tests for at least one upper case character.
-	// At least one lower case character.
-	// At least one digit.
-	// At least eight characters long.
+	/**
+	 * Tests for at least one upper case character.
+	 * At least one lower case character.
+	 * At least one digit.
+	 * At least eight characters long.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function oneUpperOneLowerOneDigitGreaterEight($content) {
 		if (! preg_match ( '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}+$/', $content )) {
-			throw new ValidationException ( 'Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' );
+			throw new ValidationException ( self::ERROR_UPPER_LOWER_NUMBER );
 		}
 	}
 	
-	// Tests that input is alphanumeric.
+	/**
+	 * Tests that input is alphanumeric.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function alphaNumeric($content) {
 		$content = preg_replace ( '/\s+/', '', $content );
 		
 		if (! ctype_alnum ( $content ) && strlen ( $content ) > 0) {
-			throw new ValidationException ( 'Input must be a alphanumeric!' );
+			throw new ValidationException ( self::ERROR_NOT_ALPHANUMERIC );
 		}
 	}
 	
-	// Tests that input contains letters only.
+	/**
+	 * Tests that input contains letters only.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function alpha($content) {
 		$content = preg_replace ( '/\s+/', '', $content );
 		
 		if (! ctype_alpha ( $content ) && strlen ( $content ) > 0) {
-			throw new ValidationException ( 'Input must consist of letters only!' );
+			throw new ValidationException ( self::ERROR_NOT_ALPHA );
 		}
 	}
 	
-	// Tests that the input only contains numbers or hyphens.
+	/**
+	 * Tests that the input only contains numbers or hyphens.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function numberHyphen($content) {
 		if (! preg_match ( '/^[0-9-]+$/', $content )) {
-			throw new ValidationException ( 'Must only consist of numbers and/or hyphens!' );
+			throw new ValidationException ( self::ERROR_NOT_NUMBER_OR_HYPHEN );
 		}
 	}
 	
-	// Tests that input is a date.
+	/**
+	 * Tests that input is a date.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function isDate($content) {
 		if (! $this->validateDate ( $content, 'Y-m-d' ) && strlen ( $content ) > 0) {
-			throw new ValidationException ( 'Input must be valid date!' );
+			throw new ValidationException ( self::ERROR_NOT_DATE );
 		}
 	}
 	
-	// Tests that the date is either today or a future date.
+	/**
+	 * Tests that the date is either today or a future date.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function notPastDate($content) {
 		$date = date_create ( $content );
 		$paymentDate = date_format ( $date, 'Yz' );
@@ -181,41 +261,69 @@ class Validation {
 		$currentDate = intval ( $currentDate );
 		
 		if ($paymentDate < $currentDate) {
-			throw new ValidationException ( 'Date must be todays date or a future date!' );
+			throw new ValidationException ( self::ERROR_NOT_TODAY_OR_FUTURE );
 		}
 	}
 	
-	// From PHP Manual
+	/**
+	 * Validates a date.
+	 * From PHP Manual.
+	 *
+	 * @param unknown $date        	
+	 * @param unknown $format        	
+	 * @return boolean
+	 */
 	public function validateDate($date, $format) {
 		$d = DateTime::createFromFormat ( $format, $date );
 		return $d && $d->format ( $format ) == $date;
 	}
 	
-	// Tests for valid email address
+	/**
+	 * Validates an email address.
+	 * From PHP Manual.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function validateEmail($content) {
 		if (! filter_var ( $content, FILTER_VALIDATE_EMAIL )) {
-			throw new ValidationException ( 'Email address must be valid!' );
+			throw new ValidationException ( self::ERROR_EMAIL_NOT_VALID );
 		}
 	}
 	
-	// Tests for string length atleast 4 characters long.
+	/**
+	 * Tests for string length atleast 4 characters long.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function atLeastFour($content) {
 		if (strlen ( $content ) < 4) {
-			throw new ValidationException ( 'Input must be atleast 4 characters in length!' );
+			throw new ValidationException ( self::ERROR_STRLEN_LESS_THAN_FOUR );
 		}
 	}
 	
-	// Tests for string length atleast 8 characters long.
+	/**
+	 * Tests for string length atleast 8 characters long.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function atLeastEight($content) {
 		if (strlen ( $content ) < 8) {
-			throw new ValidationException ( 'Input must be atleast 8 characters in length!' );
+			throw new ValidationException ( ERROR_STRLEN_LESS_THAN_EIGHT );
 		}
 	}
 	
-	// Tests for string length 32 characters long.
+	/**
+	 * Tests for string length 32 characters long.
+	 *
+	 * @param unknown $content        	
+	 * @throws ValidationException
+	 */
 	public function activation($content) {
 		if (strlen ( $content ) != 32) {
-			throw new ValidationException ( 'Activation code must the 32 characters in length!' );
+			throw new ValidationException ( self::ERROR_ACTIVATION_STRLEN_NOT_THIRTY_TWO );
 		}
 	}
 }

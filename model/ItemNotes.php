@@ -13,13 +13,11 @@
  * @property integer $_itemID;
  * @property integer $_noteID;
  */
-
 class ItemNotes {
-	private $_item_noteID= 0;
-	private $_itemID= 0;
-	private $_noteID= 0;
+	private $_item_noteID = 0;
+	private $_itemID = 0;
+	private $_noteID = 0;
 	private $db;
-	
 	const ERROR_ITEM_NOTE_ID_NOT_EXIST = 'The ItemNoteID does not exist!';
 	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
 	const ERROR_NOTE_ID_NOT_EXIST = 'The NoteID does not exist!';
@@ -28,9 +26,8 @@ class ItemNotes {
 	
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
-
 		$this->db = $pdo;
-
+		
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -51,14 +48,14 @@ class ItemNotes {
 	 * First confirms that the object exists in the database.
 	 * It then retrieves the attributes from the database. The attributes are set and
 	 * the object returned.
-	 * 
+	 *
 	 * @throws ModelException
 	 * @return ItemNotes
 	 */
 	public function get(): ItemNotes {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Item_notes WHERE item_noteID = :item_noteID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':item_noteID', $this->_item_noteID );
 			$stmt->execute ();
@@ -67,28 +64,29 @@ class ItemNotes {
 			$this->_noteID = $row ['noteID'];
 			return $this;
 		} else {
-			throw new ModelException ( self::ERROR_ITEM_NOTE_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_ITEM_NOTE_ID_NOT_EXIST );
 		}
 	}
 	
 	/**
-	 * if itemID and/or noteID are invalid a ModelException is thrown.  If not,
+	 * if itemID and/or noteID are invalid a ModelException is thrown.
+	 * If not,
 	 * a the database is checked to ensure the combination doesn't already exist.
-	 * If it does, the item_noteID of that entry is returned.  If not, the data is
+	 * If it does, the item_noteID of that entry is returned. If not, the data is
 	 * entered into the database and the newly created item_noteID is returned.
-	 * 
+	 *
 	 * @throws ModelException
 	 * @return int
 	 */
 	public function set(): int {
-		$i = new Item($this->db);
+		$i = new Item ( $this->db );
 		$i->itemID = $this->_itemID;
-		$n = new Note($this->db);
+		$n = new Note ( $this->db );
 		$n->noteID = $this->_noteID;
 		
-		if($i->exists()){
-			if($n->exists()){
-				if(!$this->existsNoteID()){
+		if ($i->exists ()) {
+			if ($n->exists ()) {
+				if (! $this->existsNoteID ()) {
 					$query = "SELECT * FROM Item_notes
 					WHERE itemID = :itemID
 					AND noteID = :noteID";
@@ -97,7 +95,7 @@ class ItemNotes {
 					$stmt->bindParam ( ':itemID', $this->_itemID );
 					$stmt->bindParam ( ':noteID', $this->_noteID );
 					$stmt->execute ();
-					if($stmt->rowCount() > 0){
+					if ($stmt->rowCount () > 0) {
 						$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 						$this->_item_noteID = $row ['item_noteID'];
 						return $this->_item_noteID;
@@ -118,44 +116,45 @@ class ItemNotes {
 						}
 					}
 				} else {
-					throw new ModelException(self::ERROR_NOTE_ID_ALREADY_EXIST);
+					throw new ModelException ( self::ERROR_NOTE_ID_ALREADY_EXIST );
 				}
 			} else {
-				throw new ModelException(self::ERROR_NOTE_ID_NOT_EXIST);
+				throw new ModelException ( self::ERROR_NOTE_ID_NOT_EXIST );
 			}
 		} else {
-			throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
 		}
 	}
 	
 	/**
-	 * First the existence of the item_noteID is confirmed.  If it exists, the
-	 * validity of both the itemID and noteID are checked.  If either are found
+	 * First the existence of the item_noteID is confirmed.
+	 * If it exists, the
+	 * validity of both the itemID and noteID are checked. If either are found
 	 * to be invalid, the update is carried out with the original values.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function update(): bool {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Item_notes WHERE item_noteID = :item_noteID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':item_noteID', $this->_item_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
-			$i = new Item($this->db);
+			$i = new Item ( $this->db );
 			$i->itemID = $this->_itemID;
-			$n = new Note($this->db);
+			$n = new Note ( $this->db );
 			$n->noteID = $this->_noteID;
 			
-			if (!$i->exists()) {
+			if (! $i->exists ()) {
 				$this->_itemID = $row ['itemID'];
 			}
-			if (!$n->exists()) {
+			if (! $n->exists ()) {
 				$this->_noteID = $row ['noteID'];
-			} elseif($this->existsNoteID()){
+			} elseif ($this->existsNoteID ()) {
 				$this->_noteID = $row ['noteID'];
 			}
 			
@@ -163,7 +162,7 @@ class ItemNotes {
 						SET itemID = :itemID,
 							noteID = :noteID
 						WHERE item_noteID = :item_noteID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':item_noteID', $this->_item_noteID );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
@@ -177,14 +176,14 @@ class ItemNotes {
 	
 	/**
 	 * Deletes the ItemNote from the database.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function delete(): bool {
 		$v = new Validation ();
 		
 		try {
-			$v->emptyField($this->_item_noteID);
+			$v->emptyField ( $this->_item_noteID );
 			
 			if ($this->exists ()) {
 				$query = "DELETE FROM Item_notes
@@ -199,22 +198,22 @@ class ItemNotes {
 					return false;
 				}
 			} else {
-				throw new ModelException(self::ERROR_ITEM_NOTE_ID_NOT_EXIST);
+				throw new ModelException ( self::ERROR_ITEM_NOTE_ID_NOT_EXIST );
 			}
-		} catch (ValidationException $e) {
-			throw new ModelException($e->getMessage());
+		} catch ( ValidationException $e ) {
+			throw new ModelException ( $e->getMessage () );
 		}
 	}
 	
 	/**
 	 * Confirms the existence of the ItemNote in the database.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function exists(): bool {
 		if ($this->_item_noteID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Item_notes WHERE item_noteID = :item_noteID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':item_noteID', $this->_item_noteID );
 			$stmt->execute ();
@@ -235,15 +234,15 @@ class ItemNotes {
 	 * @return bool
 	 */
 	public function existsNoteID(): bool {
-		$n = new Note($this->db);
-		$n->noteID = $this->_noteID; 
-		if($n->exists()){ 
+		$n = new Note ( $this->db );
+		$n->noteID = $this->_noteID;
+		if ($n->exists ()) {
 			$query = "SELECT COUNT(*) AS numRows FROM Item_notes WHERE noteID = :noteID";
 			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':noteID', $this->_noteID );
 			$stmt->execute ();
-			$row = $stmt->fetch ( PDO::FETCH_ASSOC ); 
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			if ($row ['numRows'] > 0) {
 				return true;
 			} else {
@@ -260,9 +259,9 @@ class ItemNotes {
 	 * @return bool
 	 */
 	public function existsItemID(): bool {
-		$i = new Item($this->db);
+		$i = new Item ( $this->db );
 		$i->itemID = $this->_itemID;
-		if($i->exists()){
+		if ($i->exists ()) {
 			$query = "SELECT COUNT(*) AS numRows FROM Item_notes WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
@@ -281,14 +280,14 @@ class ItemNotes {
 	
 	/**
 	 * Counts the number of notes for an item.
-	 * 
+	 *
 	 * @return int
 	 */
 	public function count(): int {
-		$i = new Item($this->db);
+		$i = new Item ( $this->db );
 		$i->itemID = $this->_itemID;
 		
-		if($i->exists()){
+		if ($i->exists ()) {
 			$query = "SELECT COUNT(*) as num
 							FROM Item_notes
 							WHERE itemID = :itemID";
@@ -306,31 +305,30 @@ class ItemNotes {
 	/**
 	 * Retrieves all noteID's for an item and returns them as an
 	 * array of itemNote Objects.
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getItemNotes(): array {
-		
-		$objects = array();
-		$i = new Item($this->db);
+		$objects = array ();
+		$i = new Item ( $this->db );
 		$i->itemID = $this->_itemID;
 		
-		if($i->exists()){
+		if ($i->exists ()) {
 			$query = "SELECT * FROM Item_notes WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
-			while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-				$itemNote = new ItemNotes($this->db);
+			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+				$itemNote = new ItemNotes ( $this->db );
 				$itemNote->item_noteID = $row ['item_noteID'];
 				$itemNote->itemID = $row ['itemID'];
 				$itemNote->noteID = $row ['noteID'];
 				
-				$objects[] = $itemNote;
+				$objects [] = $itemNote;
 			}
 		} else {
-			throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
 		}
 		return $objects;
 	}
@@ -338,14 +336,14 @@ class ItemNotes {
 	/**
 	 * Retrieves an ItemID for a note and returns it as an itemNote
 	 * Object.
-	 * 
+	 *
 	 * @return ItemNotes
 	 */
 	public function getItemNote(): ItemNotes {
-		$n = new Note($this->db);
+		$n = new Note ( $this->db );
 		$n->noteID = $this->_noteID;
 		
-		if($n->exists()){
+		if ($n->exists ()) {
 			$query = "SELECT * FROM Item_notes WHERE noteID = :noteID";
 			
 			$stmt = $this->db->prepare ( $query );
@@ -355,22 +353,21 @@ class ItemNotes {
 			$this->_item_noteID = $row ['item_noteID'];
 			$this->_itemID = $row ['itemID'];
 		} else {
-			throw new ModelException(self::ERROR_NOTE_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_NOTE_ID_NOT_EXIST );
 		}
 		return $this;
 	}
 	
 	/**
 	 * Deletes an ItemNote based on a noteID.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function deleteItemNote(): bool {
-		
-		$n = new Note($this->db);
+		$n = new Note ( $this->db );
 		$n->noteID = $this->_noteID;
 		
-		if($n->exists()){
+		if ($n->exists ()) {
 			
 			$query = "DELETE FROM Item_notes
 					WHERE noteID = :noteID";
@@ -378,8 +375,8 @@ class ItemNotes {
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':noteID', $this->_noteID );
 			$stmt->execute ();
-			if($stmt->rowCount() > 0){
-				if($n->delete()){
+			if ($stmt->rowCount () > 0) {
+				if ($n->delete ()) {
 					return true;
 				} else {
 					return false;
@@ -388,7 +385,7 @@ class ItemNotes {
 				return false;
 			}
 		} else {
-			throw new ModelException(self::ERROR_NOTE_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_NOTE_ID_NOT_EXIST );
 		}
 	}
 	
@@ -398,31 +395,32 @@ class ItemNotes {
 	 * @return boolean
 	 */
 	public function deleteItemNotes(): bool {
-		
-		if($this->existsItemID()){
-		
-			$itemNotes = $this->getItemNotes();
+		if ($this->existsItemID ()) {
 			
-			foreach($itemNotes as $itemNote){
-				$note = new Note($this->db);
+			$itemNotes = $this->getItemNotes ();
+			
+			foreach ( $itemNotes as $itemNote ) {
+				$note = new Note ( $this->db );
 				$note->noteID = $itemNote->noteID;
-				if($itemNote->delete()){
+				if ($itemNote->delete ()) {
 					try {
-						$note->delete();
-					} catch (ModelException $e) {
-						throw new ModelException($e->getMessage());
+						$note->delete ();
+					} catch ( ModelException $e ) {
+						throw new ModelException ( $e->getMessage () );
 					}
 				} else {
-					throw new ModelException(self::ERROR_ITEM_NOTE_NOT_DELETED);
+					throw new ModelException ( self::ERROR_ITEM_NOTE_NOT_DELETED );
 				}
 			}
 			return true;
 		} else {
-			throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
 		}
 	}
 	
-	// Display Object Contents
+	/**
+	 * Display Object Contents
+	 */
 	public function printf() {
 		echo '<br /><strong>Note Object:</strong><br />';
 		

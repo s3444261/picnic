@@ -12,6 +12,12 @@ include __DIR__ . "/../../../../../dbPicnic.php";
 
 class TestPDO extends PDO {
 	private static $instance;
+	
+	/**
+	 * Singleton
+	 * 
+	 * @return TestPDO
+	 */
 	public static function getInstance() {
 		if (! isset ( self::$instance )) {
 
@@ -30,6 +36,11 @@ class TestPDO extends PDO {
 		return self::$instance;
 	}
 
+	/**
+	 * Creates the Test Database and a User.
+	 * 
+	 * @return boolean
+	 */
 	public static function CreateTestDatabaseAndUser() {
 
 		TestPDO::CleanUp();
@@ -51,6 +62,9 @@ class TestPDO extends PDO {
 		return true;
 	}
 
+	/**
+	 * Deletes the Test Database
+	 */
 	public static function CleanUp() {
 		$rootPDO =  new PDO ( 'mysql:host=' . getenv("DB_HOST") , getenv("ADMIN_DB_USER"), getenv("ADMIN_DB_PW"));
 

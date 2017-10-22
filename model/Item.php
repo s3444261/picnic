@@ -6,8 +6,7 @@
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
  * @author Edwan Putro <edwanhp@gmail.com>
  */
-
-require_once dirname(__FILE__) . '/ModelException.php';
+require_once dirname ( __FILE__ ) . '/ModelException.php';
 
 /**
  *
@@ -21,7 +20,6 @@ require_once dirname(__FILE__) . '/ModelException.php';
  * @property string $_created_at;
  * @property string $_updated_at;
  */
-
 class Item {
 	private $_itemID = 0;
 	private $_title = '';
@@ -33,15 +31,13 @@ class Item {
 	private $_created_at;
 	private $_updated_at;
 	private $db;
-	
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
 	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
-
+	
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
-
 		$this->db = $pdo;
-
+		
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -59,17 +55,18 @@ class Item {
 	}
 	
 	/**
-	 * First confirms the item object exists in the database.  If it doesn't, an
-	 * exception is thrown.  If it does exsit, it retrieves the attributes from the database.
+	 * First confirms the item object exists in the database.
+	 * If it doesn't, an
+	 * exception is thrown. If it does exsit, it retrieves the attributes from the database.
 	 * The attributes are set and returnes+.
-	 * 
+	 *
 	 * @throws ModelException
 	 * @return Item
 	 */
 	public function get(): Item {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Items WHERE itemID = :itemID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
@@ -84,22 +81,22 @@ class Item {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new ModelException ( self::ERROR_ITEM_NOT_EXIST);
+			throw new ModelException ( self::ERROR_ITEM_NOT_EXIST );
 		}
 	}
 	
 	/**
 	 * Checks that at a bare minimum the title has been completed.
-	 * If so, inserts the item into the database.  If not, throws an
+	 * If so, inserts the item into the database. If not, throws an
 	 * exception.
-	 * 
+	 *
 	 * @throws ModelException
 	 * @return int
 	 */
 	public function set(): int {
-		$v = new Validation();
+		$v = new Validation ();
 		try {
-			$v->emptyField($this->title);
+			$v->emptyField ( $this->title );
 			$query = "INSERT INTO Items
 						SET title = :title,
 							description = :description,
@@ -108,7 +105,7 @@ class Item {
 							price = :price,
 							itemStatus = :status,
 							created_at = NULL";
-	
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':title', $this->_title );
 			$stmt->bindParam ( ':description', $this->_description );
@@ -123,15 +120,16 @@ class Item {
 			} else {
 				return 0;
 			}
-		} catch (ValidationException $e) {
-			throw new ModelException($e->getMessage());
+		} catch ( ValidationException $e ) {
+			throw new ModelException ( $e->getMessage () );
 		}
 	}
 	
 	/**
-	 * Confirms the item exists in the database.  If it does, any modified
+	 * Confirms the item exists in the database.
+	 * If it does, any modified
 	 * attributes are updated.
-	 * 
+	 *
 	 * @throws ModelException
 	 * @return bool
 	 */
@@ -139,7 +137,7 @@ class Item {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Items WHERE itemID = :itemID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
@@ -172,7 +170,7 @@ class Item {
 							price = :price,
 							itemStatus = :status
 						WHERE itemID = :itemID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->bindParam ( ':title', $this->_title );
@@ -184,46 +182,47 @@ class Item {
 			$stmt->execute ();
 			return true;
 		} else {
-			throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
 		}
 	}
 	
 	/**
-	 * Checks the item exsits in the database.  If it does, it is
+	 * Checks the item exsits in the database.
+	 * If it does, it is
 	 * deleted and true is returned.
-	 * 
+	 *
 	 * @throws ModelException
 	 * @return bool
 	 */
-	public function delete(): bool{
+	public function delete(): bool {
 		if ($this->exists ()) {
 			
 			$query = "DELETE FROM Items
 						WHERE itemID = :itemID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
-			if (! $this->exists ()) { 
+			if (! $this->exists ()) {
 				return true;
 			} else {
 				return false;
 			}
 		} else {
-			throw new ModelException(self::ERROR_ITEM_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
 		}
 	}
 	
 	/**
 	 * Checks to see if the itemID exists in the database, if it does
 	 * true is returned.
-	 * 
+	 *
 	 * @return bool
 	 */
-	public function exists(): bool{
+	public function exists(): bool {
 		if ($this->_itemID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Items WHERE itemID = :itemID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
@@ -238,7 +237,9 @@ class Item {
 		}
 	}
 	
-	// Display Object Contents
+	/**
+	 * Display Object Contents
+	 */
 	public function printf() {
 		echo '<br /><strong>Item Object:</strong><br />';
 		

@@ -29,7 +29,7 @@ class UserRatings {
 	private $_updated_at;
 	private $db;
 	
-	/*
+	/**
 	 * The sellrating is the rating of a buyer made by the seller.
 	 * 
 	 * The userID listed above is the userID of the buyer.
@@ -318,6 +318,12 @@ class UserRatings {
 		}
 	}
 	
+	/**
+	 * Adds a Buyer Rating for a Seller
+	 * 
+	 * @throws ModelException
+	 * @return bool
+	 */
 	public function addBuyerRating(): bool {
 		if(strlen($this->_transaction) <= 32 && strlen($this->_transaction) > 0){
 			if($this->_buyrating > 0  && $this->_buyrating < 6){
@@ -344,6 +350,13 @@ class UserRatings {
 		}
 	}
 	
+	/**
+	 * Retrieves a Users Rating stats.
+	 * 
+	 * @param User $user
+	 * @throws ModelException
+	 * @return array
+	 */
 	public function getStats(User $user): array {
 		try {
 			if($user->exists()){ 
@@ -397,16 +410,21 @@ class UserRatings {
 		}
 	}
 	
-	/*
+	/**
 	 * Generate a random transaction code.
+	 * 
+	 * @return string
 	 */
 	private function transactionCode(): string {
 		date_default_timezone_set ( 'UTC' );
 		return md5 ( strtotime ( "now" ) . $this->_itemID . $this->_sellrating );
 	}
 	
-	// Display Object Contents
-	public function printf() {
+	/**
+	 * Display Object Contents
+	 * 
+	 */
+	public function printf(): void {
 		echo '<br /><strong>UserRatings Object:</strong><br />';
 		
 		if ($this->_id) {

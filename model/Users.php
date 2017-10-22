@@ -31,8 +31,13 @@ class Users {
 		$this->$name = $value;
 	}
 	
-	/*
+	/**
 	 * Retrieves all users that haven't been deleted.
+	 * 
+	 * @param int $pageNumber
+	 * @param int $usersPerPage
+	 * @throws ModelException
+	 * @return array
 	 */
 	public function getUsers(int $pageNumber, int $usersPerPage): array {
 		

@@ -32,15 +32,15 @@
  * get(): ItemComments
  * -- testGetItemCommentsNoItemCommentsId(): void
  * -- testGetItemCommentsInvalidItemCommentsId(): void
- * -- testGetItemCommentsValidItemCommentsId(): 
- * 
+ * -- testGetItemCommentsValidItemCommentsId():
+ *
  * set(): int
  * -- testSetItemCommentsEmpty(): void
  * -- testSetItemCommentsInvalidItemId(): void
  * -- testSetItemCommentsInvalidCommentId(): void
  * -- testSetItemCommentsExistingCommentId(): void
  * -- testSetItemCommentsSuccess(): void
- * 
+ *
  * update(): bool
  * -- testUpdateItemCommentsNoItemCommentsId(): void
  * -- testUpdateItemCommentsInvalidItemCommentsId(): void
@@ -48,67 +48,64 @@
  * -- testUpdateItemCommentsInvalidCommentId(): void
  * -- testUpdateItemCommentsExistingCommentId(): void
  * -- testUpdateItemCommentsSuccess(): void
- * 
+ *
  * delete(): bool
  * -- testDeleteItemCommentsItemCommentsIdEmpty(): void
  * -- testDeleteItemCommentsItemCommentsIdInvalid(): void
  * -- testDeleteItemCommentsItemCommentsIdValid(): void
- * 
+ *
  * exists(): bool
  * -- testExistsItemCommentsItemCommentsIdEmpty(): void
  * -- testExistsItemCommentsItemCommentsIdInvalid(): void
  * -- testExistsItemCommentsItemCommentsIdValid(): void
- * 
+ *
  * existsCommentID(): bool
  * -- testExistsItemCommentsCommentIdEmpty(): void
  * -- testExistsItemCommentsCommentIdInvalid(): void
  * -- testExistsItemCommentsCommentIdValid(): void
- * 
+ *
  * count(): int
  * -- testCountItemIdEmpty(): void
  * -- testCountItemIdInvalid(): void
  * -- testCountItemIdValid(): void
- * 
+ *
  * getItemComments(): array
  * -- testGetItemCommentsItemIdEmpty(): void
  * -- testGetItemCommentsItemIdInvalid(): void
  * -- testGetItemCommentsItemIdValid(): void
- * 
+ *
  * getItemComment(): ItemComments
  * -- testGetItemCommentCommentIdEmpty(): void
  * -- testGetItemCommentCommentIdInvalid(): void
  * -- testGetItemCommentCommentIdValid(): void
- * 
+ *
  * deleteComment(): bool
  * -- testDeleteCommentCommentIdEmpty(): void
  * -- testDeleteCommentCommentIdInvalid(): void
  * -- testDeleteCommentCommentIdValid(): void
- * 
+ *
  * deleteItem(): bool
  * -- testDeleteItemItemIdEmpty(): void
  * -- testDeleteItemItemIdInvalid(): void
  * -- testDeleteItemItemIdValid(): void
  */
-
-declare(strict_types=1);
+declare ( strict_types = 1 )
+	;
 
 require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
-require_once dirname(__FILE__) . '/../../createDB/DatabaseGenerator.php';
-require_once dirname(__FILE__) . '/../../../model/ItemComments.php';
-require_once dirname(__FILE__) . '/../../../model/Item.php';
-require_once dirname(__FILE__) . '/../../../model/Comment.php';
-require_once dirname(__FILE__) . '/../../../model/User.php';
-require_once dirname(__FILE__) . '/../../../model/Validation.php';
-require_once dirname(__FILE__) . '/../../../model/ModelException.php';
-require_once dirname(__FILE__) . '/../../../model/ValidationException.php';
-
-final class ItemCommentsTest extends PicnicTestCase{
-
-	const ITEM_COMMENT_ID  = 'item_commentID';
-	const ITEM_ID   	= 'itemID';
-	const COMMENT_ID   	= 'commentID';
-	
+require_once dirname ( __FILE__ ) . '/../../createDB/DatabaseGenerator.php';
+require_once dirname ( __FILE__ ) . '/../../../model/ItemComments.php';
+require_once dirname ( __FILE__ ) . '/../../../model/Item.php';
+require_once dirname ( __FILE__ ) . '/../../../model/Comment.php';
+require_once dirname ( __FILE__ ) . '/../../../model/User.php';
+require_once dirname ( __FILE__ ) . '/../../../model/Validation.php';
+require_once dirname ( __FILE__ ) . '/../../../model/ModelException.php';
+require_once dirname ( __FILE__ ) . '/../../../model/ValidationException.php';
+final class ItemCommentsTest extends PicnicTestCase {
+	const ITEM_COMMENT_ID = 'item_commentID';
+	const ITEM_ID = 'itemID';
+	const COMMENT_ID = 'commentID';
 	const USER_ID_1 = 1;
 	const ITEM_COMMENT_ID_1 = 1;
 	const ITEM_ID_1 = 1;
@@ -121,436 +118,418 @@ final class ItemCommentsTest extends PicnicTestCase{
 	const ITEM_ID_3 = 3;
 	const COMMENT_ID_5 = 5;
 	const COMMENT_ID_15 = 15;
-	
 	const ERROR_ITEM_COMMENT_ID_NOT_EXIST = 'The ItemCommentID does not exist!';
 	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
 	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
 	const ERROR_COMMENT_ID_ALREADY_EXIST = 'The CommentID is already in Item_comments!';
-
 	protected function setUp(): void {
 		// Regenerate a fresh database.
-		TestPDO::CreateTestDatabaseAndUser();
-		$pdo = TestPDO::getInstance();
-		DatabaseGenerator::Generate($pdo);
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
 		
-		$user = new User($pdo, ['user' => 'user', 'email' => 'user@gmai.com', 'password' => 'TestTest88']);
+		$user = new User ( $pdo, [ 
+				'user' => 'user',
+				'email' => 'user@gmai.com',
+				'password' => 'TestTest88' 
+		] );
 		try {
-			$user->set();
-		} catch (ModelException $e) {}
+			$user->set ();
+		} catch ( ModelException $e ) {
+		}
 		
 		$l = 1;
-		for($i = 1; $i <= 3; $i++){
-			$item = new Item($pdo);
+		for($i = 1; $i <= 3; $i ++) {
+			$item = new Item ( $pdo );
 			$item->title = 'title' . $i;
-			$item->set();
-			for($j = 1; $j <= 5; $j++){
-				$comment = new Comment($pdo);
+			$item->set ();
+			for($j = 1; $j <= 5; $j ++) {
+				$comment = new Comment ( $pdo );
 				$comment->userID = self::USER_ID_1;
 				$comment->comment = 'comment' . $l;
 				try {
-					$comment->set();
-					$itemComment = new ItemComments($pdo);
+					$comment->set ();
+					$itemComment = new ItemComments ( $pdo );
 					$itemComment->itemID = $i;
 					$itemComment->commentID = $l;
 					try {
-						if($itemComment->itemID == 3 && $itemComment->commentID == 15){
+						if ($itemComment->itemID == 3 && $itemComment->commentID == 15) {
 							// Don't set.
 						} else {
-							$itemComment->set();
+							$itemComment->set ();
 						}
-					} catch (ModelException $e) {}
-				} catch (Exception $e) {}
-				$l++;
+					} catch ( ModelException $e ) {
+					}
+				} catch ( Exception $e ) {
+				}
+				$l ++;
 			}
 		}
 	}
-
 	protected function tearDown(): void {
-		TestPDO::CleanUp();
+		TestPDO::CleanUp ();
 	}
-
-	protected function createDefaultSut(){
-		return new ItemComments(TestPDO::getInstance());
+	protected function createDefaultSut() {
+		return new ItemComments ( TestPDO::getInstance () );
 	}
-
-	protected function createSutWithId($id){
-		return new ItemComments(TestPDO::getInstance(), [self::ITEM_COMMENT_ID => $id]);
+	protected function createSutWithId($id) {
+		return new ItemComments ( TestPDO::getInstance (), [ 
+				self::ITEM_COMMENT_ID => $id 
+		] );
 	}
-
 	protected function getValidId() {
 		return 1;
 	}
-
 	protected function getInvalidId() {
 		return 2000;
 	}
-
 	protected function getExpectedAttributesForGet() {
-
-		return [
-			self::ITEM_COMMENT_ID => self::COMMENT_ID_1,
-			self::ITEM_ID => self::ITEM_ID_1,
-			self::COMMENT_ID => self::COMMENT_ID_1
+		return [ 
+				self::ITEM_COMMENT_ID => self::COMMENT_ID_1,
+				self::ITEM_ID => self::ITEM_ID_1,
+				self::COMMENT_ID => self::COMMENT_ID_1 
 		];
 	}
-
 	public function testAttributes(): void {
-		$values = [
+		$values = [ 
 				self::ITEM_COMMENT_ID => self::COMMENT_ID_2,
 				self::ITEM_ID => self::ITEM_ID_2,
-				self::COMMENT_ID => self::COMMENT_ID_2
+				self::COMMENT_ID => self::COMMENT_ID_2 
 		];
-
-		$this->assertAttributesAreSetAndRetrievedCorrectly($values);
+		
+		$this->assertAttributesAreSetAndRetrievedCorrectly ( $values );
 	}
-
+	
 	/*
 	 * get(): ItemComments
-	 */	
+	 */
 	public function testGetItemCommentsNoItemCommentsId(): void {
-		$sut = $this->createDefaultSut();
-		$this->expectExceptionMessage(self::ERROR_ITEM_COMMENT_ID_NOT_EXIST);
-		$sut->get();
+		$sut = $this->createDefaultSut ();
+		$this->expectExceptionMessage ( self::ERROR_ITEM_COMMENT_ID_NOT_EXIST );
+		$sut->get ();
 	}
-	
 	public function testGetItemCommentsInvalidItemCommentsId(): void {
-		$sut = $this->createSutWithId($this->getInvalidId());
-		$this->expectExceptionMessage(self::ERROR_ITEM_COMMENT_ID_NOT_EXIST);
-		$sut->get();
+		$sut = $this->createSutWithId ( $this->getInvalidId () );
+		$this->expectExceptionMessage ( self::ERROR_ITEM_COMMENT_ID_NOT_EXIST );
+		$sut->get ();
 	}
-	
 	public function testGetItemCommentsValidItemCommentsId(): void {
-		$sut = $this->createSutWithId(self::ITEM_COMMENT_ID_2);
+		$sut = $this->createSutWithId ( self::ITEM_COMMENT_ID_2 );
 		try {
-			$sut->get();
-		} catch (ModelException $e) {}
-		$this->assertEquals(self::ITEM_COMMENT_ID_2, $sut->item_commentID);
-		$this->assertEquals(self::ITEM_ID_1, $sut->itemID);
-		$this->assertEquals(self::COMMENT_ID_2, $sut->commentID);
+			$sut->get ();
+		} catch ( ModelException $e ) {
+		}
+		$this->assertEquals ( self::ITEM_COMMENT_ID_2, $sut->item_commentID );
+		$this->assertEquals ( self::ITEM_ID_1, $sut->itemID );
+		$this->assertEquals ( self::COMMENT_ID_2, $sut->commentID );
 	}
 	
 	/*
 	 * set(): int
 	 */
 	public function testSetItemCommentsEmpty(): void {
-		$sut = $this->createDefaultSut();
-		$this->expectExceptionMessage('');
-		$sut->set();
+		$sut = $this->createDefaultSut ();
+		$this->expectExceptionMessage ( '' );
+		$sut->set ();
 	}
-	
 	public function testSetItemCommentsInvalidItemId(): void {
-		$sut = $this->createDefaultSut();
-		$sut->itemID = $this->getInvalidId();
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = $this->getInvalidId ();
 		$sut->commentID = self::COMMENT_ID_5;
-		$this->expectExceptionMessage(self::ERROR_ITEM_ID_NOT_EXIST);
-		$sut->set();
+		$this->expectExceptionMessage ( self::ERROR_ITEM_ID_NOT_EXIST );
+		$sut->set ();
 	}
-	
 	public function testSetItemCommentsInvalidCommentId(): void {
-		$sut = $this->createDefaultSut();
+		$sut = $this->createDefaultSut ();
 		$sut->itemID = self::ITEM_ID_3;
-		$sut->commentID = $this->getInvalidId();
-		$this->expectExceptionMessage(self::ERROR_COMMENT_ID_NOT_EXIST);
-		$sut->set();
+		$sut->commentID = $this->getInvalidId ();
+		$this->expectExceptionMessage ( self::ERROR_COMMENT_ID_NOT_EXIST );
+		$sut->set ();
 	}
-	
 	public function testSetItemCommentsExistingCommentId(): void {
-		$sut = $this->createDefaultSut();
+		$sut = $this->createDefaultSut ();
 		$sut->itemID = self::ITEM_ID_3;
 		$sut->commentID = self::COMMENT_ID_2;
-		$this->expectExceptionMessage(self::ERROR_COMMENT_ID_ALREADY_EXIST);
-		$sut->set();
+		$this->expectExceptionMessage ( self::ERROR_COMMENT_ID_ALREADY_EXIST );
+		$sut->set ();
 	}
-	
 	public function testSetItemCommentsSuccess(): void {
-		$sut = $this->createDefaultSut();
+		$sut = $this->createDefaultSut ();
 		$sut->itemID = self::ITEM_ID_3;
 		$sut->commentID = self::COMMENT_ID_15;
 		try {
-			$sut->item_commentID = $sut->set(); 
-		} catch (ModelException $e) {}
-		$sut = $this->createSutWithId($sut->item_commentID); 
+			$sut->item_commentID = $sut->set ();
+		} catch ( ModelException $e ) {
+		}
+		$sut = $this->createSutWithId ( $sut->item_commentID );
 		try {
-			$sut->get();
-			$this->assertEquals(self::ITEM_COMMENT_ID_15, $sut->item_commentID);
-			$this->assertEquals(self::ITEM_ID_3, $sut->itemID);
-			$this->assertEquals(self::COMMENT_ID_15, $sut->commentID);
-		} catch (ModelException $e) {}
+			$sut->get ();
+			$this->assertEquals ( self::ITEM_COMMENT_ID_15, $sut->item_commentID );
+			$this->assertEquals ( self::ITEM_ID_3, $sut->itemID );
+			$this->assertEquals ( self::COMMENT_ID_15, $sut->commentID );
+		} catch ( ModelException $e ) {
+		}
 	}
 	
 	/*
 	 * update(): bool
 	 */
 	public function testUpdateItemCommentsNoItemCommentsId(): void {
-		$sut = $this->createDefaultSut();
-		$this->assertFalse($sut->update());		
+		$sut = $this->createDefaultSut ();
+		$this->assertFalse ( $sut->update () );
 	}
-	
 	public function testUpdateItemCommentsInvalidItemCommentsId(): void {
-		$sut = $this->createSutWithId($this->getInvalidId());
-		$this->assertFalse($sut->update());	
+		$sut = $this->createSutWithId ( $this->getInvalidId () );
+		$this->assertFalse ( $sut->update () );
 	}
-	
 	public function testUpdateItemCommentsInvalidItemId(): void {
-		$sut = $this->createSutWithId($this->getValidId());
-		$sut->itemID = $this->getInvalidId();
+		$sut = $this->createSutWithId ( $this->getValidId () );
+		$sut->itemID = $this->getInvalidId ();
 		$sut->commentID = self::COMMENT_ID_15;
-		$this->assertTrue($sut->update());
+		$this->assertTrue ( $sut->update () );
 		try {
-			$sut->get();
-		} catch (ModelException $e) {}
-		$this->assertSame('1', $sut->itemID);
-		$this->assertSame('15', $sut->commentID);
+			$sut->get ();
+		} catch ( ModelException $e ) {
+		}
+		$this->assertSame ( '1', $sut->itemID );
+		$this->assertSame ( '15', $sut->commentID );
 	}
-	
 	public function testUpdateItemCommentsInvalidCommentId(): void {
-		$sut = $this->createSutWithId($this->getValidId());
+		$sut = $this->createSutWithId ( $this->getValidId () );
 		$sut->itemID = self::ITEM_ID_2;
-		$sut->commentID = $this->getInvalidId();
-		$this->assertTrue($sut->update());
+		$sut->commentID = $this->getInvalidId ();
+		$this->assertTrue ( $sut->update () );
 		try {
-			$sut->get();
-		} catch (ModelException $e) {}
-		$this->assertSame('2', $sut->itemID);
-		$this->assertSame('1', $sut->commentID);
+			$sut->get ();
+		} catch ( ModelException $e ) {
+		}
+		$this->assertSame ( '2', $sut->itemID );
+		$this->assertSame ( '1', $sut->commentID );
 	}
-	
 	public function testUpdateItemCommentsExistingCommentId(): void {
-		$sut = $this->createSutWithId($this->getValidId());
+		$sut = $this->createSutWithId ( $this->getValidId () );
 		$sut->itemID = self::ITEM_ID_2;
 		$sut->commentID = self::COMMENT_ID_2;
-		$this->assertTrue($sut->update());
+		$this->assertTrue ( $sut->update () );
 		try {
-			$sut->get();
-		} catch (ModelException $e) {}
-		$this->assertSame('2', $sut->itemID);
-		$this->assertSame('1', $sut->commentID);
+			$sut->get ();
+		} catch ( ModelException $e ) {
+		}
+		$this->assertSame ( '2', $sut->itemID );
+		$this->assertSame ( '1', $sut->commentID );
 	}
-	
 	public function testUpdateItemCommentsSuccess(): void {
-		$sut = $this->createSutWithId($this->getValidId());
+		$sut = $this->createSutWithId ( $this->getValidId () );
 		$sut->itemID = self::ITEM_ID_2;
 		$sut->commentID = self::COMMENT_ID_15;
-		$this->assertTrue($sut->update());
+		$this->assertTrue ( $sut->update () );
 		try {
-			$sut->get();
-		} catch (ModelException $e) {}
-		$this->assertSame('2', $sut->itemID);
-		$this->assertSame('15', $sut->commentID);
+			$sut->get ();
+		} catch ( ModelException $e ) {
+		}
+		$this->assertSame ( '2', $sut->itemID );
+		$this->assertSame ( '15', $sut->commentID );
 	}
 	
 	/*
 	 * delete(): bool
 	 */
 	public function testDeleteItemCommentsItemCommentsIdEmpty(): void {
-		$sut = $this->createDefaultSut();
-		$this->expectExceptionMessage(self::ERROR_ITEM_COMMENT_ID_NOT_EXIST);
-		$sut->delete();
+		$sut = $this->createDefaultSut ();
+		$this->expectExceptionMessage ( self::ERROR_ITEM_COMMENT_ID_NOT_EXIST );
+		$sut->delete ();
 	}
-	
 	public function testDeleteItemCommentsItemCommentsIdInvalid(): void {
-		$sut = $this->createSutWithId($this->getInvalidId());
-		$this->expectExceptionMessage(self::ERROR_ITEM_COMMENT_ID_NOT_EXIST);
-		$sut->delete();
+		$sut = $this->createSutWithId ( $this->getInvalidId () );
+		$this->expectExceptionMessage ( self::ERROR_ITEM_COMMENT_ID_NOT_EXIST );
+		$sut->delete ();
+	}
+	public function testDeleteItemCommentsItemCommentsIdValid(): void {
+		$sut = $this->createSutWithId ( self::ITEM_COMMENT_ID_2 );
+		try {
+			$this->assertTrue ( $sut->delete () );
+		} catch ( ModelException $e ) {
+		}
+		$this->expectExceptionMessage ( self::ERROR_ITEM_COMMENT_ID_NOT_EXIST );
+		$sut->get ();
 	}
 	
-	public function testDeleteItemCommentsItemCommentsIdValid(): void {
-		$sut = $this->createSutWithId(self::ITEM_COMMENT_ID_2);
-		try {
-			$this->assertTrue($sut->delete());
-		} catch (ModelException $e) {}		
-		$this->expectExceptionMessage(self::ERROR_ITEM_COMMENT_ID_NOT_EXIST);
-		$sut->get();
-	}
-	 
 	/*
 	 * exists(): bool
 	 */
 	public function testExistsItemCommentsItemCommentsIdEmpty(): void {
-		$sut = $this->createDefaultSut();
-		$this->assertFalse($sut->exists());
+		$sut = $this->createDefaultSut ();
+		$this->assertFalse ( $sut->exists () );
 	}
-	
 	public function testExistsItemCommentsItemCommentsIdInvalid(): void {
-		$sut = $this->createSutWithId($this->getInvalidId());
-		$this->assertFalse($sut->exists());
+		$sut = $this->createSutWithId ( $this->getInvalidId () );
+		$this->assertFalse ( $sut->exists () );
 	}
-	
 	public function testExistsItemCommentsItemCommentsIdValid(): void {
-		$sut = $this->createSutWithId(self::COMMENT_ID_2);
-		$this->assertTrue($sut->exists());
+		$sut = $this->createSutWithId ( self::COMMENT_ID_2 );
+		$this->assertTrue ( $sut->exists () );
 	}
 	
 	/*
 	 * existsCommentID(): bool
 	 */
 	public function testExistsItemCommentsCommentIdEmpty(): void {
-		$sut = $this->createDefaultSut();
-		$this->assertFalse($sut->existsCommentID());
+		$sut = $this->createDefaultSut ();
+		$this->assertFalse ( $sut->existsCommentID () );
 	}
-	
 	public function testExistsItemCommentsCommentIdInvalid(): void {
-		$sut = $this->createDefaultSut();
-		$sut->commentID = $this->getInvalidId();
-		$this->assertFalse($sut->existsCommentID());
+		$sut = $this->createDefaultSut ();
+		$sut->commentID = $this->getInvalidId ();
+		$this->assertFalse ( $sut->existsCommentID () );
 	}
-	
 	public function testExistsItemCommentsCommentIdValid(): void {
-		$sut = $this->createDefaultSut();
-		$sut->commentID = $this->getValidId(); 
-		$this->assertTrue($sut->existsCommentID());
+		$sut = $this->createDefaultSut ();
+		$sut->commentID = $this->getValidId ();
+		$this->assertTrue ( $sut->existsCommentID () );
 	}
 	
 	/*
 	 * existsItemID(): bool
 	 */
 	public function testExistsItemCommentsItemIdEmpty(): void {
-		$sut = $this->createDefaultSut();
-		$this->assertFalse($sut->existsItemID());
+		$sut = $this->createDefaultSut ();
+		$this->assertFalse ( $sut->existsItemID () );
 	}
-	
 	public function testExistsItemCommentsItemIdInvalid(): void {
-		$sut = $this->createDefaultSut();
-		$sut->itemID = $this->getInvalidId();
-		$this->assertFalse($sut->existsItemID());
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = $this->getInvalidId ();
+		$this->assertFalse ( $sut->existsItemID () );
 	}
-	
 	public function testExistsItemCommentsItemIdValid(): void {
-		$sut = $this->createDefaultSut();
-		$sut->itemID = $this->getValidId();
-		$this->assertTrue($sut->existsItemID());
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = $this->getValidId ();
+		$this->assertTrue ( $sut->existsItemID () );
 	}
 	
 	/*
 	 * count(): int
 	 */
 	public function testCountItemIdEmpty(): void {
-		$sut = $this->createDefaultSut();
-		$this->assertEquals(0, $sut->count());
+		$sut = $this->createDefaultSut ();
+		$this->assertEquals ( 0, $sut->count () );
 	}
-	
 	public function testCountItemIdInvalid(): void {
-		$sut = $this->createDefaultSut();
-		$sut->itemID = $this->getInvalidId();
-		$this->assertEquals(0, $sut->count());
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = $this->getInvalidId ();
+		$this->assertEquals ( 0, $sut->count () );
 	}
-	
 	public function testCountItemIdValid(): void {
-		$sut = $this->createDefaultSut();
-		$sut->itemID = $this->getValidId();
-		$this->assertEquals(5, $sut->count());
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = $this->getValidId ();
+		$this->assertEquals ( 5, $sut->count () );
 	}
 	
 	/*
 	 * getItemComments(): array
 	 */
 	public function testGetItemCommentsItemIdEmpty(): void {
-		$sut = $this->createDefaultSut();
-		$this->expectExceptionMessage(self::ERROR_ITEM_ID_NOT_EXIST);
-		$sut->getItemComments();
+		$sut = $this->createDefaultSut ();
+		$this->expectExceptionMessage ( self::ERROR_ITEM_ID_NOT_EXIST );
+		$sut->getItemComments ();
 	}
-	
 	public function testGetItemCommentsItemIdInvalid(): void {
-		$sut = $this->createDefaultSut();
-		$sut->itemID = $this->getInvalidId();
-		$this->expectExceptionMessage(self::ERROR_ITEM_ID_NOT_EXIST);
-		$sut->getItemComments();
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = $this->getInvalidId ();
+		$this->expectExceptionMessage ( self::ERROR_ITEM_ID_NOT_EXIST );
+		$sut->getItemComments ();
 	}
-	
 	public function testGetItemCommentsItemIdValid(): void {
-		$sut = $this->createDefaultSut();
+		$sut = $this->createDefaultSut ();
 		$sut->itemID = self::ITEM_ID_2;
 		try {
 			$i = 6;
-			foreach($sut->getItemComments() as $obj){
-				$this->assertEquals($i, $obj->item_commentID);
-				$this->assertEquals(2, $obj->itemID);
-				$this->assertEquals($i, $obj->commentID);
-				$i++;
+			foreach ( $sut->getItemComments () as $obj ) {
+				$this->assertEquals ( $i, $obj->item_commentID );
+				$this->assertEquals ( 2, $obj->itemID );
+				$this->assertEquals ( $i, $obj->commentID );
+				$i ++;
 			}
-		} catch (ModelException $e) {}
+		} catch ( ModelException $e ) {
+		}
 	}
 	
 	/*
 	 * getItemComment(): ItemComments
 	 */
 	public function testGetItemCommentCommentIdEmpty(): void {
-		$sut = $this->createDefaultSut();
-		$this->expectExceptionMessage(self::ERROR_COMMENT_ID_NOT_EXIST);
-		$sut->getItemComment();
+		$sut = $this->createDefaultSut ();
+		$this->expectExceptionMessage ( self::ERROR_COMMENT_ID_NOT_EXIST );
+		$sut->getItemComment ();
 	}
-	
 	public function testGetItemCommentCommentIdInvalid(): void {
-		$sut = $this->createDefaultSut();
-		$sut->commentID = $this->getInvalidId();
-		$this->expectExceptionMessage(self::ERROR_COMMENT_ID_NOT_EXIST);
-		$sut->getItemComment();
+		$sut = $this->createDefaultSut ();
+		$sut->commentID = $this->getInvalidId ();
+		$this->expectExceptionMessage ( self::ERROR_COMMENT_ID_NOT_EXIST );
+		$sut->getItemComment ();
 	}
-	
 	public function testGetItemCommentCommentIdValid(): void {
-		$sut = $this->createDefaultSut();
+		$sut = $this->createDefaultSut ();
 		$sut->commentID = self::COMMENT_ID_2;
 		try {
-			$obj = $sut->getItemComment();
-			$this->assertEquals(2, $obj->item_commentID);
-			$this->assertEquals(1, $obj->itemID);
-			$this->assertEquals(2, $obj->commentID);
-		} catch (ModelException $e) {}
+			$obj = $sut->getItemComment ();
+			$this->assertEquals ( 2, $obj->item_commentID );
+			$this->assertEquals ( 1, $obj->itemID );
+			$this->assertEquals ( 2, $obj->commentID );
+		} catch ( ModelException $e ) {
+		}
 	}
 	
 	/*
 	 * deleteComment(): bool
 	 */
 	public function testDeleteCommentCommentIdEmpty(): void {
-		$sut = $this->createDefaultSut();
-		$this->expectExceptionMessage(self::ERROR_COMMENT_ID_NOT_EXIST);
-		$sut->deleteItemComment();
+		$sut = $this->createDefaultSut ();
+		$this->expectExceptionMessage ( self::ERROR_COMMENT_ID_NOT_EXIST );
+		$sut->deleteItemComment ();
 	}
-	
 	public function testDeleteCommentCommentIdInvalid(): void {
-		$sut = $this->createDefaultSut();
-		$sut->commentID = $this->getInvalidId();
-		$this->expectExceptionMessage(self::ERROR_COMMENT_ID_NOT_EXIST);
-		$sut->deleteItemComment();
+		$sut = $this->createDefaultSut ();
+		$sut->commentID = $this->getInvalidId ();
+		$this->expectExceptionMessage ( self::ERROR_COMMENT_ID_NOT_EXIST );
+		$sut->deleteItemComment ();
 	}
-	
 	public function testDeleteCommentCommentIdValid(): void {
-		$sut = $this->createDefaultSut();
+		$sut = $this->createDefaultSut ();
 		$sut->commentID = self::COMMENT_ID_2;
 		try {
-			$this->assertTrue($sut->deleteItemComment());
-		} catch (ModelException $e) {}
-		$sut = $this->createSutWithId(self::ITEM_COMMENT_ID_2);
-		$this->expectExceptionMessage(self::ERROR_ITEM_COMMENT_ID_NOT_EXIST);
-		$sut->get();
+			$this->assertTrue ( $sut->deleteItemComment () );
+		} catch ( ModelException $e ) {
+		}
+		$sut = $this->createSutWithId ( self::ITEM_COMMENT_ID_2 );
+		$this->expectExceptionMessage ( self::ERROR_ITEM_COMMENT_ID_NOT_EXIST );
+		$sut->get ();
 	}
 	
 	/*
 	 * deleteItemComments(): bool
 	 */
 	public function testDeleteItemCommentsItemIdEmpty(): void {
-		$sut = $this->createDefaultSut();
-		$this->expectExceptionMessage(self::ERROR_ITEM_ID_NOT_EXIST);
-		$sut->deleteItemComments();
+		$sut = $this->createDefaultSut ();
+		$this->expectExceptionMessage ( self::ERROR_ITEM_ID_NOT_EXIST );
+		$sut->deleteItemComments ();
 	}
-	
 	public function testDeleteItemCommentsItemIdInvalid(): void {
-		$sut = $this->createDefaultSut();
-		$sut->itemID = $this->getInvalidId();
-		$this->expectExceptionMessage(self::ERROR_ITEM_ID_NOT_EXIST);
-		$sut->deleteItemComments();
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = $this->getInvalidId ();
+		$this->expectExceptionMessage ( self::ERROR_ITEM_ID_NOT_EXIST );
+		$sut->deleteItemComments ();
 	}
-	
 	public function testDeleteItemCommentsItemIdValid(): void {
-		$sut = $this->createDefaultSut();
+		$sut = $this->createDefaultSut ();
 		$sut->itemID = self::ITEM_ID_2;
 		try {
-			$this->assertTrue($sut->deleteItemComments());
-		} catch (ModelException $e) {}
-		for($i = 6; $i <= 10; $i++){
-			$sut = $this->createSutWithId($i);
-			$this->expectExceptionMessage(self::ERROR_ITEM_COMMENT_ID_NOT_EXIST);
-			$sut->get();
+			$this->assertTrue ( $sut->deleteItemComments () );
+		} catch ( ModelException $e ) {
+		}
+		for($i = 6; $i <= 10; $i ++) {
+			$sut = $this->createSutWithId ( $i );
+			$this->expectExceptionMessage ( self::ERROR_ITEM_COMMENT_ID_NOT_EXIST );
+			$sut->get ();
 		}
 	}
 } 

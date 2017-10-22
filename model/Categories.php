@@ -14,7 +14,7 @@ class Categories {
 	private $db;
 
 	const ROOT_CATEGORY = 0;
-	const PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
+	const ERROR_PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
 	
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
@@ -40,8 +40,10 @@ class Categories {
 	}
 	
 	/**
-	 * The getCategories() method retrieves all categories and returns them as an array
+	 * Retrieves all categories and returns them as an array
 	 * of category objects.
+	 * 
+	 * @return array
 	 */
 	public function getCategories(): array {
 		
@@ -65,7 +67,7 @@ class Categories {
 	}
 
 	/**
-	 * The getCategoriesIn(int $parentID) method retrieves all categories for the given parent category and
+	 * Retrieves all categories for the given parent category and
 	 * returns them as an array of category objects.
 	 * 
 	 * @param $parentID		The ID of the parent category.
@@ -86,7 +88,7 @@ class Categories {
 				$c->categoryID = $parentID;
 
 				if (!$c->exists()) {
-					throw new ModelException(self::PARENT_ID_NOT_EXIST);
+					throw new ModelException(self::ERROR_PARENT_ID_NOT_EXIST);
 				}
 			}
 
@@ -120,8 +122,10 @@ class Categories {
 		return $objects;
 	}
 
-	// Display Object Contents
-	public function printf() {
+	/**
+	 * Display Object Contents
+	 */
+	public function printf(): void {
 		echo '<br /><strong>Category Object:</strong><br />';
 		
 		if ($this->_id) {

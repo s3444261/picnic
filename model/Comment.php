@@ -15,7 +15,6 @@
  * @property string $_created_at;
  * @property string $_updated_at;
  */
-
 class Comment {
 	private $_commentID = 0;
 	private $_userID = 0;
@@ -23,15 +22,13 @@ class Comment {
 	private $_created_at;
 	private $_updated_at;
 	private $db;
-	
 	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
 	const ERROR_USER_ID_NOT_EXIST = 'The User ID does not exist!';
-
+	
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
-
 		$this->db = $pdo;
-
+		
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -49,17 +46,18 @@ class Comment {
 	}
 	
 	/**
-	 * First confirms that the comment object exists in the database.  If it doesn't, an
-	 * exception is thrown.  If it does exist, it then retrieves the attributes from 
+	 * First confirms that the comment object exists in the database.
+	 * If it doesn't, an
+	 * exception is thrown. If it does exist, it then retrieves the attributes from
 	 * the database. The attributes are set and returned.
-	 * 
+	 *
 	 * @throws ModelException
 	 * @return Comment
 	 */
 	public function get(): Comment {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Comments WHERE commentID = :commentID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
@@ -70,24 +68,25 @@ class Comment {
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
 		} else {
-			throw new ModelException(self::ERROR_COMMENT_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_COMMENT_ID_NOT_EXIST );
 		}
 	}
 	
 	/**
 	 * Tests to for a valid UserID and comment, then inserts them into
-	 * the database.  The commentID is returned.
-	 * 
+	 * the database.
+	 * The commentID is returned.
+	 *
 	 * @throws ModelException
 	 * @return int
 	 */
 	public function set(): int {
-		$v = new Validation();
-		$user = new User($this->db);
+		$v = new Validation ();
+		$user = new User ( $this->db );
 		$user->userID = $this->userID;
 		try {
-			if($user->exists()){
-				$v->emptyField($this->comment);
+			if ($user->exists ()) {
+				$v->emptyField ( $this->comment );
 				
 				$query = "INSERT INTO Comments
 					SET userID = :userID,
@@ -105,18 +104,19 @@ class Comment {
 					return 0;
 				}
 			} else {
-				throw new ModelException(self::ERROR_USER_ID_NOT_EXIST);
+				throw new ModelException ( self::ERROR_USER_ID_NOT_EXIST );
 			}
-		} catch (ValidationException $e) {
-			throw new ModelException($e->getMessage());
+		} catch ( ValidationException $e ) {
+			throw new ModelException ( $e->getMessage () );
 		}
 	}
 	
 	/**
-	 * Confirmat the object already exsits in the database.  If it does, it
-	 * goes on to check the UserID and the Comment.  If either value is invalid
+	 * Confirmat the object already exsits in the database.
+	 * If it does, it
+	 * goes on to check the UserID and the Comment. If either value is invalid
 	 * then the original values are used.
-	 * 
+	 *
 	 * @throws ModelException
 	 * @return bool
 	 */
@@ -124,21 +124,21 @@ class Comment {
 		if ($this->exists ()) {
 			
 			$query = "SELECT * FROM Comments WHERE commentID = :commentID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
-			$user = new User($this->db);
+			$user = new User ( $this->db );
 			$user->userID = $this->userID;
 			try {
-				if($user->exists()){
+				if ($user->exists ()) {
 					// Update with this value.
 				} else {
 					$this->_userID = $row ['userID'];
 				}
-			} catch (ModelException $e){
+			} catch ( ModelException $e ) {
 				$this->_userID = $row ['userID'];
 			}
 			if (strlen ( $this->_comment ) < 1) {
@@ -149,7 +149,7 @@ class Comment {
 						SET userID = :userID,
 							comment = :comment
 						WHERE commentID = :commentID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->bindParam ( ':userID', $this->_userID );
@@ -157,14 +157,15 @@ class Comment {
 			$stmt->execute ();
 			return true;
 		} else {
-			throw new ModelException(self::ERROR_COMMENT_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_COMMENT_ID_NOT_EXIST );
 		}
 	}
 	
 	/**
-	 * Checks the object exists in the database. If it does,
+	 * Checks the object exists in the database.
+	 * If it does,
 	 * it is deleted and true is returned.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function delete() {
@@ -172,7 +173,7 @@ class Comment {
 			
 			$query = "DELETE FROM Comments
 						WHERE commentID = :commentID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
@@ -182,20 +183,20 @@ class Comment {
 				return false;
 			}
 		} else {
-			throw new ModelException(self::ERROR_COMMENT_ID_NOT_EXIST);
+			throw new ModelException ( self::ERROR_COMMENT_ID_NOT_EXIST );
 		}
 	}
 	
 	/**
 	 * Checks to see if the commentID exists in the database,
 	 * if it does, true is returned.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function exists() {
 		if ($this->_commentID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Comments WHERE commentID = :commentID";
-
+			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
@@ -210,7 +211,9 @@ class Comment {
 		}
 	}
 	
-	// Display Object Contents
+	/**
+	 * Display Object Contents
+	 */
 	public function printf() {
 		echo '<br /><strong>Comment Object:</strong><br />';
 		

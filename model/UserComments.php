@@ -6,16 +6,12 @@
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
  * @author Edwan Putro <edwanhp@gmail.com>
  */
-
 class UserComments {
-	
 	private $_userID = '';
 	private $db;
-
 	function __construct(PDO $pdo, $args = array()) {
-
 		$this->db = $pdo;
-
+		
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
 			if (isset ( $this->{$name} )) {
@@ -32,10 +28,12 @@ class UserComments {
 		$this->$name = $value;
 	}
 	
-	/*
+	/**
 	 * Count number of occurences of comment for a user.
+	 *
+	 * @return int
 	 */
-	public function count() {
+	public function count(): int {
 		$query = "SELECT COUNT(*) AS numComments FROM Comments WHERE userID = :userID";
 		
 		$stmt = $this->db->prepare ( $query );
@@ -45,30 +43,31 @@ class UserComments {
 		return $row ['numComments'];
 	}
 	
-	/*
-	 * The getUserComments() method retrieves all comments made by a user and returns them
+	/**
+	 * Retrieves all comments made by a user and returns them
 	 * as an array of comments.
+	 *
+	 * @return array
 	 */
 	public function getUserComments(): array {
+		$query = "SELECT * FROM Comments WHERE userID = :userID";
 		
-			$query = "SELECT * FROM Comments WHERE userID = :userID"; 
-
-			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':userID', $this->_userID );
-			$stmt->execute (); 
-			$objects = array();
-			while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
-				$comment = new Comment($this->db);
-				$comment->commentID = $row ['commentID'];
-				$comment->userID = $row ['userID'];
-				$comment->comment = $row ['comment'];
-				$comment->created_at = $row ['created_at'];
-				$comment->updated_at = $row ['updated_at'];
-				
-				$objects[] = $comment;
-			} 
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindParam ( ':userID', $this->_userID );
+		$stmt->execute ();
+		$objects = array ();
+		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+			$comment = new Comment ( $this->db );
+			$comment->commentID = $row ['commentID'];
+			$comment->userID = $row ['userID'];
+			$comment->comment = $row ['comment'];
+			$comment->created_at = $row ['created_at'];
+			$comment->updated_at = $row ['updated_at'];
 			
-			return $objects;
+			$objects [] = $comment;
+		}
+		
+		return $objects;
 	}
 }
 ?>
