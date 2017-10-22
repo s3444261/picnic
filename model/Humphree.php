@@ -994,6 +994,20 @@ class Humphree {
 	 * @return array
 	 */
 	public function search(string $searchString): array {
-		return $this->system->search ($searchString);
+		$items = $this->system->search ($searchString);
+		$its = array();
+		foreach($items as $item){
+			$it = array();
+			$it ['itemID'] = $item->itemID;
+			$it ['title'] = $item->title;
+			$it ['description'] = $item->description;
+			$it ['quantity'] = $item->quantity;
+			$it ['itemcondition'] = $item->itemcondition;
+			$it ['price'] = $item->price;
+			$it ['status'] = $item->status;
+			
+			$its[] = $it;
+		}
+		return $its;
 	}
 }
