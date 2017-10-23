@@ -74,7 +74,6 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	const PRICE = 'price';
 	const STATUS = 'status';
 	const CATEGORY_ID_1 = 1;
-	const PARENT_ID_0 = 0;
 	const CATEGORY_1 = 'Category';
 	const CATEGORY_ID_2 = 2;
 	const PARENT_ID_1 = 1;
@@ -99,7 +98,6 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 		// Populate the Category Table
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();

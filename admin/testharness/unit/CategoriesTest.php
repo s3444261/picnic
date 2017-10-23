@@ -39,7 +39,6 @@ final class CategoriesTest extends PHPUnit\Framework\TestCase {
 	const CATEGORY_NAME = 'category';
 	const CREATION_DATE = 'created_at';
 	const MODIFIED_DATE = 'updated_at';
-	const ROOT_CATEGORY = 0;
 	const ROOT_CATEGORY_NAME = 'Category';
 	const ERROR_PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
 	protected function setUp(): void {
@@ -50,7 +49,6 @@ final class CategoriesTest extends PHPUnit\Framework\TestCase {
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::ROOT_CATEGORY;
 		$root->{self::CATEGORY_NAME} = self::ROOT_CATEGORY_NAME;
 		try {
 			$root->set ();

@@ -67,7 +67,6 @@ final class CategoryTest extends PicnicTestCase {
 	const CREATION_DATE = 'created_at';
 	const MODIFIED_DATE = 'updated_at';
 	const CATEGORY_ID_1 = 1;
-	const PARENT_ID_0 = 0;
 	const CATEGORY_1 = 'Category';
 	const CATEGORY_ID_2 = 2;
 	const PARENT_ID_1 = 1;
@@ -94,7 +93,6 @@ final class CategoryTest extends PicnicTestCase {
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();
@@ -181,8 +179,7 @@ final class CategoryTest extends PicnicTestCase {
 	public function testSetCategoryNoParentId(): void {
 		$sut = $this->createDefaultSut ();
 		$sut->category = self::CATEGORY_4;
-		$this->expectExceptionMessage ( self::ERROR_PARENT_ID_NONE );
-		$sut->set ();
+		$this->assertEquals ( self::CATEGORY_ID_4, $sut->set () );
 	}
 	public function testSetCategoryInvalidParentId(): void {
 		$sut = $this->createDefaultSut ();

@@ -17,7 +17,7 @@
  */
 class Category {
 	private $_categoryID = 0;
-	private $_parentID = 0;
+	private $_parentID = null;
 	private $_category = '';
 	private $_created_at;
 	private $_updated_at;
@@ -35,9 +35,7 @@ class Category {
 		
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
-			if (isset ( $this->{$name} )) {
-				$this->{$name} = $val;
-			}
+			$this->{$name} = $val;
 		}
 	}
 	public function &__get($name) {
@@ -88,35 +86,29 @@ class Category {
 		$v = new Validation ();
 		
 		try {
-			$v->emptyField ( $this->parentID );
-			$v->number ( $this->parentID );
+			if ($this->parentID !== null) {
+				$v->emptyField ( $this->parentID );
+				$v->number ( $this->parentID );
+			}
+
 			$v->emptyField ( $this->category );
 			
-			if ($this->parentID > 0) {
+			if ($this->parentID !== null) {
 				$this->categoryID = $this->parentID;
 				if (! $this->exists ()) {
 					throw new ModelException ( self::ERROR_PARENT_ID_NOT_EXIST );
 				}
 				$this->categoryID = NULL;
 			}
-			
-			$query = "SELECT COUNT(*) AS numCategories FROM Categories";
-			
-			$stmt = $this->db->prepare ( $query );
-			$stmt->execute ();
-			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			
-			if ($row ['numCategories'] > 1 && $this->parentID == 0) {
-				throw new ModelException ( self::ERROR_PARENT_ID_NONE );
-			}
-			
+
 			$query = "INSERT INTO Categories
 					SET parentID = :parentID,
 						category = :category,
 						created_at = NULL";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':parentID', $this->_parentID );
+
+			$stmt->bindValue ( ':parentID', $this->_parentID);
 			$stmt->bindParam ( ':category', $this->_category );
 			$stmt->execute ();
 			

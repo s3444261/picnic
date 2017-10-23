@@ -464,7 +464,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const PAGE_NUMBER_ZERO = 0;
 	const USERS_PER_PAGE_ZERO = 0;
 	const CATEGORY_ID_1 = 1;
-	const PARENT_ID_0 = 0;
 	const CATEGORY_1 = 'Category';
 	const CATEGORY_ID_2 = 2;
 	const PARENT_ID_1 = 1;
@@ -477,7 +476,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const CATEGORY_4 = 'Category4';
 	const CATEGORY_ID_INVALID = 400;
 	const PARENT_ID_INVALID = 300;
-	const ROOT_CATEGORY = 0;
 	const ROOT_CATEGORY_NAME = 'Category';
 	const ITEM_ID_1 = 1;
 	const TITLE_1 = 'title1';
@@ -539,7 +537,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();
@@ -1486,7 +1483,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = new Category ( $pdo, [ 
 				self::CATEGORY_NAME => self::CATEGORY_4 
 		] );
-		$this->assertFalse ( $system->addCategory ( $sut ) );
+		$this->assertTrue ( $system->addCategory ( $sut ) );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_PARENT_ID_INVALID, $_SESSION ['error'] );
 		}
@@ -1692,7 +1689,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = new Category ( $pdo );
 		$category = $system->getCategory ( $sut );
 		$this->assertSame ( 0, $category->categoryID );
-		$this->assertSame ( 0, $category->parentID );
+		$this->assertSame ( null, $category->parentID );
 		$this->assertEmpty ( $category->category );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
@@ -1706,7 +1703,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		] );
 		$category = $system->getCategory ( $sut );
 		$this->assertSame ( '400', $category->categoryID );
-		$this->assertSame ( 0, $category->parentID );
+		$this->assertSame ( null, $category->parentID );
 		$this->assertEmpty ( $category->category );
 		if (isset ( $_SESSION ['error'] )) {
 			$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
@@ -2859,7 +2856,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	/*
 	 *
 	 *
-	 * ADDITIONAL DATABASE POPULARION METHODS FOR TESTS *
+	 * ADDITIONAL DATABASE POPULATION METHODS FOR TESTS *
 	 *
 	 *
 	 *
@@ -2872,7 +2869,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::ROOT_CATEGORY;
 		$root->{self::CATEGORY_NAME} = self::ROOT_CATEGORY_NAME;
 		try {
 			$root->set ();
@@ -2957,7 +2953,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		// Populate the Category Table
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();
@@ -3024,7 +3019,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		// Populate the Category Table
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();
@@ -3130,7 +3124,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();
@@ -3180,7 +3173,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();
@@ -3448,7 +3440,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();
@@ -3566,7 +3557,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();

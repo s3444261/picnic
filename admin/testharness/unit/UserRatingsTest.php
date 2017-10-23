@@ -131,7 +131,6 @@ final class UserRatingsTest extends PicnicTestCase {
 	const PARENT_ID = 'parentID';
 	const CATEGORY_NAME = 'category';
 	const CATEGORY_ID_1 = 1;
-	const PARENT_ID_0 = 0;
 	const CATEGORY_1 = 'Category';
 	const CATEGORY_ID_2 = 2;
 	const PARENT_ID_1 = 1;
@@ -210,7 +209,6 @@ final class UserRatingsTest extends PicnicTestCase {
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
-		$root->{self::PARENT_ID} = self::PARENT_ID_0;
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
 		try {
 			$root->set ();
