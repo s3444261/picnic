@@ -33,12 +33,18 @@ CREATE TABLE `Users` (
 
 CREATE TABLE `Categories` (
 		`categoryID` int(11) NOT NULL AUTO_INCREMENT,
-		`parentID` int(11) unsigned,
+		`parentID` int(11),
 		`category` varchar(90) NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   	`updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`categoryID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE Categories
+		ADD CONSTRAINT FK_Categories_Categories
+		FOREIGN KEY (`parentID`)
+		REFERENCES `Categories` (`categoryID`)
+		ON DELETE CASCADE ON UPDATE CASCADE;
 
 CREATE TABLE `Items` (
 		`itemID` bigint(11) NOT NULL AUTO_INCREMENT,
@@ -49,7 +55,7 @@ CREATE TABLE `Items` (
 		`price` varchar(45) NOT NULL,
 		`itemStatus` varchar(45) NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`itemID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -57,10 +63,10 @@ CREATE TABLE `User_items` (
 		`user_itemID` int(11) NOT NULL AUTO_INCREMENT,
 		`userID` int(11) NOT NULL,
 		`itemID` bigint(11) NOT NULL,
-        `relationship` varchar(45) NOT NULL,
-        `userStatus` varchar(45) NOT NULL,
-        `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `relationship` varchar(45) NOT NULL,
+    `userStatus` varchar(45) NOT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`user_itemID`),
 		KEY `FK_User_items_Users_idx` (`userID`),
 		KEY `FK_User_items_Items_idx` (`itemID`),
@@ -71,13 +77,13 @@ CREATE TABLE `User_items` (
         
 CREATE TABLE `User_ratings` (
 		`user_ratingID` int(11) NOT NULL AUTO_INCREMENT,
-        `itemID` bigint(11) NOT NULL,
-        `sellrating` int(11),
+    `itemID` bigint(11) NOT NULL,
+    `sellrating` int(11),
 		`userID` int(11),
 		`buyrating` bigint(11) NOT NULL,
-        `transaction` varchar(32) DEFAULT NULL,
-        `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `transaction` varchar(32) DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`user_ratingID`),
 		KEY `FK_User_ratings_Items_idx` (`itemID`),
 		KEY `FK_User_ratings_Users_idx` (`userID`),
@@ -102,8 +108,8 @@ CREATE TABLE `Comments` (
 		`commentID` int(11) NOT NULL AUTO_INCREMENT,
 		`userID` int(11) NOT NULL,
 		`comment` text NOT NULL,
-		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
-        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`commentID`),
 		KEY `FK_Comments_User_idx` (`userID`),
 		CONSTRAINT `FK_Comments_User` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -124,8 +130,8 @@ CREATE TABLE `Item_comments` (
 CREATE TABLE `Notes` (
 		`noteID` int(11) NOT NULL AUTO_INCREMENT,
 		`note` text NOT NULL,
-		`created_at` timestamp NOT NULL DEFAULT '1970-01-02 00:00:01',
-        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`noteID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -140,4 +146,3 @@ CREATE TABLE `Item_notes` (
 		CONSTRAINT `FK_Item_notes_Note` FOREIGN KEY (`noteID`) REFERENCES `Notes` (`noteID`) ON DELETE CASCADE ON UPDATE CASCADE,
 		CONSTRAINT `UQ_itemID_noteID` UNIQUE (`itemID`, `noteID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
