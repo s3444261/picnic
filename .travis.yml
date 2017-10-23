@@ -11,4 +11,5 @@ before_install:
   - mysql -e 'CREATE DATABASE picnic';
 script: 
   - phpunit ./admin/testharness/unit
+  - phpunit ./admin/testharness/system
   
