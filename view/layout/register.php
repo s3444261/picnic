@@ -28,7 +28,7 @@
                             <p><small>We'll never share your email with anyone else.</small></p>
                         </div>
                         <div class="form-group">
-                            <label for="test">User name</label>
+                            <label for="username">User name</label>
                             <input type="text" class="form-control" name="username" id="username" placeholder="User name" required>
                         </div>
                         <div class="form-group">
@@ -36,7 +36,7 @@
                             <input type="password" class="form-control" name="password" id="password" placeholder="Password" minlength="8" required>
                         </div>
                         <div class="form-group">
-                            <label for="password">Confirm Password</label>
+                            <label for="password2">Confirm Password</label>
                             <input type="password" class="form-control" name="password2" id="password2" placeholder="Password" minlength="8" required>
                         </div>
                         <button type="submit" class="btn btn-primary btn-success">Register</button>

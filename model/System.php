@@ -575,6 +575,7 @@ class System {
 			if ($ci->category_itemID > 0) {
 				$ui->userID = $user->userID;
 				$ui->itemID = $i->itemID;
+				$ui->relationship = "owner";
 				try {
 					$ui->user_itemID = $ui->set ();
 				} catch ( ModelException $e ) {
@@ -592,7 +593,14 @@ class System {
 			return 0;
 		}
 	}
-	
+
+	public function getItemIDForUserItem(int $userItemID): int {
+		$userItem = new UserItems($this->db);
+		$userItem->user_itemID = $userItemID;
+		$userItem->get();
+		return $userItem->itemID;
+	}
+
 	/**
 	 * Updates an item.
 	 *

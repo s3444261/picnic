@@ -37,8 +37,48 @@ class ItemController {
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
+		$view->SetData('categories', $h->getCategoriesIn(Category::ROOT_CATEGORY));
+		$view->SetData('subCategories', $h->getCategories());
 		$view->SetData('navData',  new NavData(NavData::ViewListings));
 		$view->Render('itemAdd');
+	}
+
+	public function DoCreate() {
+
+		if ($this->auth()) {
+			if (isset ($_POST ['category']) && isset ($_POST ['title']) && isset ($_POST ['description']) && isset ($_POST ['quantity']) && isset ($_POST ['condition']) && isset ($_POST ['price'])) {
+				try {
+					$validate = new Validation ();
+					$validate->numberGreaterThanZero($_POST ['category']);
+					$validate->emptyField($_POST ['title']);
+					$validate->emptyField($_POST ['description']);
+					$validate->emptyField($_POST ['condition']);
+					$validate->number($_POST ['quantity']);
+					$validate->number($_POST ['price']);
+
+					$h = new Humphree(Picnic::getInstance());
+
+					$params = [];
+					$params['title'] = $_POST ['title'];
+					$params['description'] = $_POST ['description'];
+					$params['quantity'] = $_POST ['quantity'];
+					$params['itemcondition'] = $_POST ['condition'];
+					$params['price'] = $_POST ['price'];
+					$params['status'] = 'ForSale';
+
+					$itemID = $h->addItem($_SESSION['userID'], $params, intval($_POST ['category']));
+
+					header('Location: ' . BASE . '/Item/View/' . $itemID);
+				} catch (ValidationException $e) {
+					$_SESSION['error'] =  $e->getError();
+					header('Location: ' . BASE . '/Item/Create');
+				}
+			} else {
+				header('Location: ' . BASE . '/Account/Register');
+			}
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
 	}
 
 	public function Edit($itemId) {
@@ -114,4 +154,15 @@ class ItemController {
 		// images to the dev server.
 		$this->Thumb($itemId);
 	}
+
+	/**
+	 * Determines whether the user is currently logged in.
+	 */
+	private function auth() : bool {
+
+		return (isset($_SESSION[MODULE]))
+			&& (isset($_SESSION['userID']))
+			&& ($_SESSION['userID'] > 0);
+	}
+
 }

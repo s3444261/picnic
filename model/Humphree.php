@@ -498,7 +498,7 @@ class Humphree {
 		
 		return $numUserItems;
 	}
-	
+
 	/**
 	 * Retrieves all items linked to a User.
 	 *
@@ -638,12 +638,12 @@ class Humphree {
 	 * @param int $userID        	
 	 * @param array $item        	
 	 * @param int $categoryID        	
-	 * @return bool
+	 * @return int
 	 */
-	public function addItem(int $userID, array $item, int $categoryID): bool {
+	public function addItem(int $userID, array $item, int $categoryID): int {
 		$user = new User ( $this->db );
 		$user->userID = $userID;
-		$category = new Category ( $this->db );
+		$category = new Category($this->db);
 		$category->categoryID = $categoryID;
 		$it = new Item ( $this->db );
 		$it->title = $item ['title'];
@@ -652,11 +652,9 @@ class Humphree {
 		$it->itemcondition = $item ['itemcondition'];
 		$it->price = $item ['price'];
 		$it->status = $item ['status'];
-		if ($this->system->addItem ( $user, $it, $category ) > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		$userItemID =  $this->system->addItem ( $user, $it, $category );
+
+		return $this->system->getItemIDForUserItem($userItemID);
 	}
 	
 	/**
@@ -732,7 +730,7 @@ class Humphree {
 	 * @return array
 	 */
 	public function getItemComment(int $commentID): array {
-		$comment = new Comment ( $pdo );
+		$comment = new Comment ( $this->db );
 		$comment->commentID = $commentID;
 		$item = $this->system->getItemComment ( $comment );
 		$it = array ();
@@ -832,7 +830,7 @@ class Humphree {
 	 * @return array
 	 */
 	public function getItemNote(int $noteID): array {
-		$note = new Note ( $pdo );
+		$note = new Note ( $this->db );
 		$note->noteID = $noteID;
 		$item = $this->system->getItemNote ( $note );
 		$it = array ();
