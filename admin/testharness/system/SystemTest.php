@@ -391,7 +391,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	
 	// Error Messages
 	const ERROR_ACTIVATION_CODE = 'Failed to retrieve UserID!';
-	const ERROR_ACTIVATION_CODE_SHORT = 'Activation code must the 32 characters in length!';
+	const ERROR_ACTIVATION_CODE_SHORT = 'Activation code must be 32 characters in length!';
 	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
 	const ERROR_CATEGORY_NONE = 'Input is required!';
 	const ERROR_CATEGORY_NOT_CREATED = 'The category was not created!';
