@@ -40,11 +40,11 @@ CREATE TABLE `Categories` (
 		PRIMARY KEY (`categoryID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-ALTER TABLE Categories
-		ADD CONSTRAINT FK_Categories_Categories
-		FOREIGN KEY (`parentID`)
-		REFERENCES `Categories` (`categoryID`)
-		ON DELETE CASCADE ON UPDATE CASCADE;
+# ALTER TABLE Categories
+# 		ADD CONSTRAINT FK_Categories_Categories
+# 		FOREIGN KEY (`parentID`)
+# 		REFERENCES `Categories` (`categoryID`)
+# 		ON DELETE CASCADE ON UPDATE CASCADE;
 
 CREATE TABLE `Items` (
 		`itemID` bigint(11) NOT NULL AUTO_INCREMENT,
