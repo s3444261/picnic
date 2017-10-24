@@ -48,6 +48,7 @@ ALTER TABLE Categories
 
 CREATE TABLE `Items` (
 		`itemID` bigint(11) NOT NULL AUTO_INCREMENT,
+  	`owningUserID` int(11) NOT NULL,
 		`title` text NOT NULL,
 		`description` text NOT NULL,
 		`quantity` varchar(45) NOT NULL,
@@ -56,7 +57,8 @@ CREATE TABLE `Items` (
 		`itemStatus` varchar(45) NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		PRIMARY KEY (`itemID`)
+		PRIMARY KEY (`itemID`),
+  	CONSTRAINT `FK_Items_Users` FOREIGN KEY (`owningUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `User_items` (

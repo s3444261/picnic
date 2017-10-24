@@ -103,6 +103,7 @@ require_once 'PicnicTestCase.php';
 require_once dirname ( __FILE__ ) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ItemNotes.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Item.php';
+require_once dirname ( __FILE__ ) . '/../../../model/User.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Note.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Validation.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ModelException.php';
@@ -131,10 +132,18 @@ final class ItemNotesTest extends PicnicTestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
-		
+
+		$user = new User($pdo);
+		$user->user = "f sfsd fsd f";
+		$user->email = "test@test.com";
+		$user->password = "fRRR44@fff";
+		$user->status = "good";
+		$userID = $user->set();
+
 		$l = 1;
 		for($i = 1; $i <= 3; $i ++) {
 			$item = new Item ( $pdo );
+			$item->owningUserID = $userID;
 			$item->title = 'title' . $i;
 			$item->set ();
 			for($j = 1; $j <= 5; $j ++) {

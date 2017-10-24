@@ -141,6 +141,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 		$l = 1;
 		for($i = 1; $i <= 3; $i ++) {
 			$item = new Item ( $pdo );
+			$item->owningUserID = $user->userID;
 			$item->title = 'title' . $i;
 			$item->set ();
 			for($j = 1; $j <= 5; $j ++) {

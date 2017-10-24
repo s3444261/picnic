@@ -146,6 +146,7 @@ final class UserItemsTest extends PicnicTestCase {
 			
 			for($j = 1; $j <= 5; $j ++) {
 				$item = new Item ( $pdo );
+				$item->owningUserID = $user->userID;
 				$item->title = 'title' . $l;
 				try {
 					$item->set ();

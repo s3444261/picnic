@@ -58,6 +58,7 @@ require_once dirname ( __FILE__ ) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname ( __FILE__ ) . '/../../../model/CategoryItems.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Category.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Item.php';
+require_once dirname ( __FILE__ ) . '/../../../model/User.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Validation.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ModelException.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ValidationException.php';
@@ -67,7 +68,8 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	const ITEM_ID = 'itemID';
 	const PARENT_ID = 'parentID';
 	const CATEGORY_NAME = 'category';
-	const TITLE = 'title';
+ 	const OWNING_USER_ID = 'owningUserID';
+ 	const TITLE = 'title';
 	const DESCRIPTION = 'description';
 	const QUANTITY = 'quantity';
 	const CONDITION = 'itemcondition';
@@ -123,10 +125,18 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 			$c->set ();
 		} catch ( CategoryException $e ) {
 		}
-		
+
+		$user = new User($pdo);
+		$user->user = "f sfsd fsd f";
+		$user->email = "test@test.com";
+		$user->password = "fRRR44@fff";
+		$user->status = "good";
+		$userID = $user->set();
+
 		// Populate the Items Table
 		for($i = 1; $i <= 100; $i ++) {
-			$item = new Item ( $pdo, [ 
+			$item = new Item ( $pdo, [
+					self::OWNING_USER_ID => $userID,
 					self::TITLE => 'title' . $i,
 					self::DESCRIPTION => 'description' . $i,
 					self::QUANTITY => 'quantity' . $i,

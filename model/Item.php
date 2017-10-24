@@ -11,6 +11,7 @@ require_once dirname ( __FILE__ ) . '/ModelException.php';
 /**
  *
  * @property integer $_itemID;
+ * @property integer $_owningUserID ;
  * @property string $_title;
  * @property string $_description;
  * @property string $_quantity;
@@ -22,6 +23,7 @@ require_once dirname ( __FILE__ ) . '/ModelException.php';
  */
 class Item {
 	private $_itemID = 0;
+	private $_owningUserID = 0;
 	private $_title = '';
 	private $_description = '';
 	private $_quantity = '';
@@ -71,6 +73,7 @@ class Item {
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			$this->_owningUserID = $row ['owningUserID'];
 			$this->_title = $row ['title'];
 			$this->_description = $row ['description'];
 			$this->_quantity = $row ['quantity'];
@@ -97,8 +100,16 @@ class Item {
 		$v = new Validation ();
 		try {
 			$v->emptyField ( $this->title );
+			$v->numberGreaterThanZero( $this->owningUserID );
+
+			// make sure the claimed owning user exists
+			$user = new User($this->db);
+			$user->userID = $this->owningUserID;
+			$user->get();
+
 			$query = "INSERT INTO Items
-						SET title = :title,
+						SET owningUserID = :owningUserID,
+							title = :title,
 							description = :description,
 							quantity = :quantity,
 							itemcondition = :itemcondition,
@@ -107,6 +118,7 @@ class Item {
 							created_at = NULL";
 			
 			$stmt = $this->db->prepare ( $query );
+			$stmt->bindParam ( ':owningUserID', $this->_owningUserID );
 			$stmt->bindParam ( ':title', $this->_title );
 			$stmt->bindParam ( ':description', $this->_description );
 			$stmt->bindParam ( ':quantity', $this->_quantity );
@@ -245,6 +257,9 @@ class Item {
 		
 		if ($this->_id) {
 			echo 'id => ' . $this->_id . '<br/>';
+		}
+		if ($this->_owningUserID) {
+			echo 'owningUserID => ' . $this->_owningUserID . '<br/>';
 		}
 		if ($this->_title) {
 			echo 'title => ' . $this->_title . '<br/>';

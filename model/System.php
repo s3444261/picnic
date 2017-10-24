@@ -500,14 +500,34 @@ class System {
 	 * @return int
 	 */
 	public function countUserItems(User $user): int {
-		$numUserItems = 0;
 		$ui = new UserItems ( $this->db );
 		$ui->userID = $user->userID;
 		$numUserItems = $ui->count ();
 		
 		return $numUserItems;
 	}
-	
+
+	/**
+	 * Retrieves all items owned by a user.
+	 *
+	 * @param int $userID
+	 *        	The user whose items will be returned.
+	 *
+	 * @return array
+	 * 			An array of Item objects.
+	 */
+	public function getUserOwnedItems(int $userID): array {
+		try {
+			$user = new User( $this->db );
+			$user->userID = $userID;
+			return $user->getUserOwnedItems();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
+
+		return [];
+	}
+
 	/**
 	 * Retrieves all items linked to a user.
 	 *
@@ -545,27 +565,26 @@ class System {
 		}
 		return $i;
 	}
-	
+
 	/**
 	 * Adds an item to the items table and then adds the id's to
 	 * the UserItems table.
 	 *
-	 * @param User $user        	
-	 * @param Item $item        	
-	 * @return bool
+	 * @param Item $item
+	 * @param int $categoryID
+	 * @return int
 	 */
-	public function addItem(User $user, Item $item, Category $category): int {
-		$i = new Item ( $this->db );
-		$ui = new UserItems ( $this->db );
-		$ci = new CategoryItems ( $this->db );
+	public function addItem(Item $item, int $categoryID): int {
 		$i = $item;
 		try {
 			$i->itemID = $i->set ();
 		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getError ();
 		}
-		if ($i->itemID > 1) {
-			$ci->categoryID = $category->categoryID;
+
+		if ($i->itemID > 0) {
+			$ci = new CategoryItems ( $this->db );
+			$ci->categoryID = $categoryID;
 			$ci->itemID = $i->itemID;
 			try {
 				$ci->category_itemID = $ci->set ();
@@ -573,19 +592,7 @@ class System {
 				$_SESSION ['error'] = $e->getError ();
 			}
 			if ($ci->category_itemID > 0) {
-				$ui->userID = $user->userID;
-				$ui->itemID = $i->itemID;
-				$ui->relationship = "owner";
-				try {
-					$ui->user_itemID = $ui->set ();
-				} catch ( ModelException $e ) {
-					$_SESSION ['error'] = $e->getError ();
-				}
-				if ($ui->user_itemID > 0) {
-					return $ui->user_itemID;
-				} else {
-					return 0;
-				}
+				return $i->itemID;
 			} else {
 				return 0;
 			}
