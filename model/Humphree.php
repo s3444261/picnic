@@ -816,7 +816,17 @@ class Humphree {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Gets the first category associated with the given item.
+	 *
+	 * @param int $itemID
+	 * @return array
+	 */
+	public function getItemCategory(int $itemID): array {
+		return $this->system->getItemCategory($itemID);
+	}
+
 	/**
 	 * Retrieves all notes for an item.
 	 *

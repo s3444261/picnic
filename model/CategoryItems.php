@@ -278,7 +278,36 @@ class CategoryItems {
 			throw new ModelException ( self::ERROR_CATEGORY_ID_NOT_EXIST );
 		}
 	}
-	
+
+	/**
+	 * Gets the first category associated with the given item.
+	 *
+	 * @param int $itemID
+	 * @return Category
+	 * @throws ModelException
+	 */
+	public function getItemCategory(int $itemID): Category {
+		$query = "SELECT * FROM Category_items
+					WHERE itemID = :itemID";
+
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindParam ( ':itemID', $itemID );
+		$stmt->execute ();
+
+		$category = new Category($this->db);
+
+		if ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+			$category->categoryID = $row ['categoryID'];
+			try {
+				$category->get ();
+			} catch ( ModelException $e ) {
+				throw new ModelException ( $e->getMessage () );
+			}
+		}
+
+		return $category;
+	}
+
 	/**
 	 * Retrieves all the items for a the objects CategoryID.
 	 *

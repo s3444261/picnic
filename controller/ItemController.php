@@ -24,7 +24,7 @@ class ItemController {
 	 * @param $itemId
 	 * 			The iID of the item to be displayed.
 	 */
-	public function View($itemId) {
+	public function View(int $itemId) {
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
@@ -39,34 +39,75 @@ class ItemController {
 		$view = new View();
 		$view->SetData('categories', $h->getCategoriesIn(Category::ROOT_CATEGORY));
 		$view->SetData('subCategories', $h->getCategories());
-		$view->SetData('navData',  new NavData(NavData::ViewListings));
+		$view->SetData('navData',  new NavData(NavData::Account));
+
+		if (isset($_SESSION['error'])) {
+			$view->SetData('error',  $_SESSION['error']);
+		}
+
+		if (isset($_SESSION['itemAdd'])) {
+			$view->SetData('item',  $_SESSION['itemAdd']);
+		}
+
 		$view->Render('itemAdd');
 	}
 
-	public function DoCreate() {
-
+	public function CreateConfirm() {
 		if ($this->auth()) {
-			if (isset ($_POST ['category']) && isset ($_POST ['title']) && isset ($_POST ['description']) && isset ($_POST ['quantity']) && isset ($_POST ['condition']) && isset ($_POST ['price'])) {
-				try {
-					$validate = new Validation ();
-					$validate->numberGreaterThanZero($_POST ['category']);
-					$validate->emptyField($_POST ['title']);
-					$validate->emptyField($_POST ['description']);
-					$validate->emptyField($_POST ['condition']);
-					$validate->number($_POST ['quantity']);
-					$validate->number($_POST ['price']);
+			try {
+				$_SESSION['itemAdd'] = $_POST;
 
+				$validate = new Validation ();
+				$validate->emptyField($_POST['majorCategory']);
+				$validate->emptyField($_POST['category']);
+				$validate->number($_POST['majorCategory']);
+				$validate->number($_POST['category']);
+				$validate->numberGreaterThanZero($_POST['majorCategory']);
+				$validate->numberGreaterThanZero($_POST['category']);
+				$validate->emptyField($_POST['title']);
+				$validate->emptyField($_POST['description']);
+				$validate->emptyField($_POST['condition']);
+				$validate->number($_POST ['quantity']);
+				$validate->number($_POST['price']);
+
+
+				$h = new Humphree(Picnic::getInstance());
+				$category = $h->getCategory(intval($_POST['category']));
+				$_SESSION['itemAdd']['categoryName'] = $category['category'];
+
+				$majorCategory = $h->getCategory(intval($category['parentID']));
+				$_SESSION['itemAdd']['majorCategoryName'] = $majorCategory['category'];
+
+				$view = new View();
+				$view->SetData('item',  $_SESSION['itemAdd']);
+				$view->SetData('navData',  new NavData(NavData::Account));
+				$view->Render('itemAddConfirm');
+			} catch (ValidationException $e) {
+				$_SESSION['error'] =  $e->getError();
+				header('Location: ' . BASE . '/Item/Create');
+			}
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
+
+	public function DoCreate() {
+		if ($this->auth()) {
+			if ($_SESSION['itemAdd']) {
+				try {
 					$h = new Humphree(Picnic::getInstance());
 
 					$params = [];
-					$params['title'] = $_POST ['title'];
-					$params['description'] = $_POST ['description'];
-					$params['quantity'] = $_POST ['quantity'];
-					$params['itemcondition'] = $_POST ['condition'];
-					$params['price'] = $_POST ['price'];
+					$params['title'] = $_SESSION['itemAdd']['title'];
+					$params['description'] = $_SESSION['itemAdd']['description'];
+					$params['quantity'] = $_SESSION['itemAdd']['quantity'];
+					$params['itemcondition'] = $_SESSION['itemAdd']['condition'];
+					$params['price'] = $_SESSION['itemAdd']['price'];
 					$params['status'] = 'ForSale';
 
-					$itemID = $h->addItem($_SESSION['userID'], $params, intval($_POST ['category']));
+					$itemID = $h->addItem($_SESSION['userID'], $params, intval($_SESSION['itemAdd']['category']));
+
+					unset($_SESSION['itemAdd']);
 
 					header('Location: ' . BASE . '/Item/View/' . $itemID);
 				} catch (ValidationException $e) {
@@ -81,22 +122,98 @@ class ItemController {
 		}
 	}
 
-	public function Edit($itemId) {
+	public function Edit(int $itemID) {
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
-		$view->SetData('item', $h ->getItem($itemId));
-		$view->SetData('navData',  new NavData(NavData::ViewListings));
+		$view->SetData('categories', $h->getCategoriesIn(Category::ROOT_CATEGORY));
+		$view->SetData('subCategories', $h->getCategories());
+		$view->SetData('navData',  new NavData(NavData::Account));
+
+		if (!isset($_SESSION['itemEdit']) || $_SESSION['itemEdit']['itemID'] != $itemID ) {
+			$_SESSION['itemEdit'] = $h ->getItem($itemID);
+			$_SESSION['itemEdit']['itemID'] = $itemID;
+
+			$category = $h->getItemCategory($itemID);
+			$_SESSION['itemEdit']['majorCategory'] = $category['parentID'];
+			$_SESSION['itemEdit']['category'] = $category['categoryID'];
+		}
+
+		$view->SetData('item', $_SESSION['itemEdit']);
 		$view->Render('itemEdit');
 	}
 
-	public function Delete($itemId) {
+	public function EditConfirm() {
+		if ($this->auth()) {
+			try {
+				$itemID = $_SESSION['itemEdit']['itemID'];
+
+				$_SESSION['itemEdit'] = $_POST;
+				$_SESSION['itemEdit']['itemID'] = $itemID;
+
+				$validate = new Validation ();
+				$validate->emptyField($_POST['majorCategory']);
+				$validate->emptyField($_POST['category']);
+				$validate->number($_POST['majorCategory']);
+				$validate->number($_POST['category']);
+				$validate->numberGreaterThanZero($_POST['majorCategory']);
+				$validate->numberGreaterThanZero($_POST['category']);
+				$validate->emptyField($_POST['title']);
+				$validate->emptyField($_POST['description']);
+				$validate->emptyField($_POST['itemcondition']);
+				$validate->number($_POST ['quantity']);
+				$validate->number($_POST['price']);
+
+				$h = new Humphree(Picnic::getInstance());
+				$category = $h->getCategory(intval($_POST['category']));
+				$_SESSION['itemEdit']['categoryName'] = $category['category'];
+
+				$majorCategory = $h->getCategory(intval($category['parentID']));
+				$_SESSION['itemEdit']['majorCategoryName'] = $majorCategory['category'];
+
+				$view = new View();
+				$view->SetData('item',  $_SESSION['itemEdit']);
+				$view->SetData('navData',  new NavData(NavData::Account));
+				$view->Render('itemEditConfirm');
+			} catch (ValidationException $e) {
+				$_SESSION['error'] =  $e->getError();
+				header('Location: ' . BASE . '/Item/Edit/' . $itemID);
+			}
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
+
+	public function DoEdit() {
+		if ($this->auth()) {
+			if (isset($_SESSION['itemEdit'])) {
+				try {
+					$itemID = $_SESSION['itemEdit']['itemID'];
+
+					$h = new Humphree(Picnic::getInstance());
+					$h->updateItem($_SESSION['itemEdit']);
+					unset($_SESSION['itemEdit']);
+
+					header('Location: ' . BASE . '/Item/View/' . $itemID);
+				} catch (ValidationException $e) {
+					$_SESSION['error'] =  $e->getError();
+					header('Location: ' . BASE . '/Item/Create');
+				}
+			} else {
+				header('Location: ' . BASE . '/Account/Register');
+			}
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
+
+	public function Delete(int $itemId) {
 		$h = new Humphree(Picnic::getInstance());
 		$h ->deleteItem($itemId);
 		header('Location: ' . BASE . '/Dashboard/View');
 	}
 
-	public function MarkFoundOrSold($itemId) {
+	public function MarkFoundOrSold(int $itemId) {
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
@@ -112,7 +229,7 @@ class ItemController {
 	 * @param $itemId
 	 * 			The ID of the item whose thumbnail will be sent.
 	 */
-	public function Thumb($itemId) {
+	public function Thumb(int $itemId) {
 
 		// to avoid killing the file system with millions of files in a single directory,
 		// we store images in a structure like so:
@@ -148,7 +265,7 @@ class ItemController {
 	 * @param $itemId
 	 * 			The ID of the item whose image will be sent.
 	 */
-	public function Image($itemId) {
+	public function Image(int $itemId) {
 
 		// for now, I'm just using the thumb scaled up, to avoid uploading hundreds of MB of
 		// images to the dev server.

@@ -508,6 +508,29 @@ class System {
 	}
 
 	/**
+	 * Gets the first category associated with the given item.
+	 *
+	 * @param int $itemID
+	 * @return array
+	 */
+	public function getItemCategory(int $itemID): array {
+		try {
+			$ic = new CategoryItems( $this->db );
+			$category = $ic->getItemCategory($itemID);
+
+			$array = [];
+			$array['categoryID'] = $category->categoryID;
+			$array['category'] = $category->category;
+			$array['parentID'] = $category->parentID;
+			return $array;
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
+
+
+	}
+
+	/**
 	 * Retrieves all items owned by a user.
 	 *
 	 * @param int $userID

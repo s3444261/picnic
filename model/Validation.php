@@ -150,7 +150,7 @@ class Validation {
 	 * @throws ValidationException
 	 */
 	public function emptyField($content) {
-		if (strlen ( $content ) == 0) {
+		if (!isset($content) || strlen ( $content ) == 0) {
 			throw new ValidationException ( self::ERROR_FIELD_EMPTY );
 		}
 	}
