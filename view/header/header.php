@@ -44,7 +44,7 @@
 
 if(isset($_SESSION['error'])){
 	echo '<span class="error">' . $_SESSION['error'] . '</span>';
-	$_SESSION['error'] = null;
+
 }
 
 if(isset($_SESSION['message'])){
