@@ -97,6 +97,7 @@ final class CategoryTest extends PicnicTestCase {
 		try {
 			$root->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		// Insert additional categories
@@ -106,11 +107,13 @@ final class CategoryTest extends PicnicTestCase {
 		try {
 			$c->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
 		try {
 			$c->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	protected function tearDown(): void {
@@ -167,6 +170,7 @@ final class CategoryTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::CATEGORY_ID_2, $sut->categoryID );
 		$this->assertEquals ( self::PARENT_ID_1, $sut->parentID );
@@ -201,6 +205,7 @@ final class CategoryTest extends PicnicTestCase {
 		try {
 			$sut->categoryID = $sut->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( $sut->categoryID );
 		try {
@@ -209,6 +214,7 @@ final class CategoryTest extends PicnicTestCase {
 			$this->assertEquals ( self::PARENT_ID_3, $sut->parentID );
 			$this->assertEquals ( self::CATEGORY_4, $sut->category );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	

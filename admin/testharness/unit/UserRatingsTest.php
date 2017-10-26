@@ -203,6 +203,7 @@ final class UserRatingsTest extends PicnicTestCase {
 			$ui->set ();
 			$ur->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	protected function populateAdditionalUserRatings(): void {
@@ -217,6 +218,7 @@ final class UserRatingsTest extends PicnicTestCase {
 		try {
 			$root->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		// Insert additional categories
@@ -226,11 +228,13 @@ final class UserRatingsTest extends PicnicTestCase {
 		try {
 			$c->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
 		try {
 			$c->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 
 		$l = 1;
@@ -242,6 +246,7 @@ final class UserRatingsTest extends PicnicTestCase {
 			try {
 				$user->set ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			
 			for($j = 1; $j <= 5; $j ++) {
@@ -263,8 +268,10 @@ final class UserRatingsTest extends PicnicTestCase {
 							$userItem->set ();
 						}
 					} catch ( ModelException $e ) {
+						$this->assertEquals('Exception', $e->getMessage());
 					}
 				} catch ( Exception $e ) {
+					$this->assertEquals('Exception', $e->getMessage());
 				}
 				$l ++;
 			}
@@ -292,6 +299,7 @@ final class UserRatingsTest extends PicnicTestCase {
 			try {
 				$ur->set ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			
 			if ($k == 5) {
@@ -312,11 +320,13 @@ final class UserRatingsTest extends PicnicTestCase {
 		try {
 			$sut->addSellerRating ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( self::USER_RATING_ID_2 );
 		try {
 			return $sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	protected function tearDown(): void {
@@ -375,6 +385,7 @@ final class UserRatingsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::USER_RATING_ID_1, $sut->user_ratingID );
 		$this->assertEquals ( self::ITEM_ID_1, $sut->itemID );
@@ -395,6 +406,7 @@ final class UserRatingsTest extends PicnicTestCase {
 		try {
 			$sut->user_ratingID = $sut->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( self::USER_RATING_ID_2 );
 		try {
@@ -405,6 +417,7 @@ final class UserRatingsTest extends PicnicTestCase {
 			$this->assertEquals ( self::USER_ID_2, $sut->userID );
 			$this->assertEquals ( self::BUYRATING_2, $sut->buyrating );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -553,11 +566,13 @@ final class UserRatingsTest extends PicnicTestCase {
 		try {
 			$sut->addSellerRating ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( self::USER_RATING_ID_2 );
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::USER_RATING_ID_2, $sut->user_ratingID );
 		$this->assertEquals ( self::ITEM_ID_2, $sut->itemID );
@@ -595,6 +610,7 @@ final class UserRatingsTest extends PicnicTestCase {
 			$sut->addBuyerRating ();
 			$sut->get ();
 		} catch ( Exception $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::BUYRATING_2, $sut->buyrating );
 		$this->assertNull ( $sut->transaction );
@@ -632,6 +648,7 @@ final class UserRatingsTest extends PicnicTestCase {
 		try {
 			$stats = $sut->getStats ( $user );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( 5, $stats ['numSellRatings'] );
 		$this->assertEquals ( 3.0, $stats ['avgSellRating'] );

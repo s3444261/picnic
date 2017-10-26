@@ -142,6 +142,7 @@ final class UserItemsTest extends PicnicTestCase {
 			try {
 				$user->set ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			
 			for($j = 1; $j <= 5; $j ++) {
@@ -163,8 +164,10 @@ final class UserItemsTest extends PicnicTestCase {
 							$userItem->set ();
 						}
 					} catch ( ModelException $e ) {
+						$this->assertEquals('Exception', $e->getMessage());
 					}
 				} catch ( Exception $e ) {
+					$this->assertEquals('Exception', $e->getMessage());
 				}
 				$l ++;
 			}
@@ -226,6 +229,7 @@ final class UserItemsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::USER_ITEM_ID_2, $sut->user_itemID );
 		$this->assertEquals ( self::USER_ID_1, $sut->userID );
@@ -268,6 +272,7 @@ final class UserItemsTest extends PicnicTestCase {
 		try {
 			$sut->user_itemID = $sut->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( $sut->user_itemID );
 		try {
@@ -276,6 +281,7 @@ final class UserItemsTest extends PicnicTestCase {
 			$this->assertEquals ( self::USER_ID_3, $sut->userID );
 			$this->assertEquals ( self::ITEM_ID_15, $sut->itemID );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -298,6 +304,7 @@ final class UserItemsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '1', $sut->userID );
 		$this->assertSame ( '15', $sut->itemID );
@@ -310,6 +317,7 @@ final class UserItemsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '2', $sut->userID );
 		$this->assertSame ( '1', $sut->itemID );
@@ -322,6 +330,7 @@ final class UserItemsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '2', $sut->userID );
 		$this->assertSame ( '1', $sut->itemID );
@@ -334,6 +343,7 @@ final class UserItemsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '2', $sut->userID );
 		$this->assertSame ( '15', $sut->itemID );
@@ -357,6 +367,7 @@ final class UserItemsTest extends PicnicTestCase {
 		try {
 			$this->assertTrue ( $sut->delete () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->expectExceptionMessage ( self::ERROR_USER_ITEM_ID_NOT_EXIST );
 		$sut->get ();
@@ -459,6 +470,7 @@ final class UserItemsTest extends PicnicTestCase {
 				$i ++;
 			}
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -485,6 +497,7 @@ final class UserItemsTest extends PicnicTestCase {
 			$this->assertEquals ( 1, $obj->userID );
 			$this->assertEquals ( 2, $obj->itemID );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -508,6 +521,7 @@ final class UserItemsTest extends PicnicTestCase {
 		try {
 			$this->assertTrue ( $sut->deleteUserItem () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( self::USER_ITEM_ID_2 );
 		$this->expectExceptionMessage ( self::ERROR_USER_ITEM_ID_NOT_EXIST );
@@ -534,6 +548,7 @@ final class UserItemsTest extends PicnicTestCase {
 		try {
 			$this->assertTrue ( $sut->deleteUserItems () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		for($i = 6; $i <= 10; $i ++) {
 			$sut = $this->createSutWithId ( $i );

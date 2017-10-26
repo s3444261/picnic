@@ -576,10 +576,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			try {
 				${'u' . $i}->set ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			try {
 				${'u' . $i}->get ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			${'u' . $i}->activate ();
 		}
@@ -3155,6 +3157,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		try {
 			$user->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		$l = 1;

@@ -129,6 +129,7 @@ class ItemTest extends PicnicTestCase {
 		try {
 			$item->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		$args2 = [ 
@@ -146,6 +147,7 @@ class ItemTest extends PicnicTestCase {
 		try {
 			$item->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		$args3 = [ 
@@ -163,6 +165,7 @@ class ItemTest extends PicnicTestCase {
 		try {
 			$item->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	protected function tearDown(): void {
@@ -226,6 +229,7 @@ class ItemTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::ITEM_ID_2, $sut->itemID );
 		$this->assertEquals ( self::TITLE_2, $sut->title );
@@ -256,6 +260,7 @@ class ItemTest extends PicnicTestCase {
 		try {
 			$sut->itemID = $sut->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( $sut->itemID );
 		try {
@@ -268,6 +273,7 @@ class ItemTest extends PicnicTestCase {
 			$this->assertEquals ( self::PRICE_4, $sut->price );
 			$this->assertEquals ( self::STATUS_4, $sut->status );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	

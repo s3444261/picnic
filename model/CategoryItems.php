@@ -21,6 +21,8 @@ class CategoryItems {
 	const ERROR_CATEGORY_NOT_EXIST = 'The categoryItem does not exist!';
 	const ERROR_CATEGORYITEM_EXISTS = 'The categoryItem already exists!';
 	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
+	const ERROR_ITEM_ID_NOT_EXIST = 'The itemID does not exist!';
+	const ERROR_CATEGORY_ITEMS_ID_NOT_EXIST = 'The category_itemsID does not exist!';
 	
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
@@ -51,7 +53,7 @@ class CategoryItems {
 	 * @return CategoryItems
 	 */
 	public function get(): CategoryItems {
-		if ($this->exists ()) {
+		if ($this->exists ()) { 
 			$query = "SELECT * FROM Category_items WHERE category_itemID = :category_itemID";
 			
 			$stmt = $this->db->prepare ( $query );
@@ -61,7 +63,7 @@ class CategoryItems {
 			$this->_categoryID = $row ['categoryID'];
 			$this->_itemID = $row ['itemID'];
 		} else {
-			throw new ModelException ( self::ERROR_CATEGORYITEMS_NOT_EXIST );
+			throw new ModelException ( self::ERROR_CATEGORY_ITEMS_ID_NOT_EXIST );
 		}
 		return $this;
 	}
@@ -127,52 +129,23 @@ class CategoryItems {
 	 * @return bool
 	 */
 	public function update(): bool {
-		if ($this->exists ()) {
-			
-			$query = "SELECT * FROM Category_items WHERE category_itemID = :category_itemID";
+		if ($this->exists ()
+			&& $this->existsCategoryID()
+			&& $this->existsItemID()
+			&& !$this->existsCategoryIDItemID()) {
+				
+			$query = "UPDATE Category_items
+					SET categoryID = :categoryID,
+						itemID = :itemID
+					WHERE category_itemID = :category_itemID";
 			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
-			$stmt->execute ();
-			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			
-			if (is_numeric ( $this->_categoryID ) && $this->_categoryID > 1) {
-				// Leave it as is
-			} else {
-				$this->_categoryID = $row ['categoryID'];
-			}
-			
-			if (is_numeric ( $this->_categoryID ) && $this->_categoryID > 1) {
-				// Leave it as is
-			} else {
-				$this->_itemID = $row ['itemID'];
-			}
-			
-			$query = "SELECT * FROM Category_items 
-						WHERE categoryID = :categoryID
-						AND itemID = :itemID";
-			
-			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':categoryID', $this->_categoryID );
 			$stmt->bindParam ( ':itemID', $this->_itemID );
 			$stmt->execute ();
-			
-			if ($stmt->rowCount () == 0) {
-				$query = "UPDATE Category_items
-						SET categoryID = :categoryID,
-							itemID = :itemID
-						WHERE category_itemID = :category_itemID";
-				
-				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
-				$stmt->bindParam ( ':categoryID', $this->_categoryID );
-				$stmt->bindParam ( ':itemID', $this->_itemID );
-				$stmt->execute ();
-				if ($stmt->rowCount () > 0) {
-					return true;
-				} else {
-					return false;
-				}
+			if ($stmt->rowCount () > 0) {
+				return true;
 			} else {
 				return false;
 			}
@@ -240,17 +213,77 @@ class CategoryItems {
 	 * @return bool
 	 */
 	public function exists(): bool {
-		if ($this->_category_itemID > 0) {
+		if ($this->_category_itemID > 0) { 
 			$query = "SELECT COUNT(*) AS numRows FROM Category_items WHERE category_itemID = :category_itemID";
 			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':category_itemID', $this->_category_itemID );
 			$stmt->execute ();
-			if ($stmt->rowCount () > 0) {
+			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+			if ($row['numRows'] > 0) {
 				return true;
 			} else {
 				return false;
 			}
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Checks to see if the ItemID exists in the table.
+	 * 
+	 * @return bool
+	 */
+	private function existsItemID(): bool {
+		$query = "SELECT COUNT(*) AS numRows FROM Category_items WHERE itemID = :itemID";
+		
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindParam ( ':itemID', $this->_itemID );
+		$stmt->execute ();
+		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+		if ($row['numRows'] > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Checks to see if the CategoryID exists in the table.
+	 *
+	 * @return bool
+	 */
+	private function existsCategoryID(): bool {
+		$query = "SELECT COUNT(*) AS numRows FROM Category_items WHERE categoryID = :categoryID";
+		
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindParam ( ':categoryID', $this->_categoryID );
+		$stmt->execute ();
+		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+		if ($row['numRows'] > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Checks to see if the CategoryID and ItemID exist in a single row.
+	 *
+	 * @return bool
+	 */
+	private function existsCategoryIDItemID(): bool {
+		$query = "SELECT COUNT(*) AS numRows FROM Category_items WHERE categoryID = :categoryID 
+					AND itemID = :itemID";
+		
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindParam ( ':categoryID', $this->_categoryID );
+		$stmt->bindParam ( ':itemID', $this->_itemID );
+		$stmt->execute ();
+		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+		if ($row['numRows'] > 0) {
+			return true;
 		} else {
 			return false;
 		}

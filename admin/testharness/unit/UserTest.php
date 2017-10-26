@@ -239,15 +239,18 @@ class UserTest extends PicnicTestCase {
 			try {
 				${'u' . $i}->set ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			try {
 				${'u' . $i}->get ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			if ($i != 3) {
 				try {
 					${'u' . $i}->activate ();
 				} catch ( ModelException $e ) {
+					$this->assertEquals('Exception', $e->getMessage());
 				}
 			}
 		}
@@ -325,6 +328,7 @@ class UserTest extends PicnicTestCase {
 			$this->assertSame ( self::STATUS_ACTIVE, $sut->status );
 			$this->assertNull ( $sut->activate );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -479,6 +483,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$this->assertEquals ( 4, $sut->set () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -573,6 +578,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( Exception $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::STATUS_ADD, $sut->status );
 	}
@@ -588,6 +594,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( Exception $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::USER_ADD, $sut->user );
 		$this->assertEquals ( self::EMAIL_ADD, $sut->email );
@@ -651,20 +658,24 @@ class UserTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$oldPassword = $sut->password;
 		$sut->password = self::PASSWORD_ADD;
 		try {
 			$this->assertTrue ( $sut->updatePassword () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		try {
 			$newPassword = $sut->get ()->password;
 		} catch ( Exception $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		if (strlen ( $oldPassword ) > 0 && strlen ( $newPassword ) > 0 && $oldPassword != $newPassword) {
 			$this->assertTrue ( true );
@@ -691,6 +702,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$sut->delete ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( $this->getValidId () );
 		$this->expectExceptionMessage ( self::ERROR_USER_NOT_EXIST );
@@ -710,6 +722,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$this->assertFalse ( $sut->exists () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	public function testExistsValidUserID(): void {
@@ -717,6 +730,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$this->assertTrue ( $sut->exists () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -746,6 +760,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$this->assertEquals ( 1, $sut->countUser () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -769,6 +784,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$this->assertEquals ( 1, $sut->countEmail () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -797,12 +813,14 @@ class UserTest extends PicnicTestCase {
 		try {
 			$expected->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createDefaultSut ();
 		$sut->activate = $expected->activate;
 		try {
 			$sut->userID = $sut->getUserIdByActivationCode ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( $expected->userID, $sut->userID );
 	}
@@ -825,10 +843,12 @@ class UserTest extends PicnicTestCase {
 		try {
 			$sut->activate ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertNull ( $sut->activate );
 	}
@@ -843,7 +863,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$sut->login ();
 		} catch ( ModelException $e ) {
-			// Do Nothing
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		$this->assertNotEmpty ( $_SESSION );
@@ -862,7 +882,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$sut->login ();
 		} catch ( ModelException $e ) {
-			// Do Nothing
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		$this->assertEmpty ( $_SESSION );
@@ -902,6 +922,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		try {
@@ -913,10 +934,13 @@ class UserTest extends PicnicTestCase {
 	}
 	public function testLoginFailsForAccountSuspended(): void {
 		$u = $this->createSutWithId ( 1 );
-		$u->status = SELF::STATUS_SUSPENDED;
+		$u->user = self::USER_ONE;
+		$u->email = self::EMAIL_ADDRESS_ONE;
+		$u->status = self::STATUS_SUSPENDED;
 		try {
 			$u->update ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		unset ( $_SESSION [self::MODULE] );
@@ -925,6 +949,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		try {
@@ -957,6 +982,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$sut->login ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		$this->assertNotEmpty ( $_SESSION );
@@ -992,6 +1018,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$this->assertFalse ( $sut->checkUserExist () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	public function testCheckUserExistTrue(): void {
@@ -1010,6 +1037,7 @@ class UserTest extends PicnicTestCase {
 		try {
 			$this->assertFalse ( $sut->checkEmailExist () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	public function testCheckEmailExistTrue(): void {
