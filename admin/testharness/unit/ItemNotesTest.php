@@ -234,7 +234,7 @@ final class ItemNotesTest extends PicnicTestCase {
 	 */
 	public function testSetItemNotesEmpty(): void {
 		$sut = $this->createDefaultSut ();
-		$this->expectExceptionMessage ( '' );
+		$this->expectExceptionMessage ( self::ERROR_ITEM_ID_NOT_EXIST );
 		$sut->set ();
 	}
 	public function testSetItemNotesInvalidItemId(): void {

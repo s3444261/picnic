@@ -234,7 +234,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 	 */
 	public function testSetItemCommentsEmpty(): void {
 		$sut = $this->createDefaultSut ();
-		$this->expectExceptionMessage ( '' );
+		$this->expectExceptionMessage ( self::ERROR_ITEM_ID_NOT_EXIST );
 		$sut->set ();
 	}
 	public function testSetItemCommentsInvalidItemId(): void {
