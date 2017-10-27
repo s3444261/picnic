@@ -818,6 +818,26 @@ class Humphree {
 	}
 
 	/**
+	 * Removes the given item form the given category.
+	 *
+	 * @param int $itemID		The item to be removed.
+	 * @param int $categoryID	The category from which it will be removed.
+	 */
+	public function removeItemFromCategory(int $itemID, int $categoryID): void {
+		$this->system->removeItemFromCategory($itemID, $categoryID);
+	}
+
+	/**
+	 * Afds the given item to the given category.
+	 *
+	 * @param int $itemID		The item to be added.
+	 * @param int $categoryID	The category to which it will be added.
+	 */
+	public function addItemToCategory(int $itemID, int $categoryID): void {
+		$this->system->addItemToCategory($itemID, $categoryID);
+	}
+
+	/**
 	 * Gets the first category associated with the given item.
 	 *
 	 * @param int $itemID

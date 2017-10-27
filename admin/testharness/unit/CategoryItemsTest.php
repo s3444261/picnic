@@ -75,7 +75,6 @@ require_once dirname ( __FILE__ ) . '/../../../model/Validation.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ModelException.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ValidationException.php';
 class CategoryItemsTest extends PHPUnit\Framework\TestCase {
-	const CATEGORY_ITEM_ID = 'category_itemID';
 	const CATEGORY_ID = 'categoryID';
 	const ITEM_ID = 'itemID';
 	const PARENT_ID = 'parentID';
@@ -102,14 +101,12 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	const ITEM_ID_3 = 3;
 	const ITEM_ID_40 = 40;
 	const ITEM_ID_101 = 101;
-	const CATEGORY_ITEM_ID_101 = 101;
 	const PAGE_NUMBER = 3;
 	const ITEMS_PER_PAGE = 6;
 	const PAGE_NUMBER_ZERO = 0;
 	const ITEMS_PER_PAGE_ZERO = 0;
 	const ERROR_ZERO = 'Number must be greater than zero!';
 	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
-	const ERROR_CATEGORY_ITEMS_ID_NOT_EXIST = 'The category_itemsID does not exist!';
 	const ERROR_ITEM_ID_NOT_EXIST = 'The itemID does not exist!';
 	const ERROR_CATEGORYITEM_EXISTS = 'The categoryItem already exists!';
 	
@@ -122,34 +119,20 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 		// Insert a root category
 		$root = new Category ( $pdo );
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( CategoryException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
-		
+		$root->set ();
+
 		// Insert additional categories
 		$c = new Category ( $pdo );
 		$c->{self::PARENT_ID} = self::PARENT_ID_1;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( CategoryException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+		$c->set ();
+
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( CategoryException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+		$c->set ();
+
 		$c->{self::PARENT_ID} = self::PARENT_ID_2;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_4;
-		try {
-			$c->set ();
-		} catch ( CategoryException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+		$c->set ();
 
 		$user = new User($pdo);
 		$user->user = "f sfsd fsd f";
@@ -169,11 +152,8 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 					self::PRICE => 'price' . $i,
 					self::STATUS => '' 
 			] );
-			try {
-				$item->set ();
-			} catch ( ModelException $e ) {
-				$this->assertEquals('Exception', $e->getMessage());
-			}
+
+			$item->set ();
 		}
 		
 		// Populate the CategoryItems Table
@@ -181,13 +161,10 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 		for($i = 1; $i <= 100; $i ++) {
 			$ci = new CategoryItems ( $pdo, [ 
 					self::CATEGORY_ID => $j,
-					SELF::ITEM_ID => $i 
+					self::ITEM_ID => $i
 			] );
-			try {
-				$ci->set ();
-			} catch ( ModelExceptionException $e ) {
-				$this->assertEquals('Exception', $e->getMessage());
-			}
+			$ci->set ();
+
 			if ($i % 34 == 0) {
 				$j ++;
 			}
@@ -199,135 +176,82 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	protected function createDefaultSut() {
 		return new CategoryItems ( TestPDO::getInstance () );
 	}
-	protected function createSutWithId($id) {
+	protected function createSutWithId(int $itemID, int $categoryID) {
 		return new CategoryItems ( TestPDO::getInstance (), [ 
-				self::CATEGORY_ITEM_ID => $id 
+				self::ITEM_ID => $itemID,
+				self::CATEGORY_ID => $categoryID
 		] );
 	}
-	protected function getValidId() {
+
+	protected function getValidItemId() {
+		return self::ITEM_ID_40;
+	}
+
+	protected function getValidCategoryId() {
 		return self::CATEGORY_ID_3;
 	}
-	protected function getInvalidId() {
+
+	protected function getInvalidItemId() {
 		return 5000;
 	}
-	
-	/*
-	 * get(): CategoryItems
-	 */
-	public function testGetCategoryItemIDEmpty(): void {
-		$sut = $this->createDefaultSut ();
-		$this->expectExceptionMessage ( self::ERROR_CATEGORY_ITEMS_ID_NOT_EXIST);
-		$sut->get ();
+
+	protected function getInvalidCategoryId() {
+		return 5000;
 	}
-	public function testGetCategoryItemIDInvalid(): void {
-		$sut = $this->createSutWithId($this->getInvalidId());
-		$this->expectExceptionMessage ( self::ERROR_CATEGORY_ITEMS_ID_NOT_EXIST);
-		$sut->get ();
-	}
-	public function testGetCategoryItemIDValid(): void {
-		$sut = $this->createSutWithId($this->getValidId());
-		try {
-			$this->assertEquals ( 2, $sut->get()->categoryID);
-			$this->assertEquals ( 3, $sut->get()->itemID);
-		} catch ( Exception $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
-	}
-	
+
 	/*
 	 * set(): int
 	 */
 	public function testSetCategoryIDInvalid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->categoryID = $this->getInvalidId();
-		$sut->itemID = $this->getValidId();
+		$sut = $this->createSutWithId($this->getValidItemId(), $this->getInvalidCategoryId());
 		$this->expectExceptionMessage ( self::ERROR_CATEGORY_ID_NOT_EXIST);
 		$sut->set ();
 	}
 	
 	public function testSetItemIDInvalid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->categoryID = $this->getValidId();
-		$sut->itemID = $this->getInvalidId();
+		$sut = $this->createSutWithId ($this->getInvalidItemId(), $this->getValidCategoryId());
 		$this->expectExceptionMessage ( self::ERROR_ITEM_ID_NOT_EXIST);
 		$sut->set ();
 	}
-	
-	public function testSetCategoryIDItemIDExist(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->categoryID = $this->getValidId();
-		$sut->itemID = self::ITEM_ID_40;
+
+	public function testSetBothIDsInvalid(): void {
+		$sut = $this->createSutWithId ($this->getInvalidItemId(), $this->getInvalidCategoryId());
+		$this->expectExceptionMessage ( self::ERROR_CATEGORY_ID_NOT_EXIST);
+		$sut->set ();
+	}
+
+	public function testSetDuplicate(): void {
+		$sut = $this->createSutWithId($this->getValidItemId(), $this->getValidCategoryId());
 		$this->expectExceptionMessage ( self::ERROR_CATEGORYITEM_EXISTS);
 		$sut->set ();
 	}
 	
 	public function testSetSuccess(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->categoryID = $this->getValidId();
-		$sut->itemID = self::ITEM_ID_101;
-		try {
-			$this->assertEquals ( self::CATEGORY_ITEM_ID_101, $sut->set());
-		} catch ( Exception $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+		$sut = $this->createSutWithId (self::ITEM_ID_101, $this->getValidCategoryId());
+		$this->assertTrue($sut->set());
 	}
-	
-	/*
-	 * update(): bool
-	 */	
-	public function testUpdateCategoryItemIDInvalid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->category_itemID = $this->getInvalidId();
-		$sut->categoryID = $this->getValidId();
-		$sut->itemID = $this->getValidId();
-		$this->assertFalse($sut->update());
-	}
-	
-	public function testUpdateCategoryIDInvalid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->category_itemID = $this->getValidId();
-		$sut->categoryID = $this->getInvalidId();
-		$sut->itemID = $this->getValidId();
-		$this->assertFalse($sut->update());
-	}
-	
-	public function testUpdateItemIDInvalid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->category_itemID = $this->getValidId();
-		$sut->categoryID = $this->getValidId();
-		$sut->itemID = $this->getInvalidId();
-		$this->assertFalse($sut->update());
-	}
-	
-	public function testUpdateCategoryIDItemIDExist(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->category_itemID = $this->getValidId();
-		$sut->categoryID = self::CATEGORY_ID_2;
-		$sut->itemID = self::ITEM_ID_3;
-		$this->assertFalse($sut->update());
-	}
-	
-	public function testUpdateSuccess(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->category_itemID = $this->getValidId();
-		$sut->categoryID = self::CATEGORY_ID_3;
-		$sut->itemID = self::ITEM_ID_2;
-		$this->assertTrue($sut->update());
-	}
-	
+
 	/*
 	 * delete(): bool
 	 */
 	
-	public function testDeleteCategoryItemCategoryItemIDInvalid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->category_itemID = $this->getInvalidId();
+	public function testDeleteItemIDInvalid(): void {
+		$sut = $this->createSutWithId ($this->getInvalidItemId(), $this->getValidCategoryId());
 		$this->assertFalse($sut->delete());
 	}
-	
-	public function testDeleteCategoryItemCategoryItemIDValid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->category_itemID = $this->getValidId();
+
+	public function testDeleteCategoryIDInvalid(): void {
+		$sut = $this->createSutWithId ($this->getValidItemId(), $this->getInvalidCategoryId());
+		$this->assertFalse($sut->delete());
+	}
+
+	public function testDeleteBothIDsInvalid(): void {
+		$sut = $this->createSutWithId ($this->getInvalidItemId(), $this->getInvalidCategoryId());
+		$this->assertFalse($sut->delete());
+	}
+
+	public function testDeleteBothIDsValid(): void {
+		$sut = $this->createSutWithId ($this->getValidItemId(), $this->getValidCategoryId());
 		$this->assertTrue($sut->delete());
 	}
 		
@@ -335,31 +259,47 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	 * deleteItem(): bool
 	 */
 	
-	public function testDeleteCategoryItemItemIDInvalid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->itemID = $this->getInvalidId();
+	public function testDeleteItemItemIDInvalid(): void {
+		$sut = $this->createSutWithId($this->getInvalidItemId(), $this->getValidCategoryId());
 		$this->assertFalse($sut->deleteItem());
 	}
-	
-	public function testDeleteCategoryItemItemIDValid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->itemID = $this->getValidId();
+
+	public function testDeleteItemCategoryIDInvalid(): void {
+		$sut = $this->createSutWithId($this->getValidItemId(), $this->getInvalidCategoryId());
+		$this->assertFalse($sut->deleteItem());
+	}
+
+	public function testDeleteItemBothIDsInvalid(): void {
+		$sut = $this->createSutWithId($this->getInvalidItemId(), $this->getInvalidCategoryId());
+		$this->assertFalse($sut->deleteItem());
+	}
+
+	public function testDeleteItemBothIDsValid(): void {
+		$sut = $this->createSutWithId($this->getValidItemId(), $this->getValidCategoryId());
 		$this->assertTrue($sut->deleteItem());
 	}
 		
 	/*
 	 * exists(): bool
 	 */
-	
-	public function testExistsCategoryItemIDInvalid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->category_itemID = $this->getInvalidId();
+
+	public function testExistsItemIDInvalid(): void {
+		$sut = $this->createSutWithId ($this->getInvalidItemId(), $this->getValidCategoryId());
 		$this->assertFalse($sut->exists());
 	}
-	
-	public function testExistsCategoryItemIDValid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->category_itemID = $this->getValidId();
+
+	public function testExistsCategoryIDInvalid(): void {
+		$sut = $this->createSutWithId ($this->getValidItemId(), $this->getInvalidCategoryId());
+		$this->assertFalse($sut->exists());
+	}
+
+	public function testExistsBothIDsInvalid(): void {
+		$sut = $this->createSutWithId ($this->getInvalidItemId(), $this->getInvalidCategoryId());
+		$this->assertFalse($sut->exists());
+	}
+
+	public function testExistsBothIDsValid(): void {
+		$sut = $this->createSutWithId($this->getValidItemId(), $this->getValidCategoryId());
 		$this->assertTrue($sut->exists());
 	}
 		
@@ -367,24 +307,18 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	 * count(): int
 	 */
 	public function testCountCategoryIDEmpty(): void {
-		$sut = $this->createDefaultSut ();
-		$this->expectExceptionMessage ( self::ERROR_CATEGORY_ID_NOT_EXIST );
-		$sut->count ();
+		$sut = $this->createDefaultSut();
+		$this->assertEquals(0, $sut->count());
 	}
+
 	public function testCountCategoryIDInvalid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->categoryID = $this->getInvalidID ();
-		$this->expectExceptionMessage ( self::ERROR_CATEGORY_ID_NOT_EXIST );
-		$sut->count ();
+		$sut = $this->createSutWithId($this->getInvalidItemId(), $this->getInvalidCategoryId());
+		$this->assertEquals(0, $sut->count());
 	}
+
 	public function testCountCategoryIDValid(): void {
-		$sut = $this->createDefaultSut ();
-		$sut->categoryID = $this->getValidID ();
-		try {
-			$this->assertEquals ( 34, $sut->count () );
-		} catch ( Exception $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+		$sut = $this->createSutWithId($this->getValidItemId (), $this->getValidCategoryId());
+		$this->assertEquals ( 34, $sut->count () );
 	}
 	
 	/*
@@ -395,20 +329,19 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 		$this->expectExceptionMessage ( self::ERROR_ZERO );
 		$sut->getCategoryItemsByPage ( self::PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE, '' );
 	}
+
 	public function testGetCategoryItemsItemsPerPageZero(): void {
 		$sut = $this->createDefaultSut ();
 		$this->expectExceptionMessage ( self::ERROR_ZERO );
 		$sut->getCategoryItemsByPage ( self::PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO, '' );
 	}
+
 	public function testGetCategoryItemsSuccess(): void {
 		$sut = $this->createDefaultSut ();
 		$sut->categoryID = self::CATEGORY_ID_3;
 		try {
 			$items = $sut->getCategoryItemsByPage ( self::PAGE_NUMBER, self::ITEMS_PER_PAGE, '' );
-			
-			$pn = self::PAGE_NUMBER;
-			$upp = self::ITEMS_PER_PAGE;
-			
+
 			$start = 47;
 			
 			foreach ( $items as $item ) {

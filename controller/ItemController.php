@@ -103,6 +103,13 @@ class ItemController {
 					try {
 						$h = new Humphree(Picnic::getInstance());
 						$h->updateItem($_SESSION['itemAdd']);
+
+						$originalCategory = $h->getItemCategory($itemID)['categoryID'];
+						if ($originalCategory !=$_SESSION['itemAdd']['category']) {
+							$h->removeItemFromCategory($_SESSION['itemAdd']['itemID'], $originalCategory);
+							$h->addItemToCategory($_SESSION['itemAdd']['itemID'], $_SESSION['itemAdd']['category']);
+						}
+
 						unset($_SESSION['itemAdd']);
 						header('Location: ' . BASE . '/Item/View/' . $itemID);
 					} catch (ValidationException $e) {

@@ -1749,10 +1749,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$category = new Category ( $pdo );
-		$system->countCategoryItems ( $category );
 
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_CATEGORY_ID_NOT_EXIST, $_SESSION ['error'] );
+		$this->assertEquals(0, $system->countCategoryItems ( $category ));
 	}
 	public function testCountCategoryItemsCategoryIDInvalid(): void {
 		unset ( $_SESSION ['error'] );
@@ -1760,10 +1758,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$category = new Category ( $pdo );
 		$category->categoryID = self::INVALID_ID;
-		$system->countCategoryItems ( $category );
 
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_CATEGORY_ID_NOT_EXIST, $_SESSION ['error'] );
+		$this->assertEquals(0, $system->countCategoryItems ( $category ));
 	}
 	public function testCountCategoryItemsCategoryIDValid(): void {
 		unset ( $_SESSION ['error'] );
@@ -2007,7 +2003,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
 		$i->title = self::TITLE_16;
-		$system->addItem ( $i, self::CATEGORY_ID_1 );
+		$system->addItem ( $i, intval(self::CATEGORY_ID_1 ));
 
 		$this->assertTrue( isset ( $_SESSION ['error'] ));
 		$this->assertEquals ( self::ERROR_NUMBER_IS_ZERO, $_SESSION ['error'] );
@@ -2020,7 +2016,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$i = new Item ( $pdo );
 		$i->owningUserID = self::INVALID_ID;
 		$i->title = self::TITLE_16;
-		$system->addItem ( $i, self::CATEGORY_ID_1 );
+		$system->addItem ( $i, intval(self::CATEGORY_ID_1 ));
 
 		$this->assertTrue( isset ( $_SESSION ['error'] ));
 		$this->assertEquals ( self::ERROR_USER_NOT_EXIST, $_SESSION ['error'] );
@@ -2034,7 +2030,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$u->userID = self::USER_ID_1;
 		$i = new Item ( $pdo );
 		$i->owningUserID = self::USER_ID_1;
-		$system->addItem ( $i, self::CATEGORY_ID_1 );
+		$system->addItem ( $i, intval(self::CATEGORY_ID_1 ));
 
 		$this->assertTrue( isset ( $_SESSION ['error'] ));
 		$this->assertEquals ( self::ERROR_ITEM_EMPTY, $_SESSION ['error'] );

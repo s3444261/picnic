@@ -95,16 +95,15 @@ CREATE TABLE `User_ratings` (
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Category_items` (
-		`category_itemID` int(11) NOT NULL AUTO_INCREMENT,
-		`categoryID` int(11) NOT NULL,
-		`itemID` bigint(11) NOT NULL,
-		PRIMARY KEY (`category_itemID`),
-		KEY `FK_Category_idx` (`categoryID`),
-		KEY `FK_Item_idx` (`itemID`),
-		CONSTRAINT `FK_Category` FOREIGN KEY (`categoryID`) REFERENCES `Categories` (`categoryID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `UQ_categoryID_itemID` UNIQUE (`categoryID`, `itemID`)
-		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+	`itemID` bigint(11) NOT NULL,
+	`categoryID` int(11) NOT NULL,
+	PRIMARY KEY (`itemID`,`categoryID`),
+	UNIQUE KEY `UQ_categoryID_itemID` (`itemID`,`categoryID`),
+	KEY `FK_Item_idx` (`itemID`),
+	KEY `FK_Category_idx` (`categoryID`),
+	CONSTRAINT `FK_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `FK_Category` FOREIGN KEY (`categoryID`) REFERENCES `Categories` (`categoryID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Comments` (
 		`commentID` int(11) NOT NULL AUTO_INCREMENT,
