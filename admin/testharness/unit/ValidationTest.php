@@ -15,15 +15,15 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 	const ERROR_FIELD_EMPTY = 'Input is required!';
 	const ERROR_NOT_NUMBER = 'Input must be a number!';
 	const ERROR_NOT_ZERO = 'Number must be greater than zero!';
-	const ERROR_UPPER_LOWER_NUMBER = 'Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!';
+	const ERROR_UPPER_LOWER_NUMBER = 'At least one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!';
 	const ERROR_NOT_ALPHANUMERIC = 'Input must be a alphanumeric!';
 	const ERROR_NOT_ALPHA = 'Input must consist of letters only!';
 	const ERROR_NOT_NUMBER_OR_HYPHEN = 'Must only consist of numbers and/or hyphens!';
 	const ERROR_NOT_DATE = 'Input must be valid date!';
 	const ERROR_NOT_TODAY_OR_FUTURE = 'Date must be todays date or a future date!';
 	const ERROR_EMAIL_NOT_VALID = 'Email address must be valid!';
-	const ERROR_STRLEN_LESS_THAN_FOUR = 'Input must be atleast 4 characters in length!';
-	const ERROR_STRLEN_LESS_THAN_EIGHT = 'Input must be atleast 8 characters in length!';
+	const ERROR_STRLEN_LESS_THAN_FOUR = 'Input must be at least 4 characters in length!';
+	const ERROR_STRLEN_LESS_THAN_EIGHT = 'Input must be at least 8 characters in length!';
 	const ERROR_ACTIVATION_STRLEN_NOT_THIRTY_TWO = 'Activation code must be 32 characters in length!';
 	public function testEmptyFieldThrowsForEmptyString() {
 		$sut = new Validation ();
@@ -171,7 +171,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		try {
 			$v->oneUpperOneLowerOneDigitGreaterEight ( $content );
 		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
+			if (strcmp ( $e->getError (), 'At least one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
 				$b5 = false;
 				$oneUpperOneLowerOneDigitGreaterEightError = $oneUpperOneLowerOneDigitGreaterEightError . 'Failed caught error oneUpperOneLowerOneDigitGreaterEight($content) with correct content.<br />';
 			}
@@ -183,7 +183,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		try {
 			$v->oneUpperOneLowerOneDigitGreaterEight ( $content );
 		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
+			if (strcmp ( $e->getError (), 'At least one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
 				$b6 = true;
 			}
 		}
@@ -196,7 +196,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		try {
 			$v->oneUpperOneLowerOneDigitGreaterEight ( $content );
 		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
+			if (strcmp ( $e->getError (), 'At least one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
 				$b7 = true;
 			}
 		}
@@ -209,7 +209,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		try {
 			$v->oneUpperOneLowerOneDigitGreaterEight ( $content );
 		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
+			if (strcmp ( $e->getError (), 'At least one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
 				$b8 = true;
 			}
 		}
@@ -222,7 +222,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		try {
 			$v->oneUpperOneLowerOneDigitGreaterEight ( $content );
 		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
+			if (strcmp ( $e->getError (), 'At least one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
 				$b9 = true;
 			}
 		}
@@ -389,7 +389,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		try {
 			$v->atLeastFour ( $content );
 		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Input must be atleast 4 characters in length!' ) == 0) {
+			if (strcmp ( $e->getError (), 'Input must be at least 4 characters in length!' ) == 0) {
 				$b23 = false;
 				$atLeastFourError = 'Failed validated atLeastFour($content) with valid content.<br />';
 			}
@@ -401,7 +401,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		try {
 			$v->atLeastFour ( $content );
 		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Input must be atleast 4 characters in length!' ) == 0) {
+			if (strcmp ( $e->getError (), 'Input must be at least 4 characters in length!' ) == 0) {
 				$b24 = true;
 			}
 		}
