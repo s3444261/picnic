@@ -419,7 +419,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ERROR_PARENT_ID_INVALID = 'Input is required!';
 	const ERROR_PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
 	const ERROR_PASSWORD_EMPTY = 'Password Error: Input is required!';
-	const ERROR_PASSWORD_INVALID = 'Password Error: Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!';
+	const ERROR_PASSWORD_INVALID = 'Password Error: At least one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!';
 	const ERROR_USER_ADD_FAILED = 'Failed to add User.';
 	const ERROR_USER_EMPTY = 'Username Error: Input is required!';
 	const ERROR_USER_DUPLICATE = 'This user name is not available!';
@@ -430,7 +430,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ERROR_USER_NOT_EXIST = 'User does not exist!';
 	const ERROR_USER_RATING_ID_NOT_EXIST = 'The UserRatingID does not exist!';
 	const ERROR_USER_RATING_NOT_SET = 'The rating has not been set!';
-	const ERROR_USER_SHORT = 'Username Error: Input must be atleast 4 characters in length!';
+	const ERROR_USER_SHORT = 'Username Error: Input must be at least 4 characters in length!';
 	const ERROR_ZERO = 'Number must be greater than zero!';
 	
 	// Test Data

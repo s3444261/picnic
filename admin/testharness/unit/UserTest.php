@@ -181,7 +181,7 @@ class UserTest extends PicnicTestCase {
 	const ERROR_USER_ID_NOT_INT = 'UserID must be an integer!';
 	const ERROR_USER_NOT_EXIST = 'User does not exist!';
 	const ERROR_USER_EMPTY = 'Username Error: Input is required!';
-	const ERROR_USER_SHORT = 'Input must be atleast 4 characters in length!';
+	const ERROR_USER_SHORT = 'Input must be at least 4 characters in length!';
 	const ERROR_USER_NOT_ALPHA = 'Input must consist of letters only!';
 	const ERROR_USER_DUPLICATE = 'This user name is not available!';
 	const ERROR_USER_SET = 'Failed to create user!';
@@ -191,7 +191,7 @@ class UserTest extends PicnicTestCase {
 	const ERROR_EMAIL_DUPLICATE = 'This email address is not available!';
 	const ERROR_EMAIL_NOT_EXIST = 'Email does not exist!';
 	const ERROR_PASSWORD_EMPTY = 'Password Error: Input is required!';
-	const ERROR_PASSWORD_INVALID = 'Password Error: Atleast one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!';
+	const ERROR_PASSWORD_INVALID = 'Password Error: At least one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!';
 	const ERROR_PASSWORD_NOT_UPDATED = 'Password Not Updated!';
 	const ERROR_ACTIVATION_CODE_INVALID = 'Failed to activate account!';
 	const ERROR_ACTIVATION_CODE_SHORT = 'Activation code must be 32 characters in length!';
