@@ -1,24 +1,31 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <edwanhp@gmail.com>
  */
 ?>
 
-
 <div class="container-fluid">
-	<div class="row">
-		<div class="col"></div>
-		<div class="col-9">
-			<div class="jumbotron panel panel-default">
-				<h1 class="display-3 text-center">Edit Item</h1>
-				<h4 class="text-center">Coming soon!</h4>
-			</div>
-		</div>
-		<div class="col"></div>
-	</div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-9">
+            <div class="jumbotron panel panel-default">
+                <h1 class="display-3 text-center">Edit item</h1>
+                <hr>
+
+				<?php if ($this->hasError()) { ?>
+                    <div class="alert alert-danger"><?php echo $this->error() ?></div>
+				<?php } ?>
+
+                <form data-toggle="validator" role="form" method="post" action="../Edit/<?php echo $this->itemID() ?>">
+					<?php include("itemDetailsEditable.php") ?>
+                    <button type="submit" class="btn btn-primary btn-success" name="confirm">Next</button>
+                </form>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
 </div>

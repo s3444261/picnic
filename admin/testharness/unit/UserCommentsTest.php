@@ -62,10 +62,12 @@ class UserCommentsTest extends PHPUnit\Framework\TestCase {
 			try {
 				${'u' . $i}->set ();
 			} catch ( UserException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			try {
 				${'u' . $i}->get ();
 			} catch ( UserException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			${'u' . $i}->activate ();
 		}
@@ -80,6 +82,7 @@ class UserCommentsTest extends PHPUnit\Framework\TestCase {
 					$c->set ();
 					$k ++;
 				} catch ( ModelException $e ) {
+					$this->assertEquals('Exception', $e->getMessage());
 				}
 			}
 		}

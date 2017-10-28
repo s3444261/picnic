@@ -26,7 +26,7 @@ class Validation {
 	/**
 	 * Validates a userName.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function userName($content) {
@@ -52,7 +52,7 @@ class Validation {
 	/**
 	 * Validates an email address.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function email($content) {
@@ -77,7 +77,7 @@ class Validation {
 	/**
 	 * Validates a password.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function password($content) {
@@ -102,8 +102,8 @@ class Validation {
 	/**
 	 * Compares two passwords.
 	 *
-	 * @param unknown $password1        	
-	 * @param unknown $password2        	
+	 * @param $password1
+	 * @param $password2
 	 * @throws ValidationException
 	 */
 	public function comparePasswords($password1, $password2) {
@@ -118,7 +118,7 @@ class Validation {
 	/**
 	 * Validates a date.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function confirmDate($content) {
@@ -146,11 +146,11 @@ class Validation {
 	/**
 	 * Tests for an empty field.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function emptyField($content) {
-		if (strlen ( $content ) == 0) {
+		if (!isset($content) || strlen ( $content ) == 0) {
 			throw new ValidationException ( self::ERROR_FIELD_EMPTY );
 		}
 	}
@@ -158,7 +158,7 @@ class Validation {
 	/**
 	 * Tests for a number.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function number($content) {
@@ -170,7 +170,7 @@ class Validation {
 	/**
 	 * Tests for a number greater than zero.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function numberGreaterThanZero($content) {
@@ -185,7 +185,7 @@ class Validation {
 	 * At least one digit.
 	 * At least eight characters long.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function oneUpperOneLowerOneDigitGreaterEight($content) {
@@ -197,7 +197,7 @@ class Validation {
 	/**
 	 * Tests that input is alphanumeric.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function alphaNumeric($content) {
@@ -211,7 +211,7 @@ class Validation {
 	/**
 	 * Tests that input contains letters only.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function alpha($content) {
@@ -225,7 +225,7 @@ class Validation {
 	/**
 	 * Tests that the input only contains numbers or hyphens.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function numberHyphen($content) {
@@ -237,7 +237,7 @@ class Validation {
 	/**
 	 * Tests that input is a date.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function isDate($content) {
@@ -249,7 +249,7 @@ class Validation {
 	/**
 	 * Tests that the date is either today or a future date.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function notPastDate($content) {
@@ -269,8 +269,8 @@ class Validation {
 	 * Validates a date.
 	 * From PHP Manual.
 	 *
-	 * @param unknown $date        	
-	 * @param unknown $format        	
+	 * @param $date
+	 * @param $format
 	 * @return boolean
 	 */
 	public function validateDate($date, $format) {
@@ -282,7 +282,7 @@ class Validation {
 	 * Validates an email address.
 	 * From PHP Manual.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function validateEmail($content) {
@@ -294,7 +294,7 @@ class Validation {
 	/**
 	 * Tests for string length atleast 4 characters long.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function atLeastFour($content) {
@@ -306,7 +306,7 @@ class Validation {
 	/**
 	 * Tests for string length atleast 8 characters long.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function atLeastEight($content) {
@@ -318,7 +318,7 @@ class Validation {
 	/**
 	 * Tests for string length 32 characters long.
 	 *
-	 * @param unknown $content        	
+	 * @param $content
 	 * @throws ValidationException
 	 */
 	public function activation($content) {

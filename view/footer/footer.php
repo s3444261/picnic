@@ -23,6 +23,7 @@
                     <li class="nav-item"><a class="nav-link" href="<?php echo BASE . '/TermsOfService' ?>">Terms of Service</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?php echo  BASE . '/PrivacyPolicy' ?>">Privacy policy</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?php echo  BASE . '/SiteMap' ?>">Site map</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo  BASE . '/Faq' ?>">FAQ</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?php echo  BASE . '/Home' ?>">Search</a></li>
 
                     <?php if (isset ( $_SESSION [MODULE] )) { ?>
@@ -49,3 +50,5 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
 </body>
 </html>
+
+<?php 	unset($_SESSION['error']); ?>

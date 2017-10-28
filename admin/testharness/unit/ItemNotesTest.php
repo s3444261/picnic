@@ -103,6 +103,7 @@ require_once 'PicnicTestCase.php';
 require_once dirname ( __FILE__ ) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ItemNotes.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Item.php';
+require_once dirname ( __FILE__ ) . '/../../../model/User.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Note.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Validation.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ModelException.php';
@@ -131,10 +132,18 @@ final class ItemNotesTest extends PicnicTestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
-		
+
+		$user = new User($pdo);
+		$user->user = "f sfsd fsd f";
+		$user->email = "test@test.com";
+		$user->password = "fRRR44@fff";
+		$user->status = "good";
+		$userID = $user->set();
+
 		$l = 1;
 		for($i = 1; $i <= 3; $i ++) {
 			$item = new Item ( $pdo );
+			$item->owningUserID = $userID;
 			$item->title = 'title' . $i;
 			$item->set ();
 			for($j = 1; $j <= 5; $j ++) {
@@ -152,8 +161,10 @@ final class ItemNotesTest extends PicnicTestCase {
 							$itemNote->set ();
 						}
 					} catch ( ModelException $e ) {
+						$this->assertEquals('Exception', $e->getMessage());
 					}
 				} catch ( Exception $e ) {
+					$this->assertEquals('Exception', $e->getMessage());
 				}
 				$l ++;
 			}
@@ -211,6 +222,7 @@ final class ItemNotesTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::ITEM_NOTE_ID_2, $sut->item_noteID );
 		$this->assertEquals ( self::ITEM_ID_1, $sut->itemID );
@@ -222,7 +234,7 @@ final class ItemNotesTest extends PicnicTestCase {
 	 */
 	public function testSetItemNotesEmpty(): void {
 		$sut = $this->createDefaultSut ();
-		$this->expectExceptionMessage ( '' );
+		$this->expectExceptionMessage ( self::ERROR_ITEM_ID_NOT_EXIST );
 		$sut->set ();
 	}
 	public function testSetItemNotesInvalidItemId(): void {
@@ -253,6 +265,7 @@ final class ItemNotesTest extends PicnicTestCase {
 		try {
 			$sut->item_noteID = $sut->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( $sut->item_noteID );
 		try {
@@ -261,6 +274,7 @@ final class ItemNotesTest extends PicnicTestCase {
 			$this->assertEquals ( self::ITEM_ID_3, $sut->itemID );
 			$this->assertEquals ( self::NOTE_ID_15, $sut->noteID );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -283,6 +297,7 @@ final class ItemNotesTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '1', $sut->itemID );
 		$this->assertSame ( '15', $sut->noteID );
@@ -295,6 +310,7 @@ final class ItemNotesTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '2', $sut->itemID );
 		$this->assertSame ( '1', $sut->noteID );
@@ -307,6 +323,7 @@ final class ItemNotesTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '2', $sut->itemID );
 		$this->assertSame ( '1', $sut->noteID );
@@ -319,6 +336,7 @@ final class ItemNotesTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '2', $sut->itemID );
 		$this->assertSame ( '15', $sut->noteID );
@@ -342,6 +360,7 @@ final class ItemNotesTest extends PicnicTestCase {
 		try {
 			$this->assertTrue ( $sut->delete () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->expectExceptionMessage ( self::ERROR_ITEM_NOTE_ID_NOT_EXIST );
 		$sut->get ();
@@ -443,6 +462,7 @@ final class ItemNotesTest extends PicnicTestCase {
 				$i ++;
 			}
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -469,6 +489,7 @@ final class ItemNotesTest extends PicnicTestCase {
 			$this->assertEquals ( 1, $obj->itemID );
 			$this->assertEquals ( 2, $obj->noteID );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -518,6 +539,7 @@ final class ItemNotesTest extends PicnicTestCase {
 		try {
 			$this->assertTrue ( $sut->deleteItemNotes () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		for($i = 6; $i <= 10; $i ++) {
 			$sut = $this->createSutWithId ( $i );

@@ -363,6 +363,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	
 	// Item Parameters
 	const ITEM_ID = 'itemID';
+	const OWNING_USER_ID = 'owningUserID';
 	const TITLE = 'title';
 	const DESCRIPTION = 'description';
 	const QUANTITY = 'quantity';
@@ -413,6 +414,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ERROR_NOTE_EMPTY = 'Input is required!';
 	const ERROR_NOTE_ID_ALREADY_EXIST = 'The NoteID is already in Item_notes!';
 	const ERROR_NOTE_ID_NOT_EXIST = 'The NoteID does not exist!';
+	const ERROR_NUMBER_IS_ZERO = 'Number must be greater than zero!';
 	const ERROR_PARENT_CATEGORY_NOT_EXIST = 'The parent category does not exist!';
 	const ERROR_PARENT_ID_INVALID = 'Input is required!';
 	const ERROR_PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
@@ -538,43 +540,35 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		// Insert a root category
 		$root = new Category ( $pdo );
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
+		$root->set ();
+
 		// Insert additional categories
 		$c = new Category ( $pdo );
 		$c->{self::PARENT_ID} = self::PARENT_ID_1;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		$c->set ();
+
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		$args1 = [ 
+		$c->set ();
+
+		$args1 = [
 				self::USER => self::USER_ONE,
 				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE 
+				self::PASSWORD => self::PASSWORD_ONE
 		];
-		
-		$args2 = [ 
+
+		$args2 = [
 				self::USER => self::USER_TWO,
 				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO 
+				self::PASSWORD => self::PASSWORD_TWO
 		];
-		
-		$args3 = [ 
+
+		$args3 = [
 				self::USER => self::USER_THREE,
 				self::EMAIL => self::EMAIL_ADDRESS_THREE,
-				self::PASSWORD => self::PASSWORD_THREE 
+				self::PASSWORD => self::PASSWORD_THREE
 		];
-		
+
 		// Populate the Users table.
 		
 		for($i = 1; $i < 4; $i ++) {
@@ -582,10 +576,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			try {
 				${'u' . $i}->set ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			try {
 				${'u' . $i}->get ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			${'u' . $i}->activate ();
 		}
@@ -606,10 +602,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_EMPTY, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_EMPTY, $_SESSION ['error'] );
 	}
 	public function testcreateAccountShortUser(): void {
 		unset ( $_SESSION ['error'] );
@@ -620,10 +616,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_SHORT, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_SHORT, $_SESSION ['error'] );
 	}
 	public function testcreateAccountExistUser(): void {
 		unset ( $_SESSION ['error'] );
@@ -634,10 +630,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_DUPLICATE, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_DUPLICATE, $_SESSION ['error'] );
 	}
 	public function testcreateAccountNoEmail(): void {
 		unset ( $_SESSION ['error'] );
@@ -648,10 +644,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => NULL,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_EMPTY, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_EMPTY, $_SESSION ['error'] );
 	}
 	public function testcreateAccountBadEmail(): void {
 		unset ( $_SESSION ['error'] );
@@ -662,10 +658,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_BAD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_INVALID, $_SESSION ['error'] );
 	}
 	public function testcreateAccountExistEmail(): void {
 		unset ( $_SESSION ['error'] );
@@ -676,10 +672,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADDRESS_TWO,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_DUPLICATE, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_DUPLICATE, $_SESSION ['error'] );
 	}
 	public function testcreateAccountNoPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -690,10 +686,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => NULL 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_EMPTY, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_EMPTY, $_SESSION ['error'] );
 	}
 	public function testcreateAccountShortPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -704,10 +700,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_SHORT 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
 	public function testcreateAccountNoUpperPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -718,10 +714,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_NO_UPPER 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
 	public function testcreateAccountNoLowerPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -732,10 +728,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_NO_LOWER 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
 	public function testcreateAccountNoNumberPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -746,10 +742,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_NO_NUMBER 
 		] );
+
 		$this->assertFalse ( $system->createAccount ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
 	public function testcreateAccountSuccessful(): void {
 		unset ( $_SESSION ['error'] );
@@ -775,18 +771,15 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
-		try {
-			$sut->set ();
-			$sut->userID = $sut->get ();
-		} catch ( ModelException $e ) {
-		}
+
+		$sut->set ();
+		$sut->userID = $sut->get ();
+
 		$sut->activate = self::INVALID_ACTIVATION_CODE;
 		$system->getUserIdByActivationCode ( $sut );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ACTIVATION_CODE_SHORT, $_SESSION ['error'] );
-		} else {
-			$this->assertFalse ( true );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ACTIVATION_CODE_SHORT, $_SESSION ['error'] );
 	}
 	public function testGetUserIdByActivationCodeValidCode(): void {
 		unset ( $_SESSION ['error'] );
@@ -797,11 +790,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
-		try {
-			$sut->set ();
-			$sut->userID = $sut->get ();
-		} catch ( ModelException $e ) {
-		}
+
+		$sut->set ();
+		$sut->userID = $sut->get ();
+
 		$this->assertGreaterThan ( 0, $system->getUserIdByActivationCode ( $sut ) );
 	}
 	
@@ -816,16 +808,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
-		try {
-			$sut->userID = $sut->set ();
-		} catch ( ModelException $e ) {
-			$this->assertFalse ( true );
-		}
-		try {
-			$sut->get ();
-		} catch ( ModelException $e ) {
-			$this->assertFalse ( true );
-		}
+
+		$sut->userID = $sut->set ();
+		$sut->get ();
+
 		$sut->userID = self::INVALID_ID;
 		$this->expectExceptionMessage ( self::ERROR_USER_NOT_EXIST );
 		$system->activateAccount ( $sut );
@@ -838,16 +824,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
-		try {
-			$sut->userID = $sut->set ();
-		} catch ( ModelException $e ) {
-			$this->assertFalse ( true );
-		}
-		try {
-			$sut->get ();
-		} catch ( ModelException $e ) {
-			$this->assertFalse ( true );
-		}
+
+		$sut->userID = $sut->set ();
+		$sut->get ();
+
 		$this->assertTrue ( $system->activateAccount ( $sut ) );
 	}
 	
@@ -862,10 +842,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::USER_ID => 1,
 				self::PASSWORD => NULL 
 		] );
+
 		$this->assertFalse ( $system->changePassword ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_EMPTY, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_EMPTY, $_SESSION ['error'] );
 	}
 	public function testChangePasswordShortPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -875,10 +855,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::USER_ID => 1,
 				self::PASSWORD => self::PASSWORD_SHORT 
 		] );
+
 		$this->assertFalse ( $system->changePassword ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
 	public function testChangePasswordNoUpperPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -888,10 +868,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::USER_ID => 1,
 				self::PASSWORD => self::PASSWORD_NO_UPPER 
 		] );
+
 		$this->assertFalse ( $system->changePassword ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
 	public function testChangePasswordNoLowerPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -901,11 +881,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::USER_ID => 1,
 				self::PASSWORD => self::PASSWORD_NO_LOWER 
 		] );
+
 		$this->assertFalse ( $system->changePassword ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
+
 	public function testChangePasswordNoNumberPassword(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -914,11 +895,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::USER_ID => 1,
 				self::PASSWORD => self::PASSWORD_NO_NUMBER 
 		] );
+
 		$this->assertFalse ( $system->changePassword ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
+
 	public function testChangePasswordSuccessful(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -927,17 +909,14 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::USER_ID => 1,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
-		try {
-			$sut->get ();
-		} catch ( ModelException $e ) {
-		}
+
+		$sut->get ();
+
 		$oldPassword = $sut->password;
 		$sut->password = self::PASSWORD_ADD;
 		$this->assertTrue ( $system->changePassword ( $sut ) );
-		try {
-			$sut->get ();
-		} catch ( ModelException $e ) {
-		}
+		$sut->get ();
+
 		$newPassword = $sut->get ()->password;
 		if (strlen ( $oldPassword ) > 0 && strlen ( $newPassword ) > 0 && $oldPassword != $newPassword) {
 			$this->assertTrue ( true );
@@ -956,10 +935,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = new User ( $pdo, [ 
 				self::EMAIL => NULL 
 		] );
-		$sut = $system->forgotPassword ( $sut );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_EMPTY, $_SESSION ['error'] );
-		}
+		$system->forgotPassword ( $sut );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_EMPTY, $_SESSION ['error'] );
 	}
 	public function testforgotPasswordBadEmail(): void {
 		unset ( $_SESSION ['error'] );
@@ -968,10 +947,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = new User ( $pdo, [ 
 				self::EMAIL => self::EMAIL_BAD 
 		] );
-		$sut = $system->forgotPassword ( $sut );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_INVALID, $_SESSION ['error'] );
-		}
+		$system->forgotPassword ( $sut );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_INVALID, $_SESSION ['error'] );
 	}
 	public function testforgotPasswordNotExistEmail(): void {
 		unset ( $_SESSION ['error'] );
@@ -980,10 +959,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = new User ( $pdo, [ 
 				self::EMAIL => self::EMAIL_BAD 
 		] );
-		$sut = $system->forgotPassword ( $sut );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_INVALID, $_SESSION ['error'] );
-		}
+		$system->forgotPassword ( $sut );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_INVALID, $_SESSION ['error'] );
 	}
 	public function testforgotPasswordExistEmail(): void {
 		unset ( $_SESSION ['error'] );
@@ -1010,10 +989,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_EMPTY, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_EMPTY, $_SESSION ['error'] );
 	}
 	public function testAddUserShortUser(): void {
 		unset ( $_SESSION ['error'] );
@@ -1024,10 +1003,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_SHORT, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_SHORT, $_SESSION ['error'] );
 	}
 	public function testAddUserExistUser(): void {
 		unset ( $_SESSION ['error'] );
@@ -1038,11 +1017,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_DUPLICATE, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_DUPLICATE, $_SESSION ['error'] );
 	}
+
 	public function testAddUserNoEmail(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -1052,10 +1032,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => NULL,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_EMPTY, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_EMPTY, $_SESSION ['error'] );
 	}
 	public function testAddUserBadEmail(): void {
 		unset ( $_SESSION ['error'] );
@@ -1066,10 +1046,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_BAD,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_INVALID, $_SESSION ['error'] );
 	}
 	public function testAddUserExistEmail(): void {
 		unset ( $_SESSION ['error'] );
@@ -1080,10 +1060,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADDRESS_TWO,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_DUPLICATE, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_DUPLICATE, $_SESSION ['error'] );
 	}
 	public function testAddUserNoPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -1094,11 +1074,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => NULL 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_EMPTY, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_EMPTY, $_SESSION ['error'] );
 	}
+
 	public function testAddUserShortPassword(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -1108,11 +1089,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_SHORT 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
+
 	public function testAddUserNoUpperPassword(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -1122,10 +1104,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_NO_UPPER 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
 	public function testAddUserNoLowerPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -1136,10 +1118,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_NO_LOWER 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
 	public function testAddUserNoNumberPassword(): void {
 		unset ( $_SESSION ['error'] );
@@ -1150,10 +1132,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::PASSWORD => self::PASSWORD_NO_NUMBER 
 		] );
+
 		$this->assertEquals ( 0, $system->addUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PASSWORD_INVALID, $_SESSION ['error'] );
 	}
 	public function testAddUserSuccessful(): void {
 		unset ( $_SESSION ['error'] );
@@ -1179,10 +1161,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::STATUS => self::STATUS_ADD 
 		] );
+
 		$this->assertFalse ( $system->updateUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
 	}
 	public function testUpdateUserNoUser(): void {
 		unset ( $_SESSION ['error'] );
@@ -1194,11 +1176,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::STATUS => self::STATUS_ADD 
 		] );
+
 		$this->assertFalse ( $system->updateUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_EMPTY, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_EMPTY, $_SESSION ['error'] );
 	}
+
 	public function testUpdateUserShortUser(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -1209,11 +1192,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::STATUS => self::STATUS_ADD 
 		] );
+
 		$this->assertFalse ( $system->updateUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_SHORT, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_SHORT, $_SESSION ['error'] );
 	}
+
 	public function testUpdateUserExistUser(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -1224,10 +1208,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADD,
 				self::STATUS => self::STATUS_ADD 
 		] );
+
 		$this->assertFalse ( $system->updateUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_DUPLICATE, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_DUPLICATE, $_SESSION ['error'] );
 	}
 	public function testUpdateUserNoEmail(): void {
 		unset ( $_SESSION ['error'] );
@@ -1239,11 +1223,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => NULL,
 				self::STATUS => self::STATUS_ADD 
 		] );
+
 		$this->assertFalse ( $system->updateUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_EMPTY, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_EMPTY, $_SESSION ['error'] );
 	}
+
 	public function testUpdateUserBadEmail(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -1254,11 +1239,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_BAD,
 				self::STATUS => self::STATUS_ADD 
 		] );
+
 		$this->assertFalse ( $system->updateUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_INVALID, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_INVALID, $_SESSION ['error'] );
 	}
+
 	public function testUpdateUserExistEmail(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -1269,10 +1255,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::EMAIL => self::EMAIL_ADDRESS_TWO,
 				self::STATUS => self::STATUS_ADD 
 		] );
+
 		$this->assertFalse ( $system->updateUser ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_EMAIL_DUPLICATE, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_EMAIL_DUPLICATE, $_SESSION ['error'] );
 	}
 	public function testUpdateUserNoStatus(): void {
 		unset ( $_SESSION ['error'] );
@@ -1285,10 +1271,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::STATUS => self::STATUS_ADD 
 		] );
 		$this->assertTrue ( $system->updateUser ( $sut ) );
-		try {
-			$sut->get ();
-		} catch ( Exception $e ) {
-		}
+		$sut->get ();
+
 		$this->assertEquals ( self::STATUS_ADD, $sut->status );
 	}
 	public function testUpdateUserSuccessful(): void {
@@ -1302,10 +1286,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::STATUS => self::STATUS_ADD 
 		] );
 		$this->assertTrue ( $system->updateUser ( $sut ) );
-		try {
-			$sut->get ();
-		} catch ( Exception $e ) {
-		}
+		$sut->get ();
+
 		$this->assertEquals ( self::USER_ADD, $sut->user );
 		$this->assertEquals ( self::EMAIL_ADD, $sut->email );
 		$this->assertEquals ( self::STATUS_ADD, $sut->status );
@@ -1319,26 +1301,24 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$sut = new User ( $pdo );
-		$sut = $system->getUser ( $sut );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
-		} else {
-			$this->assertTrue ( false );
-		}
+		$system->getUser ( $sut );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
 	}
+
 	public function testGetUserInvalidUserID(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$sut = new User ( $pdo );
 		$sut->userID = self::INVALID_ID;
-		$sut = $system->getUser ( $sut );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_NOT_EXIST, $_SESSION ['error'] );
-		} else {
-			$this->assertTrue ( false );
-		}
+		$system->getUser ( $sut );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testGetUserValidUserID(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -1360,9 +1340,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$system->getUsers ( self::PAGE_NUMBER_ZERO, self::USERS_PER_PAGE );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ZERO, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ZERO, $_SESSION ['error'] );
 	}
 	public function testGetUsersUsersPerPageZero(): void {
 		$this->populateUsers ();
@@ -1370,30 +1350,27 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$system->getUsers ( self::PAGE_NUMBER, self::USERS_PER_PAGE_ZERO );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ZERO, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ZERO, $_SESSION ['error'] );
 	}
 	public function testGetUsersSuccess(): void {
 		$this->populateUsers ();
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		try {
-			$users = $system->getUsers ( self::PAGE_NUMBER, self::USERS_PER_PAGE );
-			
-			$pn = self::PAGE_NUMBER;
-			$upp = self::USERS_PER_PAGE;
-			
-			$start = ($pn - 1) * $upp + 1;
-			
-			foreach ( $users as $user ) {
-				$this->assertEquals ( $start, $user->userID );
-				$this->assertEquals ( 'user' . $start, $user->user );
-				$this->assertEquals ( 'email' . $start . '@gmail.com', $user->email );
-				$start ++;
-			}
-		} catch ( ModelException $e ) {
+		$users = $system->getUsers ( self::PAGE_NUMBER, self::USERS_PER_PAGE );
+
+		$pn = self::PAGE_NUMBER;
+		$upp = self::USERS_PER_PAGE;
+
+		$start = ($pn - 1) * $upp + 1;
+
+		foreach ( $users as $user ) {
+			$this->assertEquals ( $start, $user->userID );
+			$this->assertEquals ( 'user' . $start, $user->user );
+			$this->assertEquals ( 'email' . $start . '@gmail.com', $user->email );
+			$start ++;
 		}
 	}
 	
@@ -1447,9 +1424,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$u = new User ( $pdo );
 		$system->deleteUser ( $u );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
 	}
 	public function testDeleteUserUserIdInvalid(): void {
 		unset ( $_SESSION ['error'] );
@@ -1459,9 +1436,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$u = new User ( $pdo );
 		$u->userID = self::INVALID_ID;
 		$system->deleteUser ( $u );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testDeleteUserUserIdValid(): void {
 		unset ( $_SESSION ['error'] );
@@ -1483,10 +1460,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = new Category ( $pdo, [ 
 				self::CATEGORY_NAME => self::CATEGORY_4 
 		] );
+
 		$this->assertTrue ( $system->addCategory ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PARENT_ID_INVALID, $_SESSION ['error'] );
-		}
 	}
 	public function testAddCategoryInvalidParentId(): void {
 		unset ( $_SESSION ['error'] );
@@ -1497,9 +1472,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::CATEGORY_NAME => self::CATEGORY_4 
 		] );
 		$this->assertFalse ( $system->addCategory ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PARENT_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PARENT_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testAddCategoryNoCategory(): void {
 		unset ( $_SESSION ['error'] );
@@ -1509,9 +1484,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::PARENT_ID => self::PARENT_ID_1 
 		] );
 		$this->assertFalse ( $system->addCategory ( $sut ) );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_CATEGORY_NONE, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_CATEGORY_NONE, $_SESSION ['error'] );
 	}
 	public function testAddCategorySuccess(): void {
 		unset ( $_SESSION ['error'] );
@@ -1554,10 +1529,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::CATEGORY_NAME => self::CATEGORY_4 
 		] );
 		$this->assertTrue ( $system->updateCategory ( $sut ) );
-		try {
-			$sut->get ();
-		} catch ( Exception $e ) {
-		}
+		$sut->get ();
+
 		$this->assertSame ( '1', $sut->parentID );
 		$this->assertSame ( self::CATEGORY_4, $sut->category );
 	}
@@ -1570,12 +1543,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::CATEGORY_NAME => self::CATEGORY_4 
 		] );
 		$this->assertTrue ( $system->updateCategory ( $sut ) );
-		try {
-			$sut->get ();
-		} catch ( Exception $e ) {
-		}
-		$this->assertSame ( '1', $sut->parentID );
-		$this->assertSame ( self::CATEGORY_4, $sut->category );
+		$this->expectExceptionMessage ( self::ERROR_CATEGORY_NOT_EXIST );
+		$sut->get();
 	}
 	public function testUpdateCategoryNoCategory(): void {
 		$pdo = TestPDO::getInstance ();
@@ -1585,10 +1554,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::PARENT_ID => self::PARENT_ID_2 
 		] );
 		$this->assertTrue ( $system->updateCategory ( $sut ) );
-		try {
-			$sut->get ();
-		} catch ( Exception $e ) {
-		}
+		$sut->get ();
+
 		$this->assertSame ( '2', $sut->parentID );
 		$this->assertSame ( self::CATEGORY_3, $sut->category );
 	}
@@ -1601,10 +1568,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::CATEGORY_NAME => self::CATEGORY_3 
 		] );
 		$this->assertTrue ( $system->updateCategory ( $sut ) );
-		try {
-			$sut->get ();
-		} catch ( Exception $e ) {
-		}
+		$sut->get ();
+
 		$this->assertSame ( '2', $sut->parentID );
 		$this->assertSame ( self::CATEGORY_3, $sut->category );
 	}
@@ -1617,10 +1582,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::CATEGORY_NAME => self::CATEGORY_4 
 		] );
 		$this->assertTrue ( $system->updateCategory ( $sut ) );
-		try {
-			$sut->get ();
-		} catch ( Exception $e ) {
-		}
+		$sut->get ();
+
 		$this->assertSame ( '1', $sut->parentID );
 		$this->assertSame ( self::CATEGORY_4, $sut->category );
 	}
@@ -1632,11 +1595,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::PARENT_ID => self::PARENT_ID_2,
 				self::CATEGORY_NAME => self::CATEGORY_4 
 		] );
+
 		$this->assertTrue ( $system->updateCategory ( $sut ) );
-		try {
-			$sut->get ();
-		} catch ( Exception $e ) {
-		}
+		$sut->get ();
+
 		$this->assertSame ( '2', $sut->parentID );
 		$this->assertSame ( self::CATEGORY_4, $sut->category );
 	}
@@ -1651,10 +1613,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$c = new Category ( $pdo );
 		$system->deleteCategory ( $c );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testDeleteCategoryCategoryIdInvalid(): void {
 		unset ( $_SESSION ['error'] );
 		$this->populateAll ();
@@ -1663,10 +1626,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$c = new Category ( $pdo );
 		$c->categoryID = self::INVALID_ID;
 		$system->deleteCategory ( $c );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testDeleteCategoryCategoryIdValid(): void {
 		unset ( $_SESSION ['error'] );
 		if ($this->populateDeleteCategory ()) {
@@ -1691,9 +1655,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertSame ( 0, $category->categoryID );
 		$this->assertSame ( null, $category->parentID );
 		$this->assertEmpty ( $category->category );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetCategoryInvalidCategoryId(): void {
 		$pdo = TestPDO::getInstance ();
@@ -1705,9 +1669,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertSame ( '400', $category->categoryID );
 		$this->assertSame ( null, $category->parentID );
 		$this->assertEmpty ( $category->category );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_CATEGORY_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetCategoryValidCategoryId(): void {
 		$pdo = TestPDO::getInstance ();
@@ -1757,10 +1721,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$cats = $system->getCategoriesIn ( self::INVALID_ID );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_PARENT_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->getCategoriesIn ( self::INVALID_ID );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_PARENT_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetCategoriesInParentIdValid(): void {
 		$pdo = TestPDO::getInstance ();
@@ -1785,10 +1749,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$category = new Category ( $pdo );
-		$numItems = $system->countCategoryItems ( $category );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_CATEGORY_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertEquals(0, $system->countCategoryItems ( $category ));
 	}
 	public function testCountCategoryItemsCategoryIDInvalid(): void {
 		unset ( $_SESSION ['error'] );
@@ -1796,10 +1758,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$category = new Category ( $pdo );
 		$category->categoryID = self::INVALID_ID;
-		$numItems = $system->countCategoryItems ( $category );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_CATEGORY_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertEquals(0, $system->countCategoryItems ( $category ));
 	}
 	public function testCountCategoryItemsCategoryIDValid(): void {
 		unset ( $_SESSION ['error'] );
@@ -1880,10 +1840,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$c = new Category ( $pdo );
 		$c->categoryID = self::CATEGORY_ID_3;
-		$ci = $system->getCategoryItemsByPage ( $c, self::ITEMS_PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE, '' );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ZERO, $_SESSION ['error'] );
-		}
+		$system->getCategoryItemsByPage ( $c, self::ITEMS_PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE, '' );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ZERO, $_SESSION ['error'] );
 	}
 	public function testGetCategoryItemsByPageItemsPerPageZero(): void {
 		unset ( $_SESSION ['error'] );
@@ -1891,11 +1851,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$c = new Category ( $pdo );
 		$c->categoryID = self::CATEGORY_ID_3;
-		$ci = $system->getCategoryItemsByPage ( $c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO, '' );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ZERO, $_SESSION ['error'] );
-		}
+		$system->getCategoryItemsByPage ( $c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO, '' );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ZERO, $_SESSION ['error'] );
 	}
+
 	public function testGetCategoryItemsByPageSuccess(): void {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
@@ -1915,14 +1876,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	 */
 	public function testCountUserItemsUserIdEmpty(): void {
 		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
 		$this->populateUserItems ();
 		$ui = new UserItems ( $pdo );
 		$this->assertEquals ( 0, $ui->count () );
 	}
 	public function testCountUserItemsUserIdInvalid(): void {
 		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
 		$this->populateUserItems ();
 		$ui = new UserItems ( $pdo );
 		$ui->userID = self::INVALID_ID;
@@ -1930,7 +1889,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	}
 	public function testCountUserItemsUserIdValid(): void {
 		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
 		$this->populateUserItems ();
 		$ui = new UserItems ( $pdo );
 		$ui->userID = self::USER_ID_1;
@@ -1946,10 +1904,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->populateUserItems ();
 		$u = new User ( $pdo );
 		$system->getUserItems ( $u );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
 	}
+
 	public function testGetUserItemsUserIdInvalid(): void {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
@@ -1957,9 +1916,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$u = new User ( $pdo );
 		$u->userID = self::INVALID_ID;
 		$system->getUserItems ( $u );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetUserItemsUserIdValid(): void {
 		$pdo = TestPDO::getInstance ();
@@ -1993,9 +1952,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertEmpty ( $item->itemcondition );
 		$this->assertEmpty ( $item->price );
 		$this->assertEmpty ( $item->status );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetItemInvalidItemId(): void {
 		unset ( $_SESSION ['error'] );
@@ -2012,10 +1971,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertEmpty ( $item->itemcondition );
 		$this->assertEmpty ( $item->price );
 		$this->assertEmpty ( $item->status );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testGetItemValidItemId(): void {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
@@ -2041,31 +2001,25 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->populateUserItems ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$u = new User ( $pdo );
-		$c = new Category ( $pdo );
-		$c->categoryID = self::CATEGORY_ID_1;
 		$i = new Item ( $pdo );
 		$i->title = self::TITLE_16;
-		$system->addItem ( $u, $i, $c );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
-		}
+		$system->addItem ( $i, intval(self::CATEGORY_ID_1 ));
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_NUMBER_IS_ZERO, $_SESSION ['error'] );
 	}
 	public function testAddItemUserIdInvalidItemValid(): void {
 		unset ( $_SESSION ['error'] );
 		$this->populateUserItems ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$u = new User ( $pdo );
-		$u->userID = self::INVALID_ID;
-		$c = new Category ( $pdo );
-		$c->categoryID = self::CATEGORY_ID_1;
 		$i = new Item ( $pdo );
+		$i->owningUserID = self::INVALID_ID;
 		$i->title = self::TITLE_16;
-		$system->addItem ( $u, $i, $c );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->addItem ( $i, intval(self::CATEGORY_ID_1 ));
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testAddItemUserIdValidItemEmpty(): void {
 		unset ( $_SESSION ['error'] );
@@ -2074,40 +2028,29 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$u = new User ( $pdo );
 		$u->userID = self::USER_ID_1;
-		$c = new Category ( $pdo );
-		$c->categoryID = self::CATEGORY_ID_1;
 		$i = new Item ( $pdo );
-		$system->addItem ( $u, $i, $c );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_EMPTY, $_SESSION ['error'] );
-		}
+		$i->owningUserID = self::USER_ID_1;
+		$system->addItem ( $i, intval(self::CATEGORY_ID_1 ));
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_EMPTY, $_SESSION ['error'] );
 	}
+
 	public function testAddItemUserIdValidItemValid(): void {
 		unset ( $_SESSION ['error'] );
 		$this->populateUserItems ();
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$u = new User ( $pdo );
-		$u->userID = self::USER_ID_1;
-		$c = new Category ( $pdo );
-		$c->categoryID = self::CATEGORY_ID_1;
 		$i = new Item ( $pdo );
+		$i->owningUserID = self::USER_ID_1;
 		$i->title = self::TITLE_16;
-		$ui = new UserItems ( $pdo );
-		$ui->user_itemID = $system->addItem ( $u, $i, $c );
-		try {
-			$ui->get ();
-		} catch ( ModelException $e ) {
-		}
-		$this->assertEquals ( self::USER_ITEM_ID_15, $ui->user_itemID );
-		$this->assertEquals ( self::USER_ID_1, $ui->userID );
-		$this->assertEquals ( self::ITEM_ID_16, $ui->itemID );
-		try {
-			$i->itemID = self::ITEM_ID_16;
-			$i->get ();
-		} catch ( ModelException $e ) {
-		}
-		$this->assertEquals ( self::ITEM_ID_16, $i->itemID );
+
+		$itemID = $system->addItem ( $i, self::CATEGORY_ID_1 );
+		$this->assertEquals ( self::ITEM_ID_16, $itemID );
+
+		$i->itemID = self::ITEM_ID_16;
+		$i->get ();
+
 		$this->assertEquals ( self::TITLE_16, $i->title );
 	}
 	
@@ -2122,10 +2065,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$i = new Item ( $pdo );
 		$i->title = self::TITLE_16;
 		$system->updateItem ( $i );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testUpdateItemInvalidItemId(): void {
 		unset ( $_SESSION ['error'] );
 		$this->populateUserItems ();
@@ -2135,10 +2078,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$i->itemID = self::INVALID_ID;
 		$i->title = self::TITLE_16;
 		$system->updateItem ( $i );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testUpdateItemEmptyItem(): void {
 		unset ( $_SESSION ['error'] );
 		$this->populateUserItems ();
@@ -2146,10 +2089,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
 		$system->updateItem ( $i );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testUpdateItemSuccess(): void {
 		unset ( $_SESSION ['error'] );
 		$this->populateUserItems ();
@@ -2159,11 +2102,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$i->itemID = self::ITEM_ID_1;
 		$i->title = self::TITLE_16;
 		$system->updateItem ( $i );
-		try {
-			$i->itemID = self::ITEM_ID_1;
-			$i->get ();
-		} catch ( ModelException $e ) {
-		}
+		$i->itemID = self::ITEM_ID_1;
+		$i->get ();
+
 		$this->assertEquals ( self::ITEM_ID_1, $i->itemID );
 		$this->assertEquals ( self::TITLE_16, $i->title );
 	}
@@ -2178,9 +2119,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
 		$system->deleteItem ( $i );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testDeleteItemItemIdInvalid(): void {
 		unset ( $_SESSION ['error'] );
@@ -2190,9 +2131,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$i = new Item ( $pdo );
 		$i->itemID = self::INVALID_ID;
 		$system->deleteItem ( $i );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testDeleteItemItemIdValid(): void {
 		unset ( $_SESSION ['error'] );
@@ -2213,10 +2154,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$item = new Item ( $pdo );
-		$comments = $system->getItemComments ( $item );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->getItemComments ( $item );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetItemCommentsItemIdInvalid(): void {
 		$this->populateItemComments ();
@@ -2225,10 +2166,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$item = new Item ( $pdo );
 		$item->itemID = self::INVALID_ID;
-		$comments = $system->getItemComments ( $item );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->getItemComments ( $item );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetItemCommentsItemIdValid(): void {
 		$this->populateItemComments ();
@@ -2255,10 +2196,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$comment = new Comment ( $pdo );
-		$item = $system->getItemComment ( $comment );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->getItemComment ( $comment );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetItemCommentCommentIdInvalid(): void {
 		$this->populateItemComments ();
@@ -2267,10 +2208,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$comment = new Comment ( $pdo );
 		$comment->commentID = self::INVALID_ID;
-		$item = $system->getItemComment ( $comment );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->getItemComment ( $comment );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetItemCommentCommentIdValid(): void {
 		$this->populateItemComments ();
@@ -2280,6 +2221,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$comment = new Comment ( $pdo );
 		$comment->commentID = self::COMMENT_ID_2;
 		$item = $system->getItemComment ( $comment );
+
 		$this->assertEquals ( self::ITEM_ID_1, $item->itemID );
 		$this->assertEquals ( 'title1', $item->title );
 	}
@@ -2296,9 +2238,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$comment = new Comment ( $pdo );
 		$comment->userID = self::USER_ID_1;
 		$system->addItemComment ( $item, $comment );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_COMMENT_EMPTY, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_COMMENT_EMPTY, $_SESSION ['error'] );
 	}
 	public function testAddItemCommentInvalidItemId(): void {
 		$this->populateItemComments ();
@@ -2311,9 +2253,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$comment->comment = self::COMMENT_NEW;
 		$comment->userID = self::USER_ID_1;
 		$system->addItemComment ( $item, $comment );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testAddItemCommentSuccess(): void {
 		$this->populateItemComments ();
@@ -2325,6 +2267,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$comment = new Comment ( $pdo );
 		$comment->userID = self::USER_ID_1;
 		$comment->comment = self::COMMENT_NEW;
+
 		$this->assertTrue ( $system->addItemComment ( $item, $comment ) );
 	}
 	
@@ -2337,9 +2280,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$comment = new Comment ( $pdo );
 		$system->updateItemComment ( $comment );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testUpdateItemCommentsInvalidCommentId(): void {
 		$this->populateItemComments ();
@@ -2348,9 +2291,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$comment = new Comment ( $pdo );
 		$comment->commentID = self::INVALID_ID;
 		$system->updateItemComment ( $comment );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testUpdateItemCommentsSuccess(): void {
 		$this->populateItemComments ();
@@ -2372,9 +2315,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$comment = new Comment ( $pdo );
 		$system->deleteItemComment ( $comment );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testDeleteItemCommentCommentIdInvalid(): void {
 		$this->populateItemComments ();
@@ -2384,9 +2327,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$comment = new Comment ( $pdo );
 		$comment->commentID = self::INVALID_ID;
 		$system->deleteItemComment ( $comment );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_COMMENT_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testDeleteItemCommentCommentIdValid(): void {
 		$this->populateItemComments ();
@@ -2407,9 +2350,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$item = new Item ( $pdo );
 		$system->deleteItemComments ( $item );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testDeleteItemCommentsItemIdInvalid(): void {
 		$this->populateItemComments ();
@@ -2419,9 +2362,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$item = new Item ( $pdo );
 		$item->itemID = self::INVALID_ID;
 		$system->deleteItemComments ( $item );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testDeleteItemCommentsItemIdValid(): void {
 		$this->populateItemComments ();
@@ -2429,6 +2372,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$item = new Item ( $pdo );
 		$item->itemID = self::ITEM_ID_1;
+
 		$this->assertTrue ( $system->deleteItemComments ( $item ) );
 	}
 	
@@ -2441,11 +2385,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$item = new Item ( $pdo );
-		$notes = $system->getItemNotes ( $item );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->getItemNotes ( $item );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testGetItemNotesItemIdInvalid(): void {
 		$this->populateItemNotes ();
 		unset ( $_SESSION ['error'] );
@@ -2453,11 +2398,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$item = new Item ( $pdo );
 		$item->itemID = self::INVALID_ID;
-		$notes = $system->getItemNotes ( $item );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->getItemNotes ( $item );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testGetItemNotesItemIdValid(): void {
 		$this->populateItemNotes ();
 		$pdo = TestPDO::getInstance ();
@@ -2483,11 +2429,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$note = new Note ( $pdo );
-		$item = $system->getItemNote ( $note );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->getItemNote ( $note );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testGetItemNoteNoteIdInvalid(): void {
 		$this->populateItemNotes ();
 		unset ( $_SESSION ['error'] );
@@ -2495,11 +2442,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$note = new Note ( $pdo );
 		$note->noteID = self::INVALID_ID;
-		$item = $system->getItemNote ( $note );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->getItemNote ( $note );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testGetItemNoteNoteIdValid(): void {
 		$this->populateItemNotes ();
 		unset ( $_SESSION ['error'] );
@@ -2508,6 +2456,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$note = new Note ( $pdo );
 		$note->noteID = self::NOTE_ID_2;
 		$item = $system->getItemNote ( $note );
+
 		$this->assertEquals ( self::ITEM_ID_1, $item->itemID );
 		$this->assertEquals ( 'title1', $item->title );
 	}
@@ -2523,10 +2472,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$item = new Item ( $pdo );
 		$note = new Note ( $pdo );
 		$system->addItemNote ( $item, $note );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_NOTE_EMPTY, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_NOTE_EMPTY, $_SESSION ['error'] );
 	}
+
 	public function testAddItemNoteInvalidItemId(): void {
 		$this->populateItemNotes ();
 		unset ( $_SESSION ['error'] );
@@ -2537,10 +2487,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$note = new Note ( $pdo );
 		$note->note = self::NOTE_NEW;
 		$system->addItemNote ( $item, $note );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testAddItemNoteSuccess(): void {
 		$this->populateItemNotes ();
 		unset ( $_SESSION ['error'] );
@@ -2550,6 +2501,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$item->itemID = self::ITEM_ID_3;
 		$note = new Note ( $pdo );
 		$note->note = self::NOTE_NEW;
+
 		$this->assertTrue ( $system->addItemNote ( $item, $note ) );
 	}
 	
@@ -2562,10 +2514,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$note = new Note ( $pdo );
 		$system->updateItemNote ( $note );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testUpdateItemNotesInvalidNoteId(): void {
 		$this->populateItemNotes ();
 		$pdo = TestPDO::getInstance ();
@@ -2573,10 +2526,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$note = new Note ( $pdo );
 		$note->noteID = self::INVALID_ID;
 		$system->updateItemNote ( $note );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testUpdateItemNotesSuccess(): void {
 		$this->populateItemNotes ();
 		$pdo = TestPDO::getInstance ();
@@ -2584,6 +2538,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$note = new Note ( $pdo );
 		$note->noteID = self::NOTE_ID_1;
 		$note->note = self::NOTE_NEW;
+
 		$this->assertTrue ( $system->updateItemNote ( $note ) );
 	}
 	
@@ -2597,10 +2552,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$note = new Note ( $pdo );
 		$system->deleteItemNote ( $note );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testDeleteItemNoteNoteIdInvalid(): void {
 		$this->populateItemNotes ();
 		unset ( $_SESSION ['error'] );
@@ -2609,10 +2565,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$note = new Note ( $pdo );
 		$note->noteID = self::INVALID_ID;
 		$system->deleteItemNote ( $note );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testDeleteItemNoteNoteIdValid(): void {
 		$this->populateItemNotes ();
 		$pdo = TestPDO::getInstance ();
@@ -2632,10 +2589,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$item = new Item ( $pdo );
 		$system->deleteItemNotes ( $item );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testDeleteItemNotesItemIdInvalid(): void {
 		$this->populateItemNotes ();
 		unset ( $_SESSION ['error'] );
@@ -2644,9 +2602,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$item = new Item ( $pdo );
 		$item->itemID = self::INVALID_ID;
 		$system->deleteItemNotes ( $item );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testDeleteItemNotesItemIdValid(): void {
 		$this->populateItemNotes ();
@@ -2654,6 +2612,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$item = new Item ( $pdo );
 		$item->itemID = self::ITEM_ID_1;
+
 		$this->assertTrue ( $system->deleteItemNotes ( $item ) );
 	}
 	
@@ -2667,9 +2626,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
 		$system->getItemOwner ( $i );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetItemOwnerItemIdInvalid(): void {
 		$this->populateAdditionalUserRatings ();
@@ -2679,9 +2638,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$i = new Item ( $pdo );
 		$i->itemID = self::INVALID_ID;
 		$system->getItemOwner ( $i );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetItemOwnerItemIdValid(): void {
 		$this->populateAdditionalUserRatings ();
@@ -2690,10 +2649,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
 		$i->itemID = self::ITEM_ID_1;
-		try {
-			$sut = $system->getItemOwner ( $i );
-		} catch ( ModelException $e ) {
-		}
+		$sut = $system->getItemOwner ( $i );
+
 		$this->assertEquals ( self::USER_ID_1, $sut ['userID'] );
 		$this->assertEquals ( 'user1', $sut ['user'] );
 		$this->assertEquals ( 'user1@gmail.com', $sut ['email'] );
@@ -2720,10 +2677,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$ur->itemID = self::ITEM_ID_2;
 		$ur->sellrating = self::SELLRATING_2;
 		$sut->addSellerRating ( $ur );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testAddSellerRatingItemIdInvalid(): void {
 		$this->populateUserRatings ();
 		unset ( $_SESSION ['error'] );
@@ -2734,10 +2692,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$ur->itemID = self::INVALID_ID;
 		$ur->sellrating = self::SELLRATING_2;
 		$sut->addSellerRating ( $ur );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
+
 	public function testAddSellerRatingRatingNotSet(): void {
 		$this->populateUserRatings ();
 		unset ( $_SESSION ['error'] );
@@ -2747,10 +2706,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$ur->userID = self::USER_ID_2;
 		$ur->itemID = self::ITEM_ID_2;
 		$sut->addSellerRating ( $ur );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_RATING_NOT_SET, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_RATING_NOT_SET, $_SESSION ['error'] );
 	}
+
 	public function testAddSellerRatingSuccess(): void {
 		$this->populateUserRatings ();
 		unset ( $_SESSION ['error'] );
@@ -2778,10 +2738,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut->transaction = '';
 		$sut->buyrating = self::BUYRATING_2;
 		$system->addBuyerRating ( $sut );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_INCORRECT_TRANSACTION_ID, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_INCORRECT_TRANSACTION_ID, $_SESSION ['error'] );
 	}
+
 	public function testAddBuyerRatingTransactionIdInvalid(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -2790,10 +2751,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut->transaction = self::INVALID_ID;
 		$sut->buyrating = self::BUYRATING_2;
 		$system->addBuyerRating ( $sut );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_INCORRECT_TRANSACTION_ID, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_INCORRECT_TRANSACTION_ID, $_SESSION ['error'] );
 	}
+
 	public function testAddBuyerRatingRatingInvalid(): void {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
@@ -2801,9 +2763,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = $this->addSellerRating ();
 		$sut->buyrating = self::INVALID_ID;
 		$system->addBuyerRating ( $sut );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_RATING_NOT_SET, $_SESSION ['error'] );
-		}
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_RATING_NOT_SET, $_SESSION ['error'] );
 	}
 	public function testAddBuyerRatingSuccess(): void {
 		unset ( $_SESSION ['error'] );
@@ -2814,10 +2776,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system->addBuyerRating ( $sut );
 		$ur = new UserRatings ( $pdo );
 		$ur->user_ratingID = $sut->user_ratingID;
-		try {
-			$ur->get ();
-		} catch ( Exception $e ) {
-		}
+		$ur->get ();
+
 		$this->assertEquals ( self::BUYRATING_2, $ur->buyrating );
 		$this->assertNull ( $ur->transaction );
 	}
@@ -2832,10 +2792,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->populateAdditionalUserRatings ();
 		$u = new User ( $pdo );
 		$u->userID = self::INVALID_ID;
-		$stats = $system->getUserRatings ( $u );
-		if (isset ( $_SESSION ['error'] )) {
-			$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
-		}
+		$system->getUserRatings ( $u );
+
+		$this->assertTrue( isset ( $_SESSION ['error'] ));
+		$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 	public function testGetUserRatingsUserIdValid(): void {
 		unset ( $_SESSION ['error'] );
@@ -2870,24 +2830,19 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		// Insert a root category
 		$root = new Category ( $pdo );
 		$root->{self::CATEGORY_NAME} = self::ROOT_CATEGORY_NAME;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
+		$root->set ();
+
 		// Insert additional categories
 		$j = 1;
 		for($i = 1; $i <= 99; $i ++) {
 			if ($i % 3 == 0) {
 				$j ++;
 			}
+
 			$c = new Category ( $pdo );
 			$c->{self::PARENT_ID} = $j;
 			$c->{self::CATEGORY_NAME} = 'cat' . $i;
-			try {
-				$c->set ();
-			} catch ( ModelException $e ) {
-			}
+			$c->set ();
 		}
 	}
 	protected function populateItems(): void {
@@ -2895,10 +2850,19 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
-		
+
+		$user = new User ( $pdo, [
+			'user' => 'user',
+			'email' => 'user@gmai.com',
+			'password' => 'TestTest88'
+		] );
+
+		$user->set ();
+
 		// Insert items.
 		$args = [ 
 				self::ITEM_ID => self::ITEM_ID_1,
+				self::OWNING_USER_ID => $user->userID,
 				self::TITLE => self::TITLE_1,
 				self::DESCRIPTION => self::DESCRIPTION_1,
 				self::QUANTITY => self::QUANTITY_1,
@@ -2908,13 +2872,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		];
 		
 		$item = new Item ( $pdo, $args );
-		try {
-			$item->set ();
-		} catch ( ModelException $e ) {
-		}
-		
+		$item->set ();
+
 		$args2 = [ 
 				self::ITEM_ID => self::ITEM_ID_2,
+			    self::OWNING_USER_ID => $user->userID,
 				self::TITLE => self::TITLE_2,
 				self::DESCRIPTION => self::DESCRIPTION_2,
 				self::QUANTITY => self::QUANTITY_2,
@@ -2924,13 +2886,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		];
 		
 		$item = new Item ( $pdo, $args2 );
-		try {
-			$item->set ();
-		} catch ( ModelException $e ) {
-		}
-		
+		$item->set ();
+
 		$args3 = [ 
 				self::ITEM_ID => self::ITEM_ID_3,
+			    self::OWNING_USER_ID => $user->userID,
 				self::TITLE => self::TITLE_3,
 				self::DESCRIPTION => self::DESCRIPTION_3,
 				self::QUANTITY => self::QUANTITY_3,
@@ -2940,10 +2900,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		];
 		
 		$item = new Item ( $pdo, $args3 );
-		try {
-			$item->set ();
-		} catch ( ModelException $e ) {
-		}
+		$item->set ();
 	}
 	protected function populateCategoryItems(): void {
 		TestPDO::CreateTestDatabaseAndUser ();
@@ -2954,34 +2911,32 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		// Insert a root category
 		$root = new Category ( $pdo );
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
+		$root->set ();
 		
 		// Insert additional categories
 		$c = new Category ( $pdo );
 		$c->{self::PARENT_ID} = self::PARENT_ID_1;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		$c->set ();
+
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		$c->set ();
+
 		$c->{self::PARENT_ID} = self::PARENT_ID_2;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_4;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		
+		$c->set ();
+
+		$user = new User($pdo);
+		$user->user = "f sfsd fsd f";
+		$user->email = "test@test.com";
+		$user->password = "fRRR44@fff";
+		$user->status = "good";
+		$userID = $user->set();
+
 		// Populate the Items Table
 		for($i = 1; $i <= 100; $i ++) {
-			$item = new Item ( $pdo, [ 
+			$item = new Item ( $pdo, [
+					self::OWNING_USER_ID => $userID,
 					self::TITLE => 'title' . $i,
 					self::DESCRIPTION => 'description' . $i,
 					self::QUANTITY => 'quantity' . $i,
@@ -2989,10 +2944,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					self::PRICE => 'price' . $i,
 					self::STATUS => '' 
 			] );
-			try {
-				$item->set ();
-			} catch ( ModelException $e ) {
-			}
+
+			$item->set ();
 		}
 		
 		// Populate the CategoryItems Table
@@ -3002,10 +2955,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					self::CATEGORY_ID => $j,
 					SELF::ITEM_ID => $i 
 			] );
-			try {
-				$ci->set ();
-			} catch ( ModelExceptionException $e ) {
-			}
+
+			$ci->set ();
+
 			if ($i % 34 == 0) {
 				$j ++;
 			}
@@ -3020,22 +2972,16 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		// Insert a root category
 		$root = new Category ( $pdo );
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
+		$root->set ();
+
 		// Insert additional categories
 		$j = 1;
 		for($i = 2; $i <= 101; $i ++) {
 			$c = new Category ( $pdo );
 			$c->parentID = $j;
 			$c->category = 'category' . $i;
-			try {
-				$c->set ();
-			} catch ( ModelException $e ) {
-			}
-			
+			$c->set ();
+
 			if ($i % 3 == 0) {
 				$j ++;
 			}
@@ -3043,73 +2989,66 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		
 		$l = 1;
 		$k = 1;
-		$n = 2;
+		$n = 1;
 		for($i = 1; $i <= 100; $i ++) {
 			$user = new User ( $pdo );
 			$user->user = 'user' . $i;
 			$user->email = 'user' . $i . '@gmail.com';
 			$user->password = 'PassWord' . $i . $i;
-			try {
-				$user->set ();
-			} catch ( ModelException $e ) {
-			}
+			$user->set ();
+
 			for($j = 1; $j <= 5; $j ++) {
 				$item = new Item ( $pdo );
+				$item->owningUserID = $user->userID;
 				$item->title = 'title' . $k;
-				try {
-					$item->set ();
-					$userItem = new UserItems ( $pdo );
-					$userItem->userID = $i;
-					$userItem->itemID = $k;
-					$userItem->relationship = 'relationship' . $i . $l;
-					$userItem->userStatus = 'userStatus' . $i . $l;
-					
-					$categoryItem = new CategoryItems ( $pdo );
-					$categoryItem->categoryID = $n;
-					$categoryItem->itemID = $k;
-					if ($j % 5 == 0) {
-						$n ++;
-					}
-					
-					$userRating = new UserRatings ( $pdo );
-					$userRating->itemID = $k;
-					$userRating->sellrating = 5;
-					$userRating->userID = $i;
-					$userRating->buyrating = 4;
-					$userRating->set ();
-					
-					for($m = 1; $m <= 5; $m ++) {
-						$note = new Note ( $pdo );
-						$note->note = 'note' . $l;
-						$comment = new Comment ( $pdo );
-						$comment->userID = $i;
-						$comment->comment = 'comment' . $l;
-						try {
-							$note->set ();
-							$itemNote = new ItemNotes ( $pdo );
-							$itemNote->itemID = $i;
-							$itemNote->noteID = $l;
-							$comment->set ();
-							$itemComment = new ItemComments ( $pdo );
-							$itemComment->itemID = $i;
-							$itemComment->commentID = $l;
-							try {
-								$itemNote->set ();
-								$itemComment->set ();
-								$l ++;
-							} catch ( ModelException $e ) {
-							}
-						} catch ( Exception $e ) {
-						}
-					}
-					
-					try {
-						$userItem->set ();
-						$categoryItem->set ();
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
+				$item->set ();
+
+				$userRating = new UserRatings ( $pdo );
+				$userRating->itemID = $item->itemID;
+				$userRating->sellrating = 5;
+				$userRating->userID = $user->userID;
+				$userRating->buyrating = 4;
+				$userRating->set ();
+
+				for($m = 1; $m <= 5; $m ++) {
+					$note = new Note ( $pdo );
+					$note->note = 'note' . $l;
+					$note->set ();
+
+					$comment = new Comment ( $pdo );
+					$comment->userID = $user->userID;
+					$comment->comment = 'comment' . $l;
+					$comment->set ();
+
+					$itemNote = new ItemNotes ( $pdo );
+					$itemNote->itemID = $item->itemID;
+					$itemNote->noteID = $note->noteID;
+					$itemNote->set ();
+
+					$itemComment = new ItemComments ( $pdo );
+					$itemComment->itemID = $item->itemID;
+					$itemComment->commentID = $comment->commentID;
+					$itemComment->set ();
+
+					$l ++;
 				}
+
+				$userItem = new UserItems ( $pdo );
+				$userItem->userID = $user->userID;
+				$userItem->itemID = $item->itemID;
+				$userItem->relationship = 'relationship' . $i . $l;
+				$userItem->userStatus = 'userStatus' . $i . $l;
+				$userItem->set ();
+
+				if ($j % 5 == 0) {
+					$n ++;
+				}
+
+				$categoryItem = new CategoryItems ( $pdo );
+				$categoryItem->categoryID = $n;
+				$categoryItem->itemID = $item->itemID;
+				$categoryItem->set ();
+
 				$k ++;
 			}
 			
@@ -3117,6 +3056,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		}
 		return true;
 	}
+
 	protected function populateUsers(): void {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
@@ -3125,25 +3065,17 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		// Insert a root category
 		$root = new Category ( $pdo );
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
+		$root->set ();
+
 		// Insert additional categories
 		$c = new Category ( $pdo );
 		$c->{self::PARENT_ID} = self::PARENT_ID_1;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		$c->set ();
+
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		
+		$c->set ();
+
 		// Populate the Users table.
 		for($i = 1; $i <= 400; $i ++) {
 			${'u' . $i} = new User ( $pdo, [ 
@@ -3151,18 +3083,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					self::EMAIL => 'email' . $i . '@gmail.com',
 					self::PASSWORD => 'PassWord' . $i 
 			] );
-			try {
-				${'u' . $i}->set ();
-			} catch ( ModelException $e ) {
-			}
-			try {
-				${'u' . $i}->get ();
-			} catch ( ModelException $e ) {
-			}
-			try {
-				${'u' . $i}->activate ();
-			} catch ( ModelException $e ) {
-			}
+
+			${'u' . $i}->set ();
+			${'u' . $i}->get ();
+			${'u' . $i}->activate ();
 		}
 	}
 	protected function populateUserItems(): void {
@@ -3174,75 +3098,43 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		// Insert a root category
 		$root = new Category ( $pdo );
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
+		$root->set ();
+
 		// Insert additional categories
 		$c = new Category ( $pdo );
 		$c->{self::PARENT_ID} = self::PARENT_ID_1;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		$c->set ();
+
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		$args1 = [ 
-				self::USER => self::USER_ONE,
-				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE 
-		];
-		
-		$args2 = [ 
-				self::USER => self::USER_TWO,
-				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO 
-		];
-		
-		$args3 = [ 
-				self::USER => self::USER_THREE,
-				self::EMAIL => self::EMAIL_ADDRESS_THREE,
-				self::PASSWORD => self::PASSWORD_THREE 
-		];
-		
+		$c->set ();
+
 		$l = 1;
 		for($i = 1; $i <= 3; $i ++) {
 			$user = new User ( $pdo );
 			$user->user = 'user' . $i;
 			$user->email = 'user' . $i . '@gmail.com';
 			$user->password = 'PassWord' . $i . $i;
-			try {
-				$user->set ();
-			} catch ( ModelException $e ) {
-			}
-			
+			$user->set ();
+
 			for($j = 1; $j <= 5; $j ++) {
 				$item = new Item ( $pdo );
+				$item->owningUserID = $user->userID;
 				$item->title = 'title' . $l;
-				try {
-					$item->set ();
-					$userItem = new UserItems ( $pdo );
-					$userItem->userID = $i;
-					$userItem->itemID = $l;
-					$userItem->relationship = 'relationship' . $i . $l;
-					$userItem->userStatus = 'userStatus' . $i . $l;
-					
-					try {
-						if ($userItem->userID == 3 && $userItem->itemID == 15) {
-							// Don't set.
-						} else {
-							$userItem->set ();
-						}
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
+				$item->set ();
+
+				$userItem = new UserItems ( $pdo );
+				$userItem->userID = $user->userID;
+				$userItem->itemID = $item->itemID;
+				$userItem->relationship = 'relationship' . $i . $l;
+				$userItem->userStatus = 'userStatus' . $i . $l;
+
+				if ($userItem->userID == 3 && $userItem->itemID == 15) {
+					// Don't set.
+				} else {
+					$userItem->set ();
 				}
+
 				$l ++;
 			}
 		}
@@ -3261,32 +3153,32 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		try {
 			$user->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		$l = 1;
 		for($i = 1; $i <= 3; $i ++) {
 			$item = new Item ( $pdo );
+			$item->owningUserID = $user->userID;
 			$item->title = 'title' . $i;
 			$item->set ();
+
 			for($j = 1; $j <= 5; $j ++) {
 				$comment = new Comment ( $pdo );
 				$comment->userID = self::USER_ID_1;
 				$comment->comment = 'comment' . $l;
-				try {
-					$comment->set ();
-					$itemComment = new ItemComments ( $pdo );
-					$itemComment->itemID = $i;
-					$itemComment->commentID = $l;
-					try {
-						if ($itemComment->itemID == 3 && $itemComment->commentID == 15) {
-							// Don't set.
-						} else {
-							$itemComment->set ();
-						}
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
+				$comment->set ();
+
+				$itemComment = new ItemComments ( $pdo );
+				$itemComment->itemID = $i;
+				$itemComment->commentID = $l;
+
+				if ($itemComment->itemID == 3 && $itemComment->commentID == 15) {
+					// Don't set.
+				} else {
+					$itemComment->set ();
 				}
+
 				$l ++;
 			}
 		}
@@ -3296,30 +3188,37 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
-		
+
+		$user = new User ( $pdo, [
+			'user' => 'user',
+			'email' => 'user@gmai.com',
+			'password' => 'TestTest88'
+		] );
+
+		$user->set ();
+
 		$l = 1;
 		for($i = 1; $i <= 3; $i ++) {
 			$item = new Item ( $pdo );
+			$item->owningUserID = $user->userID;
 			$item->title = 'title' . $i;
 			$item->set ();
+
 			for($j = 1; $j <= 5; $j ++) {
 				$note = new Note ( $pdo );
 				$note->note = 'note' . $l;
-				try {
-					$note->set ();
-					$itemNote = new ItemNotes ( $pdo );
-					$itemNote->itemID = $i;
-					$itemNote->noteID = $l;
-					try {
-						if ($itemNote->itemID == 3 && $itemNote->noteID == 15) {
-							// Don't set.
-						} else {
-							$itemNote->set ();
-						}
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
+				$note->set ();
+
+				$itemNote = new ItemNotes ( $pdo );
+				$itemNote->itemID = $i;
+				$itemNote->noteID = $l;
+
+				if ($itemNote->itemID == 3 && $itemNote->noteID == 15) {
+					// Don't set.
+				} else {
+					$itemNote->set ();
 				}
+
 				$l ++;
 			}
 		}
@@ -3329,109 +3228,123 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
-		
-		$u1 = new User ( $pdo, [ 
+
+		$u1 = new User ( $pdo, [
 				self::USER => self::USER_ONE,
 				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE 
+				self::PASSWORD => self::PASSWORD_ONE
 		] );
-		$u2 = new User ( $pdo, [ 
+
+		$u1->set ();
+
+		$u2 = new User ( $pdo, [
 				self::USER => self::USER_TWO,
 				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO 
+				self::PASSWORD => self::PASSWORD_TWO
 		] );
-		$i1 = new Item ( $pdo, [ 
-				self::TITLE => self::TITLE_1 
+
+		$u2->set ();
+
+		$i1 = new Item ( $pdo, [
+				self::OWNING_USER_ID => $u1->userID,
+				self::TITLE => self::TITLE_1
 		] );
-		$i2 = new Item ( $pdo, [ 
-				self::TITLE => self::TITLE_2 
+
+		$i1->set ();
+
+		$i2 = new Item ( $pdo, [
+				self::OWNING_USER_ID => $u1->userID,
+				self::TITLE => self::TITLE_2
 		] );
-		$ui = new UserItems ( $pdo, [ 
+
+		$i2->set ();
+
+		$ui = new UserItems ( $pdo, [
 				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_1 
+				self::ITEM_ID => self::ITEM_ID_2
 		] );
-		$ui = new UserItems ( $pdo, [ 
-				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_2 
-		] );
-		$ur = new UserRatings ( $pdo, [ 
+
+		$ui->set ();
+
+		$ur = new UserRatings ( $pdo, [
 				self::ITEM_ID => self::ITEM_ID_1,
 				self::SELLRATING => self::SELLRATING_1,
 				self::USER_ID => self::USER_ID_1,
-				self::BUYRATING => self::BUYRATING_1 
+				self::BUYRATING => self::BUYRATING_1
 		] );
-		
-		try {
-			$u1->set ();
-			$u2->set ();
-			$i1->set ();
-			$i2->set ();
-			$ui->set ();
-			$ur->set ();
-		} catch ( ModelException $e ) {
-		}
+
+		$ur->set ();
 	}
 	protected function addSellerRating(): UserRatings {
 		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
-		
-		$u1 = new User ( $pdo, [ 
+
+		$u1 = new User ( $pdo, [
 				self::USER => self::USER_ONE,
 				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE 
+				self::PASSWORD => self::PASSWORD_ONE
 		] );
-		$u2 = new User ( $pdo, [ 
+
+		$u1->set ();
+
+		$u2 = new User ( $pdo, [
 				self::USER => self::USER_TWO,
 				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO 
+				self::PASSWORD => self::PASSWORD_TWO
 		] );
-		$i1 = new Item ( $pdo, [ 
-				self::TITLE => self::TITLE_1 
+
+		$u2->set ();
+
+		$i1 = new Item ( $pdo, [
+				self::OWNING_USER_ID => $u1->userID,
+				self::TITLE => self::TITLE_1
 		] );
-		$i2 = new Item ( $pdo, [ 
-				self::TITLE => self::TITLE_2 
+
+		$i1->set ();
+
+		$i2 = new Item ( $pdo, [
+				self::OWNING_USER_ID => $u1->userID,
+				self::TITLE => self::TITLE_2
 		] );
-		$ui = new UserItems ( $pdo, [ 
+		$i2->set ();
+
+		$ui = new UserItems ( $pdo, [
 				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_1 
+				self::ITEM_ID => self::ITEM_ID_1
 		] );
-		$ui = new UserItems ( $pdo, [ 
+
+		$ui->set ();
+
+		$ui = new UserItems ( $pdo, [
 				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_2 
+				self::ITEM_ID => self::ITEM_ID_2
 		] );
-		$ur = new UserRatings ( $pdo, [ 
+
+		$ui->set ();
+
+		$ur = new UserRatings ( $pdo, [
 				self::ITEM_ID => self::ITEM_ID_1,
 				self::SELLRATING => self::SELLRATING_1,
 				self::USER_ID => self::USER_ID_1,
-				self::BUYRATING => self::BUYRATING_1 
+				self::BUYRATING => self::BUYRATING_1
 		] );
-		
-		try {
-			$u1->set ();
-			$u2->set ();
-			$i1->set ();
-			$i2->set ();
-			$ui->set ();
-			$ur->set ();
-		} catch ( ModelException $e ) {
-		}
+
+		$ur->set ();
+
 		$sut = new UserRatings ( $pdo );
 		$sut->userID = self::USER_ID_2;
 		$sut->itemID = self::ITEM_ID_2;
 		$sut->sellrating = self::SELLRATING_2;
-		try {
-			$sut->addSellerRating ();
-		} catch ( ModelException $e ) {
-		}
+		$sut->addSellerRating ();
+
 		$sut = new UserRatings ( $pdo );
 		$sut->user_ratingID = self::USER_RATING_ID_2;
-		try {
-			return $sut->get ();
-		} catch ( ModelException $e ) {
-		}
+
+		return $sut->get ();
 	}
+
 	protected function populateAdditionalUserRatings(): void {
 		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser ();
@@ -3441,75 +3354,43 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		// Insert a root category
 		$root = new Category ( $pdo );
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
-		
+		$root->set ();
+
 		// Insert additional categories
 		$c = new Category ( $pdo );
 		$c->{self::PARENT_ID} = self::PARENT_ID_1;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		$c->set ();
+
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
-		
-		$args1 = [ 
-				self::USER => self::USER_ONE,
-				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE 
-		];
-		
-		$args2 = [ 
-				self::USER => self::USER_TWO,
-				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO 
-		];
-		
-		$args3 = [ 
-				self::USER => self::USER_THREE,
-				self::EMAIL => self::EMAIL_ADDRESS_THREE,
-				self::PASSWORD => self::PASSWORD_THREE 
-		];
-		
+		$c->set ();
+
 		$l = 1;
 		for($i = 1; $i <= 3; $i ++) {
 			$user = new User ( $pdo );
 			$user->user = 'user' . $i;
 			$user->email = 'user' . $i . '@gmail.com';
 			$user->password = 'PassWord' . $i . $i;
-			try {
-				$user->set ();
-			} catch ( ModelException $e ) {
-			}
-			
+			$user->set ();
+
 			for($j = 1; $j <= 5; $j ++) {
 				$item = new Item ( $pdo );
+				$item->owningUserID = $user->userID;
 				$item->title = 'title' . $l;
-				try {
-					$item->set ();
-					$userItem = new UserItems ( $pdo );
-					$userItem->userID = $i;
-					$userItem->itemID = $l;
-					$userItem->relationship = 'relationship' . $i . $l;
-					$userItem->userStatus = 'userStatus' . $i . $l;
-					
-					try {
-						if ($userItem->userID == 3 && $userItem->itemID == 15) {
-							// Don't set.
-						} else {
-							$userItem->set ();
-						}
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
+				$item->set ();
+
+				$userItem = new UserItems ( $pdo );
+				$userItem->userID = $i;
+				$userItem->itemID = $l;
+				$userItem->relationship = 'relationship' . $i . $l;
+				$userItem->userStatus = 'userStatus' . $i . $l;
+
+				if ($userItem->userID == 3 && $userItem->itemID == 15) {
+					// Don't set.
+				} else {
+					$userItem->set ();
 				}
+
 				$l ++;
 			}
 		}
@@ -3532,12 +3413,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					self::USER_ID => $j,
 					self::BUYRATING => $l 
 			] );
-			
-			try {
-				$ur->set ();
-			} catch ( ModelException $e ) {
-			}
-			
+
+			$ur->set ();
+
 			if ($k == 5) {
 				$k = 0;
 			}
@@ -3558,96 +3436,80 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		// Insert a root category
 		$root = new Category ( $pdo );
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;
-		try {
-			$root->set ();
-		} catch ( ModelException $e ) {
-		}
+		$root->set ();
 		
 		// Insert additional categories
 		$c = new Category ( $pdo );
 		$c->{self::PARENT_ID} = self::PARENT_ID_1;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_2;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		$c->set ();
+
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		$c->{self::CATEGORY_NAME} = self::CATEGORY_3;
+		$c->set ();
+
 		$c->{self::PARENT_ID} = self::PARENT_ID_2;
 		$c->{self::CATEGORY_NAME} = self::CATEGORY_4;
-		try {
-			$c->set ();
-		} catch ( ModelException $e ) {
-		}
+		$c->set ();
 		
 		$l = 1;
 		$k = 1;
+
 		for($i = 1; $i <= 3; $i ++) {
 			$user = new User ( $pdo );
 			$user->user = 'user' . $i;
 			$user->email = 'user' . $i . '@gmail.com';
 			$user->password = 'PassWord' . $i . $i;
-			try {
-				$user->set ();
-			} catch ( ModelException $e ) {
-			}
+			$user->set ();
+
 			for($j = 1; $j <= 5; $j ++) {
 				$item = new Item ( $pdo );
+				$item->owningUserID = $user->userID;
 				$item->title = 'title' . $k;
-				try {
-					$item->set ();
-					$userItem = new UserItems ( $pdo );
-					$userItem->userID = $i;
-					$userItem->itemID = $k;
-					$userItem->relationship = 'relationship' . $i . $l;
-					$userItem->userStatus = 'userStatus' . $i . $l;
-					
-					$categoryItem = new CategoryItems ( $pdo );
-					$categoryItem->categoryID = $i + 1;
-					$categoryItem->itemID = $k;
-					
-					$userRating = new UserRatings ( $pdo );
-					$userRating->itemID = $k;
-					$userRating->sellrating = 5;
-					$userRating->userID = $i;
-					$userRating->buyrating = 4;
-					$userRating->set ();
-					
-					for($m = 1; $m <= 5; $m ++) {
-						$note = new Note ( $pdo );
-						$note->note = 'note' . $l;
-						$comment = new Comment ( $pdo );
-						$comment->userID = $i;
-						$comment->comment = 'comment' . $l;
-						try {
-							$note->set ();
-							$itemNote = new ItemNotes ( $pdo );
-							$itemNote->itemID = $i;
-							$itemNote->noteID = $l;
-							$comment->set ();
-							$itemComment = new ItemComments ( $pdo );
-							$itemComment->itemID = $i;
-							$itemComment->commentID = $l;
-							try {
-								$itemNote->set ();
-								$itemComment->set ();
-								$l ++;
-							} catch ( ModelException $e ) {
-							}
-						} catch ( Exception $e ) {
-						}
-					}
-					
-					try {
-						$userItem->set ();
-						$categoryItem->set ();
-					} catch ( ModelException $e ) {
-					}
-				} catch ( Exception $e ) {
+				$item->set ();
+
+				$userRating = new UserRatings ( $pdo );
+				$userRating->itemID = $k;
+				$userRating->sellrating = 5;
+				$userRating->userID = $i;
+				$userRating->buyrating = 4;
+				$userRating->set ();
+
+				for($m = 1; $m <= 5; $m ++) {
+					$note = new Note ( $pdo );
+					$note->note = 'note' . $l;
+					$note->set ();
+
+					$comment = new Comment ( $pdo );
+					$comment->userID = $user->userID;
+					$comment->comment = 'comment' . $l;
+					$comment->set ();
+
+					$itemNote = new ItemNotes ( $pdo );
+					$itemNote->itemID = $item->itemID;
+					$itemNote->noteID = $note->noteID;
+					$itemNote->set ();
+
+					$itemComment = new ItemComments ( $pdo );
+					$itemComment->itemID =$item->itemID;
+					$itemComment->commentID = $comment->commentID;
+					$itemComment->set ();
+
+					$l ++;
 				}
+
+				$userItem = new UserItems ( $pdo );
+				$userItem->userID = $user->userID;
+				$userItem->itemID = $item->itemID;
+				$userItem->relationship = 'relationship' . $i . $l;
+				$userItem->userStatus = 'userStatus' . $i . $l;
+				$userItem->set ();
+
+				$categoryItem = new CategoryItems ( $pdo );
+				$categoryItem->categoryID = $i + 1;
+				$categoryItem->itemID = $item->itemID;
+				$categoryItem->set ();
+
 				$k ++;
 			}
 			

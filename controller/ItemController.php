@@ -24,7 +24,7 @@ class ItemController {
 	 * @param $itemId
 	 * 			The iID of the item to be displayed.
 	 */
-	public function View($itemId) {
+	public function View(int $itemId) {
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
@@ -34,69 +34,184 @@ class ItemController {
 	}
 
 	public function Create() {
+		if ($this->auth()) {
+			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+				unset($_SESSION['itemAdd']);
+				$view = new ItemView();
+				$view->Render('itemAdd');
+				return;
+			} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+				if (isset($_POST['confirm'])) {
+					try {
+						$_SESSION['itemAdd'] = $_POST;
+						$this->validateItemData($_POST);
+						$view = new ItemView();
+						$view->Render('itemAddConfirm');
+					} catch (ValidationException $e) {
+						$_SESSION['error'] = $e->getError();
+						$view = new ItemView();
+						$view->Render('itemAdd');
+					}
+				} else if (isset($_POST['commit'])) {
+					try {
+						$h = new Humphree(Picnic::getInstance());
+						$itemID = $h->addItem($_SESSION['userID'], $_SESSION['itemAdd'], intval($_SESSION['itemAdd']['category']));
+						unset($_SESSION['itemAdd']);
+						header('Location: ' . BASE . '/Item/View/' . $itemID);
+					} catch (ValidationException $e) {
+						$_SESSION['error'] = $e->getError();
+						$view = new ItemView();
+						$view->Render('itemAdd');
+					}
+				} else {
+					$view = new ItemView();
+					$view->Render('itemAdd');
+				}
+				return;
+			}
+		}
+
+		header('Location: ' . BASE . '/Home');
+	}
+
+	public function Edit($itemID) {
+		if ($this->auth()) {
+			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+				unset($_SESSION['itemAdd']);
+				$view = new ItemView();
+				$h = new Humphree(Picnic::getInstance());
+				$_SESSION['itemAdd'] = $h->getItem($itemID);
+				$category = $h->getItemCategory($itemID);
+				$_SESSION['itemAdd']['category'] = $category['categoryID'];
+				$_SESSION['itemAdd']['majorCategory'] = $category['parentID'];
+				$view->Render('itemEdit');
+				return;
+			} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+				if (isset($_POST['confirm'])) {
+					try {
+						$_SESSION['itemAdd'] = $_POST;
+						$_SESSION['itemAdd']['itemID'] = $itemID;
+						$this->validateItemData($_POST);
+						$view = new ItemView();
+						$view->Render('itemEditConfirm');
+					} catch (ValidationException $e) {
+						$_SESSION['error'] = $e->getError();
+						$view = new ItemView();
+						$view->Render('itemEdit');
+					}
+				} else if (isset($_POST['commit'])) {
+					try {
+						$h = new Humphree(Picnic::getInstance());
+						$h->updateItem($_SESSION['itemAdd']);
+
+						$originalCategory = $h->getItemCategory($itemID)['categoryID'];
+						if ($originalCategory !=$_SESSION['itemAdd']['category']) {
+							$h->removeItemFromCategory($_SESSION['itemAdd']['itemID'], $originalCategory);
+							$h->addItemToCategory($_SESSION['itemAdd']['itemID'], $_SESSION['itemAdd']['category']);
+						}
+
+						unset($_SESSION['itemAdd']);
+						header('Location: ' . BASE . '/Item/View/' . $itemID);
+					} catch (ValidationException $e) {
+						$_SESSION['error'] = $e->getError();
+						$view = new ItemView();
+						$view->Render('itemEdit');
+					}
+				} else {
+					$view = new ItemView();
+					$view->Render('itemEdit');
+				}
+				return;
+			}
+		}
+
+		header('Location: ' . BASE . '/Home');
+
+
+
+
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
 		$view->SetData('categories', $h->getCategoriesIn(Category::ROOT_CATEGORY));
 		$view->SetData('subCategories', $h->getCategories());
-		$view->SetData('navData',  new NavData(NavData::ViewListings));
-		$view->Render('itemAdd');
-	}
+		$view->SetData('navData',  new NavData(NavData::Account));
 
-	public function DoCreate() {
+		if (!isset($_SESSION['itemEdit']) || $_SESSION['itemEdit']['itemID'] != $itemID ) {
+			$_SESSION['itemEdit'] = $h ->getItem($itemID);
+			$_SESSION['itemEdit']['itemID'] = $itemID;
 
-		if ($this->auth()) {
-			if (isset ($_POST ['category']) && isset ($_POST ['title']) && isset ($_POST ['description']) && isset ($_POST ['quantity']) && isset ($_POST ['condition']) && isset ($_POST ['price'])) {
-				try {
-					$validate = new Validation ();
-					$validate->numberGreaterThanZero($_POST ['category']);
-					$validate->emptyField($_POST ['title']);
-					$validate->emptyField($_POST ['description']);
-					$validate->emptyField($_POST ['condition']);
-					$validate->number($_POST ['quantity']);
-					$validate->number($_POST ['price']);
-
-					$h = new Humphree(Picnic::getInstance());
-
-					$params = [];
-					$params['title'] = $_POST ['title'];
-					$params['description'] = $_POST ['description'];
-					$params['quantity'] = $_POST ['quantity'];
-					$params['itemcondition'] = $_POST ['condition'];
-					$params['price'] = $_POST ['price'];
-					$params['status'] = 'ForSale';
-
-					$itemID = $h->addItem($_SESSION['userID'], $params, intval($_POST ['category']));
-
-					header('Location: ' . BASE . '/Item/View/' . $itemID);
-				} catch (ValidationException $e) {
-					$_SESSION['error'] =  $e->getError();
-					header('Location: ' . BASE . '/Item/Create');
-				}
-			} else {
-				header('Location: ' . BASE . '/Account/Register');
-			}
-		} else {
-			header('Location: ' . BASE . '/Home');
+			$category = $h->getItemCategory($itemID);
+			$_SESSION['itemEdit']['majorCategory'] = $category['parentID'];
+			$_SESSION['itemEdit']['category'] = $category['categoryID'];
 		}
-	}
 
-	public function Edit($itemId) {
-		$h = new Humphree(Picnic::getInstance());
-
-		$view = new View();
-		$view->SetData('item', $h ->getItem($itemId));
-		$view->SetData('navData',  new NavData(NavData::ViewListings));
+		$view->SetData('item', $_SESSION['itemEdit']);
 		$view->Render('itemEdit');
 	}
 
-	public function Delete($itemId) {
+	private function validateItemData($data) {
+		$validate = new Validation ();
+
+		if (isset($data['status'])) {
+			$validate->emptyField($data['status']);
+		} else {
+			throw new ValidationException('Please enter a listing type.');
+		}
+
+		if (isset($data['majorCategory'])) {
+			$validate->emptyField($data['majorCategory']);
+			$validate->number($data['majorCategory']);
+			$validate->numberGreaterThanZero($data['majorCategory']);
+		} else {
+			throw new ValidationException('Please select a category.');
+		}
+
+		if (isset($data['category'])) {
+			$validate->emptyField($data['category']);
+			$validate->number($data['category']);
+			$validate->numberGreaterThanZero($data['category']);
+		} else {
+			throw new ValidationException('Please select a sub-category.');
+		}
+
+		if (isset($data['title'])) {
+			$validate->emptyField($data['title']);
+		} else {
+			throw new ValidationException('Please enter a title.');
+		}
+
+		if (isset($data['description'])) {
+			$validate->emptyField($data['description']);
+		} else {
+			throw new ValidationException('Please enter a description.');
+		}
+
+		if (isset($data['itemcondition'])) {
+			$validate->emptyField($data['itemcondition']);
+		} else {
+			throw new ValidationException('Please select an item condition.');
+		}
+		if (isset($data['quantity'])) {
+			$validate->number($data ['quantity']);
+		} else {
+			throw new ValidationException('Please enter a quantity.');
+		}
+
+		if (isset($data['price'])) {
+			$validate->number($data ['price']);
+		} else {
+			throw new ValidationException('Please enter a price.');
+		}
+	}
+
+	public function Delete(int $itemId) {
 		$h = new Humphree(Picnic::getInstance());
 		$h ->deleteItem($itemId);
 		header('Location: ' . BASE . '/Dashboard/View');
 	}
 
-	public function MarkFoundOrSold($itemId) {
+	public function MarkFoundOrSold(int $itemId) {
 		$h = new Humphree(Picnic::getInstance());
 
 		$view = new View();
@@ -112,7 +227,7 @@ class ItemController {
 	 * @param $itemId
 	 * 			The ID of the item whose thumbnail will be sent.
 	 */
-	public function Thumb($itemId) {
+	public function Thumb(int $itemId) {
 
 		// to avoid killing the file system with millions of files in a single directory,
 		// we store images in a structure like so:
@@ -148,7 +263,7 @@ class ItemController {
 	 * @param $itemId
 	 * 			The ID of the item whose image will be sent.
 	 */
-	public function Image($itemId) {
+	public function Image(int $itemId) {
 
 		// for now, I'm just using the thumb scaled up, to avoid uploading hundreds of MB of
 		// images to the dev server.

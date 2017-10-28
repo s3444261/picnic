@@ -90,7 +90,7 @@ class ItemComments {
 					
 					$query = "INSERT INTO Item_comments
 								SET itemID = :itemID,
-					commentID = :commentID";
+					                commentID = :commentID";
 					
 					$stmt = $this->db->prepare ( $query );
 					$stmt->bindParam ( ':itemID', $this->_itemID );

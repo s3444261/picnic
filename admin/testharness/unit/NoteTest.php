@@ -91,6 +91,7 @@ final class NoteTest extends PicnicTestCase {
 			$n2->set ();
 			$n3->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	protected function tearDown(): void {
@@ -145,6 +146,7 @@ final class NoteTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::NOTE_ID_2, $sut->noteID );
 		$this->assertEquals ( self::NOTE_2, $sut->note );
@@ -164,6 +166,7 @@ final class NoteTest extends PicnicTestCase {
 		try {
 			$sut->noteID = $sut->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( $sut->noteID );
 		try {
@@ -171,6 +174,7 @@ final class NoteTest extends PicnicTestCase {
 			$this->assertEquals ( self::NOTE_ID_4, $sut->noteID );
 			$this->assertEquals ( self::NOTE_4, $sut->note );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	

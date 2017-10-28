@@ -263,7 +263,36 @@ class User {
 			throw new ModelException ( self::ERROR_USER_NOT_EXIST );
 		}
 	}
-	
+
+
+	public function getUserOwnedItems(): array
+	{
+		$query = "SELECT * FROM Items WHERE owningUserID = :userID";
+
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindParam ( ':userID', $this->userID );
+		$stmt->execute ();
+
+		$objects = array ();
+
+		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+			$userItem = new Item ($this->db);
+			$userItem->itemID = $row ['itemID'];
+			$userItem->owningUserID = $row ['owningUserID'];
+			$userItem->title = $row ['title'];
+			$userItem->description = $row ['description'];
+			$userItem->quantity = $row ['quantity'];
+			$userItem->itemcondition = $row ['itemcondition'];
+			$userItem->price = $row ['price'];
+			$userItem->status = $row ['itemStatus'];
+			$userItem->created_at = $row ['created_at'];
+			$userItem->updated_at = $row ['updated_at'];
+			$objects [] = $userItem;
+		}
+
+		return $objects;
+	}
+
 	/**
 	 * Updates the password only.
 	 *

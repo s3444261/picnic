@@ -136,11 +136,13 @@ final class ItemCommentsTest extends PicnicTestCase {
 		try {
 			$user->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		$l = 1;
 		for($i = 1; $i <= 3; $i ++) {
 			$item = new Item ( $pdo );
+			$item->owningUserID = $user->userID;
 			$item->title = 'title' . $i;
 			$item->set ();
 			for($j = 1; $j <= 5; $j ++) {
@@ -159,8 +161,10 @@ final class ItemCommentsTest extends PicnicTestCase {
 							$itemComment->set ();
 						}
 					} catch ( ModelException $e ) {
+						$this->assertEquals('Exception', $e->getMessage());
 					}
 				} catch ( Exception $e ) {
+					$this->assertEquals('Exception', $e->getMessage());
 				}
 				$l ++;
 			}
@@ -218,6 +222,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::ITEM_COMMENT_ID_2, $sut->item_commentID );
 		$this->assertEquals ( self::ITEM_ID_1, $sut->itemID );
@@ -229,7 +234,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 	 */
 	public function testSetItemCommentsEmpty(): void {
 		$sut = $this->createDefaultSut ();
-		$this->expectExceptionMessage ( '' );
+		$this->expectExceptionMessage ( self::ERROR_ITEM_ID_NOT_EXIST );
 		$sut->set ();
 	}
 	public function testSetItemCommentsInvalidItemId(): void {
@@ -268,6 +273,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 			$this->assertEquals ( self::ITEM_ID_3, $sut->itemID );
 			$this->assertEquals ( self::COMMENT_ID_15, $sut->commentID );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -290,6 +296,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '1', $sut->itemID );
 		$this->assertSame ( '15', $sut->commentID );
@@ -302,6 +309,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '2', $sut->itemID );
 		$this->assertSame ( '1', $sut->commentID );
@@ -314,6 +322,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '2', $sut->itemID );
 		$this->assertSame ( '1', $sut->commentID );
@@ -326,6 +335,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '2', $sut->itemID );
 		$this->assertSame ( '15', $sut->commentID );
@@ -349,6 +359,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 		try {
 			$this->assertTrue ( $sut->delete () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->expectExceptionMessage ( self::ERROR_ITEM_COMMENT_ID_NOT_EXIST );
 		$sut->get ();
@@ -450,6 +461,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 				$i ++;
 			}
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -476,6 +488,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 			$this->assertEquals ( 1, $obj->itemID );
 			$this->assertEquals ( 2, $obj->commentID );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -499,6 +512,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 		try {
 			$this->assertTrue ( $sut->deleteItemComment () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( self::ITEM_COMMENT_ID_2 );
 		$this->expectExceptionMessage ( self::ERROR_ITEM_COMMENT_ID_NOT_EXIST );
@@ -525,6 +539,7 @@ final class ItemCommentsTest extends PicnicTestCase {
 		try {
 			$this->assertTrue ( $sut->deleteItemComments () );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		for($i = 6; $i <= 10; $i ++) {
 			$sut = $this->createSutWithId ( $i );

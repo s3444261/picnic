@@ -499,6 +499,30 @@ class Humphree {
 		return $numUserItems;
 	}
 
+	public function getUserOwnedItems(int $userID, string $itemStatus): array {
+		$user = new User ( $this->db );
+		$user->userID = $userID;
+		$items = $this->system->getUserOwnedItems ( $userID );
+		$result = array();
+
+		foreach ( $items as $item ) {
+			if ($item->status == $itemStatus) {
+				$it = array ();
+				$it ['itemID'] = $item->itemID;
+				$it ['owningUserID'] = $item->owningUserID;
+				$it ['title'] = $item->title;
+				$it ['description'] = $item->description;
+				$it ['quantity'] = $item->quantity;
+				$it ['itemcondition'] = $item->itemcondition;
+				$it ['price'] = $item->price;
+				$it ['status'] = $item->status;
+				$result [] = $it;
+			}
+		}
+
+		return $result;
+	}
+
 	/**
 	 * Retrieves all items linked to a User.
 	 *
@@ -641,20 +665,16 @@ class Humphree {
 	 * @return int
 	 */
 	public function addItem(int $userID, array $item, int $categoryID): int {
-		$user = new User ( $this->db );
-		$user->userID = $userID;
-		$category = new Category($this->db);
-		$category->categoryID = $categoryID;
 		$it = new Item ( $this->db );
+		$it->owningUserID = $userID;
 		$it->title = $item ['title'];
 		$it->description = $item ['description'];
 		$it->quantity = $item ['quantity'];
 		$it->itemcondition = $item ['itemcondition'];
 		$it->price = $item ['price'];
 		$it->status = $item ['status'];
-		$userItemID =  $this->system->addItem ( $user, $it, $category );
 
-		return $this->system->getItemIDForUserItem($userItemID);
+		return  $this->system->addItem ($it, $categoryID );
 	}
 	
 	/**
@@ -672,11 +692,8 @@ class Humphree {
 		$it->itemcondition = $item ['itemcondition'];
 		$it->price = $item ['price'];
 		$it->status = $item ['status'];
-		if ($this->system->updateItem ( $it )) {
-			return true;
-		} else {
-			return false;
-		}
+
+		return ($this->system->updateItem ( $it ));
 	}
 	
 	/**
@@ -799,7 +816,37 @@ class Humphree {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Removes the given item form the given category.
+	 *
+	 * @param int $itemID		The item to be removed.
+	 * @param int $categoryID	The category from which it will be removed.
+	 */
+	public function removeItemFromCategory(int $itemID, int $categoryID): void {
+		$this->system->removeItemFromCategory($itemID, $categoryID);
+	}
+
+	/**
+	 * Afds the given item to the given category.
+	 *
+	 * @param int $itemID		The item to be added.
+	 * @param int $categoryID	The category to which it will be added.
+	 */
+	public function addItemToCategory(int $itemID, int $categoryID): void {
+		$this->system->addItemToCategory($itemID, $categoryID);
+	}
+
+	/**
+	 * Gets the first category associated with the given item.
+	 *
+	 * @param int $itemID
+	 * @return array
+	 */
+	public function getItemCategory(int $itemID): array {
+		return $this->system->getItemCategory($itemID);
+	}
+
 	/**
 	 * Retrieves all notes for an item.
 	 *
@@ -908,7 +955,7 @@ class Humphree {
 		$i = new Item ( $this->db );
 		return $this->system->getItemOwner ( $i );
 	}
-	
+
 	/**
 	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
 	 * The intention is that on receipt of the seller rating, the information returned
@@ -918,12 +965,13 @@ class Humphree {
 	 * The email will contain a link with a transaction string that will be passed
 	 * through a URL to identify the relevant transaction.
 	 *
-	 * @param int $itemID        	
-	 * @param int $sellRating        	
+	 * @param int $userID
+	 * @param int $itemID
+	 * @param int $sellRating
 	 * @return array
 	 */
 	public function addSellerRating(int $userID, int $itemID, int $sellRating): array {
-		$buyerArray = new Array_ ();
+		$buyerArray = [];
 		$s = new UserRatings ( $this->db );
 		$s->userID = $userID;
 		$s->itemID = $itemID;
@@ -947,18 +995,19 @@ class Humphree {
 			return $buyerArray;
 		}
 	}
-	
+
 	/**
 	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
 	 * The transaction string is received through a URL and is used to identifiy
 	 * the relevant transaction.
 	 *
+	 * @param int $userID
 	 * @param string $transaction
-	 *        	A transaction identifier passed through a URL.
-	 * @param int $buyRating        	
+	 *            A transaction identifier passed through a URL.
+	 * @param int $buyRating
 	 * @return bool
 	 */
-	public function addBuyerRating(string $transaction, int $buyRating): bool {
+	public function addBuyerRating(int $userID, string $transaction, int $buyRating): bool {
 		if (strlen ( $transaction > 0 ) && ($buyRating > 0) && ($userID > 0)) {
 			$br = new UserRatings ( $this->db );
 			$br->buyrating = $buyRating;

@@ -28,7 +28,8 @@ class PicnicAutoloader {
 		$dir = array (
 			'controller/',
 			'model/',
-			'view/'
+			'view/',
+			'view/classes/'
 		);
 
 		foreach ( $dir as $directory ) {

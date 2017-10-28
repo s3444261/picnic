@@ -51,11 +51,13 @@ require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname ( __FILE__ ) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Item.php';
+require_once dirname ( __FILE__ ) . '/../../../model/User.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ModelException.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Validation.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ValidationException.php';
 class ItemTest extends PicnicTestCase {
 	const ITEM_ID = 'itemID';
+	const OWNING_USER_ID = 'owningUserID';
 	const TITLE = 'title';
 	const DESCRIPTION = 'description';
 	const QUANTITY = 'quantity';
@@ -64,6 +66,7 @@ class ItemTest extends PicnicTestCase {
 	const STATUS = 'status';
 	const CREATION_DATE = 'created_at';
 	const MODIFIED_DATE = 'updated_at';
+	const USER_ID_1 = 1;
 	const ITEM_ID_1 = 1;
 	const TITLE_1 = 'title1';
 	const DESCRIPTION_1 = 'description1';
@@ -102,10 +105,18 @@ class ItemTest extends PicnicTestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
-		
+
+		$user = new User($pdo);
+		$user->user = "f sfsd fsd f";
+		$user->email = "test@test.com";
+		$user->password = "fRRR44@fff";
+		$user->status = "good";
+		$userID = $user->set();
+
 		// Insert items.
 		$args = [ 
 				self::ITEM_ID => self::ITEM_ID_1,
+			    self::OWNING_USER_ID => self::USER_ID_1,
 				self::TITLE => self::TITLE_1,
 				self::DESCRIPTION => self::DESCRIPTION_1,
 				self::QUANTITY => self::QUANTITY_1,
@@ -118,10 +129,12 @@ class ItemTest extends PicnicTestCase {
 		try {
 			$item->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		$args2 = [ 
 				self::ITEM_ID => self::ITEM_ID_2,
+			    self::OWNING_USER_ID => self::USER_ID_1,
 				self::TITLE => self::TITLE_2,
 				self::DESCRIPTION => self::DESCRIPTION_2,
 				self::QUANTITY => self::QUANTITY_2,
@@ -134,10 +147,12 @@ class ItemTest extends PicnicTestCase {
 		try {
 			$item->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		$args3 = [ 
 				self::ITEM_ID => self::ITEM_ID_3,
+				self::OWNING_USER_ID => self::USER_ID_1,
 				self::TITLE => self::TITLE_3,
 				self::DESCRIPTION => self::DESCRIPTION_3,
 				self::QUANTITY => self::QUANTITY_3,
@@ -150,6 +165,7 @@ class ItemTest extends PicnicTestCase {
 		try {
 			$item->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	protected function tearDown(): void {
@@ -213,6 +229,7 @@ class ItemTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::ITEM_ID_2, $sut->itemID );
 		$this->assertEquals ( self::TITLE_2, $sut->title );
@@ -233,6 +250,7 @@ class ItemTest extends PicnicTestCase {
 	}
 	public function testSetItemSuccess(): void {
 		$sut = $this->createDefaultSut ();
+		$sut->owningUserID = self::USER_ID_1;
 		$sut->title = self::TITLE_4;
 		$sut->description = self::DESCRIPTION_4;
 		$sut->quantity = self::QUANTITY_4;
@@ -242,6 +260,7 @@ class ItemTest extends PicnicTestCase {
 		try {
 			$sut->itemID = $sut->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( $sut->itemID );
 		try {
@@ -254,6 +273,7 @@ class ItemTest extends PicnicTestCase {
 			$this->assertEquals ( self::PRICE_4, $sut->price );
 			$this->assertEquals ( self::STATUS_4, $sut->status );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	

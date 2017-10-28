@@ -179,6 +179,7 @@ final class CommentTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertEquals ( self::COMMENT_ID_2, $sut->commentID );
 		$this->assertEquals ( self::COMMENT_2, $sut->comment );
@@ -213,6 +214,7 @@ final class CommentTest extends PicnicTestCase {
 		try {
 			$sut->commentID = $sut->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$sut = $this->createSutWithId ( $sut->commentID );
 		try {
@@ -220,6 +222,7 @@ final class CommentTest extends PicnicTestCase {
 			$this->assertEquals ( self::COMMENT_ID_4, $sut->commentID );
 			$this->assertEquals ( self::COMMENT_4, $sut->comment );
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 	
@@ -261,6 +264,7 @@ final class CommentTest extends PicnicTestCase {
 		try {
 			$sut->get ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		$this->assertSame ( '2', $sut->userID );
 		$this->assertSame ( self::COMMENT_4, $sut->comment );

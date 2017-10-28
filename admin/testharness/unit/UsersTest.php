@@ -60,14 +60,17 @@ class UsersTest extends PHPUnit\Framework\TestCase {
 			try {
 				${'u' . $i}->set ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			try {
 				${'u' . $i}->get ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 			try {
 				${'u' . $i}->activate ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 		}
 	}
@@ -108,6 +111,7 @@ class UsersTest extends PHPUnit\Framework\TestCase {
 				$start ++;
 			}
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
 }

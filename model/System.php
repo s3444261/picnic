@@ -332,42 +332,11 @@ class System {
 	 */
 	public function deleteCategory(Category $category): bool {
 		if ($category->exists ()) {
-			$cID = $category->categoryID;
-			$pID = $cID;
-			
-			$i = 1;
-			do {
-				$pID = $cID;
-				
-				do {
-					$cs = new Categories ( $this->db );
-					$csArray = $cs->getCategoriesIn ( $pID );
-					$num = count ( $csArray );
-					if ($num > 0) {
-						$pID = $csArray [0]->categoryID;
-					}
-				} while ( $num != 0 );
-				
-				$categoryItem = new CategoryItems ( $this->db );
-				$categoryItem->categoryID = $pID;
-				try {
-					$itemsArray = $categoryItem->getCategoryItems ();
-					foreach ( $itemsArray as $item ) {
-						$ci = new CategoryItems ( $this->db );
-						$ci->itemID = $item->itemID;
-						$ci->deleteItem ();
-						$this->deleteItem ( $item );
-					}
-					$c = new Category ( $this->db );
-					$c->categoryID = $pID;
-					$c->delete ();
-				} catch ( ModelException $e ) {
-					$_SESSION ['error'] = self::ERROR_CATEGORY_ID_NOT_EXIST;
-				}
-				$i ++;
-			} while ( $pID != $cID );
-			
-			return true;
+			try {
+				return $category->delete();
+			} catch (ModelException $e) {
+				$_SESSION ['error'] = self::ERROR_CATEGORY_ID_NOT_EXIST;
+			}
 		} else {
 			$_SESSION ['error'] = self::ERROR_CATEGORY_NOT_EXIST;
 			return false;
@@ -434,12 +403,11 @@ class System {
 	 * @return int
 	 */
 	public function countCategoryItems(Category $category): int {
-		$numCategoryItems = 0;
 		$ci = new CategoryItems ( $this->db );
 		$ci->categoryID = $category->categoryID;
+
 		try {
-			$numCategoryItems = $ci->count ();
-			return $numCategoryItems;
+			return $ci->count ();
 		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage ();
 			return 0;
@@ -500,14 +468,92 @@ class System {
 	 * @return int
 	 */
 	public function countUserItems(User $user): int {
-		$numUserItems = 0;
 		$ui = new UserItems ( $this->db );
 		$ui->userID = $user->userID;
 		$numUserItems = $ui->count ();
 		
 		return $numUserItems;
 	}
-	
+
+	/**
+	 * Removes the given item form the given category.
+	 *
+	 * @param int $itemID		The item to be removed.
+	 * @param int $categoryID	The category from which it will be removed.
+	 * @return bool				True if the item was removed, false if the
+	 **					       	was never a member of the category to start with.
+	 */
+	public function removeItemFromCategory(int $itemID, int $categoryID): bool {
+		$ic = new CategoryItems( $this->db );
+		$ic->itemID = $itemID;
+		$ic->categoryID =$categoryID;
+		return $ic->delete();
+	}
+
+	/**
+	 * Afds the given item to the given category.
+	 *
+	 * @param int $itemID		The item to be added.
+	 * @param int $categoryID	The category to which it will be added.
+	 * @return bool				True if the item was added, false if the
+	 **					       	was never a member of the category to start with.
+	 */
+	public function addItemToCategory(int $itemID, int $categoryID): bool {
+		$ic = new CategoryItems( $this->db );
+		$ic->itemID = $itemID;
+		$ic->categoryID =$categoryID;
+		try {
+			return $ic->set();
+		} catch (ModelException $e) {
+			$_SESSION ['error'] = $e->getMessage ();
+			return false;
+		}
+	}
+
+	/**
+	 * Gets the first category associated with the given item.
+	 *
+	 * @param int $itemID
+	 * @return array
+	 */
+	public function getItemCategory(int $itemID): array {
+		try {
+			$ic = new CategoryItems( $this->db );
+			$category = $ic->getItemCategory($itemID);
+
+			$array = [];
+			$array['categoryID'] = $category->categoryID;
+			$array['category'] = $category->category;
+			$array['parentID'] = $category->parentID;
+			return $array;
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
+
+
+	}
+
+	/**
+	 * Retrieves all items owned by a user.
+	 *
+	 * @param int $userID
+	 *        	The user whose items will be returned.
+	 *
+	 * @return array
+	 * 			An array of Item objects.
+	 */
+	public function getUserOwnedItems(int $userID): array {
+		try {
+			$user = new User( $this->db );
+			$user->userID = $userID;
+			return $user->getUserOwnedItems();
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getError ();
+		}
+
+		return [];
+	}
+
 	/**
 	 * Retrieves all items linked to a user.
 	 *
@@ -545,51 +591,27 @@ class System {
 		}
 		return $i;
 	}
-	
+
 	/**
 	 * Adds an item to the items table and then adds the id's to
 	 * the UserItems table.
 	 *
-	 * @param User $user        	
-	 * @param Item $item        	
-	 * @return bool
+	 * @param Item $item
+	 * @param int $categoryID
+	 * @return int
 	 */
-	public function addItem(User $user, Item $item, Category $category): int {
-		$i = new Item ( $this->db );
-		$ui = new UserItems ( $this->db );
-		$ci = new CategoryItems ( $this->db );
+	public function addItem(Item $item, int $categoryID): int {
 		$i = $item;
 		try {
 			$i->itemID = $i->set ();
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getError ();
-		}
-		if ($i->itemID > 1) {
-			$ci->categoryID = $category->categoryID;
-			$ci->itemID = $i->itemID;
-			try {
-				$ci->category_itemID = $ci->set ();
-			} catch ( ModelException $e ) {
-				$_SESSION ['error'] = $e->getError ();
-			}
-			if ($ci->category_itemID > 0) {
-				$ui->userID = $user->userID;
-				$ui->itemID = $i->itemID;
-				$ui->relationship = "owner";
-				try {
-					$ui->user_itemID = $ui->set ();
-				} catch ( ModelException $e ) {
-					$_SESSION ['error'] = $e->getError ();
-				}
-				if ($ui->user_itemID > 0) {
-					return $ui->user_itemID;
-				} else {
-					return 0;
-				}
+			if ($i->itemID > 0) {
+				$this->addItemToCategory($i->itemID, $categoryID);
+				return $i->itemID;
 			} else {
 				return 0;
 			}
-		} else {
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getError ();
 			return 0;
 		}
 	}

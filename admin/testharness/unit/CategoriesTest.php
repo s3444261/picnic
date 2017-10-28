@@ -53,6 +53,7 @@ final class CategoriesTest extends PHPUnit\Framework\TestCase {
 		try {
 			$root->set ();
 		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
 		}
 		
 		// Insert additional categories
@@ -67,6 +68,7 @@ final class CategoriesTest extends PHPUnit\Framework\TestCase {
 			try {
 				$c->set ();
 			} catch ( ModelException $e ) {
+				$this->assertEquals('Exception', $e->getMessage());
 			}
 		}
 	}
