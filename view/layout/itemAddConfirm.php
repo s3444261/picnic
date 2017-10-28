@@ -25,7 +25,7 @@
                 <?php include("itemDetailsReadOnly.php") ?>
 
 				<form data-toggle="validator" role="form" method="post" action="Create">
-					<button type="submit" name="" class="btn btn-primary btn-success">Oops - go back!</button>
+					<button type="submit" name="" class="btn btn-primary btn-warning">Oops - go back!</button>
 					<button type="submit" name="commit" class="btn btn-primary btn-success">All good -- place listing</button>
 				</form>
 			</div>
