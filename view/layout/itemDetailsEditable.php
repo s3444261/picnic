@@ -150,7 +150,7 @@
 
 <div class="form-group">
     <label for="price">Price in $</label>
-    <input type="number" class="form-control" name="price" id="price" placeholder="Example: 199.99"
+    <input type="number" step="0.01" min="0" class="form-control" name="price" id="price" placeholder="Example: 199.99"
            value="<?php echo $this->itemPrice() ?>" required>
 </div>
 
