@@ -84,6 +84,11 @@ h1 {
 
 
 
+
+
+
+
+
 /* Customisation */
 
 .material-icons.md-light {
@@ -135,4 +140,8 @@ img.item-image {
 
 .item-badges {
     padding-top: 1em;
+}
+
+#header {
+    background-color: #fff;
 }

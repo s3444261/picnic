@@ -54,7 +54,7 @@ if(isset($_SESSION['message'])){
 ?>
 
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" id="header">
         <!-- Left margin -->
         <div class="col"></div>
         <!-- Central column -->
