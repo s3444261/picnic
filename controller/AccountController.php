@@ -43,10 +43,6 @@ class AccountController {
 
 			if (isset ($_POST ['email']) && isset ($_POST ['password'])) {
 				try {
-					$validate = new Validation ();
-					$validate->email($_POST ['email']);
-					$validate->password($_POST ['password']);
-
 					$user = new User (Picnic::getInstance());
 					$user->email = $_POST ['email'];
 					$user->password = $_POST ['password'];
@@ -63,10 +59,10 @@ class AccountController {
 						$view->Render('signin');
 					}
 				} catch (ValidationException $e) {
-					$view->SetData('error', $e->getError());
+					$view->SetData('error', 'Invalid username or password.');
 					$view->Render('signin');
 				} catch (ModelException $e) {
-					$view->SetData('error', $e->getError());
+					$view->SetData('error', 'Invalid username or password.');
 					$view->Render('signin');
 				}
 			} else {

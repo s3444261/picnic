@@ -99,7 +99,7 @@ class ItemController {
 						$view = new ItemView();
 						$view->Render('itemEdit');
 					}
-				} else if (isset($_POST['commit'])) {
+				} else if (isset($_POST['commit']) && isset($_SESSION['itemAdd'])) {
 					try {
 						$h = new Humphree(Picnic::getInstance());
 						$h->updateItem($_SESSION['itemAdd']);
@@ -126,28 +126,6 @@ class ItemController {
 		}
 
 		header('Location: ' . BASE . '/Home');
-
-
-
-
-		$h = new Humphree(Picnic::getInstance());
-
-		$view = new View();
-		$view->SetData('categories', $h->getCategoriesIn(Category::ROOT_CATEGORY));
-		$view->SetData('subCategories', $h->getCategories());
-		$view->SetData('navData',  new NavData(NavData::Account));
-
-		if (!isset($_SESSION['itemEdit']) || $_SESSION['itemEdit']['itemID'] != $itemID ) {
-			$_SESSION['itemEdit'] = $h ->getItem($itemID);
-			$_SESSION['itemEdit']['itemID'] = $itemID;
-
-			$category = $h->getItemCategory($itemID);
-			$_SESSION['itemEdit']['majorCategory'] = $category['parentID'];
-			$_SESSION['itemEdit']['category'] = $category['categoryID'];
-		}
-
-		$view->SetData('item', $_SESSION['itemEdit']);
-		$view->Render('itemEdit');
 	}
 
 	private function validateItemData($data) {

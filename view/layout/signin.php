@@ -24,13 +24,13 @@
                         <form data-toggle="validator" role="form" method="post" action="DoLogin">
                             <div class="form-group">
                                 <label for="email">Email address</label>
-                                <input type="email" class="form-control" name="email" id="email" placeholder="Enter email" required>
+                                <input type="text" class="form-control" name="email" id="email" placeholder="Enter email">
                                 <p class="text-muted"><small>We'll never share your email with anyone else.</small></p>
                             </div>
 
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" name="password" id="password" placeholder="Password" minlength="8" required>
+                                <input type="password" class="form-control" name="password" id="password" placeholder="Enter password">
                             </div>
 
                             <div class="form-row">
