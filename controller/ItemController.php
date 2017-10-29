@@ -63,6 +63,9 @@ class ItemController {
 						$view = new ItemView();
 						$view->Render('itemAdd');
 					}
+				} else if (isset($_POST['cancel'])) {
+					unset($_SESSION['itemAdd']);
+					header('Location: ' . BASE . '/Dashboard/View');
 				} else {
 					$view = new ItemView();
 					$view->Render('itemAdd');
@@ -117,6 +120,9 @@ class ItemController {
 						$view = new ItemView();
 						$view->Render('itemEdit');
 					}
+				} else if (isset($_POST['cancel'])) {
+					unset($_SESSION['itemAdd']);
+					header('Location: ' . BASE . '/Dashboard/View');
 				} else {
 					$view = new ItemView();
 					$view->Render('itemEdit');

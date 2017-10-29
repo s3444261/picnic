@@ -22,6 +22,7 @@
 
                 <form data-toggle="validator" role="form" method="post" action="../Edit/<?php echo $this->itemID() ?>">
 					<?php include("itemDetailsEditable.php") ?>
+                    <button type="submit" class="btn btn-primary btn-warning" formnovalidate="formnovalidate" name="cancel">Cancel</button>
                     <button type="submit" class="btn btn-primary btn-success" name="confirm">Next</button>
                 </form>
             </div>
