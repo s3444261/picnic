@@ -380,14 +380,12 @@ class ItemController {
 		if (strtolower ($imageFileType) != "jpg" && strtolower($imageFileType) != "jpeg") {
 			throw new ValidationException('Only JPG and JPEG files are supported.');
 		}
-
+		set_error_handler(function() { /* ignore errors */ });
 		$check = getimagesize($_FILES["image"]["tmp_name"]);
+		restore_error_handler();
+
 		if ($check === false) {
 			throw new ValidationException('The file is not an image file.');
-		}
-
-		if ($_FILES["image"]["size"] > 20000000) {
-			throw new ValidationException('The file is too large.');
 		}
 
 		if (!file_exists(self::TEMP_UPLOADS_DIRECTORY)) {
