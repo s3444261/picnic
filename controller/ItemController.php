@@ -367,7 +367,7 @@ class ItemController {
 		$target_file = self::TEMP_UPLOADS_DIRECTORY . $tempFileName . '.' . $imageFileType;
 		$_SESSION['itemAdd']['tempImageFile'] = $tempFileName . '.' . $imageFileType;
 
-		if ($imageFileType != "jpg" && $imageFileType != "jpeg") {
+		if (strtolower ($imageFileType) != "jpg" && strtolower($imageFileType) != "jpeg") {
 			throw new ValidationException('Only JPG and JPEG files are supported.');
 		}
 
