@@ -22,14 +22,15 @@
 				<h4>Please confirm the following details for your listing:</h4>
 
                 <div class="row">
-                    <div>
-                        <img src="../LastTempImage" alt="Uploaded Image" height="300" width="300"/>
+                    <div >
+                        <img src="../LastTempImage" alt="Uploaded Image" style="max-width:300px; max-height:300px"/>
                     </div>
                     <div>
 						<?php include("itemDetailsReadOnly.php") ?>
                     </div>
                 </div>
 
+                <hr />
 				<form data-toggle="validator" role="form" method="post" action="../Edit/<?php echo $this->itemID() ?>">
 					<button type="submit" name="" class="btn btn-primary btn-success">Oops - go back!</button>
 					<button type="submit" name="commit" class="btn btn-primary btn-success">All good -- update listing</button>
