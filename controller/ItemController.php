@@ -80,7 +80,9 @@ class ItemController {
 	public function Edit($itemID) {
 		if ($this->auth()) {
 			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-				unset($_SESSION['itemAdd']);
+				// TODO: This should be enabled, turned off for now to work around an issue on the production server.
+			 	//	unset($_SESSION['itemAdd']);
+				// TODO:
 				$view = new ItemView();
 				$h = new Humphree(Picnic::getInstance());
 				$_SESSION['itemAdd'] = $h->getItem($itemID);
