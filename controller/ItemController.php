@@ -380,6 +380,10 @@ class ItemController {
 			throw new ValidationException('The file is too large..');
 		}
 
+		if (!file_exists(self::TEMP_UPLOADS_DIRECTORY)) {
+			mkdir (self::TEMP_UPLOADS_DIRECTORY, 0777, true);
+		}
+
 		if (!move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
 			throw new ValidationException('There was an error uploading the file.');
 		}
@@ -387,10 +391,17 @@ class ItemController {
 
 	private function moveImageToFinalLocations($itemID): void {
 		$pathInFinalFolder = intval($itemID / 1000) . '/' . $itemID . '.jpg';
-		$tempFile = self::TEMP_UPLOADS_DIRECTORY .$_SESSION["itemAdd"]["tempImageFile"];
+		$tempFile = self::TEMP_UPLOADS_DIRECTORY . $_SESSION["itemAdd"]["tempImageFile"];
 		$finalFile = self::IMAGE_DIRECTORY . $pathInFinalFolder;
 		$thumbFile = self::THUMB_DIRECTORY . $pathInFinalFolder;
 
+		if (!file_exists(self::IMAGE_DIRECTORY .intval($itemID / 1000) )) {
+			mkdir (self::IMAGE_DIRECTORY .intval($itemID / 1000), 0777, true);
+		}
+
+		if (!file_exists(self::THUMB_DIRECTORY .intval($itemID / 1000) )) {
+			mkdir (self::THUMB_DIRECTORY .intval($itemID / 1000), 0777, true);
+		}
 		$this->createThumbnail($tempFile, $finalFile, self::IMAGE_DIMENSION, self::IMAGE_DIMENSION);
 		$this->createThumbnail($tempFile, $thumbFile, self::THUMB_DIMENSION, self::THUMB_DIMENSION);
 
