@@ -15,7 +15,7 @@
             <div class="jumbotron">
                 <div class="container-fluid">
                     <h1 id="ForSale" class="display-3 text-center">My Items For Sale (<?php echo count($this->data['forSaleItems']);  ?>)</h1>
-                    <a href="<?php echo BASE . '/Item/Create'; ?>" role="button">Add new item</a>
+                    <a href="<?php echo BASE . '/Item/Create'; ?>" role="button" class="btn btn-primary">Add new item</a>
 
                     <table class="table">
                         <thead>
@@ -49,7 +49,7 @@
 
                 <div class="container-fluid">
                     <h1 id="Wanted"  class="display-3 text-center">My Wanted Items (<?php echo count($this->data['wantedItems']);  ?>)</h1>
-                    <a href="<?php echo BASE . '/Item/Create'; ?>" role="button">Add new item</a>
+                    <a href="<?php echo BASE . '/Item/Create'; ?>" role="button" class="btn btn-primary">Add new item</a>
 
                     <table class="table">
                         <thead>
