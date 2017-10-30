@@ -362,10 +362,20 @@ class ItemController {
 	}
 
 	private function saveUploadedImageToTempDir(): void {
+
+		if ($_FILES["image"]['name'] === 0) {
+			throw new ValidationException('There was an error uploading the file.');
+		}
+
+		if ($_FILES["image"]['tmp_name'] === '') {
+			throw new ValidationException('There was an error uploading the file.');
+		}
+
+		if ($_FILES["image"]['error'] !== 0) {
+			throw new ValidationException('There was an error uploading the file.');
+		}
+
 		$imageFileType = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
-		$tempFileName = bin2hex(openssl_random_pseudo_bytes(16));
-		$target_file = self::TEMP_UPLOADS_DIRECTORY . $tempFileName . '.' . $imageFileType;
-		$_SESSION['itemAdd']['tempImageFile'] = $tempFileName . '.' . $imageFileType;
 
 		if (strtolower ($imageFileType) != "jpg" && strtolower($imageFileType) != "jpeg") {
 			throw new ValidationException('Only JPG and JPEG files are supported.');
@@ -377,12 +387,16 @@ class ItemController {
 		}
 
 		if ($_FILES["image"]["size"] > 20000000) {
-			throw new ValidationException('The file is too large..');
+			throw new ValidationException('The file is too large.');
 		}
 
 		if (!file_exists(self::TEMP_UPLOADS_DIRECTORY)) {
 			mkdir (self::TEMP_UPLOADS_DIRECTORY, 0777, true);
 		}
+
+		$tempFileName = bin2hex(openssl_random_pseudo_bytes(16));
+		$target_file = self::TEMP_UPLOADS_DIRECTORY . $tempFileName . '.' . $imageFileType;
+		$_SESSION['itemAdd']['tempImageFile'] = $tempFileName . '.' . $imageFileType;
 
 		if (!move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
 			throw new ValidationException('There was an error uploading the file.');
