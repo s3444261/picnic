@@ -44,9 +44,20 @@ class ItemController {
 			} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				if (isset($_POST['confirm'])) {
 					try {
+						if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd']['tempImageFile'])) {
+							$previousUploadedFile = $_SESSION['itemAdd']['tempImageFile'];
+						}
+
 						$_SESSION['itemAdd'] = $_POST;
+
+						if ($_FILES["image"]["name"] !== '') {
+							$this->saveUploadedImageToTempDir();
+						} else if (isset($previousUploadedFile)) {
+							$_SESSION['itemAdd']['tempImageFile'] = $previousUploadedFile;
+						}
+
 						$this->validateItemData($_POST);
-						$this->saveUploadedImageToTempDir();
+
 						$view = new ItemView();
 						$view->Render('itemAddConfirm');
 					} catch (ValidationException $e) {
@@ -58,7 +69,11 @@ class ItemController {
 					try {
 						$h = new Humphree(Picnic::getInstance());
 						$itemID = $h->addItem($_SESSION['userID'], $_SESSION['itemAdd'], intval($_SESSION['itemAdd']['category']));
-						$this->moveImageToFinalLocations($itemID);
+
+						if (isset($_SESSION['itemAdd']['tempImageFile'])) {
+							$this->moveImageToFinalLocations($itemID);
+						}
+
 						unset($_SESSION['itemAdd']);
 						header('Location: ' . BASE . '/Item/View/' . $itemID);
 					} catch (ValidationException $e) {
@@ -94,13 +109,20 @@ class ItemController {
 			} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				if (isset($_POST['confirm'])) {
 					try {
+						if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd']['tempImageFile'])) {
+							$previousUploadedFile = $_SESSION['itemAdd']['tempImageFile'];
+						}
+
 						$_SESSION['itemAdd'] = $_POST;
 						$_SESSION['itemAdd']['itemID'] = $itemID;
-						$this->validateItemData($_POST);
 
 						if ($_FILES["image"]["name"] !== '') {
 							$this->saveUploadedImageToTempDir();
+						} else if (isset($previousUploadedFile)) {
+							$_SESSION['itemAdd']['tempImageFile'] = $previousUploadedFile;
 						}
+
+						$this->validateItemData($_POST);
 
 						$view = new ItemView();
 						$view->Render('itemEditConfirm');
@@ -265,7 +287,7 @@ class ItemController {
 		$paddedItemId = str_pad($itemId, 4, '0', STR_PAD_LEFT);
 		$subDir = substr($paddedItemId, 0 , strlen($paddedItemId) - 3);
 
-		$path = self::THUMB_DIRECTORY . $subDir . "/" .$itemId . ".jpg";
+		$path = self::IMAGE_DIRECTORY . $subDir . "/" .$itemId . ".jpg";
 
 		if (file_exists($path)) {
 			readfile($path);
@@ -273,8 +295,8 @@ class ItemController {
 		} else if (isset($_SESSION['itemAdd']['tempImageFile'])) {
 			readfile($_SESSION['itemAdd']['tempImageFile']);
 			header("Content-Type: image/jpeg");
-		} else if (file_exists(self::DEFAULT_THUMB)) {
-			readfile(self::DEFAULT_THUMB);
+		} else if (file_exists(self::DEFAULT_IMAGE)) {
+			readfile(self::DEFAULT_IMAGE);
 			header("Content-Type: image/jpeg");
 		} else {
 			http_response_code(404);
@@ -303,6 +325,9 @@ class ItemController {
 			}
 		} else if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd']['itemID'])) {
 			$this->Image($_SESSION['itemAdd']['itemID']);
+		} else {
+			readfile(self::DEFAULT_IMAGE);
+			header("Content-Type: image/jpeg");
 		}
 	}
 

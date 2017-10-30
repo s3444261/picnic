@@ -24,12 +24,14 @@
 
                 <div class="row">
                     <div>
-                        <img src="LastTempImage" alt="Uploaded Image" height="300" width="300"/>
+                        <img src="LastTempImage" alt="Uploaded Image" style="max-width:300px; max-height:300px"/>
                     </div>
                     <div>
 						<?php include("itemDetailsReadOnly.php") ?>
                     </div>
                 </div>
+
+                <hr />
 
 				<form data-toggle="validator" role="form" method="post" action="Create">
 					<button type="submit" name="" class="btn btn-primary btn-warning">Oops - go back!</button>
