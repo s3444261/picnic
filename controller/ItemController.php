@@ -288,9 +288,13 @@ class ItemController {
 		$subDir = substr($paddedItemId, 0 , strlen($paddedItemId) - 3);
 
 		$path = self::IMAGE_DIRECTORY . $subDir . "/" .$itemId . ".jpg";
+		$thumbPath = self::THUMB_DIRECTORY . $subDir . "/" .$itemId . ".jpg";
 
 		if (file_exists($path)) {
 			readfile($path);
+			header("Content-Type: image/jpeg");
+		}  else if (file_exists($thumbPath)) {
+			readfile($thumbPath);
 			header("Content-Type: image/jpeg");
 		} else if (isset($_SESSION['itemAdd']['tempImageFile'])) {
 			readfile($_SESSION['itemAdd']['tempImageFile']);
