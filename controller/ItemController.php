@@ -330,13 +330,13 @@ class ItemController {
 
 		if ($original_type === 1) {
 			$imgt = "ImageGIF";
-			$imgcreatefrom = "ImageCreateFromGIF";
+			$imgcreatefrom = "imagecreatefromgif";
 		} else if ($original_type === 2) {
 			$imgt = "ImageJPEG";
-			$imgcreatefrom = "ImageCreateFromJPEG";
+			$imgcreatefrom = "imagecreatefromjpeg";
 		} else if ($original_type === 3) {
 			$imgt = "ImagePNG";
-			$imgcreatefrom = "ImageCreateFromPNG";
+			$imgcreatefrom = "imagecreatefrompng";
 		} else {
 			return false;
 		}
