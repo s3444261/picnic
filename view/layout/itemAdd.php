@@ -19,9 +19,15 @@
 				<?php if ($this->hasError()) { ?>
                     <div class="alert alert-danger"><?php echo $this->error() ?></div>
 				<?php } ?>
-
-                <form data-toggle="validator" role="form" method="post" action="Create">
+                <form data-toggle="validator" role="form" method="post" enctype="multipart/form-data" action="Create">
 					<?php include("itemDetailsEditable.php") ?>
+
+                    <div class="form-group">
+                        <label for="quantity">Image</label>
+                        <input type="file" class="form-control" name="image" id="image" placeholder="Select an image" required>
+                        Images are limited to 20MB in size.
+                    </div>
+
                     <button type="submit" class="btn btn-primary btn-warning" formnovalidate="formnovalidate" name="cancel">Cancel</button>
                     <button type="submit" class="btn btn-primary btn-success" name="confirm">Next</button>
                 </form>

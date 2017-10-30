@@ -22,7 +22,14 @@
 
                 <h4>Please confirm the following details for your listing:</h4>
 
-                <?php include("itemDetailsReadOnly.php") ?>
+                <div class="row">
+                    <div>
+                        <img src="LastTempImage" alt="Uploaded Image" height="300" width="300"/>
+                    </div>
+                    <div>
+						<?php include("itemDetailsReadOnly.php") ?>
+                    </div>
+                </div>
 
 				<form data-toggle="validator" role="form" method="post" action="Create">
 					<button type="submit" name="" class="btn btn-primary btn-warning">Oops - go back!</button>
