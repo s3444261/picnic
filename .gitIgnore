@@ -23,3 +23,5 @@ cat_view\.html
 css/main-min\.css
 
 sftp-config\.json
+
+.*

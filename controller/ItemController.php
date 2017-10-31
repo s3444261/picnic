@@ -11,13 +11,12 @@
 require_once  __DIR__ . '/../config/Picnic.php';
 
 class ItemController {
-	const TEMP_UPLOADS_DIRECTORY = __DIR__ . "/../../temp_uploads/";
+
 	const THUMB_DIRECTORY = __DIR__ . "/../../item_thumbs/";
 	const IMAGE_DIRECTORY = __DIR__ . "/../../item_images/";
 	const DEFAULT_THUMB = __DIR__ . "/../img/default_thumb.png";
 	const DEFAULT_IMAGE = __DIR__ . "/../img/default_image.png";
-	const IMAGE_DIMENSION = 300;
-	const THUMB_DIMENSION = 64;
+
 
 	/**
 	 * Displays the item details page.
@@ -44,20 +43,8 @@ class ItemController {
 			} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				if (isset($_POST['confirm'])) {
 					try {
-						if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd']['tempImageFile'])) {
-							$previousUploadedFile = $_SESSION['itemAdd']['tempImageFile'];
-						}
-
 						$_SESSION['itemAdd'] = $_POST;
-
-						if ($_FILES["image"]["name"] !== '') {
-							$this->saveUploadedImageToTempDir();
-						} else if (isset($previousUploadedFile)) {
-							$_SESSION['itemAdd']['tempImageFile'] = $previousUploadedFile;
-						}
-
 						$this->validateItemData($_POST);
-
 						$view = new ItemView();
 						$view->Render('itemAddConfirm');
 					} catch (ValidationException $e) {
@@ -69,11 +56,6 @@ class ItemController {
 					try {
 						$h = new Humphree(Picnic::getInstance());
 						$itemID = $h->addItem($_SESSION['userID'], $_SESSION['itemAdd'], intval($_SESSION['itemAdd']['category']));
-
-						if (isset($_SESSION['itemAdd']['tempImageFile'])) {
-							$this->moveImageToFinalLocations($itemID);
-						}
-
 						unset($_SESSION['itemAdd']);
 						header('Location: ' . BASE . '/Item/View/' . $itemID);
 					} catch (ValidationException $e) {
@@ -98,6 +80,9 @@ class ItemController {
 	public function Edit($itemID) {
 		if ($this->auth()) {
 			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+				// TODO: This should be enabled, turned off for now to work around an issue on the production server.
+			 	//	unset($_SESSION['itemAdd']);
+				// TODO:
 				$view = new ItemView();
 				$h = new Humphree(Picnic::getInstance());
 				$_SESSION['itemAdd'] = $h->getItem($itemID);
@@ -109,21 +94,9 @@ class ItemController {
 			} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				if (isset($_POST['confirm'])) {
 					try {
-						if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd']['tempImageFile'])) {
-							$previousUploadedFile = $_SESSION['itemAdd']['tempImageFile'];
-						}
-
 						$_SESSION['itemAdd'] = $_POST;
 						$_SESSION['itemAdd']['itemID'] = $itemID;
-
-						if ($_FILES["image"]["name"] !== '') {
-							$this->saveUploadedImageToTempDir();
-						} else if (isset($previousUploadedFile)) {
-							$_SESSION['itemAdd']['tempImageFile'] = $previousUploadedFile;
-						}
-
 						$this->validateItemData($_POST);
-
 						$view = new ItemView();
 						$view->Render('itemEditConfirm');
 					} catch (ValidationException $e) {
@@ -140,10 +113,6 @@ class ItemController {
 						if ($originalCategory !=$_SESSION['itemAdd']['category']) {
 							$h->removeItemFromCategory($_SESSION['itemAdd']['itemID'], $originalCategory);
 							$h->addItemToCategory($_SESSION['itemAdd']['itemID'], $_SESSION['itemAdd']['category']);
-						}
-
-						if (isset($_SESSION['itemAdd']['tempImageFile'])) {
-							$this->moveImageToFinalLocations($itemID);
 						}
 
 						unset($_SESSION['itemAdd']);
@@ -284,55 +253,7 @@ class ItemController {
 
 		// for now, I'm just using the thumb scaled up, to avoid uploading hundreds of MB of
 		// images to the dev server.
-		$paddedItemId = str_pad($itemId, 4, '0', STR_PAD_LEFT);
-		$subDir = substr($paddedItemId, 0 , strlen($paddedItemId) - 3);
-
-		$path = self::IMAGE_DIRECTORY . $subDir . "/" .$itemId . ".jpg";
-		$thumbPath = self::THUMB_DIRECTORY . $subDir . "/" .$itemId . ".jpg";
-
-		if (file_exists($path)) {
-			readfile($path);
-			header("Content-Type: image/jpeg");
-		}  else if (file_exists($thumbPath)) {
-			readfile($thumbPath);
-			header("Content-Type: image/jpeg");
-		} else if (isset($_SESSION['itemAdd']['tempImageFile'])) {
-			readfile($_SESSION['itemAdd']['tempImageFile']);
-			header("Content-Type: image/jpeg");
-		} else if (file_exists(self::DEFAULT_IMAGE)) {
-			readfile(self::DEFAULT_IMAGE);
-			header("Content-Type: image/jpeg");
-		} else {
-			http_response_code(404);
-		}
-
-
-	//	$this->Thumb($itemId);
-	}
-
-	/**
-	 * Sends the last image that was uploaded, but has not yet been filed away.
-	 *
-	 */
-	public function LastTempImage() {
-
-		if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd']['tempImageFile'])) {
-			$path = self::TEMP_UPLOADS_DIRECTORY . $_SESSION['itemAdd']['tempImageFile'];
-			if (file_exists($path)) {
-				readfile($path);
-				header("Content-Type: image/jpeg");
-			} else if (file_exists(self::DEFAULT_IMAGE)) {
-				readfile(self::DEFAULT_IMAGE);
-				header("Content-Type: image/jpeg");
-			} else {
-				http_response_code(404);
-			}
-		} else if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd']['itemID'])) {
-			$this->Image($_SESSION['itemAdd']['itemID']);
-		} else {
-			readfile(self::DEFAULT_IMAGE);
-			header("Content-Type: image/jpeg");
-		}
+		$this->Thumb($itemId);
 	}
 
 	/**
@@ -345,107 +266,4 @@ class ItemController {
 			&& ($_SESSION['userID'] > 0);
 	}
 
-	function createThumbnail($sourceFile, $targetFIle, $targetWidth, $targetHeight, $background=false) {
-		list($original_width, $original_height, $original_type) = getimagesize($sourceFile);
-		if ($original_width > $original_height) {
-			$new_width = $targetWidth;
-			$new_height = intval($original_height * $new_width / $original_width);
-		} else {
-			$new_height = $targetHeight;
-			$new_width = intval($original_width * $new_height / $original_height);
-		}
-		$dest_x = intval(($targetWidth - $new_width) / 2);
-		$dest_y = intval(($targetHeight - $new_height) / 2);
-
-		if ($original_type === 1) {
-			$imgt = "ImageGIF";
-			$imgcreatefrom = "imagecreatefromgif";
-		} else if ($original_type === 2) {
-			$imgt = "ImageJPEG";
-			$imgcreatefrom = "imagecreatefromjpeg";
-		} else if ($original_type === 3) {
-			$imgt = "ImagePNG";
-			$imgcreatefrom = "imagecreatefrompng";
-		} else {
-			return false;
-		}
-
-		$old_image = $imgcreatefrom($sourceFile);
-		$new_image = imagecreatetruecolor($targetWidth, $targetHeight); // creates new image, but with a black background
-
-		// figuring out the color for the background
-		if(is_array($background) && count($background) === 3) {
-			list($red, $green, $blue) = $background;
-			$color = imagecolorallocate($new_image, $red, $green, $blue);
-			imagefill($new_image, 0, 0, $color);
-			// apply transparent background only if is a png image
-		} else if($background === 'transparent' && $original_type === 3) {
-			imagesavealpha($new_image, TRUE);
-			$color = imagecolorallocatealpha($new_image, 0, 0, 0, 127);
-			imagefill($new_image, 0, 0, $color);
-		}
-
-		imagecopyresampled($new_image, $old_image, $dest_x, $dest_y, 0, 0, $new_width, $new_height, $original_width, $original_height);
-		$imgt($new_image, $targetFIle);
-		return file_exists($targetFIle);
-	}
-
-	private function saveUploadedImageToTempDir(): void {
-
-		if ($_FILES["image"]['name'] === 0) {
-			throw new ValidationException('There was an error uploading the file.');
-		}
-
-		if ($_FILES["image"]['tmp_name'] === '') {
-			throw new ValidationException('There was an error uploading the file.');
-		}
-
-		if ($_FILES["image"]['error'] !== 0) {
-			throw new ValidationException('There was an error uploading the file.');
-		}
-
-		$imageFileType = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
-
-		if (strtolower ($imageFileType) != "jpg" && strtolower($imageFileType) != "jpeg") {
-			throw new ValidationException('Only JPG and JPEG files are supported.');
-		}
-		set_error_handler(function() { /* ignore errors */ });
-		$check = getimagesize($_FILES["image"]["tmp_name"]);
-		restore_error_handler();
-
-		if ($check === false) {
-			throw new ValidationException('The file is not an image file.');
-		}
-
-		if (!file_exists(self::TEMP_UPLOADS_DIRECTORY)) {
-			mkdir (self::TEMP_UPLOADS_DIRECTORY, 0777, true);
-		}
-
-		$tempFileName = bin2hex(openssl_random_pseudo_bytes(16));
-		$target_file = self::TEMP_UPLOADS_DIRECTORY . $tempFileName . '.' . $imageFileType;
-		$_SESSION['itemAdd']['tempImageFile'] = $tempFileName . '.' . $imageFileType;
-
-		if (!move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-			throw new ValidationException('There was an error uploading the file.');
-		}
-	}
-
-	private function moveImageToFinalLocations($itemID): void {
-		$pathInFinalFolder = intval($itemID / 1000) . '/' . $itemID . '.jpg';
-		$tempFile = self::TEMP_UPLOADS_DIRECTORY . $_SESSION["itemAdd"]["tempImageFile"];
-		$finalFile = self::IMAGE_DIRECTORY . $pathInFinalFolder;
-		$thumbFile = self::THUMB_DIRECTORY . $pathInFinalFolder;
-
-		if (!file_exists(self::IMAGE_DIRECTORY .intval($itemID / 1000) )) {
-			mkdir (self::IMAGE_DIRECTORY .intval($itemID / 1000), 0777, true);
-		}
-
-		if (!file_exists(self::THUMB_DIRECTORY .intval($itemID / 1000) )) {
-			mkdir (self::THUMB_DIRECTORY .intval($itemID / 1000), 0777, true);
-		}
-		$this->createThumbnail($tempFile, $finalFile, self::IMAGE_DIMENSION, self::IMAGE_DIMENSION);
-		$this->createThumbnail($tempFile, $thumbFile, self::THUMB_DIMENSION, self::THUMB_DIMENSION);
-
-		unlink($tempFile);
-	}
 }
