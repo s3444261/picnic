@@ -13,13 +13,14 @@
         <div class="col"></div>
         <div class="col-9">
             <div class="jumbotron">
-                <div>
+                <div class="container-fluid">
                     <h1 id="ForSale" class="display-3 text-center">My Items For Sale (<?php echo count($this->data['forSaleItems']);  ?>)</h1>
-                    <a href="<?php echo BASE . '/Item/Create'; ?>" role="button">Add new item</a>
+                    <a href="<?php echo BASE . '/Item/Create'; ?>" role="button" class="btn btn-primary">Add new item</a>
 
                     <table class="table">
                         <thead>
                         <tr>
+                            <th></th>
                             <th class="col-md-1">Title</th>
                             <th class="col-md-1">Price</th>
                             <th class="col-md-1"></th>
@@ -28,6 +29,7 @@
                         <tbody>
 						<?php foreach ( $this->data['forSaleItems'] as $item ) { ?>
                             <tr>
+                                <td><a href="<?php echo BASE . '/Item/View/' . $item['itemID']; ?>"><img src="<?php echo BASE . '/Item/Thumb/' . $item['itemID']; ?>" alt="<?php echo $item['title']; ?>" style="max-width:64px; max-height:64px" /></a></td>
                                 <td><a href="<?php echo BASE . '/Item/View/' . $item['itemID']; ?>"><?php echo $item['title']; ?></a> </td>
                                 <td>$<?php echo $item['price']; ?></td>
                                 <td>
@@ -45,13 +47,14 @@
                     </table>
                 </div>
 
-                <div>
+                <div class="container-fluid">
                     <h1 id="Wanted"  class="display-3 text-center">My Wanted Items (<?php echo count($this->data['wantedItems']);  ?>)</h1>
-                    <a href="<?php echo BASE . '/Item/Create'; ?>" role="button">Add new item</a>
+                    <a href="<?php echo BASE . '/Item/Create'; ?>" role="button" class="btn btn-primary">Add new item</a>
 
                     <table class="table">
                         <thead>
                         <tr>
+                            <th></th>
                             <th class="col-md-1">Title</th>
                             <th class="col-md-1">Price</th>
                             <th class="col-md-1"></th>
@@ -60,6 +63,7 @@
                         <tbody>
 						<?php foreach ( $this->data['wantedItems'] as $item ) { ?>
                             <tr>
+                                <td><a href="<?php echo BASE . '/Item/View/' . $item['itemID']; ?>"><img src="<?php echo BASE . '/Item/Thumb/' . $item['itemID']; ?>" alt="<?php echo $item['title']; ?>" style="max-width:64px; max-height:64px"/></a></td>
                                 <td><a href="<?php echo BASE . '/Item/View/' . $item['itemID']; ?>"><?php echo $item['title']; ?></a> </td>
                                 <td>$<?php echo $item['price']; ?></td>
                                 <td>

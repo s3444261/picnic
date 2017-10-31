@@ -8,6 +8,20 @@
  */
 ?>
 
+<script type="text/javascript">
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#imgPreview').attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col"></div>
@@ -19,9 +33,24 @@
 				<?php if ($this->hasError()) { ?>
                     <div class="alert alert-danger"><?php echo $this->error() ?></div>
 				<?php } ?>
-
-                <form data-toggle="validator" role="form" method="post" action="Create">
+                <form data-toggle="validator" role="form" method="post" enctype="multipart/form-data" action="Create">
 					<?php include("itemDetailsEditable.php") ?>
+
+                    <div class="row">
+                        <div class="col-lg-3 text-center">
+                            <img id="imgPreview" src="LastTempImage" alt="Uploaded Image" style="max-width:150px; max-height:150px"/>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="image">Select an image</label>
+                                <input type="file" class="form-control" name="image" id="image" placeholder="Select an image" onchange="readURL(this);">
+                                Images are limited to 20MB in size.
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
                     <button type="submit" class="btn btn-primary btn-warning" formnovalidate="formnovalidate" name="cancel">Cancel</button>
                     <button type="submit" class="btn btn-primary btn-success" name="confirm">Next</button>
                 </form>
