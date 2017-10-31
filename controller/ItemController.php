@@ -424,10 +424,39 @@ class ItemController {
 		$tempFileName = bin2hex(openssl_random_pseudo_bytes(16));
 		$target_file = self::TEMP_UPLOADS_DIRECTORY . $tempFileName . '.' . $imageFileType;
 		$_SESSION['itemAdd']['tempImageFile'] = $tempFileName . '.' . $imageFileType;
+		$this->correctImageOrientation($_FILES["image"]["tmp_name"]);
+		$this->createThumbnail($_FILES["image"]["tmp_name"], $target_file, self::IMAGE_DIMENSION, self::IMAGE_DIMENSION);
+	}
 
-		if (!move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-			throw new ValidationException('There was an error uploading the file.');
-		}
+	// ref:   https://stackoverflow.com/a/24337547
+	function correctImageOrientation($fullpath) {
+		if (function_exists('exif_read_data')) {
+			ini_set('memory_limit', '256M');
+			$exif = exif_read_data($fullpath);
+			if($exif && isset($exif['Orientation'])) {
+				$orientation = $exif['Orientation'];
+				if($orientation != 1){
+					$img = imagecreatefromjpeg($fullpath);
+					$deg = 0;
+					switch ($orientation) {
+						case 3:
+							$deg = 180;
+							break;
+						case 6:
+							$deg = 270;
+							break;
+						case 8:
+							$deg = 90;
+							break;
+					}
+					if ($deg) {
+						$img = imagerotate($img, $deg, 0);
+					}
+					// then rewrite the rotated image back to the disk as $filename
+					imagejpeg($img, $fullpath, 100);
+				} // if there is some rotation necessary
+			} // if have the exif orientation info
+		} // if function exists
 	}
 
 	private function moveImageToFinalLocations($itemID): void {

@@ -8,20 +8,111 @@
  */
 ?>
 
+<script src="<?php echo BASE . '/js/exif.js' ?>"></script>
 
 <script type="text/javascript">
+
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
+            var img =  $('#imgPreview');
+            img.hide();
 
             reader.onload = function (e) {
-                $('#imgPreview').attr('src', e.target.result);
+                img.attr('src', e.target.result);
+                fixExifOrientation(img);
+                sleep(500).then(function() {
+                    img.show();
+                });
             }
 
             reader.readAsDataURL(input.files[0]);
         }
     }
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // ref:   https://stackoverflow.com/a/28843763
+    function fixExifOrientation($img) {
+        $img.on('load', function() {
+            EXIF.getData($img[0], function() {
+                switch(parseInt(EXIF.getTag(this, "Orientation"))) {
+                    case 2:
+                        $img.addClass('flip'); break;
+                    case 3:
+                        $img.addClass('rotate-180'); break;
+                    case 4:
+                        $img.addClass('flip-and-rotate-180'); break;
+                    case 5:
+                        $img.addClass('flip-and-rotate-270'); break;
+                    case 6:
+                        $img.addClass('rotate-90'); break;
+                    case 7:
+                        $img.addClass('flip-and-rotate-90'); break;
+                    case 8:
+                        $img.addClass('rotate-270'); break;
+                    default:
+                        $img.removeClass('flip rotate-180 flip-and-rotate-180 flip-and-rotate-270 rotate-90 flip-and-rotate-90 rotate-270');
+                        break;
+                }
+
+                $img.off();
+            });
+        });
+    }
+
 </script>
+<style>
+    .rotate-90 {
+        -moz-transform: rotate(90deg);
+        -webkit-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        transform: rotate(90deg);
+    }
+
+    .rotate-180 {
+        -moz-transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        transform: rotate(180deg);
+    }
+
+    .rotate-270 {
+        -moz-transform: rotate(270deg);
+        -webkit-transform: rotate(270deg);
+        -o-transform: rotate(270deg);
+        transform: rotate(270deg);
+    }
+
+    .flip {
+        -moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        transform: scaleX(-1);
+    }
+
+    .flip-and-rotate-90 {
+        -moz-transform: rotate(90deg) scaleX(-1);
+        -webkit-transform: rotate(90deg) scaleX(-1);
+        -o-transform: rotate(90deg) scaleX(-1);
+        transform: rotate(90deg) scaleX(-1);
+    }
+
+    .flip-and-rotate-180 {
+        -moz-transform: rotate(180deg) scaleX(-1);
+        -webkit-transform: rotate(180deg) scaleX(-1);
+        -o-transform: rotate(180deg) scaleX(-1);
+        transform: rotate(180deg) scaleX(-1);
+    }
+
+    .flip-and-rotate-270 {
+        -moz-transform: rotate(270deg) scaleX(-1);
+        -webkit-transform: rotate(270deg) scaleX(-1);
+        -o-transform: rotate(270deg) scaleX(-1);
+        transform: rotate(270deg) scaleX(-1);
+    }
+</style>
 
 <div class="container-fluid">
     <div class="row">
