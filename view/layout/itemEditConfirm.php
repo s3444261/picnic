@@ -19,20 +19,20 @@
                     <div class="alert alert-danger"><?php echo $this->error() ?></div>
 				<?php } ?>
 
-				<h4>Please confirm the following details for your listing:</h4>
+				<h4 class="text-center">Please check the details for your listing</h4>
 
-                <div class="row">
-                    <div >
-                        <img src="../LastTempImage" alt="Uploaded Image" style="max-width:300px; max-height:300px"/>
+                <div class="row top-n-tail">
+                    <div class="col-3">
+                        <img class="item-image" src="../LastTempImage" alt="Uploaded Image" />
                     </div>
-                    <div>
+                    <div class="col">
 						<?php include("itemDetailsReadOnly.php") ?>
                     </div>
                 </div>
 
                 <hr />
 				<form data-toggle="validator" role="form" method="post" action="../Edit/<?php echo $this->itemID() ?>">
-					<button type="submit" name="" class="btn btn-primary btn-success">Oops - go back!</button>
+					<button type="submit" name="" class="btn btn-primary btn-warning">Oops - go back!</button>
 					<button type="submit" name="commit" class="btn btn-primary btn-success">All good -- update listing</button>
 				</form>
 			</div>

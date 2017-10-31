@@ -25,7 +25,9 @@
 				</div>
 				<div class="row">
 					<div class="col-md-4">
-						<img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->data['item']['itemID'] ?>" style="min-width:300px; min-height:300px" />
+						<!-- To use hi-res images and let the CSS handle the sizing use the following line in lieu of the version with the inline styles -->
+						<!-- <img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->data['item']['itemID'] ?>" /> -->
+ 						<img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->data['item']['itemID'] ?>" style="min-width:300px; min-height:300px" />
 					</div>
 					<div class="col-md-8">
 						<?php if (isset ( $this->data['item'] )) { ?>

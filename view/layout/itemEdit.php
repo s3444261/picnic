@@ -44,9 +44,13 @@
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label for="image">Select an image - leave empty to keep the existing image.</label>
-                                <input type="file" class="form-control" name="image" id="image" placeholder="Select an image" onchange="readURL(this);">
-                                Images are limited to 20MB in size.
+                                <p>Select an image - leave empty to keep the existing image.</p>
+                                <label class="custom-file">
+                                    <input type="file"  class="form-control" name="image" id="image" placeholder="Select an image" onchange="readURL(this);" class="custom-file-input">
+                                    <span class="custom-file-control"></span><br>
+                                </label>
+                                <p>Images are limited to 20MB in size.</p>
+
                             </div>
                         </div>
                     </div>

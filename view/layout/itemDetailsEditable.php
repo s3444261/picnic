@@ -86,13 +86,23 @@
 </script>
 
 <div class="form-group">
-    <label for="status">Type</label>
-    <label class="radio-inline"><input type="radio" name="status" value="ForSale" <?php if ($this->isItemForSale()) {
-			echo 'checked="checked"';
-		} ?>>For Sale</label>
-    <label class="radio-inline"><input type="radio" name="status" value="Wanted" <?php if ($this->isItemWanted()) {
-			echo 'checked="checked"';
-		} ?>>Wanted</label>
+    <div class="form-check form-check-inline">
+        <label for="status">Type</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <label class="radio-inline">
+            <input type="radio" name="status" value="ForSale" <?php if ($this->isItemForSale()) {
+    			echo 'checked="checked"';
+    		} ?>> <span class="btn btn-sm btn-info">For Sale</span>
+        </label>
+    </div>
+    <div class="form-check form-check-inline">
+        <label class="radio-inline">
+            <input type="radio" name="status" value="Wanted" <?php if ($this->isItemWanted()) {
+    			echo 'checked="checked"';
+    		} ?>> <span class="btn btn-sm btn-warning">Wanted</span>
+        </label>
+    </div>
 </div>
 
 <div class="form-group">
