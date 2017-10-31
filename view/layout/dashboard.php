@@ -44,11 +44,11 @@
                         </tbody>
                     </table>
                     <div class="row">
-                        <div class="col-3"></div>
+                        <div class="col-4"></div>
                         <div class="col">
                             <a href="<?php echo BASE . '/Item/Create'; ?>" role="button" class="btn btn-primary btn-block">Add new item</a>
                         </div>
-                        <div class="col-3"></div>
+                        <div class="col-4"></div>
                     </div>
                 </div>
 
@@ -86,11 +86,11 @@
                         </tbody>
                     </table>
                     <div class="row">
-                        <div class="col-3"></div>
+                        <div class="col-4"></div>
                         <div class="col">
                             <a href="<?php echo BASE . '/Item/Create'; ?>" role="button" class="btn btn-primary btn-block">Add new item</a>
                         </div>
-                        <div class="col-3"></div>
+                        <div class="col-4"></div>
                     </div>
                 </div>
 
