@@ -1057,4 +1057,33 @@ class Humphree {
 		}
 		return $its;
 	}
+	
+	/**
+	 * Interim advanced search method.
+	 * 
+	 * @param string $srchTitle
+	 * @param string $srchDescription
+	 * @param string $srchPrice
+	 * @param string $srchQuantity
+	 * @param string $srchCondition
+	 * @param string $srchStatus
+	 * @return array
+	 */
+	public function searchAdvanced(string $srchTitle, string $srchDescription, string $srchPrice, string $srchQuantity, string $srchCondition, string $srchStatus): array {
+		$items = $this->system->searchAdvanced($srchTitle, $srchDescription, $srchPrice, $srchQuantity, $srchCondition, $srchStatus);
+		$its = array ();
+		foreach ( $items as $item ) {
+			$it = array ();
+			$it ['itemID'] = $item->itemID;
+			$it ['title'] = $item->title;
+			$it ['description'] = $item->description;
+			$it ['quantity'] = $item->quantity;
+			$it ['itemcondition'] = $item->itemcondition;
+			$it ['price'] = $item->price;
+			$it ['status'] = $item->status;
+			
+			$its [] = $it;
+		}
+		return $its;
+	}
 }
