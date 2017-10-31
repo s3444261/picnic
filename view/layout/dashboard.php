@@ -15,8 +15,6 @@
             <div class="jumbotron">
                 <div class="container-fluid">
                     <h1 id="ForSale" class="display-3 text-center">My Items For Sale (<?php echo count($this->data['forSaleItems']);  ?>)</h1>
-                    <a href="<?php echo BASE . '/Item/Create'; ?>" role="button" class="btn btn-primary">Add new item</a>
-
                     <table class="table">
                         <thead>
                         <tr>
@@ -45,11 +43,19 @@
 						<?php } ?>
                         </tbody>
                     </table>
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col">
+                            <a href="<?php echo BASE . '/Item/Create'; ?>" role="button" class="btn btn-primary btn-block">Add new item</a>
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
                 </div>
+
+                <hr>
 
                 <div class="container-fluid">
                     <h1 id="Wanted"  class="display-3 text-center">My Wanted Items (<?php echo count($this->data['wantedItems']);  ?>)</h1>
-                    <a href="<?php echo BASE . '/Item/Create'; ?>" role="button" class="btn btn-primary">Add new item</a>
 
                     <table class="table">
                         <thead>
@@ -79,6 +85,13 @@
 						<?php } ?>
                         </tbody>
                     </table>
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col">
+                            <a href="<?php echo BASE . '/Item/Create'; ?>" role="button" class="btn btn-primary btn-block">Add new item</a>
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
                 </div>
 
             </div>
