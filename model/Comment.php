@@ -11,6 +11,7 @@
  *
  * @property integer $_commentID;
  * @property integer $_userID;
+ * @property integer $_itemID;
  * @property string $_comment;
  * @property string $_created_at;
  * @property string $_updated_at;
@@ -18,13 +19,16 @@
 class Comment {
 	private $_commentID = 0;
 	private $_userID = 0;
+	private $_itemID = 0;
 	private $_comment = '';
 	private $_created_at;
 	private $_updated_at;
 	private $db;
 	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
 	const ERROR_USER_ID_NOT_EXIST = 'The User ID does not exist!';
-	
+	const ERROR_COMMENT_NOT_DELETED = 'The comment was not deleted!';
+	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
+
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
 		$this->db = $pdo;
@@ -63,6 +67,7 @@ class Comment {
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_userID = $row ['userID'];
+			$this->_itemID = $row ['itemID'];
 			$this->_comment = $row ['comment'];
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
@@ -90,11 +95,12 @@ class Comment {
 				
 				$query = "INSERT INTO Comments
 					SET userID = :userID,
-						comment = :comment,
-						created_at = NULL";
+					    itemID = :itemID,
+						comment = :comment";
 				
 				$stmt = $this->db->prepare ( $query );
 				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->bindValue ( ':itemID', $this->_itemID );
 				$stmt->bindParam ( ':comment', $this->_comment );
 				$stmt->execute ();
 				$this->_commentID = $this->db->lastInsertId ();
@@ -122,37 +128,24 @@ class Comment {
 	 */
 	public function update(): bool {
 		if ($this->exists ()) {
-			
+
 			$query = "SELECT * FROM Comments WHERE commentID = :commentID";
-			
+
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			
-			$user = new User ( $this->db );
-			$user->userID = $this->userID;
-			try {
-				if ($user->exists ()) {
-					// Update with this value.
-				} else {
-					$this->_userID = $row ['userID'];
-				}
-			} catch ( ModelException $e ) {
-				$this->_userID = $row ['userID'];
-			}
+
 			if (strlen ( $this->_comment ) < 1) {
 				$this->_comment = $row ['comment'];
 			}
-			
+
 			$query = "UPDATE Comments
-						SET userID = :userID,
-							comment = :comment
+						SET comment = :comment
 						WHERE commentID = :commentID";
-			
+
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':commentID', $this->_commentID );
-			$stmt->bindParam ( ':userID', $this->_userID );
 			$stmt->bindParam ( ':comment', $this->_comment );
 			$stmt->execute ();
 			return true;
@@ -160,7 +153,7 @@ class Comment {
 			throw new ModelException ( self::ERROR_COMMENT_ID_NOT_EXIST );
 		}
 	}
-	
+
 	/**
 	 * Checks the object exists in the database.
 	 * If it does,
@@ -201,22 +194,82 @@ class Comment {
 			$stmt->bindParam ( ':commentID', $this->_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			if ($row ['numRows'] > 0) {
-				return true;
-			} else {
-				return false;
-			}
+			return ($row ['numRows'] > 0);
 		} else {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Retrieves all commentID's for an item and returns them as an
+	 * array of itemComment Objects.
+	 * @return array
+	 * @throws ModelException
+	 */
+	public function getItemComments(): array {
+		$objects = array ();
+		$i = new Item ( $this->db );
+		$i->itemID = $this->_itemID;
+
+		if ($i->exists ()) {
+			$query = "SELECT * FROM Comments WHERE itemID = :itemID";
+
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
+			$stmt->execute ();
+			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+				$itemComment = new Comment ( $this->db );
+				$itemComment->commentID = $row ['commentID'];
+				$itemComment->itemID = $row ['itemID'];
+
+
+				$objects [] = $itemComment;
+			}
+		} else {
+			throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
+		}
+		return $objects;
+	}
+
+	public function countCommentsForItem() : int {
+		$query = "SELECT COUNT(*) as num FROM Comments WHERE itemID = :itemID";
+
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindValue ( ':itemID', $this->_itemID );
+		$stmt->execute ();
+		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+		return $row ['num'];
+	}
+
+	/**
+	 * Deletes an ItemComment and all associated comments based on an itemID.
+	 * @return bool
+	 * @throws ModelException
+	 */
+	public function deleteItemComments(): bool {
+		$i = new Item ( $this->db );
+		$i->itemID = $this->_itemID;
+
+		if ($i->exists ()) {
+			$itemComments = $this->getItemComments ();
+
+			foreach ( $itemComments as $itemComment ) {
+				if (!$itemComment->delete ()) {
+					throw new ModelException ( self::ERROR_COMMENT_NOT_DELETED );
+				}
+			}
+			return true;
+		} else {
+			throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
+		}
+	}
+
 	/**
 	 * Display Object Contents
 	 */
 	public function printf() {
 		echo '<br /><strong>Comment Object:</strong><br />';
-		
+
 		if ($this->_id) {
 			echo 'id => ' . $this->_id . '<br/>';
 		}

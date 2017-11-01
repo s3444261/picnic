@@ -76,7 +76,7 @@ CREATE TABLE `User_items` (
 		CONSTRAINT `FK_User_items_Items` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
 		CONSTRAINT `UQ_userID_itemID` UNIQUE (`userID`, `itemID`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-        
+
 CREATE TABLE `User_ratings` (
 		`user_ratingID` int(11) NOT NULL AUTO_INCREMENT,
     `itemID` bigint(11) NOT NULL,
@@ -106,27 +106,17 @@ CREATE TABLE `Category_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Comments` (
-		`commentID` int(11) NOT NULL AUTO_INCREMENT,
-		`userID` int(11) NOT NULL,
-		`comment` text NOT NULL,
-		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		PRIMARY KEY (`commentID`),
-		KEY `FK_Comments_User_idx` (`userID`),
-		CONSTRAINT `FK_Comments_User` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
-		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `Item_comments` (
-		`item_commentID` int(11) NOT NULL AUTO_INCREMENT,
-		`itemID` bigint(11) NOT NULL,
-		`commentID` int(11) NOT NULL,
-		PRIMARY KEY (`item_commentID`),
-		KEY `FK_Item_comments_Item_idx` (`itemID`),
-		KEY `FK_Item_comments_Comment_idx` (`commentID`),
-		CONSTRAINT `FK_Item_comments_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_Item_comments_Comment` FOREIGN KEY (`commentID`) REFERENCES `Comments` (`commentID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `UQ_itemID_commentID` UNIQUE (`itemID`, `commentID`)
-		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+	`commentID` int(11) NOT NULL AUTO_INCREMENT,
+	`userID` int(11) NOT NULL,
+	`itemID` bigint(11) NOT NULL,
+	`comment` text NOT NULL,
+	`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (`commentID`),
+	KEY `FK_Comments_User_idx` (`userID`),
+  CONSTRAINT `FK_Comments_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `FK_Comments_User` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Notes` (
 		`noteID` int(11) NOT NULL AUTO_INCREMENT,

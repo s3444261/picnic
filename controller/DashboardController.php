@@ -12,22 +12,51 @@ require_once  __DIR__ . '/../config/Picnic.php';
 
 class DashboardController {
 
-	public function index()
-	{
-		header('Location: ' . BASE . '/Dashboard/View');
+	public function index() {
+		header('Location: ' . BASE . '/Dashboard/ForSale');
 	}
 
 	public function View() {
-		if ($this->auth()) {
+		header('Location: ' . BASE . '/Dashboard/ForSale');
+	}
 
+	public function ForSale() {
+		if ($this->auth()) {
 			$h = new Humphree(Picnic::getInstance());
 
 			$view = new View();
 			$view->SetData('forSaleItems',   $h->getUserOwnedItems($_SESSION['userID'], "ForSale"));
 			$view->SetData('wantedItems',   $h->getUserOwnedItems($_SESSION['userID'],  "Wanted"));
 			$view->SetData('navData',  new NavData(NavData::Account));
-			$view->Render('dashboard');
+			$view->Render('dashboardForSale');
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
 
+	public function Wanted() {
+		if ($this->auth()) {
+			$h = new Humphree(Picnic::getInstance());
+
+			$view = new View();
+			$view->SetData('forSaleItems',   $h->getUserOwnedItems($_SESSION['userID'], "ForSale"));
+			$view->SetData('wantedItems',   $h->getUserOwnedItems($_SESSION['userID'],  "Wanted"));
+			$view->SetData('navData',  new NavData(NavData::Account));
+			$view->Render('dashboardWanted');
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
+
+	public function Messages() {
+		if ($this->auth()) {
+			$h = new Humphree(Picnic::getInstance());
+
+			$view = new View();
+			$view->SetData('forSaleItems',   $h->getUserOwnedItems($_SESSION['userID'], "ForSale"));
+			$view->SetData('wantedItems',   $h->getUserOwnedItems($_SESSION['userID'],  "Wanted"));
+			$view->SetData('navData',  new NavData(NavData::Account));
+			$view->Render('dashboardMessages');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}

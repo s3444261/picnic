@@ -54,9 +54,9 @@
 										<?php if (isset($_SESSION[MODULE])) { ?>
                                             <a href="<?php echo BASE . '/Dashboard' ?>">Dashboard</a>
                                             <ul>
-                                                <li><a href="<?php echo BASE . '/Dashboard#ForSale' ?>">Manage Items For Sale</a></li>
-                                                <li><a href="<?php echo BASE . '/Dashboard#Wanted' ?>">Manage Wanted Items</a></li>
-                                                <li>Message Center</li>
+                                                <li><a href="<?php echo BASE . '/Dashboard/ForSale' ?>">Manage Items For Sale</a></li>
+                                                <li><a href="<?php echo BASE . '/Dashboard/Wanted' ?>">Manage Wanted Items</a></li>
+                                                <li><a href="<?php echo BASE . '/Dashboard/Messages' ?>">Message Center</a></li>
                                                 <li>Rate Seller</li>
 										    </ul>
 										<?php } else { ?>

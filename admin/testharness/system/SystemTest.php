@@ -335,7 +335,6 @@ require_once dirname ( __FILE__ ) . '/../../../model/Categories.php';
 require_once dirname ( __FILE__ ) . '/../../../model/CategoryItems.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Comment.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Item.php';
-require_once dirname ( __FILE__ ) . '/../../../model/ItemComments.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ItemNotes.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Note.php';
 require_once dirname ( __FILE__ ) . '/../../../model/User.php';
@@ -2180,7 +2179,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$comments = $system->getItemComments ( $item );
 		$i = 6;
 		foreach ( $comments as $comment ) {
-			$this->assertEquals ( $i, $comment->item_commentID );
 			$this->assertEquals ( 2, $comment->itemID );
 			$this->assertEquals ( $i, $comment->commentID );
 			$i ++;
@@ -2234,10 +2232,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
 		$comment = new Comment ( $pdo );
 		$comment->userID = self::USER_ID_1;
-		$system->addItemComment ( $item, $comment );
+		$comment->itemID = self::ITEM_ID_1;
+		$system->addItemComment ( $comment );
 
 		$this->assertTrue( isset ( $_SESSION ['error'] ));
 		$this->assertEquals ( self::ERROR_COMMENT_EMPTY, $_SESSION ['error'] );
@@ -2247,12 +2245,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::INVALID_ID;
 		$comment = new Comment ( $pdo );
 		$comment->comment = self::COMMENT_NEW;
 		$comment->userID = self::USER_ID_1;
-		$system->addItemComment ( $item, $comment );
+		$comment->itemID =  self::INVALID_ID;
+		$system->addItemComment ( $comment );
 
 		$this->assertTrue( isset ( $_SESSION ['error'] ));
 		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
@@ -2262,13 +2259,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		unset ( $_SESSION ['error'] );
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::ITEM_ID_3;
 		$comment = new Comment ( $pdo );
 		$comment->userID = self::USER_ID_1;
+		$comment->itemID = self::ITEM_ID_3;
 		$comment->comment = self::COMMENT_NEW;
 
-		$this->assertTrue ( $system->addItemComment ( $item, $comment ) );
+		$this->assertTrue ( $system->addItemComment ( $comment ) );
 	}
 	
 	/*
@@ -3017,6 +3013,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 
 					$comment = new Comment ( $pdo );
 					$comment->userID = $user->userID;
+					$comment->itemID = $item->itemID;
 					$comment->comment = 'comment' . $l;
 					$comment->set ();
 
@@ -3024,11 +3021,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					$itemNote->itemID = $item->itemID;
 					$itemNote->noteID = $note->noteID;
 					$itemNote->set ();
-
-					$itemComment = new ItemComments ( $pdo );
-					$itemComment->itemID = $item->itemID;
-					$itemComment->commentID = $comment->commentID;
-					$itemComment->set ();
 
 					$l ++;
 				}
@@ -3166,18 +3158,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			for($j = 1; $j <= 5; $j ++) {
 				$comment = new Comment ( $pdo );
 				$comment->userID = self::USER_ID_1;
+				$comment->itemID = $i;
 				$comment->comment = 'comment' . $l;
 				$comment->set ();
-
-				$itemComment = new ItemComments ( $pdo );
-				$itemComment->itemID = $i;
-				$itemComment->commentID = $l;
-
-				if ($itemComment->itemID == 3 && $itemComment->commentID == 15) {
-					// Don't set.
-				} else {
-					$itemComment->set ();
-				}
 
 				$l ++;
 			}
@@ -3482,6 +3465,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 
 					$comment = new Comment ( $pdo );
 					$comment->userID = $user->userID;
+					$comment->itemID = $item->itemID;
 					$comment->comment = 'comment' . $l;
 					$comment->set ();
 
@@ -3489,11 +3473,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					$itemNote->itemID = $item->itemID;
 					$itemNote->noteID = $note->noteID;
 					$itemNote->set ();
-
-					$itemComment = new ItemComments ( $pdo );
-					$itemComment->itemID =$item->itemID;
-					$itemComment->commentID = $comment->commentID;
-					$itemComment->set ();
 
 					$l ++;
 				}

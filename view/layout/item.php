@@ -70,6 +70,27 @@
 					</div>
 				</div> <!-- end .row -->
 			</div> <!-- end .container -->
+
+
+            <div class="container" >
+                <hr />
+
+                <div class="row col-md-12 item-desc-header">
+                    <?php if ($this->data['item']['status'] === 'ForSale') {
+                        echo '<strong>Send a message to the seller</strong>';
+                    } else {
+						echo '<strong>Send a message to the wanter (?)</strong>';
+                    } ?>
+
+                </div>
+                <div>
+                    <form>
+                        <textarea rows="5" class="form-control" name="comment" id="comment" placeholder="Enter a message..."></textarea>
+                        <button type="submit" name="postComment" id="postComment" class="btn btn-primary">Send message
+                        </button>
+                    </form>
+                </div>
+            </div>
 		</div> <!-- end col-9 -->
 		<!-- Right margin -->
 		<div class="col"></div>

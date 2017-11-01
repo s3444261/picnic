@@ -54,6 +54,7 @@ require_once 'TestPDO.php';
 require_once 'PicnicTestCase.php';
 require_once dirname ( __FILE__ ) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Comment.php';
+require_once dirname ( __FILE__ ) . '/../../../model/Item.php';
 require_once dirname ( __FILE__ ) . '/../../../model/User.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Validation.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ModelException.php';
@@ -61,7 +62,15 @@ require_once dirname ( __FILE__ ) . '/../../../model/ValidationException.php';
 final class CommentTest extends PicnicTestCase {
 	const COMMENT_ID = 'commentID';
 	const USER_ID = 'userID';
+	const ITEM_ID = 'itemID';
+	const OWNING_USER_ID = 'owningUserID';
 	const COMMENT = 'comment';
+	const TITLE = 'title';
+	const DESCRIPTION = 'description';
+	const QUANTITY = 'quantity';
+	const CONDITION = 'itemcondition';
+	const PRICE = 'price';
+	const STATUS = 'status';
 	const CREATION_DATE = 'created_at';
 	const MODIFIED_DATE = 'updated_at';
 	const USER = 'user';
@@ -75,6 +84,13 @@ final class CommentTest extends PicnicTestCase {
 	const USER_NAME_2 = 'john';
 	const USER_EMAIL_2 = 'john@gmail.com';
 	const USER_PASSWORD_2 = 'TestTest99';
+	const ITEM_ID_1 = 1;
+	const TITLE_1 = 'title1';
+	const DESCRIPTION_1 = 'description1';
+	const QUANTITY_1 = 'quantity1';
+	const CONDITION_1 = 'condition1';
+	const PRICE_1 = 'price1';
+	const STATUS_1 = 'active';
 	const COMMENT_ID_1 = 1;
 	const COMMENT_1 = 'Comment1';
 	const COMMENT_ID_2 = 2;
@@ -105,22 +121,38 @@ final class CommentTest extends PicnicTestCase {
 				self::EMAIL => self::USER_EMAIL_2,
 				self::PASSWORD => self::USER_PASSWORD_2 
 		] );
+
+		$item = new Item ( $pdo, [
+				self::ITEM_ID => self::ITEM_ID_1,
+				self::OWNING_USER_ID => self::USER_ID_1,
+				self::TITLE => self::TITLE_1,
+				self::DESCRIPTION => self::DESCRIPTION_1,
+				self::QUANTITY => self::QUANTITY_1,
+				self::CONDITION => self::CONDITION_1,
+				self::PRICE => self::PRICE_1,
+				self::STATUS => self::STATUS_1
+		]);
+
 		$c1 = new Comment ( $pdo, [ 
 				self::USER_ID => self::USER_ID_1,
+			    self::ITEM_ID => self::ITEM_ID_1,
 				self::COMMENT => self::COMMENT_1 
 		] );
-		$c2 = new Comment ( $pdo, [ 
+		$c2 = new Comment ( $pdo, [
 				self::USER_ID => self::USER_ID_1,
+				self::ITEM_ID => self::ITEM_ID_1,
 				self::COMMENT => self::COMMENT_2 
 		] );
 		$c3 = new Comment ( $pdo, [ 
 				self::USER_ID => self::USER_ID_1,
+				self::ITEM_ID => self::ITEM_ID_1,
 				self::COMMENT => self::COMMENT_3 
 		] );
 		
 		try {
 			$u1->set ();
 			$u2->set ();
+			$item->set();
 			$c1->set ();
 			$c2->set ();
 			$c3->set ();
@@ -210,6 +242,7 @@ final class CommentTest extends PicnicTestCase {
 	public function testSetCommentSuccess(): void {
 		$sut = $this->createDefaultSut ();
 		$sut->userID = self::USER_ID_1;
+		$sut->itemID = self::ITEM_ID_1;
 		$sut->comment = self::COMMENT_4;
 		try {
 			$sut->commentID = $sut->set ();
@@ -241,32 +274,15 @@ final class CommentTest extends PicnicTestCase {
 	}
 	public function testUpdateCommentNoComment(): void {
 		$sut = $this->createSutWithId ( self::COMMENT_ID_3 );
-		$sut->userID = self::USER_ID_1;
-		$this->assertTrue ( $sut->update () );
-	}
-	public function testUpdateCommentNoUserId(): void {
-		$sut = $this->createSutWithId ( self::COMMENT_ID_3 );
-		$sut->comment = self::COMMENT_4;
-		$this->assertTrue ( $sut->update () );
-	}
-	public function testUpdateCommentInvalidUserId(): void {
-		$sut = $this->createSutWithId ( self::COMMENT_ID_3 );
-		$sut->userID = $this->getInvalidId ();
-		$sut->comment = self::COMMENT_4;
 		$this->assertTrue ( $sut->update () );
 	}
 	public function testUpdateCommentSuccess(): void {
 		$sut = $this->createSutWithId ( self::COMMENT_ID_3 );
-		$sut->userID = self::USER_ID_2;
 		$sut->comment = self::COMMENT_4;
 		$this->assertTrue ( $sut->update () );
+
 		$sut = $this->createSutWithId ( self::COMMENT_ID_3 );
-		try {
-			$sut->get ();
-		} catch ( ModelException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
-		$this->assertSame ( '2', $sut->userID );
+		$sut->get ();
 		$this->assertSame ( self::COMMENT_4, $sut->comment );
 	}
 	
@@ -304,5 +320,62 @@ final class CommentTest extends PicnicTestCase {
 	public function testExistsCommentCommentIdValid(): void {
 		$sut = $this->createSutWithId ( self::COMMENT_ID_2 );
 		$this->assertTrue ( $sut->exists () );
+	}
+
+	/*
+	 * getItemComments(): array
+	 */
+	public function testGetItemCommentsItemIdEmpty(): void {
+		$sut = $this->createDefaultSut ();
+		$this->expectExceptionMessage ( Comment::ERROR_ITEM_ID_NOT_EXIST );
+		$sut->getItemComments ();
+	}
+	public function testGetItemCommentsItemIdInvalid(): void {
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = $this->getInvalidId ();
+		$this->expectExceptionMessage ( Comment::ERROR_ITEM_ID_NOT_EXIST );
+		$sut->getItemComments ();
+	}
+	public function testGetItemCommentsItemIdValid(): void {
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = self::ITEM_ID_1;
+		try {
+			$i = 6;
+			foreach ( $sut->getItemComments () as $obj ) {
+				$this->assertEquals ( self::ITEM_ID_1, $obj->itemID );
+				$i ++;
+			}
+		} catch ( ModelException $e ) {
+			$this->assertEquals('Exception', $e->getMessage());
+		}
+	}
+
+	/*
+	 * deleteItemComments(): bool
+	 */
+	public function testDeleteItemCommentsItemIdEmpty(): void {
+		$sut = $this->createDefaultSut ();
+		$this->expectExceptionMessage ( Comment::ERROR_ITEM_ID_NOT_EXIST );
+		$sut->deleteItemComments ();
+	}
+	public function testDeleteItemCommentsItemIdInvalid(): void {
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = $this->getInvalidId ();
+		$this->expectExceptionMessage ( Comment::ERROR_ITEM_ID_NOT_EXIST );
+		$sut->deleteItemComments ();
+	}
+	public function testDeleteItemCommentsItemIdValid(): void {
+		$sut = $this->createDefaultSut ();
+		$sut->itemID = self::ITEM_ID_1;
+		try {
+			$this->assertTrue ( $sut->deleteItemComments () );
+		} catch ( ModelException $e ) {
+			$this->assertEquals(Comment::ERROR_COMMENT_ID_NOT_EXIST, $e->getMessage());
+		}
+		for($i = 6; $i <= 10; $i ++) {
+			$sut = $this->createSutWithId ( $i );
+			$this->expectExceptionMessage ( Comment::ERROR_COMMENT_ID_NOT_EXIST );
+			$sut->get ();
+		}
 	}
 }

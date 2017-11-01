@@ -25,6 +25,14 @@ class UserCommentsTest extends PHPUnit\Framework\TestCase {
 	const STATUS = 'status';
 	const ACTIVATE = 'activate';
 	const USER_ONE = 'peter';
+	const ITEM_ID = 'itemID';
+	const OWNING_USER_ID = 'owningUserID';
+	const COMMENT = 'comment';
+	const TITLE = 'title';
+	const DESCRIPTION = 'description';
+	const QUANTITY = 'quantity';
+	const CONDITION = 'itemcondition';
+	const PRICE = 'price';
 	const EMAIL_ADDRESS_ONE = 'peter@gmail.com';
 	const PASSWORD_ONE = 'TestTest88';
 	const USER_TWO = 'mary';
@@ -61,22 +69,36 @@ class UserCommentsTest extends PHPUnit\Framework\TestCase {
 			${'u' . $i} = new User ( $pdo, ${'args' . $i} );
 			try {
 				${'u' . $i}->set ();
-			} catch ( UserException $e ) {
+			} catch ( ModelException $e ) {
 				$this->assertEquals('Exception', $e->getMessage());
 			}
 			try {
 				${'u' . $i}->get ();
-			} catch ( UserException $e ) {
+			} catch ( ModelException $e ) {
 				$this->assertEquals('Exception', $e->getMessage());
 			}
 			${'u' . $i}->activate ();
 		}
-		
+
+		$item = new Item ( $pdo, [
+			self::ITEM_ID => 1,
+			self::OWNING_USER_ID => 1,
+			self::TITLE => "blah",
+			self::DESCRIPTION => "blah",
+			self::QUANTITY => 1,
+			self::CONDITION => "blah",
+			self::PRICE => 1,
+			self::STATUS => "ForSale"
+		]);
+
+		$item->set();
+
 		$k = 1;
 		for($i = 1; $i < 4; $i ++) {
 			for($j = 1; $j < 6; $j ++) {
 				$c = new Comment ( $pdo );
 				$c->userID = $i;
+				$c->itemID = 1;
 				$c->comment = 'Comment' . $k;
 				try {
 					$c->set ();

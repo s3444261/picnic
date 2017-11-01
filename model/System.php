@@ -26,6 +26,7 @@ class System {
 	const SUSPENDED = 'suspended';
 	const USER_RATING_NOT_ADDED = 'The UserRating was not added!';
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
+	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
 	const ERROR_USER_NOT_EXIST = 'User does not exist!';
 	const ERROR_CATEGORY_NOT_EXIST = 'Category does not exist!';
 	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
@@ -427,9 +428,9 @@ class System {
 	 * @return int
 	 */
 	public function countItemComments(Item $item): int {
-		$ic = new ItemComments ( $this->db );
+		$ic = new Comment ( $this->db );
 		$ic->itemID = $item->itemID;
-		return $ic->count ();
+		return $ic->countCommentsForItem ();
 	}
 	
 	/**
@@ -675,7 +676,7 @@ class System {
 	 * @return array
 	 */
 	public function getItemComments(Item $item): array {
-		$ic = new ItemComments ( $this->db );
+		$ic = new Comment ( $this->db );
 		$ic->itemID = $item->itemID;
 		$comments = array ();
 		try {
@@ -693,11 +694,11 @@ class System {
 	 * @return Item
 	 */
 	public function getItemComment(Comment $comment): Item {
-		$ic = new ItemComments ( $this->db );
+		$ic = new Comment ( $this->db );
 		$ic->commentID = $comment->commentID;
 		$item = new Item ( $this->db );
 		try {
-			$item->itemID = $ic->getItemComment ()->itemID;
+			$item->itemID = $ic->get()->itemID;
 			$item->get ();
 		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage ();
@@ -708,35 +709,31 @@ class System {
 	/**
 	 * Adds an item and a comment to ItemComments.
 	 *
-	 * @param Item $item        	
 	 * @param Comment $comment        	
 	 * @return bool
 	 */
-	public function addItemComment(Item $item, Comment $comment): bool {
-		$itemComment = new ItemComments ( $this->db );
-		$itemComment->itemID = $item->itemID;
-		try {
-			$itemComment->commentID = $comment->set ();
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return false;
-		}
-		try {
-			if ($itemComment->item_commentID = $itemComment->set () > 0) {
+	public function addItemComment(Comment $comment): bool {
+
+		$item = new Item( $this->db );
+		$item->itemID = $comment->itemID;
+		if ($item->exists()){
+			try {
+				$comment->set ();
 				return true;
-			} else {
-				return false;
+			} catch ( ModelException $e ) {
+				$_SESSION ['error'] = $e->getMessage ();
 			}
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return false;
+		} else {
+			$_SESSION ['error'] = self::ERROR_ITEM_ID_NOT_EXIST;
 		}
+
+		return false;
 	}
-	
+
 	/**
 	 * Updates an ItemComment
 	 *
-	 * @param ItemComments $itemComment        	
+	 * @param Comment $comment
 	 * @return bool
 	 */
 	public function updateItemComment(Comment $comment): bool {
@@ -756,10 +753,10 @@ class System {
 	 * @return bool
 	 */
 	public function deleteItemComment(Comment $comment): bool {
-		$itemComment = new ItemComments ( $this->db );
+		$itemComment = new Comment ( $this->db );
 		$itemComment->commentID = $comment->commentID;
 		try {
-			$itemComment->deleteItemComment ();
+			$itemComment->delete();
 			return true;
 		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage ();
@@ -775,7 +772,7 @@ class System {
 	 * @return bool
 	 */
 	public function deleteItemComments(Item $item): bool {
-		$itemComment = new ItemComments ( $this->db );
+		$itemComment = new Comment ( $this->db );
 		$itemComment->itemID = $item->itemID;
 		try {
 			$itemComment->deleteItemComments ();
