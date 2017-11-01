@@ -33,7 +33,7 @@
                 <hr />
 				<form data-toggle="validator" role="form" method="post" action="../Edit/<?php echo $this->itemID() ?>">
 					<button type="submit" name="" class="btn btn-primary btn-warning">Oops - go back!</button>
-					<button type="submit" name="commit" class="btn btn-primary btn-success">All good -- update listing</button>
+					<button type="submit" name="commit" class="btn btn-primary btn-success">All good &rarr; update listing</button>
 				</form>
 			</div>
 		</div>
