@@ -48,7 +48,7 @@ class ItemController {
 							$previousUploadedFile = $_SESSION['itemAdd']['tempImageFile'];
 						}
 
-						$_SESSION['itemAdd'] = $_POST;
+						$_SESSION['itemAdd'] = $this->sanitize($_POST);
 
 						if ($_FILES["image"]["name"] !== '') {
 							$this->saveUploadedImageToTempDir();
@@ -56,7 +56,7 @@ class ItemController {
 							$_SESSION['itemAdd']['tempImageFile'] = $previousUploadedFile;
 						}
 
-						$this->validateItemData($_POST);
+						$this->validateItemData($_SESSION['itemAdd']);
 
 						$view = new ItemView();
 						$view->Render('itemAddConfirm');
@@ -95,7 +95,7 @@ class ItemController {
 		header('Location: ' . BASE . '/Home');
 	}
 
-	public function Edit($itemID) {
+	public function Edit(int $itemID) {
 		if ($this->auth()) {
 			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 				$view = new ItemView();
@@ -113,7 +113,7 @@ class ItemController {
 							$previousUploadedFile = $_SESSION['itemAdd']['tempImageFile'];
 						}
 
-						$_SESSION['itemAdd'] = $_POST;
+						$_SESSION['itemAdd'] = $this->sanitize($_POST);
 						$_SESSION['itemAdd']['itemID'] = $itemID;
 
 						if ($_FILES["image"]["name"] !== '') {
@@ -122,7 +122,7 @@ class ItemController {
 							$_SESSION['itemAdd']['tempImageFile'] = $previousUploadedFile;
 						}
 
-						$this->validateItemData($_POST);
+						$this->validateItemData($_SESSION['itemAdd']);
 
 						$view = new ItemView();
 						$view->Render('itemEditConfirm');
@@ -165,61 +165,6 @@ class ItemController {
 		}
 
 		header('Location: ' . BASE . '/Home');
-	}
-
-	private function validateItemData($data) {
-		$validate = new Validation ();
-
-		if (isset($data['status'])) {
-			$validate->emptyField($data['status']);
-		} else {
-			throw new ValidationException('Please enter a listing type.');
-		}
-
-		if (isset($data['majorCategory'])) {
-			$validate->emptyField($data['majorCategory']);
-			$validate->number($data['majorCategory']);
-			$validate->numberGreaterThanZero($data['majorCategory']);
-		} else {
-			throw new ValidationException('Please select a category.');
-		}
-
-		if (isset($data['category'])) {
-			$validate->emptyField($data['category']);
-			$validate->number($data['category']);
-			$validate->numberGreaterThanZero($data['category']);
-		} else {
-			throw new ValidationException('Please select a sub-category.');
-		}
-
-		if (isset($data['title'])) {
-			$validate->emptyField($data['title']);
-		} else {
-			throw new ValidationException('Please enter a title.');
-		}
-
-		if (isset($data['description'])) {
-			$validate->emptyField($data['description']);
-		} else {
-			throw new ValidationException('Please enter a description.');
-		}
-
-		if (isset($data['itemcondition'])) {
-			$validate->emptyField($data['itemcondition']);
-		} else {
-			throw new ValidationException('Please select an item condition.');
-		}
-		if (isset($data['quantity'])) {
-			$validate->number($data ['quantity']);
-		} else {
-			throw new ValidationException('Please enter a quantity.');
-		}
-
-		if (isset($data['price'])) {
-			$validate->number($data ['price']);
-		} else {
-			throw new ValidationException('Please enter a price.');
-		}
 	}
 
 	public function Delete(int $itemId) {
@@ -282,8 +227,6 @@ class ItemController {
 	 */
 	public function Image(int $itemId) {
 
-		// for now, I'm just using the thumb scaled up, to avoid uploading hundreds of MB of
-		// images to the dev server.
 		$paddedItemId = str_pad($itemId, 4, '0', STR_PAD_LEFT);
 		$subDir = substr($paddedItemId, 0 , strlen($paddedItemId) - 3);
 
@@ -291,23 +234,24 @@ class ItemController {
 		$thumbPath = self::THUMB_DIRECTORY . $subDir . "/" .$itemId . ".jpg";
 
 		if (file_exists($path)) {
+			header("Content-Type: image/jpeg");
 			readfile($path);
-			header("Content-Type: image/jpeg");
+
 		}  else if (file_exists($thumbPath)) {
+			header("Content-Type: image/jpeg");
 			readfile($thumbPath);
-			header("Content-Type: image/jpeg");
+
 		} else if (isset($_SESSION['itemAdd']['tempImageFile'])) {
+			header("Content-Type: image/jpeg");
 			readfile($_SESSION['itemAdd']['tempImageFile']);
-			header("Content-Type: image/jpeg");
+
 		} else if (file_exists(self::DEFAULT_IMAGE)) {
-			readfile(self::DEFAULT_IMAGE);
 			header("Content-Type: image/jpeg");
+			readfile(self::DEFAULT_IMAGE);
+
 		} else {
 			http_response_code(404);
 		}
-
-
-	//	$this->Thumb($itemId);
 	}
 
 	/**
@@ -319,19 +263,22 @@ class ItemController {
 		if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd']['tempImageFile'])) {
 			$path = self::TEMP_UPLOADS_DIRECTORY . $_SESSION['itemAdd']['tempImageFile'];
 			if (file_exists($path)) {
+				header("Content-Type: image/jpeg");
 				readfile($path);
-				header("Content-Type: image/jpeg");
+
 			} else if (file_exists(self::DEFAULT_IMAGE)) {
-				readfile(self::DEFAULT_IMAGE);
 				header("Content-Type: image/jpeg");
+				readfile(self::DEFAULT_IMAGE);
+
 			} else {
 				http_response_code(404);
 			}
 		} else if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd']['itemID'])) {
 			$this->Image($_SESSION['itemAdd']['itemID']);
 		} else {
-			readfile(self::DEFAULT_IMAGE);
 			header("Content-Type: image/jpeg");
+			readfile(self::DEFAULT_IMAGE);
+
 		}
 	}
 
@@ -345,7 +292,62 @@ class ItemController {
 			&& ($_SESSION['userID'] > 0);
 	}
 
-	function createThumbnail($sourceFile, $targetFIle, $targetWidth, $targetHeight, $background=false) {
+	private function validateItemData($data) {
+		$validate = new Validation ();
+
+		if (isset($data['status'])) {
+			$validate->emptyField($data['status']);
+		} else {
+			throw new ValidationException('Please enter a listing type.');
+		}
+
+		if (isset($data['majorCategory'])) {
+			$validate->emptyField($data['majorCategory']);
+			$validate->number($data['majorCategory']);
+			$validate->numberGreaterThanZero($data['majorCategory']);
+		} else {
+			throw new ValidationException('Please select a category.');
+		}
+
+		if (isset($data['category'])) {
+			$validate->emptyField($data['category']);
+			$validate->number($data['category']);
+			$validate->numberGreaterThanZero($data['category']);
+		} else {
+			throw new ValidationException('Please select a sub-category.');
+		}
+
+		if (isset($data['title'])) {
+			$validate->emptyField($data['title']);
+		} else {
+			throw new ValidationException('Please enter a title.');
+		}
+
+		if (isset($data['description'])) {
+			$validate->emptyField($data['description']);
+		} else {
+			throw new ValidationException('Please enter a description.');
+		}
+
+		if (isset($data['itemcondition'])) {
+			$validate->emptyField($data['itemcondition']);
+		} else {
+			throw new ValidationException('Please select an item condition.');
+		}
+		if (isset($data['quantity'])) {
+			$validate->number($data ['quantity']);
+		} else {
+			throw new ValidationException('Please enter a quantity.');
+		}
+
+		if (isset($data['price'])) {
+			$validate->number($data ['price']);
+		} else {
+			throw new ValidationException('Please enter a price.');
+		}
+	}
+
+	private function createThumbnail($sourceFile, $targetFIle, $targetWidth, $targetHeight, $background=false) {
 		list($original_width, $original_height, $original_type) = getimagesize($sourceFile);
 		if ($original_width > $original_height) {
 			$new_width = $targetWidth;
@@ -429,7 +431,7 @@ class ItemController {
 	}
 
 	// ref:   https://stackoverflow.com/a/24337547
-	function correctImageOrientation($fullpath) {
+	private function correctImageOrientation($fullpath) {
 		if (function_exists('exif_read_data')) {
 			ini_set('memory_limit', '256M');
 			$exif = exif_read_data($fullpath);
@@ -476,5 +478,15 @@ class ItemController {
 		$this->createThumbnail($tempFile, $thumbFile, self::THUMB_DIMENSION, self::THUMB_DIMENSION);
 
 		unlink($tempFile);
+	}
+
+	private function sanitize(array $dataToSanitize): array {
+		$result = [];
+
+		foreach ($dataToSanitize as $x => $x_value) {
+			$result[$x] = filter_var($x_value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+		}
+
+		return $result;
 	}
 }
