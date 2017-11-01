@@ -12,17 +12,18 @@
     <div class="row">
         <div class="col"></div>
         <div class="col-9">
-            <div class="jumbotron">
+            <!-- <div class="jumbotron"> -->
                 <div class="container-fluid">
-                    <h1 id="ForSale" class="display-3 text-center">My Items For Sale (<?php echo count($this->data['forSaleItems']);  ?>)</h1>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th></th>
-                            <th class="col-md-1">Title</th>
-                            <th class="col-md-1">Price</th>
-                            <th class="col-md-1"></th>
-                        </tr>
+                    <h1 id="ForSale" class="display-4 text-center top-n-tail">My Items For Sale (<?php echo count($this->data['forSaleItems']);  ?>)</h1>
+
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th></th>
+                                <th class="col-md-1">Title</th>
+                                <th class="col-md-1">Price</th>
+                                <th class="col-md-1"></th>
+                            </tr>
                         </thead>
                         <tbody>
 						<?php foreach ( $this->data['forSaleItems'] as $item ) { ?>
@@ -55,9 +56,9 @@
                 <hr>
 
                 <div class="container-fluid">
-                    <h1 id="Wanted"  class="display-3 text-center">My Wanted Items (<?php echo count($this->data['wantedItems']);  ?>)</h1>
+                    <h1 id="Wanted"  class="display-4 text-center top-n-tail">My Wanted Items (<?php echo count($this->data['wantedItems']);  ?>)</h1>
 
-                    <table class="table">
+                    <table class="table table-striped">
                         <thead>
                         <tr>
                             <th></th>
@@ -94,7 +95,7 @@
                     </div>
                 </div>
 
-            </div>
+            <!-- </div> -->
         </div>
         <div class="col"></div>
     </div>
