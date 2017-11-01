@@ -10,17 +10,15 @@ use phpDocumentor\Reflection\Types\Self_;
  */
 require_once dirname ( __FILE__ ) . '/ModelException.php';
 
-/**
- *
- * @property string $_searchString;
- */
 class Items {
 	private $db;
 	
-	const SEARCH_TITLE = 'srchTitle';
-	const SEARCH_DESCRIPTION = 'srchDescription';
-	const SEARCH_PRICE = 'srchPrice';
-	const SEARCH_QUANTITY = 'srchQuantity';
+	const SEARCH_TEXT = 'srchText';
+	const SEARCH_MINOR_CATEGORY_ID = 'srchMajorCategory';
+	const SEARCH_MAJOR_CATEGORY_ID = 'srchMinorCategory';
+	const SEARCH_MIN_PRICE = 'srchMinPrice';
+	const SEARCH_MAX_PRICE = 'srchMaxPrice';
+	const SEARCH_MIN_QUANTITY = 'srchQuantity';
 	const SEARCH_CONDITION = 'srchCondition';
 	const SEARCH_STATUS = 'srchStatus';
 	
@@ -52,16 +50,18 @@ class Items {
 	public function search(string $searchString): array {
 		$items = array ();
 		
-		if (strlen ( $this->_searchString ) > 0) {
+		if (strlen ( $searchString ) > 0) {
 			
 			$query = "SELECT * FROM Items
-						WHERE title LIKE %:searchString%";
+						WHERE title LIKE :searchString 
+						OR description LIKE :searchString";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':searchString', $searchString );
+			$stmt->bindValue ( ':searchString', '%' . $searchString . '%' );
 			$stmt->execute ();
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 				$item = new Item ( $this->db );
+				$item->itemID = $row ['itemID'];
 				$item->title = $row ['title'];
 				$item->description = $row ['description'];
 				$item->quantity = $row ['quantity'];
@@ -90,81 +90,85 @@ class Items {
 		$items = array();
 		
 		$query = "SELECT * FROM Items";
+
 		$initialLength = strlen($query);
 		
-		if(strlen($args[self::SEARCH_TITLE] > 0)){
-			$srchTitle = $args[self::SEARCH_TITLE];
-			$query = $query . " WHERE title LIKE %:srchTitle%";
+		if(strlen($args[self::SEARCH_TEXT]) > 0) {
+			//$srchTitle = $args[self::SEARCH_TEXT];
+			$query = $query . " WHERE title LIKE :srchText OR description LIKE :srchText";
 		}
-		
-		if(strlen($args[self::SEARCH_DESCRIPTION] > 0)){
-			$srchDescription = $args[self::SEARCH_DESCRIPTION];
+
+		if($args[self::SEARCH_MIN_PRICE] > 0) {
+		//	$srchPrice = $args[self::SEARCH_MIN_PRICE];
 			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE title LIKE %:srchDescription%";
+				$query = $query . " WHERE price >= :srchMinPrice";
 			} else {
-				$query = $query . " AND title LIKE %:srchDescription%";
+				$query = $query . " AND price >= :srchMinPrice";
+			}
+		}
+
+		if($args[self::SEARCH_MAX_PRICE] < 0x7FFFFFFF) {
+		//	$srchPrice = $args[self::SEARCH_MAX_PRICE];
+			if(strlen($query) == $initialLength){
+				$query = $query . " WHERE price <= :srchMaxPrice";
+			} else {
+				$query = $query . " AND price <= :srchMaxPrice";
+			}
+		}
+		if($args[self::SEARCH_MIN_QUANTITY] > 1){
+
+		//	$srchQuantity = $args[self::SEARCH_QUANTITY];
+			if(strlen($query) == $initialLength){
+				$query = $query . " WHERE quantity >= :srchQuantity";
+			} else {
+				$query = $query . " AND quantity >= :srchQuantity";
 			}
 		}
 		
-		if(strlen($args[self::SEARCH_PRICE] > 0)){
-			$srchPrice = $args[self::SEARCH_PRICE];
+		if(strlen($args[self::SEARCH_CONDITION]) > 0){
+			//$srchCondition = $args[self::SEARCH_CONDITION];
 			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE price LIKE %:srchPrice%";
+				$query = $query . " WHERE itemcondition = :srchCondition";
 			} else {
-				$query = $query . " AND price LIKE %:srchPrice%";
+				$query = $query . " AND itemcondition = :srchCondition";
 			}
 		}
 		
-		if(strlen($args[self::SEARCH_QUANTITY] > 0)){
-			$srchQuantity = $args[self::SEARCH_QUANTITY];
+		if(strlen($args[self::SEARCH_STATUS]) > 0){
+			//$srchStatus = $args[self::SEARCH_STATUS];
 			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE quantity LIKE %:srchQuantity%";
+				$query = $query . " WHERE itemstatus = :srchStatus";
 			} else {
-				$query = $query . " AND quantity LIKE %:srchQuantity%";
+				$query = $query . " AND itemstatus = :srchStatus";
 			}
 		}
-		
-		if(strlen($args[self::SEARCH_CONDITION] > 0)){
-			$srchCondition = $args[self::SEARCH_CONDITION];
-			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE itemcondition LIKE %:srchCondition%";
-			} else {
-				$query = $query . " AND itemcondition LIKE %:srchCondition%";
-			}
-		}
-		
-		if(strlen($args[self::SEARCH_STATUS] > 0)){
-			$srchStatus = $args[self::SEARCH_STATUS];
-			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE itemstatus LIKE %:srchStatus%";
-			} else {
-				$query = $query . " AND itemstatus LIKE %:srchStatus%";
-			}
-		}
-		
+
 		$stmt = $this->db->prepare ( $query );
-		
-		if(strlen($args[self::SEARCH_TITLE] > 0)){
-			$stmt->bindParam ( ':srchTitle', $srchTitle );
+
+		if(strlen($args[self::SEARCH_TEXT]) > 0){
+			$stmt->bindValue ( ':srchText', '%' . $args[self::SEARCH_TEXT] . '%' );
 		}
-		if(strlen($args[self::SEARCH_DESCRIPTION] > 0)){
-			$stmt->bindParam ( ':srchDescription', $srchDescription );
+		if($args[self::SEARCH_MIN_PRICE] > 0) {
+			$stmt->bindValue ( ':srchMinPrice', $args[self::SEARCH_MIN_PRICE] );
 		}
-		if(strlen($args[self::SEARCH_PRICE] > 0)){
-			$stmt->bindParam ( ':srchPrice', $srchPrice );
+		if($args[self::SEARCH_MAX_PRICE] < 0x7FFFFFFF) {
+			$stmt->bindValue ( ':srchMaxPrice', $args[self::SEARCH_MAX_PRICE] );
 		}
-		if(strlen($args[self::SEARCH_QUANTITY] > 0)){
-			$stmt->bindParam ( ':srchQuantity', $srchQuantity );
+		if($args[self::SEARCH_MIN_QUANTITY] > 1){
+			$stmt->bindValue ( ':srchQuantity', $args[self::SEARCH_MIN_QUANTITY] );
 		}
-		if(strlen($args[self::SEARCH_CONDITION] > 0)){
-			$stmt->bindParam ( ':srchCondition', $srchCondition );
+		if(strlen($args[self::SEARCH_CONDITION]) > 0){
+			$stmt->bindValue ( ':srchCondition',  $args[self::SEARCH_CONDITION] );
 		}
-		if(strlen($args[self::SEARCH_STATUS] > 0)){
-			$stmt->bindParam ( ':srchStatus', $srchStatus );
+		if(strlen($args[self::SEARCH_STATUS]) > 0){
+			$stmt->bindValue ( ':srchStatus', $args[self::SEARCH_STATUS] );
 		}
+
 		$stmt->execute ();
+
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$item = new Item ( $this->db );
+			$item->itemID = $row ['itemID'];
 			$item->title = $row ['title'];
 			$item->description = $row ['description'];
 			$item->quantity = $row ['quantity'];

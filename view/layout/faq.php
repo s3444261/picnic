@@ -42,9 +42,9 @@
 			<h4>Where can I learn more about Humphree?</h4>
 			Click on our links on the Humphree web site to learn more:
 
-			<li><a href=<?php echo BASE . '/About'?>>About Us</a></li>
-			<li><a href=<?php echo BASE . '/PrivacyPolicy'?>>Privacy Policy</a></li>
-			<li><a href=<?php echo BASE . '/TermsOfService'?>>Terms and Conditions</a></li>
+			<li><a href="<?php echo BASE . '/About'?>">About Us</a></li>
+			<li><a href="<?php echo BASE . '/PrivacyPolicy'?>">Privacy Policy</a></li>
+			<li><a href="<?php echo BASE . '/TermsOfService'?>">Terms and Conditions</a></li>
 
 			<h4>Why do I need to log in?</h4>
 			You may view advertisements while you are not logged in, however if you want to contact an advertiser and get in touch with them, you need to be a logged in and registered user to communicate with them.

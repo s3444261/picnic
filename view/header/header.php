@@ -64,11 +64,11 @@ if(isset($_SESSION['message'])){
             </a>
             <div class="row">
                 <div class="col"></div>
-                <form class="navbar-form col-md-6 top-n-tail" role="search">
+                <form class="navbar-form col-md-6 top-n-tail" role="search" method="post" action="<?php echo BASE . '/Search/Basic'?>">
                     <div class="input-group add-on">
                         <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">
                         <div class="input-group-btn">
-                            <button class="btn btn-default" type="submit">
+                            <button class="btn btn-default" type="submit" name="search" >
                                 <i class="material-icons md-light">search</i>
                             </button>
                         </div> <!-- end .input-group-btn -->

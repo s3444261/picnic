@@ -17,10 +17,11 @@ if (session_status () == PHP_SESSION_NONE) {
 class System {
 	private $db;
 	const SEARCH_STRING = 'searchString';
-	const SEARCH_TITLE = 'srchTitle';
-	const SEARCH_DESCRIPTION = 'srchDescription';
-	const SEARCH_PRICE = 'srchPrice';
-	const SEARCH_QUANTITY = 'srchQuantity';
+	const SEARCH_TEXT = 'srchText';
+
+	const SEARCH_MIN_PRICE = 'srchMinPrice';
+	const SEARCH_MAX_PRICE = 'srchMaxPrice';
+	const SEARCH_MIN_QUANTITY = 'srchMinQuantity';
 	const SEARCH_CONDITION = 'srchCondition';
 	const SEARCH_STATUS = 'srchStatus';
 	const SUSPENDED = 'suspended';
@@ -1011,22 +1012,25 @@ class System {
 	/**
 	 * Interim Advanced Search method
 	 * 
-	 * @param string $srchTitle
-	 * @param string $srchDescription
-	 * @param string $srchPrice
-	 * @param string $srchQuantity
+	 * @param string $searchText
+	 * @param string $srchMinPrice
+	 * @param string $srchMaxPrice
+	 * @param string $srchMinQuantity
 	 * @param string $srchCondition
 	 * @param string $srchStatus
 	 * @return array
 	 */
-	public function searchAdvanced(string $srchTitle, string $srchDescription, string $srchPrice, string $srchQuantity, string $srchCondition, string $srchStatus): array {
+	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID): array {
 		$args = array ();
-		$args [self::SEARCH_TITLE] = $searchTitle;
-		$args [self::SEARCH_DESCRIPTION] = $searchDescription;
-		$args [self::SEARCH_PRICE] = $searchPrice;
-		$args [self::SEARCH_QUANTITY] = $searchQuantity;
-		$args [self::SEARCH_CONDITION] = $searchCondition;
-		$args [self::SEARCH_STATUS] = $searchStatus;
+		$args [Items::SEARCH_TEXT] = $searchText;
+		$args [Items::SEARCH_MINOR_CATEGORY_ID] = $majorCategoryID;
+		$args [Items::SEARCH_MAJOR_CATEGORY_ID] = $minorCategoryID;
+		$args [Items::SEARCH_MIN_PRICE] = $srchMinPrice;
+		$args [Items::SEARCH_MAX_PRICE] = $srchMaxPrice;
+		$args [Items::SEARCH_MIN_QUANTITY] = $srchMinQuantity;
+		$args [Items::SEARCH_CONDITION] = $srchCondition;
+		$args [Items::SEARCH_STATUS] = $srchStatus;
+
 		$items = new Items ( $this->db );
 		return $items->searchAdvanced ($args);
 	}

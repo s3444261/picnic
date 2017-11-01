@@ -20,15 +20,15 @@
                     <h2 class="text-center">Welcome to Humphree!</h2>
                     <h5 class="text-center">Please search using the form below</h5>
                 </div>
-                <form>
+                <form method="post" action="<?php echo BASE . '/Search/Basic'?>">
                     <div class="form-group">
                         <label for="exampleInputTest">Search</label>
-                        <input type="text" class="form-control" id="exampleInputText" aria-describedby="searchHelp" placeholder="What are you looking for?">
+                        <input type="text" class="form-control" id="srch-term" name="srch-term" aria-describedby="searchHelp" placeholder="What are you looking for?">
                         <small id="searchHelp" class="form-text text-muted">e.g. smartphone, lawnmower, hat</small>
-                        <small id="adv-search" class="form-text text-right"><a href="#" data-toggle="tooltip" data-placement="top" title="Coming soon">Advanced search</a></small>
+                        <small id="adv-search" class="form-text text-right"><a href="<?php echo BASE . '/Search/Advanced'?>" data-toggle="tooltip" data-placement="top" title="Coming soon">Advanced search</a></small>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Search</button>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block"  name="search" >Search</button>
                 </form>
             </div> <!-- end .jumbotron -->
         </div> <!-- end col-9 -->

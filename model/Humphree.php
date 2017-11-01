@@ -1069,8 +1069,8 @@ class Humphree {
 	 * @param string $srchStatus
 	 * @return array
 	 */
-	public function searchAdvanced(string $srchTitle, string $srchDescription, string $srchPrice, string $srchQuantity, string $srchCondition, string $srchStatus): array {
-		$items = $this->system->searchAdvanced($srchTitle, $srchDescription, $srchPrice, $srchQuantity, $srchCondition, $srchStatus);
+	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID): array {
+		$items = $this->system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
 		$its = array ();
 		foreach ( $items as $item ) {
 			$it = array ();
