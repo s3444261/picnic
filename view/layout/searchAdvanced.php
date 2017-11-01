@@ -135,7 +135,6 @@
 						<label for="itemcondition">Condition</label>
 						<label class="radio-inline"><input type="radio" name="itemcondition" value="New">New</label>
 						<label class="radio-inline"><input type="radio" name="itemcondition" value="Used">Used</label>
-						<label class="radio-inline"><input type="radio" name="itemcondition" value="Used">New or Used</label>
 					</div>
 
 					<div class="form-group">
