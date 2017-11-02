@@ -90,16 +90,24 @@ class Items {
 		$items = array();
 		
 		$query = "SELECT * FROM Items";
+		
+		if(strlen($args[self::SEARCH_MINOR_CATEGORY_ID]) > 0
+				|| strlen($args[self::SEARCH_MAJOR_CATEGORY_ID]) > 0){
+			$query = "SELECT ci.categoryID, i.itemID, i.owningUserID, i.title, i.description,";
+			$query = $query . " i.quantity, i.itemcondition, i.price, i.itemStatus,";
+			$query = $query . " i.created_at, i.updated_at";
+			$query = $query . " from Items i";
+			$query = $query . " join Category_items ci";
+			$query = $query . " on i.itemID = ci.itemID";
+		}
 
 		$initialLength = strlen($query);
 		
 		if(strlen($args[self::SEARCH_TEXT]) > 0) {
-			//$srchTitle = $args[self::SEARCH_TEXT];
 			$query = $query . " WHERE title LIKE :srchText OR description LIKE :srchText";
 		}
 
 		if($args[self::SEARCH_MIN_PRICE] > 0) {
-		//	$srchPrice = $args[self::SEARCH_MIN_PRICE];
 			if(strlen($query) == $initialLength){
 				$query = $query . " WHERE price >= :srchMinPrice";
 			} else {
@@ -108,7 +116,6 @@ class Items {
 		}
 
 		if($args[self::SEARCH_MAX_PRICE] < 0x7FFFFFFF) {
-		//	$srchPrice = $args[self::SEARCH_MAX_PRICE];
 			if(strlen($query) == $initialLength){
 				$query = $query . " WHERE price <= :srchMaxPrice";
 			} else {
@@ -116,8 +123,6 @@ class Items {
 			}
 		}
 		if($args[self::SEARCH_MIN_QUANTITY] > 1){
-
-		//	$srchQuantity = $args[self::SEARCH_QUANTITY];
 			if(strlen($query) == $initialLength){
 				$query = $query . " WHERE quantity >= :srchQuantity";
 			} else {
@@ -126,7 +131,6 @@ class Items {
 		}
 		
 		if(strlen($args[self::SEARCH_CONDITION]) > 0){
-			//$srchCondition = $args[self::SEARCH_CONDITION];
 			if(strlen($query) == $initialLength){
 				$query = $query . " WHERE itemcondition = :srchCondition";
 			} else {
@@ -135,13 +139,28 @@ class Items {
 		}
 		
 		if(strlen($args[self::SEARCH_STATUS]) > 0){
-			//$srchStatus = $args[self::SEARCH_STATUS];
 			if(strlen($query) == $initialLength){
 				$query = $query . " WHERE itemstatus = :srchStatus";
 			} else {
 				$query = $query . " AND itemstatus = :srchStatus";
 			}
 		}
+		
+		if(strlen($args[self::SEARCH_MINOR_CATEGORY_ID]) > 0){
+			if(strlen($query) == $initialLength){
+				$query = $query . " WHERE categoryID = :categoryID";
+			} else {
+				$query = $query . " AND categoryID = :categoryID";
+			}
+		} elseif(strlen($args[self::SEARCH_MAJOR_CATEGORY_ID]) > 0){
+			if(strlen($query) == $initialLength){
+				$query = $query . " WHERE categoryID IN(SELECT categoryID from Categories WHERE parentID = :categoryID)";
+			} else {
+				$query = $query . " AND categoryID IN(SELECT categoryID from Categories WHERE parentID = :categoryID)";
+			}
+		}
+		
+		$query = $query . " ORDER BY title";
 
 		$stmt = $this->db->prepare ( $query );
 
@@ -162,6 +181,11 @@ class Items {
 		}
 		if(strlen($args[self::SEARCH_STATUS]) > 0){
 			$stmt->bindValue ( ':srchStatus', $args[self::SEARCH_STATUS] );
+		}
+		if(strlen($args[self::SEARCH_MINOR_CATEGORY_ID]) > 0){
+			$stmt->bindValue ( ':categoryID', $args[self::SEARCH_MINOR_CATEGORY_ID] );
+		} elseif (strlen($args[self::SEARCH_MAJOR_CATEGORY_ID]) > 0){
+			$stmt->bindValue ( ':categoryID', $args[self::SEARCH_MAJOR_CATEGORY_ID] );
 		}
 
 		$stmt->execute ();
