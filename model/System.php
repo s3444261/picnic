@@ -1002,6 +1002,18 @@ class System {
 	}
 	
 	/**
+	 * Searches an items title on an array of strings.
+	 * 
+	 * @param array $searchArray
+	 * @return array
+	 */
+	public function searchArray(array $searchArray): array {
+		
+		$items = new Items ( $this->db );
+		return $items->searchArray ($searchArray);
+	}
+	
+	/**
 	 * Interim Advanced Search method
 	 * 
 	 * @param string $searchText

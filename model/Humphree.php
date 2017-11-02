@@ -1059,6 +1059,30 @@ class Humphree {
 	}
 	
 	/**
+	 * Searches Item title on an array of strings
+	 * 
+	 * @param array $searchArgs
+	 * @return array
+	 */
+	public function searchArray(array $searchArgs): array {
+		$items = $this->system->searchArray ( $searchArgs );
+		$its = array ();
+		foreach ( $items as $item ) {
+			$it = array ();
+			$it ['itemID'] = $item->itemID;
+			$it ['title'] = $item->title;
+			$it ['description'] = $item->description;
+			$it ['quantity'] = $item->quantity;
+			$it ['itemcondition'] = $item->itemcondition;
+			$it ['price'] = $item->price;
+			$it ['status'] = $item->status;
+			
+			$its [] = $it;
+		}
+		return $its;
+	}
+	
+	/**
 	 * Interim advanced search method.
 	 * 
 	 * @param string $srchTitle

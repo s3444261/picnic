@@ -81,6 +81,71 @@ class Items {
 	}
 	
 	/**
+	 * This method takes an array of strings and searches both title and descriptions
+	 * for matches on all parameters.  If the second or subsequent arguments have
+	 * a '-' in front of it, the '-' is stripped from the argument and the search
+	 * excludes anything that contains those parameters.
+	 * 
+	 * @param array $searchArray
+	 * @return array
+	 */
+	public function searchArray(array $searchArray): array {
+		
+		$items = array ();
+		$query = "SELECT * FROM Items";
+		
+		if (count($searchArray) > 0) {
+			for($i = 0; $i < count($searchArray); $i++){
+				if(count($searchArray) == 1){
+					$query = $query . " WHERE title LIKE :searchString" . $i;
+					$query = $query . " OR description LIKE :searchString" . $i;
+				} else {
+					if($i = 0){
+						$query1 = " WHERE (title LIKE :searchString" . $i;
+						$query2 = " OR (description LIKE :searchString" . $i;
+					} else {
+						if(substr($searchArray[$i], 0, 1) === '-'){
+							$searchArray[$i] = ltrim($searchArray[$i], '-');
+							$not = ' NOT ';
+						} else {
+							$not = '';
+						}
+						$query1 = $query1 . " AND title . $not . LIKE :searchString" . $i;
+						$query2 = $query2 . " AND description . $not . LIKE :searchString" . $i;
+					}
+				}
+			}
+			if(count($searchArray) > 1){
+				$query = $query . $query1 . ')' . $query2 . ')';
+			}
+			
+			$stmt = $this->db->prepare ( $query );
+			for($i = 0; $i < count($searchArray); $i++){
+				$stmt->bindValue ( ':searchString' . $i, '%' . $searchArray[$i] . '%' );
+			}
+			$stmt->execute ();
+			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+				$item = new Item ( $this->db );
+				$item->itemID = $row ['itemID'];
+				$item->title = $row ['title'];
+				$item->description = $row ['description'];
+				$item->quantity = $row ['quantity'];
+				$item->itemcondition = $row ['itemcondition'];
+				$item->price = $row ['price'];
+				$item->status = $row ['itemStatus'];
+				$item->created_at = $row ['created_at'];
+				$item->updated_at = $row ['updated_at'];
+				
+				$items [] = $item;
+			}
+			
+			return $items;
+		} else {
+			return $items;
+		}
+	}
+	
+	/**
 	 * Interim advanced search method.
 	 * 
 	 * @param array $args
@@ -93,7 +158,7 @@ class Items {
 		
 		if(strlen($args[self::SEARCH_MINOR_CATEGORY_ID]) > 0
 				|| strlen($args[self::SEARCH_MAJOR_CATEGORY_ID]) > 0){
-			$query = "SELECT ci.categoryID, i.itemID, i.owningUserID, i.title, i.description,";
+			$query = "SELECT i.itemID, i.owningUserID, i.title, i.description,";
 			$query = $query . " i.quantity, i.itemcondition, i.price, i.itemStatus,";
 			$query = $query . " i.created_at, i.updated_at";
 			$query = $query . " from Items i";
