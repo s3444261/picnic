@@ -2233,8 +2233,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$comment = new Comment ( $pdo );
-		$comment->userID = self::USER_ID_1;
+		$comment->toUserID = self::USER_ID_1;
+		$comment->fromUserID = self::USER_ID_2;
 		$comment->itemID = self::ITEM_ID_1;
+		$comment->status = 'unread';
 		$system->addItemComment ( $comment );
 
 		$this->assertTrue( isset ( $_SESSION ['error'] ));
@@ -2247,8 +2249,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$comment = new Comment ( $pdo );
 		$comment->comment = self::COMMENT_NEW;
-		$comment->userID = self::USER_ID_1;
+		$comment->toUserID = self::USER_ID_1;
+		$comment->fromUserID = self::USER_ID_1;
 		$comment->itemID =  self::INVALID_ID;
+		$comment->status = 'unread';
 		$system->addItemComment ( $comment );
 
 		$this->assertTrue( isset ( $_SESSION ['error'] ));
@@ -2260,9 +2264,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$comment = new Comment ( $pdo );
-		$comment->userID = self::USER_ID_1;
+		$comment->toUserID = self::USER_ID_1;
+		$comment->fromUserID = self::USER_ID_1;
 		$comment->itemID = self::ITEM_ID_3;
 		$comment->comment = self::COMMENT_NEW;
+		$comment->status = 'unread';
 
 		$this->assertTrue ( $system->addItemComment ( $comment ) );
 	}
@@ -2335,43 +2341,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$comment->commentID = self::COMMENT_ID_1;
 		$this->assertTrue ( $system->deleteItemComment ( $comment ) );
 	}
-	
-	/*
-	 * deleteItemComments(Item $item): bool
-	 */
-	public function testDeleteItemCommentsItemIdEmpty(): void {
-		$this->populateItemComments ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$system->deleteItemComments ( $item );
 
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-	public function testDeleteItemCommentsItemIdInvalid(): void {
-		$this->populateItemComments ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::INVALID_ID;
-		$system->deleteItemComments ( $item );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-	public function testDeleteItemCommentsItemIdValid(): void {
-		$this->populateItemComments ();
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::ITEM_ID_1;
-
-		$this->assertTrue ( $system->deleteItemComments ( $item ) );
-	}
-	
 	/*
 	 * getItemNotes(Item $item): array
 	 */
@@ -3012,9 +2982,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					$note->set ();
 
 					$comment = new Comment ( $pdo );
-					$comment->userID = $user->userID;
+					$comment->toUserID = $user->userID;
+					$comment->fromUserID = $user->userID;
 					$comment->itemID = $item->itemID;
 					$comment->comment = 'comment' . $l;
+					$comment->status = 'status' . $l;
 					$comment->set ();
 
 					$itemNote = new ItemNotes ( $pdo );
@@ -3157,9 +3129,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 
 			for($j = 1; $j <= 5; $j ++) {
 				$comment = new Comment ( $pdo );
-				$comment->userID = self::USER_ID_1;
-				$comment->itemID = $i;
+				$comment->toUserID = $user->userID;
+				$comment->fromUserID = $user->userID;
+				$comment->itemID = $item->itemID;
 				$comment->comment = 'comment' . $l;
+				$comment->status = 'status' . $l;
 				$comment->set ();
 
 				$l ++;
@@ -3464,9 +3438,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					$note->set ();
 
 					$comment = new Comment ( $pdo );
-					$comment->userID = $user->userID;
+					$comment->toUserID = $user->userID;
+					$comment->fromUserID = $user->userID;
 					$comment->itemID = $item->itemID;
 					$comment->comment = 'comment' . $l;
+					$comment->status = 'status' . $l;
 					$comment->set ();
 
 					$itemNote = new ItemNotes ( $pdo );

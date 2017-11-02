@@ -714,21 +714,13 @@ class System {
 	 * @return bool
 	 */
 	public function addItemComment(Comment $comment): bool {
-
-		$item = new Item( $this->db );
-		$item->itemID = $comment->itemID;
-		if ($item->exists()){
-			try {
-				$comment->set ();
-				return true;
-			} catch ( ModelException $e ) {
-				$_SESSION ['error'] = $e->getMessage ();
-			}
-		} else {
-			$_SESSION ['error'] = self::ERROR_ITEM_ID_NOT_EXIST;
+		try {
+			$comment->set ();
+			return true;
+		} catch ( ModelException $e ) {
+			$_SESSION ['error'] = $e->getMessage ();
+			return false;
 		}
-
-		return false;
 	}
 
 	/**

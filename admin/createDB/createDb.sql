@@ -107,15 +107,19 @@ CREATE TABLE `Category_items` (
 
 CREATE TABLE `Comments` (
 	`commentID` int(11) NOT NULL AUTO_INCREMENT,
-	`userID` int(11) NOT NULL,
+	`toUserID` int(11) NOT NULL,
+	`fromUserID` int(11) NOT NULL,
 	`itemID` bigint(11) NOT NULL,
 	`comment` text NOT NULL,
+	`status` varchar(16) NOT NULL,
 	`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (`commentID`),
-	KEY `FK_Comments_User_idx` (`userID`),
+	KEY `FK_Comments_ToUser_idx` (`toUserID`),
+	KEY `FK_Comments_FromUser_idx` (`fromUserID`),
   CONSTRAINT `FK_Comments_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `FK_Comments_User` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT `FK_Comments_ToUser` FOREIGN KEY (`toUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `FK_Comments_FromUser` FOREIGN KEY (`fromUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Notes` (

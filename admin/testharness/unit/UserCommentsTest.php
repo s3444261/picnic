@@ -13,6 +13,7 @@ require_once 'TestPDO.php';
 require_once dirname ( __FILE__ ) . '/../../createDB/DatabaseGenerator.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Comment.php';
 require_once dirname ( __FILE__ ) . '/../../../model/UserComments.php';
+require_once dirname ( __FILE__ ) . '/../../../model/Item.php';
 require_once dirname ( __FILE__ ) . '/../../../model/User.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Validation.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ModelException.php';
@@ -97,9 +98,11 @@ class UserCommentsTest extends PHPUnit\Framework\TestCase {
 		for($i = 1; $i < 4; $i ++) {
 			for($j = 1; $j < 6; $j ++) {
 				$c = new Comment ( $pdo );
-				$c->userID = $i;
+				$c->toUserID = $i;
+				$c->fromUserID = $i;
 				$c->itemID = 1;
 				$c->comment = 'Comment' . $k;
+				$c->status = 'Status' . $k;
 				try {
 					$c->set ();
 					$k ++;

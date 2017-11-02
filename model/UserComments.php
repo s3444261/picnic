@@ -50,7 +50,7 @@ class UserComments {
 	 * @return array
 	 */
 	public function getUserComments(): array {
-		$query = "SELECT * FROM Comments WHERE userID = :userID";
+		$query = "SELECT * FROM Comments WHERE toUserID = :userID OR fromUserID = :userID";
 		
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindParam ( ':userID', $this->_userID );
@@ -59,11 +59,7 @@ class UserComments {
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$comment = new Comment ( $this->db );
 			$comment->commentID = $row ['commentID'];
-			$comment->userID = $row ['userID'];
-			$comment->comment = $row ['comment'];
-			$comment->created_at = $row ['created_at'];
-			$comment->updated_at = $row ['updated_at'];
-			
+			$comment->get();
 			$objects [] = $comment;
 		}
 		
