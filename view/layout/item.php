@@ -72,6 +72,8 @@
 			</div> <!-- end .container -->
 
 
+            <?php if (isset($_SESSION['userID'])) {  ?>
+
             <div class="container" >
                 <hr />
 
@@ -100,6 +102,8 @@
                     </form>
                 </div>
             </div>
+
+            <?php } ?>
 		</div> <!-- end col-9 -->
 		<!-- Right margin -->
 		<div class="col"></div>
