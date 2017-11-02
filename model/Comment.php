@@ -28,11 +28,21 @@ class Comment {
 	private $_created_at;
 	private $_updated_at;
 	private $db;
-	const ERROR_COMMENT_ID_NOT_EXIST = 'The CommentID does not exist!';
-	const ERROR_USER_ID_NOT_EXIST = 'The User ID does not exist!';
-	const ERROR_COMMENT_NOT_DELETED = 'The comment was not deleted!';
-	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
-	const ERROR_USER_ID_NOT_INT = 'UserID must be an integer!';
+
+	const DB_COL_ID 			= 'commentID';
+	const DB_COL_TO_USER_ID 	= 'toUserID';
+	const DB_COL_FROM_USER_ID 	= 'fromUserID';
+	const DB_COL_ITEM_ID		= 'itemID';
+	const DB_COL_COMMENT 		= 'comment';
+	const DB_COL_STATUS			= 'status';
+	const DB_COL_CREATED_AT 	= 'created_at';
+	const DB_COL_MODIFIED_AT 	= 'updated_at';
+
+	const ERROR_COMMENT_ID_NOT_EXIST 	= 'The CommentID does not exist!';
+	const ERROR_USER_ID_NOT_EXIST 		= 'The User ID does not exist!';
+	const ERROR_COMMENT_NOT_DELETED 	= 'The comment was not deleted!';
+	const ERROR_ITEM_ID_NOT_EXIST 		= 'The ItemID does not exist!';
+	const ERROR_USER_ID_NOT_INT 		= 'UserID must be an integer!';
 
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
@@ -71,13 +81,13 @@ class Comment {
 			$stmt->bindValue ( ':commentID', $this->_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-			$this->_toUserID = $row ['toUserID'];
-			$this->_fromUserID = $row ['fromUserID'];
-			$this->_itemID = $row ['itemID'];
-			$this->_comment = $row ['comment'];
-			$this->_status = $row ['status'];
-			$this->_created_at = $row ['created_at'];
-			$this->_updated_at = $row ['updated_at'];
+			$this->_toUserID = $row [self::DB_COL_TO_USER_ID];
+			$this->_fromUserID = $row [self::DB_COL_FROM_USER_ID];
+			$this->_itemID = $row [self::DB_COL_ITEM_ID];
+			$this->_comment = $row [self::DB_COL_COMMENT];
+			$this->_status = $row [self::DB_COL_STATUS];
+			$this->_created_at = $row [self::DB_COL_CREATED_AT];
+			$this->_updated_at = $row [self::DB_COL_MODIFIED_AT];
 			return $this;
 		} else {
 			throw new ModelException ( self::ERROR_COMMENT_ID_NOT_EXIST );
@@ -161,11 +171,11 @@ class Comment {
 				$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
 				if (strlen($this->_comment) < 1) {
-					$this->_comment = $row ['comment'];
+					$this->_comment = $row [self::DB_COL_COMMENT];
 				}
 
 				if (strlen($this->_status) < 1) {
-					$this->_status = $row ['status'];
+					$this->_status = $row [self::DB_COL_STATUS];
 				}
 
 				$v = new Validation ();
@@ -251,7 +261,7 @@ class Comment {
 			$stmt->execute ();
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 				$comment = new Comment ( $this->db );
-				$comment->_commentID = $row ['commentID'];
+				$comment->_commentID = $row [self::DB_COL_ID];
 				$comment->get();
 				$objects [] = $comment;
 			}
