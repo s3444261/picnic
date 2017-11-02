@@ -11,30 +11,30 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-3"><strong>Type</strong></div>
-        <div class="col-md-9"><span class="btn btn-sm btn-success"><?php echo $this->itemStatus() ?></span></div>
+        <div class="col-md-6"><span class="btn btn-sm btn-success"><?php echo $this->itemStatus() ?></span></div>
     </div>
     <div class="row">
         <div class="col-md-3"><strong>Category</strong></div>
-        <div class="col-md-9"><?php echo $this->selectedMajorCategoryName() . '  /  ' . $this->selectedMinorCategoryName() ?></div>
+        <div class="col-md-6"><?php echo $this->selectedMajorCategoryName() . '  /  ' . $this->selectedMinorCategoryName() ?></div>
     </div>
     <div class="row">
         <div class="col-md-3"><strong>Title</strong></div>
-        <div class="col-md-9"><?php echo $this->itemTitle() ?></div>
+        <div class="col-md-6"><?php echo $this->itemTitle() ?></div>
     </div>
     <div class="row">
         <div class="col-md-3"><strong>Description</strong></div>
-        <div class="col-md-9"><?php echo $this->itemDescription() ?></div>
+        <div class="col-md-6"><?php echo $this->itemDescription() ?></div>
     </div>
     <div class="row">
         <div class="col-md-3"><strong>Quantity</strong></div>
-        <div class="col-md-9"><?php echo $this->itemQuantity() ?></div>
+        <div class="col-md-6"><?php echo $this->itemQuantity() ?></div>
     </div>
     <div class="row">
         <div class="col-md-3"><strong>Condition</strong></div>
-        <div class="col-md-9"><?php echo $this->itemCondition() ?></div>
+        <div class="col-md-6"><?php echo $this->itemCondition() ?></div>
     </div>
     <div class="row">
         <div class="col-md-3"><strong>Price</strong></div>
-        <div class="col-md-9">$<?php echo $this->itemPrice() ?></div>
+        <div class="col-md-6">$<?php echo $this->itemPrice() ?></div>
     </div>
 </div>

@@ -20,13 +20,15 @@
 					<div class="alert alert-danger"><?php echo $this->error() ?></div>
 				<?php } ?>
 
-                <h4>Please confirm the following details for your listing:</h4>
+                <h4 class="text-center top-n-tail">Please confirm the following details for your listing:</h4>
 
                 <div class="row">
-                    <div>
-                        <img src="LastTempImage" alt="Uploaded Image" style="max-width:300px; max-height:300px"/>
+                    <div class="col-3">
+                        <!-- The CSS can handle the image sizing but I wasn't sure if we were still using the inline styles for now so I've left the original code in place and commented out below, for now -->
+                        <img class="item-image" src="LastTempImage" alt="Uploaded Image" />
+                        <!-- <img class="item-image" src="LastTempImage" alt="Uploaded Image" style="max-width:300px; max-height:300px"/> -->
                     </div>
-                    <div>
+                    <div class="col-9">
 						<?php include("itemDetailsReadOnly.php") ?>
                     </div>
                 </div>
