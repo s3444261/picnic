@@ -26,7 +26,7 @@
                 </ul>
 
                 <div class="container-fluid">
-                    <h1 id="Wanted"  class="display-3 text-center">My Messages</h1>
+                    <h1 id="Wanted"  class="display-4 text-center top-n-tail">My Messages</h1>
                 </div>
             </div>
 		</div>
