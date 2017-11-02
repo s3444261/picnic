@@ -233,13 +233,13 @@ class Items {
 			$stmt->bindValue ( ':srchText', '%' . $args[self::SEARCH_TEXT] . '%' );
 		}
 		if($args[self::SEARCH_MIN_PRICE] > 0) {
-			$stmt->bindValue ( ':srchMinPrice', $args[self::SEARCH_MIN_PRICE] );
+			$stmt->bindValue ( ':srchMinPrice', floatval($args[self::SEARCH_MIN_PRICE]) );
 		}
 		if($args[self::SEARCH_MAX_PRICE] < 0x7FFFFFFF) {
-			$stmt->bindValue ( ':srchMaxPrice', $args[self::SEARCH_MAX_PRICE] );
+			$stmt->bindValue ( ':srchMaxPrice', floatval($args[self::SEARCH_MAX_PRICE]));
 		}
 		if($args[self::SEARCH_MIN_QUANTITY] > 1){
-			$stmt->bindValue ( ':srchQuantity', $args[self::SEARCH_MIN_QUANTITY] );
+			$stmt->bindValue ( ':srchQuantity', floatval($args[self::SEARCH_MIN_QUANTITY]) );
 		}
 		if(strlen($args[self::SEARCH_CONDITION]) > 0){
 			$stmt->bindValue ( ':srchCondition',  $args[self::SEARCH_CONDITION] );
