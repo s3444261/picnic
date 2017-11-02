@@ -25,9 +25,8 @@ class DashboardController {
 			$h = new Humphree(Picnic::getInstance());
 
 			$view = new View();
-			$view->SetData('forSaleItems',   $h->getUserOwnedItems($_SESSION['userID'], "ForSale"));
-			$view->SetData('wantedItems',   $h->getUserOwnedItems($_SESSION['userID'],  "Wanted"));
-			$view->SetData('navData',  new NavData(NavData::Account));
+			$view->SetData('forSaleItems', $h->getUserOwnedItems($_SESSION['userID'], "ForSale"));
+			$view->SetData('navData', new NavData(NavData::Account));
 			$view->Render('dashboardForSale');
 		} else {
 			header('Location: ' . BASE . '/Home');
@@ -39,9 +38,8 @@ class DashboardController {
 			$h = new Humphree(Picnic::getInstance());
 
 			$view = new View();
-			$view->SetData('forSaleItems',   $h->getUserOwnedItems($_SESSION['userID'], "ForSale"));
-			$view->SetData('wantedItems',   $h->getUserOwnedItems($_SESSION['userID'],  "Wanted"));
-			$view->SetData('navData',  new NavData(NavData::Account));
+			$view->SetData('wantedItems', $h->getUserOwnedItems($_SESSION['userID'],  "Wanted"));
+			$view->SetData('navData', new NavData(NavData::Account));
 			$view->Render('dashboardWanted');
 		} else {
 			header('Location: ' . BASE . '/Home');
@@ -53,9 +51,9 @@ class DashboardController {
 			$h = new Humphree(Picnic::getInstance());
 
 			$view = new View();
-			$view->SetData('forSaleItems',   $h->getUserOwnedItems($_SESSION['userID'], "ForSale"));
-			$view->SetData('wantedItems',   $h->getUserOwnedItems($_SESSION['userID'],  "Wanted"));
-			$view->SetData('navData',  new NavData(NavData::Account));
+			$view->SetData('inboxMessages', $h->getUserCommentsAsReceiver($_SESSION['userID']));
+			$view->SetData('sentMessages', $h->getUserCommentsAsSender($_SESSION['userID']));
+			$view->SetData('navData', new NavData(NavData::Account));
 			$view->Render('dashboardMessages');
 		} else {
 			header('Location: ' . BASE . '/Home');

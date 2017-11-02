@@ -445,40 +445,6 @@ class Humphree {
 			$it ['itemcondition'] = $item->itemcondition;
 			$it ['price'] = $item->price;
 			$it ['status'] = $item->status;
-			
-			$comments = $this->system->getItemComments ( $item );
-			$cs = array ();
-			
-			foreach ( $comments as $comment ) {
-				$c = array ();
-				
-				$c ['commentID'] = $comment->commentID;
-				$c ['userID'] = $comment->userID;
-				$user = new User ( $this->db );
-				$user->userID = $comment->userID;
-				$user = $this->system->getUser ( $user );
-				$c ['user'] = $user->user;
-				$c ['comment'] = $comment->comment;
-				
-				$cs [] = $c;
-			}
-			
-			$it ['comments'] = $cs;
-			
-			$notes = $this->system->getItemNotes ( $item );
-			$ns = array ();
-			
-			foreach ( $notes as $note ) {
-				$n = array ();
-				
-				$n ['noteID'] = $note->noteID;
-				$n ['note'] = $note->note;
-				
-				$ns [] = $n;
-			}
-			
-			$it ['notes'] = $ns;
-			
 			$its [] = $it;
 		}
 		
@@ -611,34 +577,16 @@ class Humphree {
 		$item->itemID = $itemID;
 		$item = $this->system->getItem ( $item );
 		$it = array ();
-		
+
 		$it ['itemID'] = $item->itemID;
+		$it ['owningUserID'] = $item->owningUserID;
 		$it ['title'] = $item->title;
 		$it ['description'] = $item->description;
 		$it ['quantity'] = $item->quantity;
 		$it ['itemcondition'] = $item->itemcondition;
 		$it ['price'] = $item->price;
 		$it ['status'] = $item->status;
-		
-		$comments = $this->system->getItemComments ( $item );
-		$cs = array ();
-		
-		foreach ( $comments as $comment ) {
-			$c = array ();
-			
-			$c ['commentID'] = $comment->commentID;
-			$c ['userID'] = $comment->userID;
-			$user = new User ( $this->db );
-			$user->userID = $comment->userID;
-			$user = $this->system->getUser ( $user );
-			$c ['user'] = $user->user;
-			$c ['comment'] = $comment->comment;
-			
-			$cs [] = $c;
-		}
-		
-		$it ['comments'] = $cs;
-		
+
 		$notes = $this->system->getItemNotes ( $item );
 		$ns = array ();
 		
@@ -761,22 +709,24 @@ class Humphree {
 		
 		return $it;
 	}
-	
+
 	/**
 	 * Adds a comment for an item.
 	 *
-	 * @param int $userID        	
-	 * @param int $itemID        	
-	 * @param string $comment        	
-	 * @return bool
+	 * @param int $fromUserID	The user ID who made the comment.
+	 * @param int $toUserID		The user ID at which the comment is directed.
+	 * @param int $itemID		The item ID to which the comment relates.
+	 * @param string $comment	The test of the comment.
+	 * @return bool				True if the comment was added successfully, false otherwise.
 	 */
-	public function addItemComment(int $userID, int $itemID, string $comment): bool {
-		$item = new Item ( $this->db );
+	public function addItemComment(int $fromUserID, int $toUserID, int $itemID, string $comment): bool {
 		$c = new Comment ( $this->db );
-		$item->itemID = $itemID;
+		$c->itemID = $itemID;
 		$c->comment = $comment;
-		$c->userID = $userID;
-		if ($this->system->addItemNote ( $item, $c )) {
+		$c->toUserID = $toUserID;
+		$c->fromUserID = $fromUserID;
+		$c->status = 'unread';
+		if ($this->system->addItemComment ( $c )) {
 			return true;
 		} else {
 			return false;
@@ -815,6 +765,71 @@ class Humphree {
 		} else {
 			return false;
 		}
+	}
+	/**
+	 * Returns all comments associated with the given user ID, where the user is the sender.
+	 *
+	 * @param int $userID	The user ID whose comments will be returned.
+	 * @return array       	An array of associated Comment objects.
+	 */
+	public function getUserCommentsAsSender(int $userID): array {
+		return $this->commentsToArrays($this->system->getUserCommentsAsSender($userID));
+	}
+
+	/**
+	 * Returns all comments associated with the given user ID, where the user is the receiver.
+	 *
+	 * @param int $userID	The user ID whose comments will be returned.
+	 * @return array       	An array of associated Comment objects.
+	 */
+	public function getUserCommentsAsReceiver(int $userID): array {
+		return $this->commentsToArrays($this->system->getUserCommentsAsReceiver($userID));
+	}
+
+	/**
+	 * Returns all comments associated with the given user ID, either as the sender or as the
+	 * receiver.
+	 *
+	 * @param int $userID	The user ID whose comments will be returned.
+	 * @return array       	An array of associated Comment objects.
+	 */
+	public function getAllUserComments(int $userID): array {
+		return $this->commentsToArrays($this->system->getAllUserComments($userID));
+	}
+
+	/**
+	 * Converts an array of Comment objects into a generic data array.
+	 *
+	 * @param array $comments	The array to be converted.
+	 * @return array 			The converted array.
+	 */
+	private function commentsToArrays(array $comments) : array {
+		$result = [];
+
+		foreach ($comments as $comment) {
+			$result[] = $this->commentToArray($comment);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Converts a Comment object into a generic data array.
+	 *
+	 * @param Comment $comment 	The Comment object to be converted.
+	 * @return array 			The converted array.
+	 */
+	private function commentToArray(Comment $comment) : array {
+		$it = array ();
+		$it ['commentID'] = $comment->commentID;
+		$it ['item'] = $this->getItem($comment->itemID);
+		$it ['toUser'] = $this->getuser($comment->toUserID);
+		$it ['fromUser'] = $this->getuser($comment->fromUserID);
+		$it ['comment'] = $comment->comment;
+		$it ['status'] =  $comment->status;
+		$it ['created_at'] = $comment->created_at;
+		$it ['updated_at'] = $comment->updated_at;
+		return $it;
 	}
 
 	/**

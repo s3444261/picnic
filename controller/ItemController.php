@@ -26,12 +26,38 @@ class ItemController {
 	 * 			The iID of the item to be displayed.
 	 */
 	public function View(int $itemId) {
-		$h = new Humphree(Picnic::getInstance());
+		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+			$h = new Humphree(Picnic::getInstance());
 
-		$view = new View();
-		$view->SetData('item', $h ->getItem($itemId));
-		$view->SetData('navData',  new NavData(NavData::ViewListings));
-		$view->Render('item');
+			$view = new View();
+			$view->SetData('item', $h->getItem($itemId));
+			$view->SetData('navData', new NavData(NavData::ViewListings));
+			$view->Render('item');
+			return;
+		} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			if (isset($_POST['sendMessage'])) {
+				if (isset($_POST['message'])) {
+					$comment = $this->sanitize($_POST)['message'];
+					$h = new Humphree(Picnic::getInstance());
+					$item = $h->getItem($itemId);
+
+					$view = new View();
+					$view->SetData('item', $h->getItem($itemId));
+					$view->SetData('navData', new NavData(NavData::ViewListings));
+
+					if (!$h->addItemComment($_SESSION['userID'], $item['owningUserID'], $itemId, $comment)) {
+						$view->SetData('error', 'Could not send the message: ' . $_SESSION['error']);
+					} else {
+						$view->SetData('info', 'Message sent.');
+					}
+
+					$view->Render('item');
+					return;
+				}
+			}
+		}
+
+		header('Location: ' . BASE . '/Item/View/' . $itemId);
 	}
 
 	public function Create() {

@@ -243,6 +243,75 @@ class Comment {
 	}
 
 	/**
+	 * Returns all comments associated with the given user ID, where the user is the receiver.
+	 *
+	 * @param int $userID	The user ID whose comments will be returned.
+	 * @return array       	An array of associated Comment objects.
+	 */
+	public function getUserCommentsAsSender(int $userID): array {
+		$query = "SELECT * FROM Comments WHERE fromUserID = :userID AND status != 'deleted' ORDER BY updated_at DESC";
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindValue ( ':userID', $userID);
+		$stmt->execute ();
+
+		$objects = array ();
+		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+			$comment = new Comment ( $this->db );
+			$comment->_commentID = $row [self::DB_COL_ID];
+			$comment->get();
+			$objects [] = $comment;
+		}
+
+		return $objects;
+	}
+
+	/**
+	 * Returns all comments associated with the given user ID, where the user is the sender.
+	 *
+	 * @param int $userID	The user ID whose comments will be returned.
+	 * @return array       	An array of associated Comment objects.
+	 */
+	public function getUserCommentsAsReceiver(int $userID): array {
+		$query = "SELECT * FROM Comments WHERE toUserID = :userID AND status != 'deleted' ORDER BY updated_at DESC";
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindValue ( ':userID', $userID);
+		$stmt->execute ();
+
+		$objects = array ();
+		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+			$comment = new Comment ( $this->db );
+			$comment->_commentID = $row [self::DB_COL_ID];
+			$comment->get();
+			$objects [] = $comment;
+		}
+
+		return $objects;
+	}
+	/**
+	 * Returns all comments associated with the given user ID, either as the sender or as the
+	 * receiver.
+	 *
+	 * @param int $userID	The user ID whose comments will be returned.
+	 * @return array       	An array of associated Comment objects.
+	 */
+	public function getAllUserComments(int $userID): array {
+		$query = "SELECT * FROM Comments WHERE toUserID = :userID OR fromUserID = :userID AND status != 'deleted' ORDER BY updated_at DESC";
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindValue ( ':userID', $userID);
+		$stmt->execute ();
+
+		$objects = array ();
+		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+			$comment = new Comment ( $this->db );
+			$comment->_commentID = $row [self::DB_COL_ID];
+			$comment->get();
+			$objects [] = $comment;
+		}
+
+		return $objects;
+	}
+
+	/**
 	 * Retrieves all commentID's for an item and returns them as an
 	 * array of Comment Objects.
 	 * @return array
@@ -254,7 +323,7 @@ class Comment {
 		$i->itemID = $this->_itemID;
 
 		if ($i->exists ()) {
-			$query = "SELECT * FROM Comments WHERE itemID = :itemID";
+			$query = "SELECT * FROM Comments WHERE itemID = :itemID ORDER BY updated_at DESC";
 
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindValue ( ':itemID', $this->_itemID );

@@ -775,7 +775,56 @@ class System {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Returns all comments associated with the given user ID, where the user is the sender.
+	 *
+	 * @param int $userID	The user ID whose comments will be returned.
+	 * @return array       	An array of associated Comment objects.
+	 */
+	public function getUserCommentsAsSender(int $userID): array {
+		$comment = new Comment ( $this->db );
+		try {
+			return $comment->getUserCommentsAsSender($userID);
+		} catch (ModelException $e) {
+			$_SESSION ['error'] = $e->getMessage ();
+			return [];
+		}
+	}
+
+	/**
+	 * Returns all comments associated with the given user ID, where the user is the receiver.
+	 *
+	 * @param int $userID	The user ID whose comments will be returned.
+	 * @return array       	An array of associated Comment objects.
+	 */
+	public function getUserCommentsAsReceiver(int $userID): array {
+		$comment = new Comment ( $this->db );
+		try {
+			return $comment->getUserCommentsAsReceiver($userID);
+		} catch (ModelException $e) {
+			$_SESSION ['error'] = $e->getMessage ();
+			return [];
+		}
+	}
+
+	/**
+	 * Returns all comments associated with the given user ID, either as the sender or as the
+	 * receiver.
+	 *
+	 * @param int $userID	The user ID whose comments will be returned.
+	 * @return array       	An array of associated Comment objects.
+	 */
+	public function getAllUserComments(int $userID): array {
+		$comment = new Comment ( $this->db );
+		try {
+			return $comment->getAllUserComments($userID);
+		} catch (ModelException $e) {
+			$_SESSION ['error'] = $e->getMessage ();
+			return [];
+		}
+	}
+
 	/**
 	 * Retrieves all notes for an item and returns them as an array of
 	 * Notes objects.

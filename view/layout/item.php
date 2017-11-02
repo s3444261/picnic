@@ -83,10 +83,19 @@
                     } ?>
 
                 </div>
+
+				<?php if (isset($this->data['error'])) { ?>
+                    <div class="alert alert-danger"><?php echo $this->data['error'] ?></div>
+				<?php } ?>
+
+				<?php if (isset($this->data['info'])) { ?>
+                    <div class="alert alert-info"><?php echo $this->data['info'] ?></div>
+				<?php } ?>
+
                 <div>
-                    <form>
-                        <textarea rows="5" class="form-control" name="comment" id="comment" placeholder="Enter a message..."></textarea>
-                        <button type="submit" name="postComment" id="postComment" class="btn btn-primary">Send message
+                    <form data-toggle="validator" role="form" method="post" action="<?php echo BASE . '/Item/View/' . $this->data['item']['itemID'] ?>">
+                        <textarea rows="5" class="form-control" name="message" id="message" placeholder="Enter a message..." required></textarea>
+                        <button type="submit" name="sendMessage" id="sendMessage" class="btn btn-primary">Send message
                         </button>
                     </form>
                 </div>
