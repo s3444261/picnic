@@ -249,7 +249,7 @@ class Comment {
 	 * @return array       	An array of associated Comment objects.
 	 */
 	public function getUserCommentsAsSender(int $userID): array {
-		$query = "SELECT * FROM Comments WHERE fromUserID = :userID AND status != 'deleted' ORDER BY updated_at DESC";
+		$query = "SELECT * FROM Comments WHERE fromUserID = :userID ORDER BY created_at DESC";
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindValue ( ':userID', $userID);
 		$stmt->execute ();
@@ -272,7 +272,7 @@ class Comment {
 	 * @return array       	An array of associated Comment objects.
 	 */
 	public function getUserCommentsAsReceiver(int $userID): array {
-		$query = "SELECT * FROM Comments WHERE toUserID = :userID AND status != 'deleted' ORDER BY updated_at DESC";
+		$query = "SELECT * FROM Comments WHERE toUserID = :userID AND status != 'deleted' ORDER BY created_at DESC";
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindValue ( ':userID', $userID);
 		$stmt->execute ();

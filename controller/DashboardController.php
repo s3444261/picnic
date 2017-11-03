@@ -48,16 +48,78 @@ class DashboardController {
 
 	public function Messages() {
 		if ($this->auth()) {
-			$h = new Humphree(Picnic::getInstance());
-
-			$view = new View();
-			$view->SetData('inboxMessages', $h->getUserCommentsAsReceiver($_SESSION['userID']));
-			$view->SetData('sentMessages', $h->getUserCommentsAsSender($_SESSION['userID']));
-			$view->SetData('navData', new NavData(NavData::Account));
+			$view = new MessagesView();
 			$view->Render('dashboardMessages');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
+	}
+
+	public function SendMessage() {
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			if (isset($_POST['sendMessage'])) {
+				if (isset($_POST['message'])) {
+					$comment = $this->sanitize($_POST)['message'];
+					$h = new Humphree(Picnic::getInstance());
+					$h->addItemComment($_SESSION['userID'], intval($_POST['toUserID']), intval($_POST['itemID']), $comment);
+					header('Location: ' . BASE . '/Dashboard/Messages');
+					return;
+				}
+			}
+		}
+
+		header('Location: ' . BASE . '/Home');
+	}
+
+	public function DeleteMessage(int $messageID) {
+		if ($this->auth()) {
+			$h = new Humphree(Picnic::getInstance());
+			$message = $h->getComment($messageID);
+
+			// we can only affect messages in our inbox.
+			if ($message['toUserID'] === $_SESSION['userID']) {
+				$args = ['commentID' => $messageID, 'status' => 'deleted'];
+				$h->updateItemComment($args);
+				header('Location: ' . BASE . '/Dashboard/Messages');
+				return;
+			}
+		}
+
+		header('Location: ' . BASE . '/Home');
+	}
+
+	public function MarkMessageRead(int $messageID) {
+		if ($this->auth()) {
+			$h = new Humphree(Picnic::getInstance());
+			$message = $h->getComment($messageID);
+
+			// we can only affect messages in our inbox.
+			if ($message['toUserID'] === $_SESSION['userID']) {
+				$args = ['commentID' => $messageID, 'status' => 'read'];
+				$h->updateItemComment($args);
+				header('Location: ' . BASE . '/Dashboard/Messages');
+				return;
+			}
+		}
+
+		header('Location: ' . BASE . '/Home');
+	}
+
+	public function MarkMessageUnread(int $messageID) {
+		if ($this->auth()) {
+			$h = new Humphree(Picnic::getInstance());
+			$message = $h->getComment($messageID);
+
+			// we can only affect messages in our inbox.
+			if ($message['toUserID'] === $_SESSION['userID']) {
+				$args = ['commentID' => $messageID, 'status' => 'unread'];
+				$h->updateItemComment($args);
+				header('Location: ' . BASE . '/Dashboard/Messages');
+				return;
+			}
+		}
+
+		header('Location: ' . BASE . '/Home');
 	}
 
 	private function auth(){
@@ -70,5 +132,15 @@ class DashboardController {
 		} else {
 			return false;
 		}
+	}
+
+	private function sanitize(array $dataToSanitize): array {
+		$result = [];
+
+		foreach ($dataToSanitize as $x => $x_value) {
+			$result[$x] = filter_var($x_value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+		}
+
+		return $result;
 	}
 }

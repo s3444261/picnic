@@ -687,7 +687,30 @@ class Humphree {
 		}
 		return $cs;
 	}
-	
+
+	/**
+	 * Gets the details for a comment.
+	 *
+	 * @param int $commentID
+	 * @return array
+	 */
+	public function getComment(int $commentID): array {
+		$comment = new Comment ( $this->db );
+		$comment->commentID = $commentID;
+		$comment->get();
+		$it = array ();
+		$it ['commentID'] = $comment->commentID;
+		$it ['itemID'] = $comment->itemID;
+		$it ['toUserID'] = $comment->toUserID;
+		$it ['fromUserID'] = $comment->fromUserID;
+		$it ['comment'] = $comment->comment;
+		$it ['status'] = $comment->status;
+		$it ['created_at'] = $comment->created_at;
+		$it ['updated_at'] = $comment->updated_at;
+
+		return $it;
+	}
+
 	/**
 	 * Retrieves an item associated with a comment.
 	 *
@@ -742,8 +765,17 @@ class Humphree {
 	public function updateItemComment(array $c): bool {
 		$comment = new Comment ( $this->db );
 		$comment->commentID = $c ['commentID'];
-		$comment->userID = $c ['userID'];
-		$comment->comment = $c ['comment'];
+
+		// the only things that can be sensibly updated in a comment, are the
+		// comment text and the status.
+		if (isset($c ['status'])) {
+			$comment->status = $c ['status'];
+		}
+
+		if (isset($c ['comment'])) {
+			$comment->comment = $c ['comment'];
+		}
+
 		if ($this->system->updateItemComment ( $comment )) {
 			return true;
 		} else {

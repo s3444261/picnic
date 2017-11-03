@@ -8,7 +8,7 @@
  */
 
 /**
- * Class ItemEditView
+ * Class ItemView
  *
  * View class for editing an existing item.
  */
