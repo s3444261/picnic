@@ -1079,8 +1079,8 @@ class Humphree {
 	 * @param array $searchArgs
 	 * @return array
 	 */
-	public function searchArray(array $searchArgs): array {
-		$items = $this->system->searchArray ( $searchArgs );
+	public function searchArray(string $searchString): array {
+		$items = $this->system->searchArray ( $searchString );
 		$its = array ();
 		foreach ( $items as $item ) {
 			$it = array ();

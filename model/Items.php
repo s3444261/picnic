@@ -53,11 +53,11 @@ class Items {
 		if (strlen ( $searchString ) > 0) {
 			
 			$query = "SELECT * FROM Items
-						WHERE title LIKE :searchString 
-						OR description LIKE :searchString";
+						WHERE MATCH (title, description)
+						AGAINST (:searchString)";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindValue ( ':searchString', '%' . $searchString . '%' );
+			$stmt->bindValue ( ':searchString', $searchString );
 			$stmt->execute ();
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 				$item = new Item ( $this->db );
@@ -81,48 +81,25 @@ class Items {
 	}
 	
 	/**
-	 * This method takes an array of strings and searches both title and descriptions
-	 * for matches on all parameters.  If the second or subsequent arguments have
-	 * a '-' in front of it, the '-' is stripped from the argument and the search
-	 * excludes anything that contains those parameters.
+	 * This method uses boolean full text searches.  See http://www.vionblog.com/mysql-full-text-search-with-multiple-words/
+	 * for a full explanation.
+	 * + means AND
+	 * – means NOT
+	 * [no operator] means OR
 	 * 
 	 * @param array $searchArray
 	 * @return array
 	 */
-	public function searchArray(array $searchArray): array {
+	public function searchArray(string $searchString): array {
 		
 		$items = array ();
-		$query = "SELECT * FROM Items";
+		$query = "SELECT * FROM Items
+					WHERE MATCH (title, description)
+					AGAINST (:searchString IN BOOLEAN MODE)";
 		
-		if (count($searchArray) > 0) {
-			for($i = 0; $i < count($searchArray); $i++){
-				if(count($searchArray) == 1){
-					$query = $query . " WHERE title LIKE :searchString" . $i;
-					$query = $query . " OR description LIKE :searchString" . $i;
-				} else {
-					if($i = 0){
-						$query1 = " WHERE (title LIKE :searchString" . $i;
-						$query2 = " OR (description LIKE :searchString" . $i;
-					} else {
-						if(substr($searchArray[$i], 0, 1) === '-'){
-							$searchArray[$i] = ltrim($searchArray[$i], '-');
-							$not = ' NOT ';
-						} else {
-							$not = '';
-						}
-						$query1 = $query1 . " AND title . $not . LIKE :searchString" . $i;
-						$query2 = $query2 . " AND description . $not . LIKE :searchString" . $i;
-					}
-				}
-			}
-			if(count($searchArray) > 1){
-				$query = $query . $query1 . ')' . $query2 . ')';
-			}
-			
+		if (strlen($searchString) > 0) {
 			$stmt = $this->db->prepare ( $query );
-			for($i = 0; $i < count($searchArray); $i++){
-				$stmt->bindValue ( ':searchString' . $i, '%' . $searchArray[$i] . '%' );
-			}
+			$stmt->bindValue ( ':searchString', $searchString );
 			$stmt->execute ();
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 				$item = new Item ( $this->db );
@@ -205,9 +182,9 @@ class Items {
 		
 		if(strlen($args[self::SEARCH_STATUS]) > 0){
 			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE itemstatus = :srchStatus";
+				$query = $query . " WHERE itemStatus = :srchStatus";
 			} else {
-				$query = $query . " AND itemstatus = :srchStatus";
+				$query = $query . " AND itemStatus = :srchStatus";
 			}
 		}
 		

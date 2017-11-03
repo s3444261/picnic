@@ -2819,7 +2819,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 
 		$user = new User ( $pdo, [
 			'user' => 'user',
-			'email' => 'user@gmai.com',
+			'email' => 'user@gmail.com',
 			'password' => 'TestTest88'
 		] );
 

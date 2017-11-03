@@ -1056,10 +1056,10 @@ class System {
 	 * @param array $searchArray
 	 * @return array
 	 */
-	public function searchArray(array $searchArray): array {
+	public function searchArray(string $searchString): array {
 		
 		$items = new Items ( $this->db );
-		return $items->searchArray ($searchArray);
+		return $items->searchArray ($searchString);
 	}
 	
 	/**
