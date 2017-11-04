@@ -318,7 +318,56 @@
  * -- testGetUserRatingsUserIdInvalid(): void
  * -- testGetUserRatingsUserIdValid(): void
  *
+ * search(string $searchString): array
+ * -- testSearchNegativeResult(): void
+ * -- testSearchTitlePositiveResult(): void
+ * -- testSearchDescriptionPositiveResult(): void
  *
+ * searchArray(string $searchString): array
+ * -- testSearchArrayTitleNegativeResult(): void
+ * -- testSearchArrayAndWord(): void
+ * -- testSearchArrayNotWord(): void
+ * -- testSearchArrayOrWord(): void
+ * -- testSearchArrayAndWordAndWord(): void
+ * -- testSearchArrayNotWordAndWord(): void
+ * -- testSearchArrayOrWordAndWord(): void
+ * -- testSearchArrayAndWordNotWord(): void
+ * -- testSearchArrayNotWordNotWord(): void
+ * -- testSearchArrayOrWordNotWord(): void
+ * -- testSearchArrayAndWordOrWord(): void
+ * -- testSearchArrayNotWordOrWord(): void
+ * -- testSearchArrayOrWordOrWord(): void
+ * -- testSearchArrayAndWordAndWordAndWord(): void
+ * -- testSearchArrayAndWordTildaWord(): void
+ * -- testSearchArrayAndWordAndGreaterWordLessWord(): void
+ *
+ * searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID): array 
+ * -- testSearchAdvancedTitleNegativeResult(): void
+ * -- testSearchAdvancedAndWord(): void
+ * -- testSearchAdvancedNotWord(): void
+ * -- testSearchAdvancedOrWord(): void
+ * -- testSearchAdvancedAndWordAndWord(): void
+ * -- testSearchAdvancedNotWordAndWord(): void
+ * -- testSearchAdvancedOrWordAndWord(): void
+ * -- testSearchAdvancedAndWordNotWord(): void
+ * -- testSearchAdvancedNotWordNotWord(): void
+ * -- testSearchAdvancedOrWordNotWord(): void
+ * -- testSearchAdvancedAndWordOrWord(): void
+ * -- testSearchAdvancedNotWordOrWord(): void
+ * -- testSearchAdvancedOrWordOrWord(): void
+ * -- testSearchAdvancedAndWordAndWordAndWord(): void
+ * -- testSearchAdvancedAndWordTildaWord(): void
+ * -- testSearchAdvancedAndWordAndGreaterWordLessWord(): void
+ * -- testSearchAdvancedMinorCategoryIDNotExist(): void
+ * -- testSearchAdvancedMinorCategoryIDExist(): void
+ * -- testSearchAdvancedMajorCategoryIDNotExist(): void
+ * -- testSearchAdvancedMajorCategoryIDExist(): void
+ * -- testSearchAdvancedMinPrice(): void
+ * -- testSearchAdvancedMaxPrice(): void
+ * -- testSearchAdvancedMinPriceMaxPrice(): void
+ * -- testSearchAdvancedMinQuantity(): void
+ * -- testSearchAdvancedCondition(): void
+ * -- testSearchAdvancedStatus(): void
  */
 declare ( strict_types = 1 )
 	;
@@ -530,6 +579,38 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const USER_RATING_ID_2 = 2;
 	const SELLRATING_2 = 4;
 	const BUYRATING_2 = 3;
+	
+	// Search Constants
+	const STRING_NOT_EXIST = 'Hammer';
+	const TITLE_EXIST = 'Word3 word4';
+	const DESCRIPTION_EXIST = 'word7 word8';
+	const AND_WORD = '+word12';
+	const NOT_WORD = '-word12';
+	const OR_WORD = 'word12';
+	const AND_WORD_AND_WORD = '+word12 +word13';
+	const NOT_WORD_AND_WORD = '-word12 +word13';
+	const OR_WORD_AND_WORD = 'word12 +word13';
+	const AND_WORD_NOT_WORD = '+word12 -word13';
+	const NOT_WORD_NOT_WORD = '-word12 -word13';
+	const OR_WORD_NOT_WORD = 'word12 -word13';
+	const AND_WORD_OR_WORD = '+word12 word13';
+	const NOT_WORD_OR_WORD = '-word12 word13';
+	const OR_WORD_OR_WORD = 'word12 word13';
+	const AND_WORD_AND_WORD_AND_WORD = '+word12 +word13 +word14';
+	const AND_WORD_TILDA_WORD = '+word12 ~word13';
+	const AND_WORD_AND_GREATER_WORD_LESS_WORD = 'word12 +(>word13 <word14)';
+	const SEARCH_INVALID_ID = 5000;
+	const SEARCH_VALID_ID = 10;
+	
+	const SEARCH_TEXT = 'srchText';
+	const SEARCH_MINOR_CATEGORY_ID = 'srchMinorCategory';
+	const SEARCH_MAJOR_CATEGORY_ID = 'srchMajorCategory';
+	const SEARCH_MIN_PRICE = 'srchMinPrice';
+	const SEARCH_MAX_PRICE = 'srchMaxPrice';
+	const SEARCH_MIN_QUANTITY = 'srchQuantity';
+	const SEARCH_CONDITION = 'srchCondition';
+	const SEARCH_STATUS = 'srchStatus';
+	
 	protected function setUp(): void {
 		// Regenerate a fresh database.
 		TestPDO::CreateTestDatabaseAndUser ();
@@ -2779,6 +2860,765 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertEquals ( 2.8, $stats ['avgRating'] );
 	}
 	
+	/**
+	 * Does not return anything.
+	 */
+	public function testSearchNegativeResult(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->search(self::STRING_NOT_EXIST);
+		$this->assertEquals(0, count($array));
+	}
+	
+	/**
+	 * Returns anything from either title or description that has
+	 * either Word3 or word4.  Case insensitive.
+	 */
+	public function testSearchTitlePositiveResult(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->search(self::TITLE_EXIST);
+		$this->assertEquals(15, count($array));
+	}
+	
+	/**
+	 * Returns anything from either title or description that has
+	 * either Word7 or word8.  Case insensitive.
+	 */
+	public function testSearchDescriptionPositiveResult(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->search(self::DESCRIPTION_EXIST);
+		$this->assertEquals(35, count($array));
+	}
+	
+	/*
+	 * searchArray(array $searchArray): array
+	 */
+	/**
+	 * Returns nothing as string does not exist.
+	 */
+	public function testSearchArrayTitleNegativeResult(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::STRING_NOT_EXIST);
+		$this->assertEquals(0, count($array));
+	}
+	
+	/**
+	 * Returns 40 rows.  Each row has word12 (case insensitive)
+	 * somewhere in either the title or description.
+	 */
+	public function testSearchArrayAndWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::AND_WORD);
+		$this->assertEquals(40, count($array));
+	}
+	
+	/**
+	 * This does not return any rows as the actual result contains
+	 * more than half the database.
+	 */
+	public function testSearchArrayNotWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::NOT_WORD);
+		$this->assertEquals(0, count($array));
+	}
+	
+	/**
+	 * Returns 40 rows.  Each row has word12 (case insensitive)
+	 * somewhere in either the title or description.
+	 */
+	public function testSearchArrayOrWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::OR_WORD);
+		$this->assertEquals(40, count($array));
+	}
+	
+	/**
+	 * Returns 35 rows.  Each row has both word12 (case insensitive)
+	 * and word 13 somewhere in either the title or description.
+	 */
+	public function testSearchArrayAndWordAndWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::AND_WORD_AND_WORD);
+		$this->assertEquals(35, count($array));
+	}
+	
+	/**
+	 * Returns 5 Rows.  These rows contain Word13 only.
+	 */
+	public function testSearchArrayNotWordAndWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::NOT_WORD_AND_WORD);
+		$this->assertEquals(5, count($array));
+	}
+	
+	/**
+	 * Returns 40 Rows. Each row has either both word12 and
+	 * word13 in either the title or description, or has just
+	 * word13 in either the title or description.
+	 */
+	public function testSearchArrayOrWordAndWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::OR_WORD_AND_WORD);
+		$this->assertEquals(40, count($array));
+	}
+	
+	/**
+	 * Returns 5 Rows.  These rows contain word12 only.
+	 */
+	public function testSearchArrayAndWordNotWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::AND_WORD_NOT_WORD);
+		$this->assertEquals(5, count($array));
+	}
+	
+	/**
+	 * Returns 0 rows as in actual fact more than half the
+	 * database would be returned in this instance.
+	 */
+	public function testSearchArrayNotWordNotWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::NOT_WORD_NOT_WORD);
+		$this->assertEquals(0, count($array));
+	}
+	
+	/**
+	 * Returns 5 Rows.  These rows contain word12 only.
+	 */
+	public function testSearchArrayOrWordNotWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::OR_WORD_NOT_WORD);
+		$this->assertEquals(5, count($array));
+	}
+	
+	/**
+	 * Returns 40 Rows.  All rows contain word12.  35 rows
+	 * contain word12 and word13.  5 rows contain only
+	 * word12.  The rows that contain only word12 were expected
+	 * to rate lower than those rows that also contain word13,
+	 * however the opposite seems to be the case.
+	 */
+	public function testSearchArrayAndWordOrWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::AND_WORD_OR_WORD);
+		$this->assertEquals(40, count($array));
+	}
+	
+	/**
+	 * Returns 5 rows.  These rows only contain word13.
+	 */
+	public function testSearchArrayNotWordOrWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::NOT_WORD_OR_WORD);
+		$this->assertEquals(5, count($array));
+	}
+	
+	/**
+	 * Returns 45 Rows.  These rows contain either word12 only,
+	 * word13 only, or both word12 and word13.
+	 */
+	public function testSearchArrayOrWordOrWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::OR_WORD_OR_WORD);
+		$this->assertEquals(45, count($array));
+	}
+	
+	/**
+	 * Returns 30 Rows. Each row contains all word12, word13 and
+	 * word14 across the title and description tables.
+	 */
+	public function testSearchArrayAndWordAndWordAndWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::AND_WORD_AND_WORD_AND_WORD);
+		$this->assertEquals(30, count($array));
+	}
+	
+	/**
+	 * Returns 40 rows.  The first 5 rows contain word12 only and rank
+	 * higher than the rows that also contain word13.
+	 */
+	public function testSearchArrayAndWordTildaWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::AND_WORD_TILDA_WORD);
+		$this->assertEquals(40, count($array));
+		$this->assertEquals(16, $array[0]->itemID);
+		$this->assertEquals(17, $array[1]->itemID);
+		$this->assertEquals(18, $array[2]->itemID);
+		$this->assertEquals(19, $array[3]->itemID);
+		$this->assertEquals(20, $array[4]->itemID);
+	}
+	
+	/**
+	 * Returns 45 rows.  Rows that don't contain word14 rank higher than those that do.
+	 */
+	public function testSearchArrayAndWordAndGreaterWordLessWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$array = $system->searchArray(self::AND_WORD_AND_GREATER_WORD_LESS_WORD);
+		$this->assertEquals(45, count($array));
+		$this->assertEquals(21, $array[0]->itemID);
+		$this->assertEquals(22, $array[1]->itemID);
+		$this->assertEquals(23, $array[2]->itemID);
+		$this->assertEquals(24, $array[3]->itemID);
+		$this->assertEquals(25, $array[4]->itemID);
+	}
+	
+	/*
+	 * searchAdvanced(array $args): array
+	 */
+	/**
+	 * Returns nothing as string does not exist.
+	 */
+	public function testSearchAdvancedTitleNegativeResult(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::STRING_NOT_EXIST;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(0, count($array));
+	}
+	
+	/**
+	 * Returns 40 rows.  Each row has word12 (case insensitive)
+	 * somewhere in either the title or description.
+	 */
+	public function testSearchAdvancedAndWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::AND_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(40, count($array));
+	}
+	
+	/**
+	 * This does not return any rows as the actual result contains
+	 * more than half the database.
+	 */
+	public function testSearchAdvancedNotWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::NOT_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(0, count($array));
+	}
+	
+	/**
+	 * Returns 40 rows.  Each row has word12 (case insensitive)
+	 * somewhere in either the title or description.
+	 */
+	public function testSearchAdvancedOrWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::OR_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(40, count($array));
+	}
+	
+	/**
+	 * Returns 35 rows.  Each row has both word12 (case insensitive)
+	 * and word 13 somewhere in either the title or description.
+	 */
+	public function testSearchAdvancedAndWordAndWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::AND_WORD_AND_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(35, count($array));
+	}
+	
+	/**
+	 * Returns 5 Rows.  These rows contain Word13 only.
+	 */
+	public function testSearchAdvancedNotWordAndWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::NOT_WORD_AND_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(5, count($array));
+	}
+	
+	/**
+	 * Returns 40 Rows. Each row has either both word12 and
+	 * word13 in either the title or description, or has just
+	 * word13 in either the title or description.
+	 */
+	public function testSearchAdvancedOrWordAndWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::OR_WORD_AND_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(40, count($array));
+	}
+	
+	/**
+	 * Returns 5 Rows.  These rows contain word12 only.
+	 */
+	public function testSearchAdvancedAndWordNotWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::AND_WORD_NOT_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(5, count($array));
+	}
+	
+	/**
+	 * Returns 0 rows as in actual fact more than half the
+	 * database would be returned in this instance.
+	 */
+	public function testSearchAdvancedNotWordNotWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::NOT_WORD_NOT_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(0, count($array));
+	}
+	
+	/**
+	 * Returns 5 Rows.  These rows contain word12 only.
+	 */
+	public function testSearchAdvancedOrWordNotWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::OR_WORD_NOT_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(5, count($array));
+	}
+	
+	/**
+	 * Returns 40 Rows.  All rows contain word12.  35 rows
+	 * contain word12 and word13.  5 rows contain only
+	 * word12.  The rows that contain only word12 were expected
+	 * to rate lower than those rows that also contain word13,
+	 * however the opposite seems to be the case.
+	 */
+	public function testSearchAdvancedAndWordOrWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::AND_WORD_OR_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(40, count($array));
+	}
+	
+	/**
+	 * Returns 5 rows.  These rows only contain word13.
+	 */
+	public function testSearchAdvancedNotWordOrWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::NOT_WORD_OR_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(5, count($array));
+	}
+	
+	/**
+	 * Returns 45 Rows.  These rows contain either word12 only,
+	 * word13 only, or both word12 and word13.
+	 */
+	public function testSearchAdvancedOrWordOrWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::OR_WORD_OR_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(45, count($array));
+	}
+	
+	/**
+	 * Returns 30 Rows. Each row contains all word12, word13 and
+	 * word14 across the title and description tables.
+	 */
+	public function testSearchAdvancedAndWordAndWordAndWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::AND_WORD_AND_WORD_AND_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(30, count($array));
+	}
+	
+	/**
+	 * Returns 40 rows.  The first 5 rows contain word12 only and rank
+	 * higher than the rows that also contain word13.
+	 */
+	public function testSearchAdvancedAndWordTildaWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::AND_WORD_TILDA_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(40, count($array));
+		$this->assertEquals(16, $array[0]->itemID);
+		$this->assertEquals(17, $array[1]->itemID);
+		$this->assertEquals(18, $array[2]->itemID);
+		$this->assertEquals(19, $array[3]->itemID);
+		$this->assertEquals(20, $array[4]->itemID);
+	}
+	
+	/**
+	 * Returns 45 rows.  Rows that don't contain word14 rank higher than those that do.
+	 */
+	public function testSearchAdvancedAndWordAndGreaterWordLessWord(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = self::AND_WORD_AND_GREATER_WORD_LESS_WORD;
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(45, count($array));
+		$this->assertEquals(21, $array[0]->itemID);
+		$this->assertEquals(22, $array[1]->itemID);
+		$this->assertEquals(23, $array[2]->itemID);
+		$this->assertEquals(24, $array[3]->itemID);
+		$this->assertEquals(25, $array[4]->itemID);
+	}
+	
+	/**
+	 * Returns 0 rows.
+	 */
+	public function testSearchAdvancedMinorCategoryIDNotExist(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = '';
+		$minorCategoryID = self::SEARCH_INVALID_ID;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(0, count($array));
+	}
+	
+	/**
+	 * Returns 5 rows.
+	 */
+	public function testSearchAdvancedMinorCategoryIDExist(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = '';
+		$minorCategoryID = self::SEARCH_VALID_ID;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(5, count($array));
+	}
+	
+	/**
+	 * Returns 0 rows.
+	 */
+	public function testSearchAdvancedMajorCategoryIDNotExist(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = '';
+		$minorCategoryID = 0;
+		$majorCategoryID = self::SEARCH_INVALID_ID;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(0, count($array));
+	}
+	
+	/**
+	 * Returns 15 rows.
+	 */
+	public function testSearchAdvancedMajorCategoryIDExist(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = '';
+		$minorCategoryID = 0;
+		$majorCategoryID = self::SEARCH_VALID_ID;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(15, count($array));
+	}
+	
+	/**
+	 * Returns 160 rows.
+	 */
+	public function testSearchAdvancedMinPrice(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = '';
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '70.00';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(160, count($array));
+	}
+	
+	/**
+	 * Returns 15 rows.
+	 */
+	public function testSearchAdvancedMaxPrice(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = '';
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '5';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(15, count($array));
+	}
+	
+	/**
+	 * Returns 9 rows.
+	 */
+	public function testSearchAdvancedMinPriceMaxPrice(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = '';
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '3.20';
+		$srchMaxPrice = '5.00';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(9, count($array));
+	}
+	
+	/**
+	 * Returns 55 rows.
+	 */
+	public function testSearchAdvancedMinQuantity(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = '';
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '50';
+		$srchCondition = '';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(55, count($array));
+	}
+	
+	/**
+	 * Returns 250 rows.
+	 */
+	public function testSearchAdvancedCondition(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = '';
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = 'Used';
+		$srchStatus = '';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(250, count($array));
+	}
+	
+	/**
+	 * Returns 165 rows.
+	 */
+	public function testSearchAdvancedStatus(): void {
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$this->populateSearch();
+		$searchText = '';
+		$minorCategoryID = 0;
+		$majorCategoryID = 0;
+		$srchMinPrice = '0';
+		$srchMaxPrice = '999999999999999';
+		$srchMinQuantity = '1';
+		$srchCondition = '';
+		$srchStatus = 'ForSale';
+		$array = $system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+		$this->assertEquals(165, count($array));
+	}
+	
 	/*
 	 *
 	 *
@@ -3469,6 +4309,86 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			}
 			
 			$l ++;
+		}
+	}
+	
+	protected function populateSearch(): void {
+		// Regenerate a fresh database.
+		TestPDO::CreateTestDatabaseAndUser ();
+		$pdo = TestPDO::getInstance ();
+		DatabaseGenerator::Generate ( $pdo );
+		
+		// Populate the Category Table
+		$j = 1;
+		for($i = 1; $i <= 101; $i ++) {
+			if($i == 1){
+				$c = new Category ( $pdo );
+				$c->category = 'category1';
+				try {
+					$c->set ();
+				} catch (ModelException $e) {
+					$this->assertEquals('Exception', $e->getMessage());
+				}
+				
+			} else {
+				$c = new Category ( $pdo );
+				$c->parentID = $j;
+				$c->category = 'category' . $i;
+				try {
+					$c->set ();
+				} catch (ModelException $e) {
+					$this->assertEquals('Exception', $e->getMessage());
+				}
+				
+				if ($i % 3 == 0) {
+					$j ++;
+				}
+			}
+		}
+		
+		// Populate User Table
+		
+		$user = new User ( $pdo, [
+				'user' => 'user',
+				'email' => 'user@gmail.com',
+				'password' => 'TestTest88'
+		] );
+		
+		try {
+			$user->userID = $user->set ();
+		} catch (ModelException $e) {
+			$this->assertEquals('Exception', $e->getMessage());
+		}
+		
+		// Populate the Item and Category_items Tables
+		
+		for($i = 2; $i <= 101; $i ++) {
+			for($j = 1; $j <= 5; $j++){
+				$item = new Item($pdo);
+				$item->owningUserID = 1;
+				$item->title = 'Word' . $i . ' word' . ($i + 1) . ' word' . ($i + 2) . ' word' . ($i + 3);
+				$item->description = 'Word' . ($i + 4) . ' word' . ($i + 5) . ' word' . ($i + 6) . ' word' . ($i + 7);
+				$item->price = $i . '.' . $j . '0';
+				$item->quantity = ceil($i/$j);
+				if($i % 2 == 0){
+					$item->itemcondition = 'New';
+				} else {
+					$item->itemcondition = 'Used';
+				}
+				if($i % 3 == 0){
+					$item->status = 'ForSale';
+				} else {
+					$item->status = 'Wanted';
+				}
+				try {
+					$categoryItems = new CategoryItems($pdo);
+					$categoryItems->itemID= $item->set();
+					$categoryItems->categoryID = $i;
+					$categoryItems->set();
+				} catch (ModelException $e) {
+					$this->assertEquals('Exception', $e->getMessage());
+				}
+			}
 		}
 	}
 }
