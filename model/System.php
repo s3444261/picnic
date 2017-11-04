@@ -18,7 +18,8 @@ class System {
 	private $db;
 	const SEARCH_STRING = 'searchString';
 	const SEARCH_TEXT = 'srchText';
-
+	const SEARCH_MINOR_CATEGORY_ID = 'srchMinorCategory';
+	const SEARCH_MAJOR_CATEGORY_ID = 'srchMajorCategory';
 	const SEARCH_MIN_PRICE = 'srchMinPrice';
 	const SEARCH_MAX_PRICE = 'srchMaxPrice';
 	const SEARCH_MIN_QUANTITY = 'srchMinQuantity';
@@ -1075,15 +1076,39 @@ class System {
 	 */
 	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID): array {
 		$args = array ();
-		$args [Items::SEARCH_TEXT] = $searchText;
-		$args [Items::SEARCH_MINOR_CATEGORY_ID] = $majorCategoryID;
-		$args [Items::SEARCH_MAJOR_CATEGORY_ID] = $minorCategoryID;
-		$args [Items::SEARCH_MIN_PRICE] = $srchMinPrice;
-		$args [Items::SEARCH_MAX_PRICE] = $srchMaxPrice;
-		$args [Items::SEARCH_MIN_QUANTITY] = $srchMinQuantity;
-		$args [Items::SEARCH_CONDITION] = $srchCondition;
-		$args [Items::SEARCH_STATUS] = $srchStatus;
-
+		$args [Items::SEARCH_TEXT] = '';
+		$args [Items::SEARCH_MINOR_CATEGORY_ID] = 0;
+		$args [Items::SEARCH_MAJOR_CATEGORY_ID] = 0;
+		$args [Items::SEARCH_MIN_PRICE] = 0;
+		$args [Items::SEARCH_MAX_PRICE] = 0x7FFFFFFF;
+		$args [Items::SEARCH_MIN_QUANTITY] = 1;
+		$args [Items::SEARCH_CONDITION] = '';
+		$args [Items::SEARCH_STATUS] = '';
+		
+		if(strlen($searchText) > 0){
+			$args [Items::SEARCH_TEXT] = $searchText;
+		}
+		if($minorCategoryID > 0){
+			$args [Items::SEARCH_MINOR_CATEGORY_ID] = $minorCategoryID;
+		}
+		if($majorCategoryID > 0){
+			$args [Items::SEARCH_MAJOR_CATEGORY_ID] = $majorCategoryID;
+		}
+		if($srchMinPrice > 0){
+			$args [Items::SEARCH_MIN_PRICE] = $srchMinPrice;
+		}
+		if($srchMaxPrice > 0){
+			$args [Items::SEARCH_MAX_PRICE] = $srchMaxPrice;
+		}
+		if($srchMinQuantity > 0){
+			$args [Items::SEARCH_MIN_QUANTITY] = $srchMinQuantity;
+		}
+		if(strlen($srchCondition) > 0){
+			$args [Items::SEARCH_CONDITION] = $srchCondition;
+		}
+		if(strlen($srchStatus) > 0){
+			$args [Items::SEARCH_STATUS] = $srchStatus;
+		}
 		$items = new Items ( $this->db );
 		return $items->searchAdvanced ($args);
 	}
