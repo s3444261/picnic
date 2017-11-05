@@ -289,16 +289,18 @@ class Item {
 		if ($this->_itemID > 0) {
 
 			// add matches in both directions.
-			$query1 = "REPLACE INTO Item_matches (baseItemID, matchingItemID) VALUES (:baseItemID, :matchingItemID)";
+			$query1 = "REPLACE INTO Item_matches (baseItemID, matchingItemID, status) VALUES (:baseItemID, :matchingItemID, :status)";
 			$stmt1 = $this->db->prepare ( $query1 );
 			$stmt1->bindValue ( ':baseItemID', $this->_itemID );
 			$stmt1->bindValue ( ':matchingItemID', $matchingItemID );
+			$stmt1->bindValue ( ':status', 'none' );
 			$stmt1->execute ();
 
-			$query2 = "REPLACE INTO Item_matches (baseItemID, matchingItemID) VALUES (:matchingItemID, :baseItemID)";
+			$query2 = "REPLACE INTO Item_matches (baseItemID, matchingItemID, status) VALUES (:matchingItemID, :baseItemID, :status)";
 			$stmt2 = $this->db->prepare ( $query2 );
 			$stmt2->bindValue ( ':baseItemID', $this->_itemID );
 			$stmt2->bindValue ( ':matchingItemID', $matchingItemID );
+			$stmt1->bindValue ( ':status', 'none' );
 			$stmt2->execute ();
 		}
 	}
