@@ -12,7 +12,7 @@
 	<div class="row">
 		<div class="col"></div>
 		<div class="col-9">
-		<h1>Edit User</h1>
+		<h1 class="text-center">Edit User</h1>
 		<div class="editUser">
 			<form data-toggle="validator" role="form" class="form-inline"
 				method="post" action="<?php echo BASE . '/Administration'; ?>">

@@ -147,20 +147,25 @@
                 <!-- sent items -->
                 <div class="container-fluid">
                     <h1 class="display-4 text-center top-n-tail">Sent Messages</h1>
-                    <table class="table table-striped">
+                    <table class="table">
                         <thead class="thead-dark">
-                        <tr>
-                            <th class="col-md-1">Message</th>
-                            <th class="col-md-1">To</th>
-                            <th class="col-md-1">Item</th>
-                            <th class="col-md-1">Date</th>
-                        </tr>
+                        <div class="row">
+                            <tr>
+                                <!-- <th class="col-md-1">Message</th> -->
+                                <th scope="col">To</th>
+                                <th scope="col">Item</th>
+                                <th scope="col">Date</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </div>
                         </thead>
                         <tbody>
 						<?php foreach ($this->sentMessages() as $m) { ?>
                             <tr>
-                                <td><?php echo $this->messageText($m) ?></td>
-                                <td><?php echo $this->recipientName($m) ?></td>
+                                <!-- <td><?php echo $this->messageText($m) ?></td> -->
+                                <th scope="row">
+                                    <?php echo $this->recipientName($m) ?>
+                                </td>
                                 <td>
                                     <a href="<?php echo $this->viewItemUrl($m) ?>"><?php echo $this->itemTitle($m) ?></a>
                                 </td>
@@ -206,6 +211,11 @@
                                             </div>
                                         </div>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr class="message-body">
+                                <td colspan="4">
+                                    <?php echo $this->messageText($m) ?>
                                 </td>
                             </tr>
 						<?php } ?>
