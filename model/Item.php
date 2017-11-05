@@ -300,7 +300,7 @@ class Item {
 			$stmt2 = $this->db->prepare ( $query2 );
 			$stmt2->bindValue ( ':baseItemID', $this->_itemID );
 			$stmt2->bindValue ( ':matchingItemID', $matchingItemID );
-			$stmt1->bindValue ( ':status', 'none' );
+			$stmt2->bindValue ( ':status', 'none' );
 			$stmt2->execute ();
 		}
 	}
