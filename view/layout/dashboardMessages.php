@@ -130,9 +130,9 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th scope="row" colspan="4">Message</th>
+                                <td class="message-row text-center" scope="row" colspan="4"><strong>Message</strong></td>
                             </tr>
-                            <tr>
+                            <tr class="message-body">
                                 <td colspan="4">
                                     <?php if ($this->isUnread($m)) { ?> <strong> <?php } ?>
                                     <?php echo $this->messageText($m) ?>
