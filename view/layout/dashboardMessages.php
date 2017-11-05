@@ -31,25 +31,27 @@
                 <!-- inbox -->
                 <div class="container-fluid">
                     <h1 class="display-4 text-center top-n-tail">Inbox</h1>
-                    <table class="table table-striped">
+                    <table class="table">
                         <thead class="thead-dark">
-                        <tr>
-                            <th class="col-md-1">Message</th>
-                            <th class="col-md-1">From</th>
-                            <th class="col-md-1">Item</th>
-                            <th class="col-md-1">Date</th>
-                            <th></th>
-                        </tr>
+                        <div class="row">
+                            <tr>
+                                <!-- <th class="col-md-1">Message</th> -->
+                                <th scope="col">From</th>
+                                <th scope="col">Item</th>
+                                <th scope="col">Date</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </div>
                         </thead>
                         <tbody>
 						<?php foreach ($this->inboxMessages() as $m) { ?>
                             <tr>
-                                <td>
+                                <!-- <td>
 									<?php if ($this->isUnread($m)) { ?> <strong> <?php } ?>
                                     <?php echo $this->messageText($m) ?>
                                     <?php if ($this->isUnread($m)) { ?> </strong> <?php } ?>
-                                </td>
-                                <td><?php echo $this->senderName($m) ?></td>
+                                </td> -->
+                                <th scope="row"><?php echo $this->senderName($m) ?></th>
                                 <td>
                                     <a href="<?php echo $this->viewItemUrl($m) ?>"><?php echo $this->itemTitle($m) ?></a>
                                 </td>
@@ -102,7 +104,6 @@
                                                     </form>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
 
@@ -124,9 +125,18 @@
                                                     </button>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" colspan="4">Message</th>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <?php if ($this->isUnread($m)) { ?> <strong> <?php } ?>
+                                    <?php echo $this->messageText($m) ?>
+                                    <?php if ($this->isUnread($m)) { ?> </strong> <?php } ?>
                                 </td>
                             </tr>
 						<?php } ?>
