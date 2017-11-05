@@ -420,7 +420,7 @@ class AccountController {
 		$mail = $this->getMailer();
 		$mail->addAddress($user['email'], $user['user']);
 		$mail->Subject  = 'Humphree password reset';
-		$mail->Body     = 'Your new password is <strong>' . $password . '</strong>.';
+		$mail->Body     = 'Your new password is    <strong>' . $password . '</strong>';
 
 		if(!$mail->send()) {
 			echo 'Message was not sent.';
