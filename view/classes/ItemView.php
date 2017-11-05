@@ -18,6 +18,10 @@ class ItemView extends View
 		$this->SetData('navData', new NavData(NavData::ViewListings));
 	}
 
+	public function isLoggedInUser() {
+		return isset($_SESSION['userID']);
+	}
+
 	public function majorCategories() {
 		$h = new Humphree(Picnic::getInstance());
 		return $h->getCategoriesIn(Category::ROOT_CATEGORY);
@@ -28,8 +32,25 @@ class ItemView extends View
 		return $h->getCategories();
 	}
 
+	public function matchedItems() {
+		$h = new Humphree(Picnic::getInstance());
+		return $h->getMatchedItemsFor($this->itemID());
+	}
+
 	public function itemID() {
 		return $this-> getItemAttribute('itemID');
+	}
+
+	public function hasInfoMessage() {
+		return (isset($this->data['info']) && $this->data['info'] !== '');
+	}
+
+	public function infoMessage() {
+		if (isset($this->data['info']) && $this->data['info'] !== '') {
+			return $this->data['info'];
+		}
+
+		return '';
 	}
 
 	public function hasError() {
@@ -123,6 +144,10 @@ class ItemView extends View
 	private function getItemAttribute($name) {
 		if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd'][$name])) {
 			return $_SESSION['itemAdd'][$name];
+		}
+
+		if (isset($this->data['item']) && isset($this->data['item'][$name])) {
+			return $this->data['item'][$name];
 		}
 
 		return null;

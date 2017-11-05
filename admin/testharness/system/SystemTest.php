@@ -384,6 +384,7 @@ require_once dirname ( __FILE__ ) . '/../../../model/Categories.php';
 require_once dirname ( __FILE__ ) . '/../../../model/CategoryItems.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Comment.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Item.php';
+require_once dirname ( __FILE__ ) . '/../../../model/Items.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ItemNotes.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Note.php';
 require_once dirname ( __FILE__ ) . '/../../../model/User.php';

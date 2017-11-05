@@ -52,9 +52,10 @@ class Items {
 		
 		if (strlen ( $searchString ) > 0) {
 			
-			$query = "SELECT * FROM Items
+			$query = "SELECT *, MATCH (title, description) AGAINST (:searchString) AS relevance FROM Items
 						WHERE MATCH (title, description)
-						AGAINST (:searchString)";
+						AGAINST (:searchString)
+						ORDER BY relevance DESC";
 			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindValue ( ':searchString', $searchString );
@@ -84,7 +85,7 @@ class Items {
 	 * This method uses boolean full text searches.  See http://www.vionblog.com/mysql-full-text-search-with-multiple-words/
 	 * for a full explanation.
 	 * + means AND
-	 * – means NOT
+	 * ï¿½ means NOT
 	 * [no operator] means OR
 	 * 
 	 * @param array $searchArray
@@ -121,23 +122,34 @@ class Items {
 			return $items;
 		}
 	}
-	
+
 	/**
 	 * Interim advanced search method.
-	 * 
+	 *
 	 * @param array $args
+	 * @param int $maxResults
 	 * @return array
 	 */
-	public function searchAdvanced(array $args): array {
+	public function searchAdvanced(array $args, int $maxResults = 500): array {
 		$items = array();
-		
-		$query = "SELECT * FROM Items";
+
+		$query = "SELECT *";
+		if (strlen($args[self::SEARCH_TEXT]) > 0) {
+			$query = $query . 		", MATCH (title, description) AGAINST (:srchText IN BOOLEAN MODE) AS relevance";
+		}
+
+		$query = $query . 		" FROM Items";
 		
 		if($args[self::SEARCH_MINOR_CATEGORY_ID] > 0
 				|| $args[self::SEARCH_MAJOR_CATEGORY_ID] > 0){
 			$query = "SELECT i.itemID, i.owningUserID, i.title, i.description,";
 			$query = $query . " i.quantity, i.itemcondition, i.price, i.itemStatus,";
 			$query = $query . " i.created_at, i.updated_at";
+
+			if (strlen($args[self::SEARCH_TEXT]) > 0) {
+				$query = $query . 		", MATCH (title, description) AGAINST (:srchText IN BOOLEAN MODE) AS relevance";
+			}
+
 			$query = $query . " from Items i";
 			$query = $query . " join Category_items ci";
 			$query = $query . " on i.itemID = ci.itemID";
@@ -202,7 +214,9 @@ class Items {
 				$query = $query . " AND categoryID IN(SELECT categoryID from Categories WHERE parentID = :categoryID)";
 			}
 		}
-		
+
+		$query = $query . ' LIMIT ' . $maxResults;
+
 		$stmt = $this->db->prepare ( $query );
 
 		if(strlen($args[self::SEARCH_TEXT]) > 0){ 

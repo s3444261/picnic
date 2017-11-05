@@ -47,6 +47,22 @@ class Item {
 			}
 		}
 	}
+
+	public static function getAllItemIDs($db): array {
+
+		$query = "SELECT itemID FROM Items";
+
+		$stmt = $db->prepare ( $query );
+		$stmt->execute ();
+
+		$items = [];
+		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+			$items [] = $row['itemID'];
+		}
+
+		return $items;
+	}
+
 	public function &__get($name) {
 		$name = '_' . $name;
 		return $this->$name;
@@ -248,7 +264,68 @@ class Item {
 			return false;
 		}
 	}
-	
+
+
+	/**
+	 * Removes all matches for the current item.
+	 */
+	public function removeAllMatches(): void {
+		if ($this->_itemID > 0) {
+
+			// remove matches in both directions.
+			$query = "DELETE FROM Item_matches WHERE baseItemID = :itemID OR matchingItemID = :itemID";
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
+			$stmt->execute ();
+		}
+	}
+
+	/**
+	 * Adds a new match for the current item.
+	 *
+	 * @param int $matchingItemID	The item ID for the matched item.
+	 */
+	public function addMatch(int $matchingItemID): void {
+		if ($this->_itemID > 0) {
+
+			// add matches in both directions.
+			$query1 = "REPLACE INTO Item_matches (baseItemID, matchingItemID) VALUES (:baseItemID, :matchingItemID)";
+			$stmt1 = $this->db->prepare ( $query1 );
+			$stmt1->bindValue ( ':baseItemID', $this->_itemID );
+			$stmt1->bindValue ( ':matchingItemID', $matchingItemID );
+			$stmt1->execute ();
+
+			$query2 = "REPLACE INTO Item_matches (baseItemID, matchingItemID) VALUES (:matchingItemID, :baseItemID)";
+			$stmt2 = $this->db->prepare ( $query2 );
+			$stmt2->bindValue ( ':baseItemID', $this->_itemID );
+			$stmt2->bindValue ( ':matchingItemID', $matchingItemID );
+			$stmt2->execute ();
+		}
+	}
+
+	/**
+	 * Returns the IDs of all items that were matched with this item.
+	 *
+	 * @return array		The matched item IDs.
+	 */
+	public function getMatches(): array {
+		$items = array();
+
+		if ($this->_itemID > 0) {
+			$query = "SELECT * FROM Item_matches WHERE baseItemID = :itemID";
+
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
+			$stmt->execute ();
+
+			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+				$items [] = $row['matchingItemID'];
+			}
+		}
+
+		return $items;
+	}
+
 	/**
 	 * Display Object Contents
 	 */

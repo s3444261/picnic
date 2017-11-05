@@ -18,91 +18,99 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-12">
-						<?php if (isset ( $this->data['item'] )) { ?>
-						<h2 class="item-header"><?php echo ucwords (strtolower( ( $this->data['item']['title'] ) ) ) ?> </h2>
-						<?php } ?>
+						<h2 class="item-header"><?php echo ucwords (strtolower(($this->itemTitle()))) ?> </h2>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-4">
 						<!-- To use hi-res images and let the CSS handle the sizing use the following line in lieu of the version with the inline styles -->
-						<!-- <img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->data['item']['itemID'] ?>" /> -->
- 						<img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->data['item']['itemID'] ?>" style="min-width:300px; min-height:300px" />
+						<!-- <img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->itemID() ?>" /> -->
+ 						<img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->itemID() ?>" style="min-width:300px; min-height:300px" />
 					</div>
 					<div class="col-md-8">
-						<?php if (isset ( $this->data['item'] )) { ?>
-						<div class="row">
-							<div class="col-md-12 item-desc-header"><strong>Item description</strong></div>
-							<div class="col-md-12 item-desc">
-								<?php echo $this->data['item']['description'] ?> </div>
-						</div>
-						<div class="row">
-							<div class="col-md-12"><strong>Price</strong></div>
-							<div class="col-md-12">
-								<h2>$<?php echo $this->data['item']['price'] ?></h2></div>
-						</div>
-						<div class="row item-badges">
-							<div class="col-md-4">
-								<div class="row">
-									<div class="col-md-6 col-sm-4 col-4"><strong>Quantity</strong></div>
-									<div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-primary"><?php echo $this->data['item']['quantity'] ?></span></div>
-								</div>
-							</div>
-							<div class="col-md-4">
-								<div class="row">
-									<div class="col-md-6 col-sm-4 col-4"><strong>Condition</strong></div>
-									<div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-success"><?php echo $this->data['item']['itemcondition'] ?></span></div>
-								</div>
-							</div>
+                        <div class="row">
+                            <div class="col-md-12 item-desc-header"><strong>Item description</strong></div>
+                            <div class="col-md-12 item-desc">
+                                <?php echo $this->itemDescription() ?> </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12"><strong>Price</strong></div>
+                            <div class="col-md-12">
+                                <h2>$<?php echo $this->itemPrice() ?></h2></div>
+                        </div>
+                        <div class="row item-badges">
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-4 col-4"><strong>Quantity</strong></div>
+                                    <div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-primary"><?php echo $this->itemQuantity() ?></span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-4 col-4"><strong>Condition</strong></div>
+                                    <div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-success"><?php echo $this->itemCondition() ?></span></div>
+                                </div>
+                            </div>
 
-							<div class="col-md-4">
-								<div class="row">
-									<div class="col-md-6 col-sm-4 col-4"><strong>Status</strong></div>
-									<div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-warning"><?php echo $this->data['item']['status'] ?></span></div>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-						</div>
-						<div class="row">
-						</div>
-						<?php } ?>
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-4 col-4"><strong>Status</strong></div>
+                                    <div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-warning"><?php echo $this->itemStatus() ?></span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        </div>
+                        <div class="row">
+                        </div>
 					</div>
 				</div> <!-- end .row -->
 			</div> <!-- end .container -->
 
 
-            <?php if (isset($_SESSION['userID'])) {  ?>
+            <?php if ($this->isLoggedInUser()) {  ?>
 
-            <div class="container" >
-                <hr />
+                <div class="container" >
+                    <hr />
 
-                <div class="row col-md-12 item-desc-header top-n-tail">
-                    <?php if ($this->data['item']['status'] === 'ForSale') {
-                        echo '<strong>Send a message to the seller</strong>';
-                    } else {
-						echo '<strong>Send a message to the wanter (?)</strong>';
-                    } ?>
+                    <div class="row col-md-12 item-desc-header top-n-tail">
+                        <?php if ($this->isItemForSale()) {
+                            echo '<strong>Send a message to the seller</strong>';
+                        } else {
+                            echo '<strong>Send a message to the wanter (?)</strong>';
+                        } ?>
 
+                    </div>
+
+                    <?php if ($this->hasError()) { ?>
+                        <div class="alert alert-danger"><?php echo $this->error() ?></div>
+                    <?php } ?>
+
+                    <?php if ($this->hasInfoMessage()) { ?>
+                        <div class="alert alert-info"><?php echo $this->infoMessage()?></div>
+                    <?php } ?>
+
+                    <div>
+                        <form data-toggle="validator" role="form" method="post" action="<?php echo BASE . '/Item/View/' . $this->itemID() ?>">
+                            <textarea rows="5" class="form-control" name="message" id="message" placeholder="Enter a message..." required></textarea>
+                            <div class="top-n-tail">
+                                <button type="submit" name="sendMessage" id="sendMessage" class="btn btn-primary">Send message</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
-				<?php if (isset($this->data['error'])) { ?>
-                    <div class="alert alert-danger"><?php echo $this->data['error'] ?></div>
-				<?php } ?>
+                <div class="container" >
+                    <hr />
 
-				<?php if (isset($this->data['info'])) { ?>
-                    <div class="alert alert-info"><?php echo $this->data['info'] ?></div>
-				<?php } ?>
+                    <strong>Items that match this item:</strong>
 
-                <div>
-                    <form data-toggle="validator" role="form" method="post" action="<?php echo BASE . '/Item/View/' . $this->data['item']['itemID'] ?>">
-                        <textarea rows="5" class="form-control" name="message" id="message" placeholder="Enter a message..." required></textarea>
-                        <div class="top-n-tail">
-                            <button type="submit" name="sendMessage" id="sendMessage" class="btn btn-primary">Send message</button>
-                        </div>
-                    </form>
+                    <?php foreach ($this->matchedItems() as $matchedItem) { ?>
+                    <div class="row">
+                        <a href="<?php echo BASE . '/Item/View/' . $matchedItem['itemID']; ?>"><?php echo $matchedItem['title']; ?></a>
+                    </div>
+                    <?php } ?>
                 </div>
-            </div>
 
             <?php } ?>
 		</div> <!-- end col-9 -->

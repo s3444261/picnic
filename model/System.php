@@ -616,6 +616,7 @@ class System {
 			$i->itemID = $i->set ();
 			if ($i->itemID > 0) {
 				$this->addItemToCategory ( $i->itemID, $categoryID );
+				$this->runMatchingFor($i->itemID);
 				return $i->itemID;
 			} else {
 				return 0;
@@ -643,6 +644,7 @@ class System {
 		$i = $item;
 		try {
 			$i->update ();
+			$this->runMatchingFor($i->itemID);
 			return true;
 		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getError ();
@@ -669,7 +671,7 @@ class System {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Retrieves all comments for an item and returns them as an array of
 	 * Comments objects.
@@ -1074,7 +1076,7 @@ class System {
 	 * @param string $srchStatus
 	 * @return array
 	 */
-	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID): array {
+	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID, int $maxResults = 500): array {
 		$args = array ();
 		$args [Items::SEARCH_TEXT] = '';
 		$args [Items::SEARCH_MINOR_CATEGORY_ID] = 0;
@@ -1110,7 +1112,47 @@ class System {
 			$args [Items::SEARCH_STATUS] = $srchStatus;
 		}
 		$items = new Items ( $this->db );
-		return $items->searchAdvanced ($args);
+		return $items->searchAdvanced ($args, $maxResults);
+	}
+
+	private function runMatchingFor(int $itemID) {
+
+		$item = new Item($this->db);
+		$item->itemID = $itemID;
+		$item->get();
+
+		if ($item->status === 'ForSale' || $item->status === 'Wanted') {
+			$category = $this->getItemCategory($item->itemID);
+
+			$desiredStatus = ($item->status === 'ForSale' ? 'Wanted' : 'ForSale');
+
+			// Not considering price for now.
+			$searchResults = $this->searchAdvanced($item->title, 0, 2000000000, 1, $item->itemcondition, $desiredStatus, $category['parentID'], $category['categoryID'], 10);
+
+			$item->removeAllMatches();
+
+			// we take a maximum of 10 matches.
+			foreach (array_slice($searchResults, 0, 10) as $result) {
+				$item->addMatch($result->itemID);
+			}
+		}
+	}
+
+	public function getMatchedItemsFor(int $itemID) {
+		$item = new Item($this->db);
+		$item->itemID = $itemID;
+		return $item->getMatches();
+	}
+
+	public function runMatchingForAllItems()
+	{
+		set_time_limit(1000);
+
+		$allItems = Item::getAllItemIDs($this->db);
+
+		foreach ($allItems as $itemID) {
+			$this->runMatchingFor($itemID);
+		}
 	}
 }
 ?>

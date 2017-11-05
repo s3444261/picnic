@@ -10,7 +10,7 @@
 
 class View {
 
-	private $data;
+	protected $data;
 
 	function Render($template) {
 		ob_start();

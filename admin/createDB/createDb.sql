@@ -8,11 +8,11 @@
 
 DROP TABLE IF EXISTS `Item_notes`;
 DROP TABLE IF EXISTS `Notes`;
-DROP TABLE IF EXISTS `Item_comments`;
 DROP TABLE IF EXISTS `Comments`;
 DROP TABLE IF EXISTS `Category_items`;
 DROP TABLE IF EXISTS `User_ratings`;
 DROP TABLE IF EXISTS `User_items`;
+DROP TABLE IF EXISTS `Item_matches`;
 DROP TABLE IF EXISTS `Items`;
 DROP TABLE IF EXISTS `Users`;
 DROP TABLE IF EXISTS `Categories`;
@@ -57,11 +57,23 @@ CREATE TABLE `Items` (
 		`itemStatus` varchar(45) NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	  FULLTEXT idx1 (title, description),
 		PRIMARY KEY (`itemID`),
   	CONSTRAINT `FK_Items_Users` FOREIGN KEY (`owningUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 		
 ALTER TABLE Items ADD FULLTEXT(title, description);
+
+CREATE TABLE `Item_matches` (
+		`baseItemID` bigint(11) NOT NULL,
+		`matchingItemID` bigint(11) NOT NULL,
+		`status` varchar(45) NOT NULL,
+		PRIMARY KEY (`baseItemID`,	`matchingItemID`),
+		KEY `FK_Item_matches_Items_idx` (`baseItemID`),
+		KEY `FK_Item_matches_Items_idx2` (`matchingItemID`),
+		CONSTRAINT `FK_Item_matches_Items` FOREIGN KEY (`baseItemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `FK_Item_matches_Items2` FOREIGN KEY (`matchingItemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE
+		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `User_items` (
 		`user_itemID` int(11) NOT NULL AUTO_INCREMENT,

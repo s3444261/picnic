@@ -17,6 +17,9 @@ class CreateDBController {
 		DatabaseGenerator::Generate(Picnic::getInstance());
 		DatabaseGenerator::Populate(Picnic::getInstance());
 
+		$h = new Humphree(Picnic::getInstance());
+		$h->runMatchingForAllItems();
+
 		$view = new View();
 		$view->SetData('navData',  new NavData(NavData::Account));
 		$view->Render('createDB');

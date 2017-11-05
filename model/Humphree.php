@@ -659,7 +659,18 @@ class Humphree {
 			return false;
 		}
 	}
-	
+
+	public function getMatchedItemsFor(int $itemID): array {
+		$itemIDs =  $this->system->getMatchedItemsFor($itemID);
+		$results = [];
+
+		foreach ($itemIDs as $itemID) {
+			$results[] = $this->getItem($itemID);
+		}
+
+		return $results;
+	}
+
 	/**
 	 * Retrieves all comments for an item.
 	 *
@@ -1156,5 +1167,10 @@ class Humphree {
 			$its [] = $it;
 		}
 		return $its;
+	}
+
+	public function runMatchingForAllItems()
+	{
+		$this->system->runMatchingForAllItems();
 	}
 }

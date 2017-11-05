@@ -29,7 +29,7 @@ class ItemController {
 		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 			$h = new Humphree(Picnic::getInstance());
 
-			$view = new View();
+			$view = new ItemView();
 			$view->SetData('item', $h->getItem($itemId));
 			$view->SetData('navData', new NavData(NavData::ViewListings));
 			$view->Render('item');
@@ -41,7 +41,7 @@ class ItemController {
 					$h = new Humphree(Picnic::getInstance());
 					$item = $h->getItem($itemId);
 
-					$view = new View();
+					$view = new ItemView();
 					$view->SetData('item', $h->getItem($itemId));
 					$view->SetData('navData', new NavData(NavData::ViewListings));
 
