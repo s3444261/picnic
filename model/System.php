@@ -1126,8 +1126,21 @@ class System {
 
 			$desiredStatus = ($item->status === 'ForSale' ? 'Wanted' : 'ForSale');
 
-			// Not considering price for now.
-			$searchResults = $this->searchAdvanced($item->title, 0, 2000000000, 1, $item->itemcondition, $desiredStatus, $category['parentID'], $category['categoryID'], 10);
+			if ($item->status === 'ForSale') {
+				// We allow a 25% variation on min price, no max.
+				$minPrice = (floatval($item->price) * 0.75);
+				$maxPrice = 0x7FFFFFFF;
+			} elseif ($item->status === 'Wanted') {
+				// We allow a 50% variation on max price, no min.
+				$minPrice = 0;
+				$maxPrice = (floatval($item->price) * 1.5);
+			} else {
+				// We effectively don't consider price.
+				$minPrice = 0;
+				$maxPrice = 0x7FFFFFFF;
+			}
+
+			$searchResults = $this->searchAdvanced($item->title, $minPrice, $maxPrice, 1, $item->itemcondition, $desiredStatus, $category['parentID'], $category['categoryID'], 10);
 
 			$item->removeAllMatches();
 
