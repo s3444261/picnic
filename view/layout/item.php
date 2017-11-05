@@ -77,7 +77,7 @@
             <div class="container" >
                 <hr />
 
-                <div class="row col-md-12 item-desc-header">
+                <div class="row col-md-12 item-desc-header top-n-tail">
                     <?php if ($this->data['item']['status'] === 'ForSale') {
                         echo '<strong>Send a message to the seller</strong>';
                     } else {
@@ -97,8 +97,9 @@
                 <div>
                     <form data-toggle="validator" role="form" method="post" action="<?php echo BASE . '/Item/View/' . $this->data['item']['itemID'] ?>">
                         <textarea rows="5" class="form-control" name="message" id="message" placeholder="Enter a message..." required></textarea>
-                        <button type="submit" name="sendMessage" id="sendMessage" class="btn btn-primary">Send message
-                        </button>
+                        <div class="top-n-tail">
+                            <button type="submit" name="sendMessage" id="sendMessage" class="btn btn-primary">Send message</button>
+                        </div>
                     </form>
                 </div>
             </div>
