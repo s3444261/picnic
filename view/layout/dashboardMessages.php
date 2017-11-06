@@ -33,7 +33,7 @@
 
                 <!-- inbox -->
                 <div class="container-fluid">
-                    <h1 class="display-4 text-center top-n-tail">Inbox</h1>
+                    <h1 class="display-4 text-center top-n-tail">Inbox (<?php echo $this->inboxMessageCount() ?>)</h1>
                     <table class="table">
                         <thead class="thead-dark">
                         <div class="row">
@@ -149,7 +149,7 @@
 
                 <!-- sent items -->
                 <div class="container-fluid">
-                    <h1 class="display-4 text-center top-n-tail">Sent Messages</h1>
+                    <h1 class="display-4 text-center top-n-tail">Sent Messages (<?php echo $this->sentMessageCount() ?>)</h1>
                     <table class="table">
                         <thead class="thead-dark">
                         <div class="row">

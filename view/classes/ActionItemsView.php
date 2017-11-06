@@ -29,7 +29,11 @@ class ActionItemsView extends View
 	}
 
 	public function matches() : array {
-		return$this->_matches;
+		return $this->_matches;
+	}
+
+	public function totalMatches(): int {
+		return count($this->_matches);
 	}
 
 	public function forSaleUrl() : string {

@@ -14,8 +14,15 @@
  */
 class MessagesView extends View
 {
+	private $_inboxMessages;
+	private $_sentMessages;
+
 	function __construct() {
 		$this->SetData('navData', new NavData(NavData::Account));
+
+		$h = new Humphree(Picnic::getInstance());
+		$this->_inboxMessages = $h->getUserCommentsAsReceiver($this->loggedInUserID());
+		$this->_sentMessages = $h->getUserCommentsAsSender($this->loggedInUserID());
 	}
 
 	public function loggedInUserID() : int {
@@ -23,13 +30,19 @@ class MessagesView extends View
 	}
 
 	public function inboxMessages() : array {
-		$h = new Humphree(Picnic::getInstance());
-		return $h->getUserCommentsAsReceiver($this->loggedInUserID());
+		return $this->_inboxMessages;
 	}
 
 	public function sentMessages() {
-		$h = new Humphree(Picnic::getInstance());
-		return $h->getUserCommentsAsSender($this->loggedInUserID());
+		return $this->_sentMessages;
+	}
+
+	public function inboxMessageCount(): int {
+		return count($this->inboxMessages());
+	}
+
+	public function sentMessageCount(): int {
+		return count($this->sentMessages());
 	}
 
 	public function messageText(array $item) : string {

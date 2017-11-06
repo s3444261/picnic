@@ -32,7 +32,7 @@
 				</ul>
 
 				<div class="container-fluid">
-					<h1 class="display-4 text-center top-n-tail">Action Items</h1>
+					<h1 class="display-4 text-center top-n-tail">Action Items (<?php echo $this->totalMatches() ?>)</h1>
 					<table class="table">
 						<thead class="thead-dark">
                             <div class="row">
