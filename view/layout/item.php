@@ -77,7 +77,7 @@
                         <?php if ($this->isItemForSale()) {
                             echo '<strong>Send a message to the seller</strong>';
                         } else {
-                            echo '<strong>Send a message to the wanter (?)</strong>';
+                            echo '<strong>Send a message to the buyer</strong>';
                         } ?>
 
                     </div>
