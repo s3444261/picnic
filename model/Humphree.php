@@ -465,14 +465,14 @@ class Humphree {
 		return $numUserItems;
 	}
 
-	public function getUserOwnedItems(int $userID, string $itemStatus): array {
+	public function getUserOwnedItems(int $userID, string $itemStatus = ''): array {
 		$user = new User ( $this->db );
 		$user->userID = $userID;
 		$items = $this->system->getUserOwnedItems ( $userID );
 		$result = array();
 
 		foreach ( $items as $item ) {
-			if ($item->status == $itemStatus) {
+			if ($itemStatus === '' || $item->status == $itemStatus) {
 				$it = array ();
 				$it ['itemID'] = $item->itemID;
 				$it ['owningUserID'] = $item->owningUserID;
@@ -1011,7 +1011,12 @@ class Humphree {
 	 */
 	public function getItemOwner(int $itemID): array {
 		$i = new Item ( $this->db );
+		$i->itemID = $itemID;
 		return $this->system->getItemOwner ( $i );
+	}
+
+	public function discardMatch($itemID, $matchedItemID) {
+		$this->system->discardMatch ($itemID, $matchedItemID);
 	}
 
 	/**

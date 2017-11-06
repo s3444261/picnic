@@ -15,7 +15,7 @@
 class MessagesView extends View
 {
 	function __construct() {
-		$this->SetData('navData', new NavData(NavData::ViewListings));
+		$this->SetData('navData', new NavData(NavData::Account));
 	}
 
 	public function loggedInUserID() : int {
@@ -82,6 +82,10 @@ class MessagesView extends View
 
 	public function messagesUrl() : string {
 		return BASE . '/Dashboard/Messages';
+	}
+
+	public function actionItemsUrl() : string {
+		return BASE . '/Dashboard/ActionItems';
 	}
 
 	public function sendMessageUrl() : string {

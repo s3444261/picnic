@@ -959,19 +959,15 @@ class System {
 		
 		if ($item->exists ()) {
 			try {
-				$userItem = new UserItems ( $this->db );
-				$userItem->itemID = $item->itemID;
-				$userItem = $userItem->getUserItem ();
+				$item->get();
 				$user = new User ( $this->db );
-				$user->userID = $userItem->userID;
+				$user->userID = $item->owningUserID;
 				$user = $user->get ();
 				$userRatings = new UserRatings ( $this->db );
 				$stats = $userRatings->getStats ( $user );
 				$owner ['userID'] = $user->userID;
 				$owner ['user'] = $user->user;
 				$owner ['email'] = $user->email;
-				$owner ['relationship'] = $userItem->relationship;
-				$owner ['userStatus'] = $userItem->userStatus;
 				$owner ['numSellRatings'] = $stats ['numSellRatings'];
 				$owner ['avgSellRating'] = $stats ['avgSellRating'];
 				$owner ['numBuyRatings'] = $stats ['numBuyRatings'];
@@ -1157,8 +1153,7 @@ class System {
 		return $item->getMatches();
 	}
 
-	public function runMatchingForAllItems()
-	{
+	public function runMatchingForAllItems() {
 		set_time_limit(1000);
 
 		$allItems = Item::getAllItemIDs($this->db);
@@ -1167,5 +1162,10 @@ class System {
 			$this->runMatchingFor($itemID);
 		}
 	}
+
+	public function discardMatch(int $itemID, int $matchedItemID) {
+		$item = new Item($this->db);
+		$item->itemID = $itemID;
+		$item->discardMatch($matchedItemID);
+	}
 }
-?>

@@ -280,6 +280,17 @@ class Item {
 		}
 	}
 
+	public function discardMatch(int $matchedItemID) {
+		if ($this->_itemID > 0) {
+			$query = "UPDATE Item_matches SET status = :status WHERE baseItemID = :itemID AND matchingItemID = :otherItemID";
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindValue ( ':status', 'deleted' );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':otherItemID', $matchedItemID);
+			$stmt->execute ();
+		}
+	}
+
 	/**
 	 * Adds a new match for the current item.
 	 *
@@ -314,7 +325,7 @@ class Item {
 		$items = array();
 
 		if ($this->_itemID > 0) {
-			$query = "SELECT * FROM Item_matches WHERE baseItemID = :itemID";
+			$query = "SELECT * FROM Item_matches WHERE baseItemID = :itemID AND status != 'deleted'";
 
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindValue ( ':itemID', $this->_itemID );

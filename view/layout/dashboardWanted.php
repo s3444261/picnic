@@ -23,6 +23,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo BASE; ?>/Dashboard/Messages">Messages</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo BASE; ?>/Dashboard/ActionItems">Action Items</a>
+                    </li>
                 </ul>
             </div>
 

@@ -26,6 +26,9 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="<?php echo $this->messagesUrl() ?>">Messages</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $this->actionItemsUrl() ?>">Action Items</a>
+                    </li>
                 </ul>
 
                 <!-- inbox -->
@@ -61,7 +64,7 @@
                                        role="button" aria-haspopup="true" aria-expanded="false">Actions</a>
                                     <div class="dropdown-menu">
                                         <button type="button" class="dropdown-item" data-toggle="modal"
-                                                data-target="#sendDialog<?php echo $this->itemID($m) ?>">Reply
+                                                data-target="#replyDialog<?php echo $this->itemID($m) ?>">Reply
                                         </button>
 										<?php if ($this->isUnread($m)) { ?>
                                             <a href="<?php echo $this->markReadUrl($m) ?>" class="dropdown-item">Mark

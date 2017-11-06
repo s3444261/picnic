@@ -55,6 +55,15 @@ class DashboardController {
 		}
 	}
 
+	public function ActionItems() {
+			if ($this->auth()) {
+			$view = new ActionItemsView();
+			$view->Render('dashboardActionItems');
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
+
 	public function SendMessage() {
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			if (isset($_POST['sendMessage'])) {
@@ -65,6 +74,21 @@ class DashboardController {
 					header('Location: ' . BASE . '/Dashboard/Messages');
 					return;
 				}
+			}
+		}
+
+		header('Location: ' . BASE . '/Home');
+	}
+
+	public function DiscardMatch(int $itemID, int $matchedItemID) {
+		if ($this->auth()) {
+			$h = new Humphree(Picnic::getInstance());
+			$itemOwner = $h->getItemOwner($itemID);
+
+			if ($itemOwner['userID'] === $_SESSION['userID']) {
+				$h->discardMatch($itemID, $matchedItemID) ;
+				header('Location: ' . BASE . '/Dashboard/ActionItems');
+				return;
 			}
 		}
 

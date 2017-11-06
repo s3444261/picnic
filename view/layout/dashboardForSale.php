@@ -23,6 +23,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo BASE; ?>/Dashboard/Messages">Messages</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo BASE; ?>/Dashboard/ActionItems">Action Items</a>
+                    </li>
                 </ul>
 
                 <h1 id="ForSale" class="display-4 text-center top-n-tail">My Items For Sale (<?php echo count($this->data['forSaleItems']);  ?>)</h1>
