@@ -25,7 +25,6 @@
                     </li>
                 </ul>
             </div>
-            <hr>
 
             <div class="container-fluid">
                 <h1 id="Wanted"  class="display-4 text-center top-n-tail">My Wanted Items (<?php echo count($this->data['wantedItems']);  ?>)</h1>
