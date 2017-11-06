@@ -2702,8 +2702,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertEquals ( self::USER_ID_1, $sut ['userID'] );
 		$this->assertEquals ( 'user1', $sut ['user'] );
 		$this->assertEquals ( 'user1@gmail.com', $sut ['email'] );
-		$this->assertEquals ( 'relationship11', $sut ['relationship'] );
-		$this->assertEquals ( 'userStatus11', $sut ['userStatus'] );
 		$this->assertEquals ( 5, $sut ['numSellRatings'] );
 		$this->assertEquals ( 3.0, $sut ['avgSellRating'] );
 		$this->assertEquals ( 4, $sut ['numBuyRatings'] );
