@@ -145,7 +145,7 @@
 <div class="form-group">
     <label for="quantity">Quantity</label>
     <input type="number" class="form-control" name="quantity" id="quantity" placeholder="Quantity"
-           value="<?php echo $this->itemQuantity() ?>" required>
+           min="1" value="<?php echo $this->itemQuantity() ?>" required>
 </div>
 
 <div class="form-group">

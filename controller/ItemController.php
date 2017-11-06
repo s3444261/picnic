@@ -361,7 +361,7 @@ class ItemController {
 			throw new ValidationException('Please select an item condition.');
 		}
 		if (isset($data['quantity'])) {
-			$validate->number($data ['quantity']);
+			$validate->numberGreaterThanZero($data ['quantity']);
 		} else {
 			throw new ValidationException('Please enter a quantity.');
 		}
