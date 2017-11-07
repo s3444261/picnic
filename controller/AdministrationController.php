@@ -28,15 +28,9 @@ class AdministrationController {
 			$view->SetData('pagerData', $pagerData);
 			$view->Render('administration');
 
-
 			if (isset ( $_POST ['add'] )) {
 				unset ( $_POST ['add'] );
 				$this->add();
-			}
-
-			if (isset ( $_POST ['update'] )) {
-				unset ( $_POST ['update'] );
-				$this->update();
 			}
 
 			if (isset ( $_POST ['changePassword'] )) {
@@ -133,8 +127,9 @@ class AdministrationController {
 
 	/**
 	 * Updates the user attributes if they are valid, then displays the main admin page.
+	 * @param int $userID
 	 */
-	public function update(): void {
+	public function update(int $userID): void {
 		if ($this->auth()) {
 			$user = new User (Picnic::getInstance());
 			$v = new Validation ();
@@ -171,8 +166,7 @@ class AdministrationController {
 						unset ($_POST ['email']);
 						$user->status = $_POST ['status'];
 						unset ($_POST ['status']);
-						$user->userID = $_POST ['userID'];
-						unset ($_POST ['userID']);
+						$user->userID = $userID;
 						$user->update();
 
 						header('Location: ' . BASE . '/Administration');
@@ -186,45 +180,45 @@ class AdministrationController {
 
 	/**
 	 * Updates the user password if it is valid, then displays the main admin page.
+	 * @param int $userID
 	 */
-	public function changePassword(): void {
+	public function doChangePassword(int $userID): void {
 		if ($this->auth()) {
 			$user = new User (Picnic::getInstance());
 			$v = new Validation ();
 
-			if (isset ($_POST ['password']) && isset ($_POST ['confirm'])) {
+			if (isset ($_POST ['password1']) && isset ($_POST ['password2'])) {
 
 				// Validate the password.
 				try {
-					$v->password($_POST ['password']);
+					$v->password($_POST ['password1']);
 				} catch (ValidationException $e) {
 					$_SESSION ['error'] = $e->getError();
 				}
 
 				if (isset ($_SESSION ['error'])) {
-					unset ($_POST ['password']);
-					unset ($_POST ['confirm']);
-					header('Location: Administration');
+					unset ($_POST ['password1']);
+					unset ($_POST ['password2']);
+					header('Location: ' . BASE . '/Administration/ChangePassword/' . $userID);
 				} else {
 
 					// Compare passwords.
 					try {
-						$v->comparePasswords($_POST ['password'], $_POST ['confirm']);
+						$v->comparePasswords($_POST ['password1'], $_POST ['password2']);
 					} catch (ValidationException $e) {
 						$_SESSION ['error'] = $e->getError();
 					}
 
 					if (isset ($_SESSION ['error'])) {
-						unset ($_POST ['password']);
-						unset ($_POST ['confirm']);
+						unset ($_POST ['password1']);
+						unset ($_POST ['password2']);
 						header('Location: Administration');
 					} else {
-						$user->password = $_POST ['password'];
-						unset ($_POST ['password']);
-						unset ($_POST ['confirm']);
-						$user->userID = $_POST ['userID'];
-						unset ($_POST ['userID']);
-						$user->update();
+						$user->password = $_POST ['password1'];
+						unset ($_POST ['password1']);
+						unset ($_POST ['password2']);
+						$user->userID = $userID;
+						$user->updatePassword();
 
 						header('Location: ' . BASE . '/Administration');
 					}
@@ -235,32 +229,57 @@ class AdministrationController {
 		}
 	}
 
+	public function ChangePassword(int $userID) {
+		if ($this->auth()) {
+			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+				$view = new View();
+				$view->SetData('navData', new NavData(NavData::Account));
+				$view->SetData('userID', $userID);
+				$view->Render('adminChangePassword');
+				return;
+			} else if (isset ($_POST ['update'])) {
+				$this->doChangePassword($userID);
+				return;
+			}
+		}
+
+		header('Location: ' . BASE . '/Home');
+	}
+
 	/**
 	 * Displays a page allowing editing of the user with the given ID.
 	 *
 	 * @param $id
 	 * 			The ID of the user to be edited.
 	 */
-	public function edit($id): void {
+	public function Edit($id): void {
 		if ($this->auth()) {
-			$user = new User (Picnic::getInstance());
-			$user->userID = $id;
+			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+				$user = new User (Picnic::getInstance());
+				$user->userID = $id;
 
-			if ($user->get()) {
-				$_SESSION ['editUser'] = [
-					'userID' => $user->userID,
-					'user' => $user->user,
-					'email' => $user->email,
-					'status' => $user->status
-				];
+				if ($user->get()) {
+
+					$userData = [
+						'userID' => $user->userID,
+						'user' => $user->user,
+						'email' => $user->email,
+						'status' => $user->status
+					];
+
+					$view = new View();
+					$view->SetData('navData', new NavData(NavData::Account));
+					$view->SetData('user', $userData);
+					$view->Render('adminEditUser');
+					return;
+				}
+			} else if (isset ($_POST ['update'])) {
+				$this->update($id);
+				return;
 			}
-
-			$view = new View();
-			$view->SetData('navData', new NavData(NavData::Account));
-			$view->Render('editUser');
-		} else {
-			header('Location: ' . BASE . '/Home');
 		}
+
+		header('Location: ' . BASE . '/Home');
 	}
 
 	/**

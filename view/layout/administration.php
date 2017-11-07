@@ -95,6 +95,7 @@
                             <a class="dropdown-toggle btn btn-primary btn-block" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions</a>
                             <div class="dropdown-menu">
                                 <a href="<?php echo BASE . '/Administration/Edit/' . $user['userID']; ?>" class="dropdown-item">Edit</a>
+                                <a href="<?php echo BASE . '/Administration/ChangePassword/' . $user['userID']; ?>" class="dropdown-item">Change Password</a>
                                 <button class="dropdown-item" data-toggle="modal" data-target="#deleteDialog<?php echo $user['userID'] ?>">Delete</button>
 								<?php if ($user['blocked'] != 0) { ?>
                                     <button class="dropdown-item" data-toggle="modal" data-target="#unblockDialog<?php echo $user['userID'] ?>">Unblock User</button>
@@ -143,7 +144,7 @@
                                 </div>
                             </div>
 
-                            <!-- Block Modal -->
+                            <!-- unBlock Modal -->
                             <div class="modal fade" id="unblockDialog<?php echo $user['userID'] ?>"
                                  role="dialog">
                                 <div class="modal-dialog">
