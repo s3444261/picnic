@@ -31,7 +31,7 @@
                 <h1 id="ForSale" class="display-4 text-center top-n-tail">My Items For Sale (<?php echo count($this->data['forSaleItems']);  ?>)</h1>
 
 				<?php if ( count($this->data['forSaleItems']) === 0) { ?>
-                    <div class="text-center"><strong>You don't have any items listed for sale.</strong></div>
+                    <div class="text-center"><strong>You have no items for sale.</strong></div>
 				<?php }else {?>
                     <table class="table table-striped">
                         <thead class="thead-dark">
@@ -52,8 +52,28 @@
                                     <a class="dropdown-toggle btn btn-primary btn-block" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions</a>
                                     <div class="dropdown-menu">
                                         <a href="<?php echo BASE . '/Item/Edit/' . $item['itemID']; ?>" class="dropdown-item">Edit</a>
-                                        <a href="<?php echo BASE . '/Item/Delete/' . $item['itemID']; ?>" class="dropdown-item" onclick="return confirm('<?php echo "Are you sure you want to delete item ". $item['title'] ."?"; ?>');">Delete</a>
+                                        <a href="<?php echo BASE . '/Item/Delete/' . $item['itemID']; ?>" class="dropdown-item" data-toggle="modal" data-target="#deleteDialog<?php echo $item['itemID'] ?>">Delete</a>
                                         <a href="<?php echo BASE . '/Item/MarkFoundOrSold/' . $item['itemID']; ?>" class="dropdown-item">Mark as <?php echo $item['status'] == 'Wanted' ? 'Found' : 'Sold';  ?></a>
+                                    </div>
+
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteDialog<?php echo $item['itemID'] ?>"
+                                         role="dialog">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Delete listing '<?php echo $item['title'] ?>'?</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <a class="btn btn-primary"
+                                                       href="<?php echo BASE . '/Item/Delete/' . $item['itemID']; ?>">Yes,
+                                                        delete this listing</a>
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
