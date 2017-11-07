@@ -190,6 +190,7 @@ class Humphree {
 		$userArray ['user'] = $user->user;
 		$userArray ['email'] = $user->email;
 		$userArray ['status'] = $user->status;
+		$userArray ['blocked'] = $user->blocked;
 		$userArray ['activate'] = $user->activate;
 		return $userArray;
 	}

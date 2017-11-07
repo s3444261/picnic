@@ -16,7 +16,6 @@ class AdministrationController {
 	 * Displays the main admin page.
 	 */
 	public function index() : void {
-
 		if ($this->auth())  {
 			$h = new Humphree(Picnic::getInstance());
 
@@ -52,8 +51,7 @@ class AdministrationController {
 	/**
 	 * Adds a new user, then displays the main admin page.
 	 */
-	public function add(): void
-	{
+	public function add(): void {
 		if ($this->auth()) {
 			$user = new User (Picnic::getInstance());
 			$v = new Validation ();
@@ -136,8 +134,7 @@ class AdministrationController {
 	/**
 	 * Updates the user attributes if they are valid, then displays the main admin page.
 	 */
-	public function update(): void
-	{
+	public function update(): void {
 		if ($this->auth()) {
 			$user = new User (Picnic::getInstance());
 			$v = new Validation ();
@@ -190,8 +187,7 @@ class AdministrationController {
 	/**
 	 * Updates the user password if it is valid, then displays the main admin page.
 	 */
-	public function changePassword(): void
-	{
+	public function changePassword(): void {
 		if ($this->auth()) {
 			$user = new User (Picnic::getInstance());
 			$v = new Validation ();
@@ -245,8 +241,7 @@ class AdministrationController {
 	 * @param $id
 	 * 			The ID of the user to be edited.
 	 */
-	public function edit($id): void
-	{
+	public function edit($id): void {
 		if ($this->auth()) {
 			$user = new User (Picnic::getInstance());
 			$user->userID = $id;
@@ -274,8 +269,7 @@ class AdministrationController {
 	 * @param $id
 	 * 			The ID of the user to be deleted.
 	 */
-	public function Delete($id): void
-	{
+	public function Delete($id): void {
 		if ($this->auth()) {
 			$h = new Humphree(Picnic::getInstance());
 			$h->deleteUser($id);
@@ -323,14 +317,10 @@ class AdministrationController {
 	}
 
 	private function auth(){
-		if(isset($_SESSION[MODULE]) && isset($_SESSION['userID'])){
-			if($_SESSION['userID'] > 0){
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
+		return isset($_SESSION[MODULE])
+			&& isset($_SESSION['userID'])
+			&& isset($_SESSION['status'])
+			&& $_SESSION['userID'] > 0
+			&& $_SESSION['status'] === 'admin';
 	}
 }

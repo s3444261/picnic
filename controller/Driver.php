@@ -9,6 +9,7 @@
  */
 
 include __DIR__ . '/../config/config.php';
+require_once  __DIR__ . '/../config/Picnic.php';
 
 /**
  * The Driver Class is the controller of the application. It determines what is
@@ -42,6 +43,16 @@ class Driver {
 	private function ensureSessionIsActive(): void {
 		if (!isset ($_SESSION)) {
 			session_start();
+		}
+
+		// force immediate logout of banned users. Not that happy with this being
+		// in this class, but can't think of a better place right now.
+		if (isset ($_SESSION['userID'])) {
+			$h = new Humphree(Picnic::getInstance());
+			$user = $h->getUser($_SESSION['userID']);
+			if ($user['blocked']) {
+				session_destroy();
+			}
 		}
 	}
 
