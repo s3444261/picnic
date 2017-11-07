@@ -16,51 +16,6 @@
 		</div>
 		<div class="col"></div>
 	</div>
-	<div class="row">
-		<div class="col"></div>
-		<div class="col-md-9">
-			<!-- <div class="text-center col-xs-10 col-xs-offset-1 col-sm-4 col-sm-offset-4 col-md-8 col-md-offset-2"> -->
-				<form data-toggle="validator" role="form" class="form-inline"
-					method="post" action="<?php echo BASE . '/Administration'; ?>">
-					<div class="form-row">
-						<div class="col">
-							<div class="form-group addUser">
-								<label class="sr-only" for="user">Username</label> <input
-									type="text" class="form-control" name="user" id="user"
-									placeholder="Username">
-							</div>
-						</div>
-						<div class="col">
-							<div class="form-group addUser">
-								<label class="sr-only" for="email">Email</label> <input type="text"
-									class="form-control" name="email" id="email" placeholder="Email">
-							</div>
-						</div>
-						<div class="col">
-							<div class="form-group addUser">
-								<label class="sr-only" for="password">Password</label> <input
-									type="password" class="form-control" name="password" id="password"
-									placeholder="Password">
-							</div>
-						</div>
-						<div class="col">
-							<div class="form-group addUser">
-								<label class="sr-only" for="confirm">Confirm Password</label> <input
-									type="password" class="form-control" name="confirm" id="confirm"
-									placeholder="Confirm Password">
-							</div>
-						</div>
-						<div class="col">
-							<div class="form-group addUser">
-								<button type="submit" name="add" class="btn btn-primary">Add User</button>
-							</div>
-						</div>
-					</div> <!-- end .form-row -->
-				</form>
-			<!-- </div> -->
-		</div>
-		<div class="col"></div>
-	</div>
 
 	<div class="row">
 		<div class="col"></div>
