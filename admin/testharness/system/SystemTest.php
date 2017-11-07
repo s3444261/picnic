@@ -509,7 +509,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const EMAIL_NOT_EXIST = 'bandicoot@gumtree.net';
 	const STATUS_ADD = 'suspended';
 	const STATUS_ACTIVE = 'active';
-	const STATUS_SUSPENDED = 'suspended';
+	const STATUS_SUSPENDED = 1;
 	const PAGE_NUMBER = 10;
 	const USERS_PER_PAGE = 20;
 	const PAGE_NUMBER_ZERO = 0;
@@ -1462,7 +1462,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		$system = new System ( $pdo );
 		$sut = new User ( $pdo );
-		if ($system->disableUser ( $sut )) {
+		if ($system->blockUser ( $sut )) {
 			$this->assertTrue ( false );
 		} else {
 			$this->assertTrue ( true );
@@ -1473,7 +1473,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$sut = new User ( $pdo );
 		$sut->userID = self::INVALID_ID;
-		if ($system->disableUser ( $sut )) {
+		if ($system->blockUser ( $sut )) {
 			$this->assertTrue ( false );
 		} else {
 			$this->assertTrue ( true );
@@ -1485,9 +1485,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$sut = new User ( $pdo );
 		$sut->userID = self::USER_ID_1;
 		
-		if ($system->disableUser ( $sut )) {
+		if ($system->blockUser ( $sut )) {
 			$sut = $system->getUser ( $sut );
-			$this->assertEquals ( self::STATUS_SUSPENDED, $sut->status );
+			$this->assertEquals ( self::STATUS_SUSPENDED, $sut->blocked );
 		} else {
 			$this->assertTrue ( false );
 		}

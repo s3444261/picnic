@@ -18,6 +18,7 @@ define ( 'SALT', 'TooMuchSalt' );
  * @property string $_password;
  * @property string $_status;
  * @property string $_activate;
+ * @property string $_blocked;
  */
 class User {
 	private $_userID = '';
@@ -26,6 +27,7 @@ class User {
 	private $_password = '';
 	private $_status = '';
 	private $_activate = '';
+	private $_blocked = 0;
 	private $_created_at;
 	private $_updated_at;
 	private $db;
@@ -105,6 +107,7 @@ class User {
 				$this->_password = $row ['password'];
 				$this->_status = $row ['status'];
 				$this->_activate = $row ['activate'];
+				$this->_blocked = $row ['blocked'];
 				$this->_created_at = $row ['created_at'];
 				$this->_updated_at = $row ['updated_at'];
 				return $this;
@@ -169,8 +172,7 @@ class User {
     					email = :email,
     					password = :password,
     					status = :status,
-    					activate = :activate,
-						created_at = NULL";
+    					activate = :activate";
 			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindParam ( ':user', $this->_user );
@@ -242,7 +244,8 @@ class User {
 				$query = "UPDATE Users
 					   	SET user = :user,
     					email = :email,
-						status = :status
+						status = :status,
+						blocked = :blocked
 						WHERE userID = :userID";
 				
 				$stmt = $this->db->prepare ( $query );
@@ -250,6 +253,7 @@ class User {
 				$stmt->bindParam ( ':user', $this->_user );
 				$stmt->bindParam ( ':email', $this->_email );
 				$stmt->bindParam ( ':status', $this->_status );
+				$stmt->bindParam ( ':blocked', $this->_blocked );
 				$stmt->execute ();
 				if ($stmt->rowCount () > 0) {
 					return true;
@@ -587,7 +591,8 @@ class User {
 					FROM Users
 					WHERE email = :email
     				AND password = :password
-    				AND (status != 'deleted' && status != 'suspended')
+    				AND status != 'deleted'
+    				AND blocked = 0
 					AND activate IS NULL";
 			
 			$stmt = $this->db->prepare ( $query );

@@ -25,7 +25,6 @@ class System {
 	const SEARCH_MIN_QUANTITY = 'srchMinQuantity';
 	const SEARCH_CONDITION = 'srchCondition';
 	const SEARCH_STATUS = 'srchStatus';
-	const SUSPENDED = 'suspended';
 	const USER_RATING_NOT_ADDED = 'The UserRating was not added!';
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
 	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
@@ -234,10 +233,10 @@ class System {
 	 *        	User object.
 	 * @return bool
 	 */
-	public function disableUser(User $user): bool {
+	public function blockUser(User $user): bool {
 		if ($user->userID > 0) {
 			$user = $this->getUser ( $user );
-			$user->status = self::SUSPENDED;
+			$user->blocked = 1;
 			try {
 				$user->update ();
 				return true;
@@ -248,7 +247,28 @@ class System {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Allows an administrator to un-suspend an account.
+	 *
+	 * @param User $user
+	 *        	User object.
+	 * @return bool
+	 */
+	public function unblockUser(User $user): bool {
+		if ($user->userID > 0) {
+			$user = $this->getUser ( $user );
+			$user->blocked = 0;
+			try {
+				$user->update ();
+				return true;
+			} catch ( ModelException $e ) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 	/**
 	 * Allows an administrator to completely delete an account and all its
 	 * associated entries.

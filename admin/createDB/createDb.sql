@@ -24,6 +24,7 @@ CREATE TABLE `Users` (
   `password` varchar(45) NULL,
   `status` varchar(45) NOT NULL,
   `activate` varchar(32) DEFAULT NULL,
+	`blocked` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`userID`),
@@ -57,7 +58,6 @@ CREATE TABLE `Items` (
 		`itemStatus` varchar(45) NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	  FULLTEXT idx1 (title, description),
 		PRIMARY KEY (`itemID`),
   	CONSTRAINT `FK_Items_Users` FOREIGN KEY (`owningUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=MyISAM DEFAULT CHARSET=latin1;

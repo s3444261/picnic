@@ -76,13 +76,10 @@
 			<table class="table listUser">
 				<thead>
 					<tr>
-						<!-- <th class="col-md-3"></th> -->
 						<th class="col-md-1">Username</th>
 						<th class="col-md-1">Email</th>
 						<th class="col-md-1">Status</th>
 						<th class="col-md-1"></th>
-						<th class="col-md-1"></th>
-						<!-- <th class="col-md-4"></th> -->
 					</tr>
 				</thead>
 				<tbody>
@@ -91,18 +88,81 @@
 					foreach ( $this->data['users'] as $user ) {
 						?>
 						<tr>
-						<!-- <td></td> -->
 						<td><?php echo $user['user']; ?></td>
 						<td><?php echo $user['email']; ?></td>
-						<td><?php echo $user['status']; ?></td>
-						<td><a
-							href="<?php echo BASE . '/Administration/Edit/' . $user['userID']; ?>"
-							class="btn btn-primary btn-xs pull-right" role="button">Edit</a></td>
-						<td><a
-							href="<?php echo BASE . '/Administration/Delete/' . $user['userID']; ?>"
-							class="btn btn-primary btn-xs" role="button"
-							onclick="return confirm('Are you sure you want to delete?');">Delete</a></td>
-						<!-- <td></td> -->
+						<td><?php if ($user['blocked'] != 0) { echo 'BLOCKED'; } else {echo $user['status']; } ?></td>
+						<td>
+                            <a class="dropdown-toggle btn btn-primary btn-block" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions</a>
+                            <div class="dropdown-menu">
+                                <a href="<?php echo BASE . '/Administration/Edit/' . $user['userID']; ?>" class="dropdown-item">Edit</a>
+                                <button class="dropdown-item" data-toggle="modal" data-target="#deleteDialog<?php echo $user['userID'] ?>">Delete</button>
+								<?php if ($user['blocked'] != 0) { ?>
+                                    <button class="dropdown-item" data-toggle="modal" data-target="#unblockDialog<?php echo $user['userID'] ?>">Unblock User</button>
+                                <?php } else { ?>
+                                    <button class="dropdown-item" data-toggle="modal" data-target="#blockDialog<?php echo $user['userID'] ?>">Block User</button>
+                                <?php } ?>
+                            </div>
+
+                            <!-- Delete Modal -->
+                            <div class="modal fade" id="deleteDialog<?php echo $user['userID'] ?>"
+                                 role="dialog">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Delete user '<?php echo $user['user'] ?>'?</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <a class="btn btn-primary"
+                                               href="<?php echo BASE . '/Administration/Delete/' . $user['userID']; ?>">Yes,
+                                                delete this user</a>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Block Modal -->
+                            <div class="modal fade" id="blockDialog<?php echo $user['userID'] ?>"
+                                 role="dialog">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Block user '<?php echo $user['user'] ?>'?</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <a class="btn btn-primary"
+                                               href="<?php echo BASE . '/Administration/BlockUser/' . $user['userID']; ?>">Yes,
+                                                block this user</a>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Block Modal -->
+                            <div class="modal fade" id="unblockDialog<?php echo $user['userID'] ?>"
+                                 role="dialog">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Unblock user '<?php echo $user['user'] ?>'?</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <a class="btn btn-primary"
+                                               href="<?php echo BASE . '/Administration/UnblockUser/' . $user['userID']; ?>">Yes,
+                                                unblock this user</a>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
 					</tr>
 					<?php
 						}

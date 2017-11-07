@@ -285,6 +285,43 @@ class AdministrationController {
 		}
 	}
 
+	/**
+	 * Blocks the user with the given ID.
+	 *
+	 * @param $userID
+	 * 			The ID of the user to be blocked.
+	 */
+	public function BlockUser(int $userID): void {
+		if ($this->auth()) {
+			$h = new Humphree(Picnic::getInstance());
+			if (!$h->blockUser($userID)) {
+				$_SESSION['error'] = 'Failed to block the user.';
+			}
+			header('Location: ' . BASE . '/Administration');
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
+
+	/**
+	 * Unblocks the user with the given ID.
+	 *
+	 * @param $userID
+	 * 			The ID of the user to be unblocked.
+	 */
+	public function UnblockUser(int $userID): void {
+		if ($this->auth()) {
+			$h = new Humphree(Picnic::getInstance());
+			if (!$h->unblockUser($userID)) {
+				$_SESSION['error'] = 'Failed to unblock the user.';
+			}
+
+			header('Location: ' . BASE . '/Administration');
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
+
 	private function auth(){
 		if(isset($_SESSION[MODULE]) && isset($_SESSION['userID'])){
 			if($_SESSION['userID'] > 0){

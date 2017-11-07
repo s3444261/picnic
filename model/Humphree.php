@@ -213,7 +213,8 @@ class Humphree {
 			$userArray ['user'] = $user->user;
 			$userArray ['email'] = $user->email;
 			$userArray ['status'] = $user->status;
-			
+			$userArray ['blocked'] = $user->blocked;
+
 			$usersArray [] = $userArray;
 		}
 		return $usersArray;
@@ -226,16 +227,35 @@ class Humphree {
 	 *        	The ID of the user.
 	 * @return bool
 	 */
-	public function disableUser(int $userID): bool {
+	public function blockUser(int $userID): bool {
 		$user = new User ( $this->db );
 		$user->userID = $userID;
-		if ($this->system->disableUser ( $user )) {
+		$user->get();
+		if ($this->system->blockUser ( $user )) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Allows an administrator to un-suspend a users account.
+	 *
+	 * @param int $userID
+	 *        	The ID of the user.
+	 * @return bool
+	 */
+	public function unblockUser(int $userID): bool {
+		$user = new User ( $this->db );
+		$user->userID = $userID;
+		$user->get();
+		if ($this->system->unblockUser ( $user )) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	 * Allows an administrator to delete a user from the database.
 	 *

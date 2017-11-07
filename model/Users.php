@@ -55,7 +55,7 @@ class Users {
 			
 			$pn = ($pn - 1)*$upp;
 			
-			$query = "SELECT userID, user, email, status
+			$query = "SELECT userID, user, email, status, blocked
 					FROM Users
 					WHERE status != 'deleted'
 					LIMIT " . $pn . "," . $upp;
@@ -70,7 +70,7 @@ class Users {
 				$user->user = $row['user'];
 				$user->email = $row['email'];
 				$user->status = $row['status'];
-				
+				$user->blocked = $row['blocked'];
 				$users [] = $user;
 			}
 		} catch (ValidationException $e) { 
