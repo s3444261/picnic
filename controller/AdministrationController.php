@@ -167,7 +167,13 @@ class AdministrationController {
 						$user->status = $_POST ['status'];
 						unset ($_POST ['status']);
 						$user->userID = $userID;
-						$user->update();
+						try {
+							$user->update();
+						} catch (ModelException $e) {
+							// temporary -- to catch the case where no change was made to the data, in which
+							// case update throws due to now rows being modified.
+						}
+
 
 						header('Location: ' . BASE . '/Administration');
 					}
