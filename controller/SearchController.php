@@ -26,15 +26,17 @@ class SearchController  {
 
 	public function Results() {
 		if (isset($_REQUEST['searchBasic'])) {
-			$h = new Humphree(Picnic::getInstance());
 			$text = isset($_REQUEST['srch-term']) ? $_REQUEST['srch-term'] : '';
-			$results = $h->search($text);
+			$h = new Humphree(Picnic::getInstance());
+			$pagerData = Pager::ParsePagerDataFromQuery();
+			$pagerData->totalItems = sizeof( $h->search($text, 1, 1000000));
+			$results = $h->search($text, $pagerData->pageNumber, $pagerData->itemsPerPage);
 			$view = new View();
 			$view->SetData('navData', new NavData(NavData::ViewListings));
 			$view->SetData('results', $results);
+			$view->SetData('pagerData', $pagerData);
 			$view->Render('searchResults');
 		} else if (isset($_REQUEST['searchAdvanced'])) {
-			$h = new Humphree(Picnic::getInstance());
 			$text = isset($_REQUEST['srch-term']) ? $_REQUEST['srch-term'] : '';
 			$majorCategory = isset($_REQUEST['majorCategory']) ? $_REQUEST['majorCategory'] : -1;
 			$minorCategory = isset($_REQUEST['minorCategory']) ? $_REQUEST['minorCategory'] : -1;
@@ -43,10 +45,14 @@ class SearchController  {
 			$minQuantity = (isset($_REQUEST['minQuantity']) && $_REQUEST['minQuantity'] !== '') ? $_REQUEST['minQuantity'] : 1;
 			$condition = isset($_REQUEST['itemcondition']) ? $_REQUEST['itemcondition'] : '';
 			$status = isset($_REQUEST['status']) ? $_REQUEST['status'] : '';
-			$results = $h->searchAdvanced($text, $minPrice, $maxPrice, $minQuantity, $condition, $status, $majorCategory, $minorCategory);
+			$h = new Humphree(Picnic::getInstance());
+			$pagerData = Pager::ParsePagerDataFromQuery();
+			$pagerData->totalItems = sizeof( $h->searchAdvanced($text, $minPrice, $maxPrice, $minQuantity, $condition, $status, $majorCategory, $minorCategory, 1, 1000000));
+			$results = $h->searchAdvanced($text, $minPrice, $maxPrice, $minQuantity, $condition, $status, $majorCategory, $minorCategory, $pagerData->pageNumber, $pagerData->itemsPerPage);
 			$view = new View();
 			$view->SetData('navData', new NavData(NavData::ViewListings));
 			$view->SetData('results', $results);
+			$view->SetData('pagerData', $pagerData);
 			$view->Render('searchResults');
 		} else {
 			header('Location: ' . BASE . '/Home');

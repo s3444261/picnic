@@ -15,7 +15,10 @@
 		<div class="col"></div>
 		<!-- Central column -->
 		<div class="col-md-9">
-			<strong>Found <?php echo count($this->data['results']) ?> items.</strong>
+            <div class="text-center">
+				<?php echo Pager::Render('pagination pagination-sm list-inline', $this->data ['pagerData'], true); ?>
+            </div>
+
 			<div class="tab-content ">
 				<div class="tab-pane active" id="1">
 					<div class="row">
@@ -34,6 +37,10 @@
 						<?php } ?>
 					</div>
 				</div> <!-- end of tab pane #1 -->
+
+                <div class="text-center">
+					<?php echo Pager::Render('pagination pagination-sm list-inline', $this->data ['pagerData'], false); ?>
+                </div>
 
 			</div> <!-- end of .tab-content -->
 		</div> <!-- end .col-md-9 -->

@@ -1056,17 +1056,19 @@ class System {
 			return $ur;
 		}
 	}
-	
+
 	/**
 	 * Searches Item Titles and returns an array of Items.
 	 *
-	 * @param string $searchString        	
+	 * @param string $searchString
+	 * @param int $pageNumber
+	 * @param int $itemsPerPage
 	 * @return array
 	 */
-	public function search(string $searchString): array {
+	public function search(string $searchString, int $pageNumber = 1, int $itemsPerPage = 5000): array {
 		
 		$items = new Items ( $this->db );
-		return $items->search ($searchString);
+		return $items->search ($searchString, $pageNumber, $itemsPerPage);
 	}
 	
 	/**
@@ -1080,19 +1082,23 @@ class System {
 		$items = new Items ( $this->db );
 		return $items->searchArray ($searchString);
 	}
-	
+
 	/**
 	 * Interim Advanced Search method
-	 * 
+	 *
 	 * @param string $searchText
 	 * @param string $srchMinPrice
 	 * @param string $srchMaxPrice
 	 * @param string $srchMinQuantity
 	 * @param string $srchCondition
 	 * @param string $srchStatus
+	 * @param int $majorCategoryID
+	 * @param int $minorCategoryID
+	 * @param int $pageNumber
+	 * @param int $itemsPerPage
 	 * @return array
 	 */
-	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID, int $maxResults = 500): array {
+	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID, int $pageNumber = 1, int $itemsPerPage = 5000): array {
 		$args = array ();
 		$args [Items::SEARCH_TEXT] = '';
 		$args [Items::SEARCH_MINOR_CATEGORY_ID] = 0;
@@ -1128,7 +1134,7 @@ class System {
 			$args [Items::SEARCH_STATUS] = $srchStatus;
 		}
 		$items = new Items ( $this->db );
-		return $items->searchAdvanced ($args, $maxResults);
+		return $items->searchAdvanced ($args, $pageNumber, $itemsPerPage);
 	}
 
 	private function runMatchingFor(int $itemID) {
@@ -1156,7 +1162,7 @@ class System {
 				$maxPrice = 0x7FFFFFFF;
 			}
 
-			$searchResults = $this->searchAdvanced($item->title, $minPrice, $maxPrice, 1, $item->itemcondition, $desiredStatus, $category['parentID'], $category['categoryID'], 10);
+			$searchResults = $this->searchAdvanced($item->title, $minPrice, $maxPrice, 1, $item->itemcondition, $desiredStatus, $category['parentID'], $category['categoryID'], 1, 10);
 
 			$item->removeAllMatches();
 

@@ -41,21 +41,25 @@ class Items {
 		$name = '_' . $name;
 		$this->$name = $value;
 	}
-	
+
 	/**
 	 * Searches Items and returns an array of item objects.
-	 * 
+	 *
+	 * @param string $searchString
+	 * @param int $pageNumber
+	 * @param int $itemsPerPage
 	 * @return array
 	 */
-	public function search(string $searchString): array {
+	public function search(string $searchString, int $pageNumber = 1, int $itemsPerPage = 5000): array {
 		$items = array ();
 		
 		if (strlen ( $searchString ) > 0) {
 			
-			$query = "SELECT *, MATCH (title, description) AGAINST (:searchString) AS relevance FROM Items
+			$query = 'SELECT *, MATCH (title, description) AGAINST (:searchString) AS relevance FROM Items
 						WHERE MATCH (title, description)
 						AGAINST (:searchString)
-						ORDER BY relevance DESC";
+						ORDER BY relevance DESC
+						LIMIT ' . ($pageNumber - 1) * $itemsPerPage . ', ' . $itemsPerPage;
 			
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindValue ( ':searchString', $searchString );
@@ -127,10 +131,12 @@ class Items {
 	 * Interim advanced search method.
 	 *
 	 * @param array $args
-	 * @param int $maxResults
+	 * @param int $pageNumber
+	 * @param int $itemsPerPage
 	 * @return array
+	 * @internal param int $maxResults
 	 */
-	public function searchAdvanced(array $args, int $maxResults = 500): array {
+	public function searchAdvanced(array $args, int $pageNumber = 1, int $itemsPerPage = 5000): array {
 		$items = array();
 
 		$query = "SELECT *";
@@ -215,7 +221,7 @@ class Items {
 			}
 		}
 
-		$query = $query . ' LIMIT ' . $maxResults;
+		$query = $query . ' LIMIT ' . ($pageNumber - 1) * $itemsPerPage . ', ' . $itemsPerPage;
 
 		$stmt = $this->db->prepare ( $query );
 
@@ -242,7 +248,7 @@ class Items {
 		} elseif ($args[self::SEARCH_MAJOR_CATEGORY_ID] > 0){ 
 			$stmt->bindValue ( ':categoryID', $args[self::SEARCH_MAJOR_CATEGORY_ID] );
 		}
-		
+
 		$stmt->execute ();
 
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {

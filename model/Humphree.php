@@ -1122,15 +1122,17 @@ class Humphree {
 		$user->userID = $userID;
 		return $this->system->getUserRatings ( $user );
 	}
-	
+
 	/**
 	 * Searches Item Titles based on search string and returns an array of Items.
 	 *
-	 * @param string $searchString        	
+	 * @param string $searchString
+	 * @param int $pageNumber
+	 * @param int $itemsPerPage
 	 * @return array
 	 */
-	public function search(string $searchString): array {
-		$items = $this->system->search ( $searchString );
+	public function search(string $searchString, int $pageNumber, int $itemsPerPage): array {
+		$items = $this->system->search ( $searchString, $pageNumber, $itemsPerPage );
 		$its = array ();
 		foreach ( $items as $item ) {
 			$it = array ();
@@ -1170,20 +1172,24 @@ class Humphree {
 		}
 		return $its;
 	}
-	
+
 	/**
 	 * Interim advanced search method.
-	 * 
-	 * @param string $srchTitle
-	 * @param string $srchDescription
-	 * @param string $srchPrice
-	 * @param string $srchQuantity
+	 *
+	 * @param string $searchText
+	 * @param string $srchMinPrice
+	 * @param string $srchMaxPrice
+	 * @param string $srchMinQuantity
 	 * @param string $srchCondition
 	 * @param string $srchStatus
+	 * @param int $majorCategoryID
+	 * @param int $minorCategoryID
+	 * @param int $pageNumber
+	 * @param int $itemsPerPage
 	 * @return array
 	 */
-	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID): array {
-		$items = $this->system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID);
+	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID, int $pageNumber, int $itemsPerPage): array {
+		$items = $this->system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID, $pageNumber, $itemsPerPage);
 		$its = array ();
 		foreach ( $items as $item ) {
 			$it = array ();
