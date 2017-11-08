@@ -20,7 +20,7 @@
                     <div class="alert alert-danger"><?php echo $_SESSION['error'] ?></div>
 				<?php } ?>
 
-                <form data-toggle="validator" role="form" method="post" action="<?php echo BASE . '/Administration/Edit/' . $this->data['user']['userID']; ?>">
+                <form data-toggle="validator" role="form" method="post" action="<?php echo BASE . '/Administration/EditUser/' . $this->data['user']['userID']; ?>">
                     <div class="form-group">
                         <label for="user">Name</label>
                         <input type="text" class="form-control" name="user" id="user" placeholder="Name" value="<?php echo $this->data['user']['user'] ?>" required>

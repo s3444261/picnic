@@ -95,10 +95,10 @@ class Categories {
 			if ($parentID == self::ROOT_CATEGORY) {
 				// The database uses NULL to indicate no parent, so we have a special
 				// case to handle here.
-				$query = "SELECT * FROM Categories WHERE parentID IS NULL";
+				$query = "SELECT * FROM Categories WHERE parentID IS NULL ORDER BY category";
 				$stmt = $this->db->prepare($query);
 			} else {
-				$query = "SELECT * FROM Categories WHERE parentID = :parentID";
+				$query = "SELECT * FROM Categories WHERE parentID = :parentID ORDER BY category";
 				$stmt = $this->db->prepare($query);
 				$stmt->bindParam(':parentID', $parentID);
 			}

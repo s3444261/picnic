@@ -285,7 +285,12 @@ class Humphree {
 	 */
 	public function addCategory(int $parentID, string $category): bool {
 		$cat = new Category ( $this->db );
-		$cat->parentID = $parentID;
+
+		if ($parentID !== Category::ROOT_CATEGORY)
+		{
+			$cat->parentID = $parentID;
+		}
+
 		$cat->category = $category;
 		if ($this->system->addCategory ( $cat )) {
 			return true;

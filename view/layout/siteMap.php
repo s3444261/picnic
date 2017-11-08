@@ -22,7 +22,7 @@
 						<ul>
 							<li>Home
 								<ul>
-									<li>Search</li>
+									<li><a href="<?php echo BASE . '/Search/Advanced' ?>">Search</a></li>
 									<li><a href="<?php echo BASE . '/About' ?>">About</a></li>
 									<li><a href="<?php echo BASE . '/TermsOfService' ?>">Terms of Service</a></li>
 									<li><a href="<?php echo BASE . '/PrivacyPolicy' ?>">Privacy Policy</a></li>
@@ -95,15 +95,11 @@
 							</li>
 
 							<?php if (isset($_SESSION['status']) && $_SESSION['status'] == 'admin') { ?>
-                                <li>Admin
-                                    <ul>
-                                        <li><a href="<?php echo BASE . '/Administration' ?>">Admin Home</a>
-                                            <ul>
-                                                <li>Manage Categories</li>
-                                                <li>Manage Users</li>
-                                            </ul>
-                                        </li>
+                                <li>Admin<ul>
+                                        <li><a href="<?php echo BASE . '/Administration' ?>">Manage Users</a></li>
+                                        <li><a href="<?php echo BASE . '/Administration/ViewCategories' ?>">Manage Categories</a></li>
                                     </ul>
+
                                 </li>
 							<?php } ?>
 						</ul>

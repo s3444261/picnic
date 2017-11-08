@@ -8,26 +8,28 @@
  * Putro, Edwan - edwanhp@gmail.com
  */
 ?>
+
 <div class="container-fluid">
-	<div class="row">
-		<div class="col"></div>
-		<div class="col-md-9">
-			<h1 class="text-center">Administration</h1>
-		</div>
-		<div class="col"></div>
-	</div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-9">
 
-	<div class="row">
-		<div class="col"></div>
-		<div class="col-xs-6 col-xs-offset-3 top-n-tail">
-			<?php echo Pager::Render('pagination pagination-sm list-inline', $this->data ['pagerData'], true); ?>
-		</div>
-		<div class="col"></div>
-	</div>
+            <!-- tab headers -->
+            <ul class="nav nav-tabs nav-justified">
+                <li class="nav-item">
+                    <a class="nav-link active" href="<?php echo BASE . '/Administration' ?>">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo BASE . '/Administration/ViewCategories' ?>">Categories</a>
+                </li>
+            </ul>
 
-	<div class="row">
-		<div class="col"></div> <!-- left margin -->
-		<div class="col-md-9">
+			<h1 class="display-4 text-center top-n-tail">Administration - Users</h1>
+
+            <div class="text-center">
+				<?php echo Pager::Render('pagination pagination-sm list-inline', $this->data ['pagerData'], true); ?>
+            </div>
+
 			<table class="table listUser">
 				<thead>
 					<tr>
@@ -49,7 +51,7 @@
 						<td>
                             <a class="dropdown-toggle btn btn-primary btn-block" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions</a>
                             <div class="dropdown-menu">
-                                <a href="<?php echo BASE . '/Administration/Edit/' . $user['userID']; ?>" class="dropdown-item">Edit</a>
+                                <a href="<?php echo BASE . '/Administration/EditUser/' . $user['userID']; ?>" class="dropdown-item">Edit</a>
                                 <a href="<?php echo BASE . '/Administration/ChangePassword/' . $user['userID']; ?>" class="dropdown-item">Change Password</a>
                                 <button class="dropdown-item" data-toggle="modal" data-target="#deleteDialog<?php echo $user['userID'] ?>">Delete</button>
 								<?php if ($user['blocked'] != 0) { ?>
@@ -69,7 +71,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <a class="btn btn-primary"
-                                               href="<?php echo BASE . '/Administration/Delete/' . $user['userID']; ?>">Yes,
+                                               href="<?php echo BASE . '/Administration/DeleteUser/' . $user['userID']; ?>">Yes,
                                                 delete this user</a>
                                             <button type="button" class="btn btn-default" data-dismiss="modal">
                                                 Cancel
@@ -126,15 +128,12 @@
 				?>
 				</tbody>
 			</table>
+
+            <div class="text-center">
+                <?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], false); ?>
+            </div>
+
 		</div> <!-- end .col-md-9 -->
 		<div class="col"></div> <!-- right margin -->
-	</div> <!-- end .row -->
-
-	<div class="row">
-		<div class="col"></div>
-		<div class="col-xs-6 col-xs-offset-3 top-n-tail">
-			<?php echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], false); ?>
-		</div>
-		<div class="col"></div>
 	</div> <!-- end .row -->
 </div> <!-- end .container-fluid -->

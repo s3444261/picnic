@@ -129,13 +129,20 @@ final class CategoriesTest extends PHPUnit\Framework\TestCase {
 	public function testGetCategoriesInParentIdValid(): void {
 		$sut = $this->createDefaultSut ();
 		$cats = $sut->getCategoriesIn ( 4 );
-		$i = 10;
-		foreach ( $cats as $cat ) {
-			$number = $i - 1;
-			$this->assertEquals ( $i, $cat->categoryID );
-			$this->assertEquals ( 4, $cat->parentID );
-			$this->assertSame ( 'cat' . $number, $cat->category );
-			$i ++;
-		}
+
+		$this->assertEquals ( 3, count($cats));
+
+		// sorted by name.
+		$this->assertEquals ( 11, $cats[0]->categoryID );
+		$this->assertEquals ( 4, $cats[0]->parentID );
+		$this->assertSame ( 'cat10', $cats[0]->category );
+
+		$this->assertEquals ( 12, $cats[1]->categoryID );
+		$this->assertEquals ( 4, $cats[1]->parentID );
+		$this->assertSame ( 'cat11', $cats[1]->category );
+
+		$this->assertEquals ( 10, $cats[2]->categoryID );
+		$this->assertEquals ( 4, $cats[2]->parentID );
+		$this->assertSame ( 'cat9', $cats[2]->category );
 	}
 }
