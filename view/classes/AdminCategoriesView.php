@@ -62,4 +62,8 @@ class AdminCategoriesView extends View{
 	public function categoriesUrl(): string {
 		return BASE . '/Administration/ViewCategories';
 	}
+
+	public function systemUrl(): string {
+		return BASE . '/Administration/System';
+	}
 }

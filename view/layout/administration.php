@@ -22,6 +22,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo BASE . '/Administration/ViewCategories' ?>">Categories</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo BASE . '/Administration/System' ?>">System</a>
+                </li>
             </ul>
 
 			<h1 class="display-4 text-center top-n-tail">Administration - Users</h1>
