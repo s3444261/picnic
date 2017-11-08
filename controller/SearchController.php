@@ -19,35 +19,31 @@ class SearchController  {
 			$view->SetData('majorCategories', $this->majorCategories());
 			$view->SetData('minorCategories', $this->minorCategories());
 			$view->Render('searchAdvanced');
-		} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
-			$h = new Humphree(Picnic::getInstance());
-
-			$text = isset($_POST['searchText']) ? $_POST['searchText'] : '';
-			$majorCategory = isset($_POST['majorCategory']) ? $_POST['majorCategory'] : -1;
-			$minorCategory = isset($_POST['minorCategory']) ? $_POST['minorCategory'] : -1;
-			$minPrice = ($_POST['minPrice'] !== '') ? $_POST['minPrice'] : 0;
-			$maxPrice = ($_POST['maxPrice'] !== '') ? $_POST['maxPrice'] : 0x7FFFFFFF;
-			$minQuantity = ($_POST['minQuantity'] !== '') ? $_POST['minQuantity'] : 1;
-			$condition = isset($_POST['itemcondition']) ? $_POST['itemcondition'] : '';
-			$status = isset($_POST['status']) ? $_POST['status'] : '';
-			
-			$results = $h->searchAdvanced($text, $minPrice, $maxPrice, $minQuantity, $condition, $status, $majorCategory, $minorCategory);
-			$view = new View();
-			$view->SetData('navData', new NavData(NavData::ViewListings));
-			$view->SetData('results', $results);
-			$view->Render('searchResults');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
 	}
 
-	public function Basic() {
-		if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
+	public function Results() {
+		if (isset($_REQUEST['searchBasic'])) {
 			$h = new Humphree(Picnic::getInstance());
-
-			$text = isset($_POST['srch-term']) ? $_POST['srch-term'] : '';
-
+			$text = isset($_REQUEST['srch-term']) ? $_REQUEST['srch-term'] : '';
 			$results = $h->search($text);
+			$view = new View();
+			$view->SetData('navData', new NavData(NavData::ViewListings));
+			$view->SetData('results', $results);
+			$view->Render('searchResults');
+		} else if (isset($_REQUEST['searchAdvanced'])) {
+			$h = new Humphree(Picnic::getInstance());
+			$text = isset($_REQUEST['srch-term']) ? $_REQUEST['srch-term'] : '';
+			$majorCategory = isset($_REQUEST['majorCategory']) ? $_REQUEST['majorCategory'] : -1;
+			$minorCategory = isset($_REQUEST['minorCategory']) ? $_REQUEST['minorCategory'] : -1;
+			$minPrice = (isset($_REQUEST['minPrice']) && $_REQUEST['minPrice'] !== '') ? $_REQUEST['minPrice'] : 0;
+			$maxPrice = (isset($_REQUEST['maxPrice']) && $_REQUEST['maxPrice'] !== '') ? $_REQUEST['maxPrice'] : 0x7FFFFFFF;
+			$minQuantity = (isset($_REQUEST['minQuantity']) && $_REQUEST['minQuantity'] !== '') ? $_REQUEST['minQuantity'] : 1;
+			$condition = isset($_REQUEST['itemcondition']) ? $_REQUEST['itemcondition'] : '';
+			$status = isset($_REQUEST['status']) ? $_REQUEST['status'] : '';
+			$results = $h->searchAdvanced($text, $minPrice, $maxPrice, $minQuantity, $condition, $status, $majorCategory, $minorCategory);
 			$view = new View();
 			$view->SetData('navData', new NavData(NavData::ViewListings));
 			$view->SetData('results', $results);

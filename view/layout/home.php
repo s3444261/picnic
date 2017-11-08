@@ -20,7 +20,7 @@
                     <h2 class="text-center">Welcome to Humphree!</h2>
                     <h5 class="text-center">Please search using the form below</h5>
                 </div>
-                <form method="post" action="<?php echo BASE . '/Search/Basic'?>">
+                <form action="<?php echo BASE . '/Search/Results'?>">
                     <div class="form-group">
                         <label for="exampleInputTest">Search</label>
                         <input type="text" class="form-control" id="srch-term" name="srch-term" aria-describedby="searchHelp" placeholder="What are you looking for?">
@@ -28,7 +28,7 @@
                         <small id="adv-search" class="form-text text-right"><a href="<?php echo BASE . '/Search/Advanced'?>" data-toggle="tooltip" data-placement="top" title="Coming soon">Advanced search</a></small>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg btn-block"  name="search" >Search</button>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block"  name="searchBasic" id="searchBasic">Search</button>
                 </form>
             </div> <!-- end .jumbotron -->
         </div> <!-- end col-9 -->

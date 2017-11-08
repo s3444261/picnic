@@ -82,11 +82,11 @@
 				<h1 class="display-3 text-center">Advanced Search</h1>
 				<hr>
 
-				<form data-toggle="validator" role="form" method="post" action="<?php echo BASE . '/Search/Advanced'?>">
+				<form data-toggle="validator" role="form" action="<?php echo BASE . '/Search/Results'?>">
 
 					<div class="form-group">
 						<label for="title">Search text</label>
-						<input type="text" class="form-control" name="searchText" id="searchText" placeholder="Example: Tamiya BRZ model kit 1:24">
+						<input type="text" class="form-control" name="srch-term" id="srch-term" placeholder="Example: Tamiya BRZ model kit 1:24">
 					</div>
 
 					<div class="form-group">
@@ -149,7 +149,7 @@
 
 					<hr />
 
-					<button type="submit" class="btn btn-primary btn-success" name="search">Search</button>
+					<button type="submit" class="btn btn-primary btn-success" name="searchAdvanced">Search</button>
 				</form>
 
 			</div>
