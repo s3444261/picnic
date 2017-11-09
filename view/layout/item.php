@@ -107,7 +107,7 @@
 
                     <?php foreach ($this->matchedItems() as $matchedItem) { ?>
                     <div class="row">
-                        <a href="<?php echo BASE . '/Item/View/' . $matchedItem['itemID']; ?>"><?php echo $matchedItem['title']; ?></a>
+                        <a href="<?php echo BASE . '/Item/View/' . $matchedItem['otherItemID']; ?>"><?php echo $matchedItem['otherItem']['title']; ?></a>
                     </div>
                     <?php } ?>
                 </div>

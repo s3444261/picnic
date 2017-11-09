@@ -43,6 +43,8 @@
                                     <tr>
                                         <th scope="col">My Item</th>
                                         <th scope="col">Match</th>
+                                        <th scope="col">My Status</th>
+                                        <th scope="col">Other Status</th>
                                         <th scope="col"></th>
                                     </tr>
                                 </div>
@@ -57,15 +59,28 @@
                                         <a href="<?php echo $this->viewOtherItemUrl($m) ?>"><?php echo $this->otherItemTitle($m) ?></a>
                                     </td>
                                     <td>
+                                        <?php echo $this->myStatus($m) ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $this->otherStatus($m) ?>
+                                    </td>
+                                    <td>
                                         <a class="dropdown-toggle btn btn-primary btn-block" data-toggle="dropdown"
                                               role="button" aria-haspopup="true" aria-expanded="false">Actions</a>
                                         <div class="dropdown-menu">
                                             <button type="button" class="dropdown-item" data-toggle="modal"
-                                                    data-target="#sendDialog<?php echo $this->getMatchToItemID($m) ?>">Send Message
+                                                    data-target="#sendDialog<?php echo $this->getMatchToItemID($m) ?>">Send message
+                                            </button>
+
+                                            <?php if ($this->myStatus($m) === 'none') { ?>
+                                            <button type="button" class="dropdown-item" data-toggle="modal"
+                                                    data-target="#acceptDialog<?php echo $this->getMatchToItemID($m) ?>">Accept match
                                             </button>
                                             <button type="button" class="dropdown-item" data-toggle="modal"
-                                                    data-target="#deleteDialog<?php echo $this->getMatchToItemID($m) ?>">Discard
+                                                    data-target="#deleteDialog<?php echo $this->getMatchToItemID($m) ?>">Discard match
                                             </button>
+
+                                            <?php } ?>
                                         </div>
 
                                         <!-- Reply Modal -->
@@ -100,7 +115,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Delete Modal -->
+                                        <!-- Discard Modal -->
                                         <div class="modal fade" id="deleteDialog<?php echo $this->getMatchToItemID($m) ?>"
                                              role="dialog">
                                             <div class="modal-dialog">
@@ -112,6 +127,26 @@
                                                         <a class="btn btn-primary"
                                                            href="<?php echo $this->discardMatchUrl($m) ?>">Yes,
                                                             discard this match</a>
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Accept Modal -->
+                                        <div class="modal fade" id="acceptDialog<?php echo $this->getMatchToItemID($m) ?>"
+                                             role="dialog">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">Accept this match? <?php echo $this->otherItemTitle($m) ?>? This will notify the owner of the listing. If they also accept, both items will be marked as completed.</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <a class="btn btn-primary"
+                                                           href="<?php echo $this->acceptMatchUrl($m) ?>">Yes,
+                                                            accept this match</a>
                                                         <button type="button" class="btn btn-default" data-dismiss="modal">
                                                             Cancel
                                                         </button>

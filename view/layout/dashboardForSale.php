@@ -53,7 +53,6 @@
                                     <div class="dropdown-menu">
                                         <a href="<?php echo BASE . '/Item/Edit/' . $item['itemID']; ?>" class="dropdown-item">Edit</a>
                                         <a href="<?php echo BASE . '/Item/Delete/' . $item['itemID']; ?>" class="dropdown-item" data-toggle="modal" data-target="#deleteDialog<?php echo $item['itemID'] ?>">Delete</a>
-                                        <a href="<?php echo BASE . '/Item/MarkFoundOrSold/' . $item['itemID']; ?>" class="dropdown-item">Mark as <?php echo $item['status'] == 'Wanted' ? 'Found' : 'Sold';  ?></a>
                                     </div>
 
                                     <!-- Delete Modal -->

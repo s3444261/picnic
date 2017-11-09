@@ -95,6 +95,21 @@ class DashboardController {
 		header('Location: ' . BASE . '/Home');
 	}
 
+	public function AcceptMatch(int $itemID, int $matchedItemID) {
+		if ($this->auth()) {
+			$h = new Humphree(Picnic::getInstance());
+			$itemOwner = $h->getItemOwner($itemID);
+
+			if ($itemOwner['userID'] === $_SESSION['userID']) {
+				$h->acceptMatch($itemID, $matchedItemID) ;
+				header('Location: ' . BASE . '/Dashboard/ActionItems');
+				return;
+			}
+		}
+
+		header('Location: ' . BASE . '/Home');
+	}
+
 	public function DeleteMessage(int $messageID) {
 		if ($this->auth()) {
 			$h = new Humphree(Picnic::getInstance());

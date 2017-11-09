@@ -20,10 +20,7 @@ class ActionItemsView extends View
 		foreach ($allItems as $item) {
 			$matchesForThisItem = $h->getMatchedItemsFor($item['itemID']);
 			foreach ($matchesForThisItem as $match) {
-				$pair = [];
-				$pair['item'] = $item;
-				$pair['matchedItem'] = $match;
-				$this->_matches [] = $pair;
+				$this->_matches [] = $match;
 			}
 		}
 	}
@@ -53,29 +50,37 @@ class ActionItemsView extends View
 	}
 
 	public function myItemID(array $item) : string {
-		return $item['item']['itemID'];
+		return $item['myItem']['itemID'];
 	}
 
 	public function otherItemID(array $item) : string {
-		return $item['matchedItem']['itemID'];
+		return $item['otherItem']['itemID'];
 	}
 
 	public function myItemTitle(array $item) : string {
-		return $item['item']['title'];
+		return $item['myItem']['title'];
 	}
 
 	public function otherItemTitle(array $item) : string {
-		return $item['matchedItem']['title'];
+		return $item['otherItem']['title'];
+	}
+
+	public function myStatus(array $item) : string {
+		return $item['myStatus'];
+	}
+
+	public function otherStatus(array $item) : string {
+		return $item['otherStatus'];
 	}
 
 	public function otherItemOwnerName(array $item) : string {
 		$h = new Humphree(Picnic::getInstance());
-		$owner = $h->getItemOwner($item['matchedItem']['itemID']);
+		$owner = $h->getItemOwner($item['otherItem']['itemID']);
 		return $owner['user'];
 	}
 
 	public function otherItemOwnerID(array $item) : string {
-		return $item['matchedItem']['owningUserID'];
+		return $item['otherItem']['owningUserID'];
 	}
 
 	public function viewMyItemUrl(array $item) : string {
@@ -92,6 +97,10 @@ class ActionItemsView extends View
 
 	public function discardMatchUrl(array $item) : string {
 		return BASE . '/Dashboard/DiscardMatch/' . $this->myItemID($item) . '/' . $this->otherItemID($item);
+	}
+
+	public function acceptMatchUrl(array $item) : string {
+		return BASE . '/Dashboard/AcceptMatch/' . $this->myItemID($item) . '/' . $this->otherItemID($item);
 	}
 
 	public function getMatchToItemID(array $item) {

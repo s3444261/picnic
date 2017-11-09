@@ -687,11 +687,12 @@ class Humphree {
 	}
 
 	public function getMatchedItemsFor(int $itemID): array {
-		$itemIDs =  $this->system->getMatchedItemsFor($itemID);
+		$matches =  $this->system->getMatchedItemsFor($itemID);
 		$results = [];
-
-		foreach ($itemIDs as $itemID) {
-			$results[] = $this->getItem($itemID);
+		foreach ($matches as $match) {
+			$match['myItem'] = $this->getItem($match['myItemID']);
+			$match['otherItem'] = $this->getItem($match['otherItemID']);
+			$results[] = $match;
 		}
 
 		return $results;
@@ -1045,83 +1046,10 @@ class Humphree {
 		$this->system->discardMatch ($itemID, $matchedItemID);
 	}
 
-	/**
-	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
-	 * The intention is that on receipt of the seller rating, the information returned
-	 * will be sufficient for the relevent controller to send an email to the buyer
-	 * requesting the buyer rate the seller.
-	 *
-	 * The email will contain a link with a transaction string that will be passed
-	 * through a URL to identify the relevant transaction.
-	 *
-	 * @param int $userID
-	 * @param int $itemID
-	 * @param int $sellRating
-	 * @return array
-	 */
-	public function addSellerRating(int $userID, int $itemID, int $sellRating): array {
-		$buyerArray = [];
-		$s = new UserRatings ( $this->db );
-		$s->userID = $userID;
-		$s->itemID = $itemID;
-		$s->sellrating = $sellRating;
-		$ur = $this->system->addSellerRating ( $s );
-		$u = new User ( $this->db );
-		$u->userID = $ur->userID;
-		$i = new Item ( $this->db );
-		$i->itemID = $ur->itemID;
-		try {
-			$u->get ();
-			$i->get ();
-			$buyerArray ['userID'] = $u->userID;
-			$buyerArray ['user'] = $u->user;
-			$buyerArray ['email'] = $u->email;
-			$buyerArray ['itemID'] = $i->itemID;
-			$buyerArray ['title'] = $i->title;
-			$buyerArray ['transaction'] = $i->transaction;
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return $buyerArray;
-		}
+	public function acceptMatch($itemID, $matchedItemID) {
+		$this->system->acceptMatch ($itemID, $matchedItemID);
 	}
 
-	/**
-	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
-	 * The transaction string is received through a URL and is used to identifiy
-	 * the relevant transaction.
-	 *
-	 * @param int $userID
-	 * @param string $transaction
-	 *            A transaction identifier passed through a URL.
-	 * @param int $buyRating
-	 * @return bool
-	 */
-	public function addBuyerRating(int $userID, string $transaction, int $buyRating): bool {
-		if (strlen ( $transaction > 0 ) && ($buyRating > 0) && ($userID > 0)) {
-			$br = new UserRatings ( $this->db );
-			$br->buyrating = $buyRating;
-			$br->transaction = $transaction;
-			if ($this->system->addBuyerRating ( $br )) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-	
-	/**
-	 * Returns a users rating stats as an array.
-	 *
-	 * @param int $userID        	
-	 * @return array
-	 */
-	public function getUserRatings(int $userID): array {
-		$user = new User ( $this->db );
-		$user->userID = $userID;
-		return $this->system->getUserRatings ( $user );
-	}
 
 	/**
 	 * Searches Item Titles based on search string and returns an array of Items.

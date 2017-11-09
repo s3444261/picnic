@@ -265,7 +265,6 @@ class Item {
 		}
 	}
 
-
 	/**
 	 * Removes all matches for the current item.
 	 */
@@ -273,47 +272,140 @@ class Item {
 		if ($this->_itemID > 0) {
 
 			// remove matches in both directions.
-			$query = "DELETE FROM Item_matches WHERE baseItemID = :itemID OR matchingItemID = :itemID";
+			$query = "DELETE FROM Item_matches WHERE lhsItemID = :itemID OR rhsItemID = :itemID";
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 		}
 	}
 
-	public function discardMatch(int $matchedItemID) {
-		if ($this->_itemID > 0) {
-			$query = "UPDATE Item_matches SET status = :status WHERE baseItemID = :itemID AND matchingItemID = :otherItemID";
-			$stmt = $this->db->prepare ( $query );
-			$stmt->bindValue ( ':status', 'deleted' );
-			$stmt->bindValue ( ':itemID', $this->_itemID );
-			$stmt->bindValue ( ':otherItemID', $matchedItemID);
-			$stmt->execute ();
+	public function discardMatchWith(int $itemID) {
+		$this->setStatusForMatchWith($itemID, 'deleted');
+	}
+
+	public function acceptMatchWith(int $itemID) {
+		$this->setStatusForMatchWith($itemID, 'accepted');
+	}
+
+	private function setStatusForMatchWith(int $itemID, string $status) {
+		if ($this->_itemID > 0 && $itemID > 0) {
+			{
+				$lower = min($this->_itemID , $itemID);
+				$upper = max($this->_itemID , $itemID);
+
+				if ($lower === $itemID) {
+					$query = "UPDATE Item_matches
+							  SET rhsStatus = :status 
+					  		  WHERE lhsItemID = :lowerItemID 
+					  		  AND rhsItemID = :upperItemID
+					  		  AND rhsStatus = 'none'";
+				} else {
+					$query = "UPDATE Item_matches 
+							  SET lhsStatus = :status 
+					 		  WHERE lhsItemID = :lowerItemID 
+					 		  AND rhsItemID = :upperItemID
+					 		  AND lhsStatus = 'none'";
+				}
+
+				$stmt = $this->db->prepare($query);
+				$stmt->bindValue(':status', $status);
+				$stmt->bindValue(':lowerItemID', $lower);
+				$stmt->bindValue(':upperItemID', $upper);
+				$stmt->execute();
+			}
 		}
 	}
 
 	/**
 	 * Adds a new match for the current item.
 	 *
-	 * @param int $matchingItemID	The item ID for the matched item.
+	 * @param int $itemID	The item ID for the matched item.
 	 */
-	public function addMatch(int $matchingItemID): void {
+	public function addMatchWith(int $itemID): void {
+		if ($this->_itemID > 0
+			&& $this->_itemID != $itemID
+			&& !$this->isMatchedWith($itemID)) {
+
+			$lower = min($this->_itemID , $itemID);
+			$upper = max($this->_itemID , $itemID);
+
+			$query = "INSERT INTO Item_matches (lhsItemID, rhsItemID) VALUES (:lhsItemID, :rhsItemID)";
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindValue ( ':lhsItemID', $lower );
+			$stmt->bindValue ( ':rhsItemID', $upper );
+			$stmt->execute ();
+		}
+	}
+
+	public function isMatchedWith(int $itemID): bool {
 		if ($this->_itemID > 0) {
 
-			// add matches in both directions.
-			$query1 = "REPLACE INTO Item_matches (baseItemID, matchingItemID, status) VALUES (:baseItemID, :matchingItemID, :status)";
-			$stmt1 = $this->db->prepare ( $query1 );
-			$stmt1->bindValue ( ':baseItemID', $this->_itemID );
-			$stmt1->bindValue ( ':matchingItemID', $matchingItemID );
-			$stmt1->bindValue ( ':status', 'none' );
-			$stmt1->execute ();
+			$lower = min($this->_itemID , $itemID);
+			$upper = max($this->_itemID , $itemID);
 
-			$query2 = "REPLACE INTO Item_matches (baseItemID, matchingItemID, status) VALUES (:matchingItemID, :baseItemID, :status)";
-			$stmt2 = $this->db->prepare ( $query2 );
-			$stmt2->bindValue ( ':baseItemID', $this->_itemID );
-			$stmt2->bindValue ( ':matchingItemID', $matchingItemID );
-			$stmt2->bindValue ( ':status', 'none' );
-			$stmt2->execute ();
+			$query = "SELECT COUNT(*) as num FROM Item_matches WHERE (lhsItemID = :lowerItemID) AND (rhsItemID = :upperItemID)";
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindValue ( ':lowerItemID', $lower );
+			$stmt->bindValue ( ':upperItemID', $upper );
+			$stmt->execute ();
+
+			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+				return ($row['num'] > 0);
+			}
 		}
+
+		return false;
+	}
+
+	public function isFullyAcceptedMatchWith(int $itemID): bool {
+		if ($this->_itemID > 0) {
+
+			$lower = min($this->_itemID , $itemID);
+			$upper = max($this->_itemID , $itemID);
+
+			$query = "SELECT COUNT(*) as num FROM Item_matches 
+					  WHERE (lhsItemID = :lowerItemID) 
+					  AND (rhsItemID = :upperItemID)
+					  AND lhsStatus = 'accepted'
+					  AND rhsStatus = 'accepted'";
+			$stmt = $this->db->prepare ( $query );
+			$stmt->bindValue ( ':lowerItemID', $lower );
+			$stmt->bindValue ( ':upperItemID', $upper );
+			$stmt->execute ();
+
+			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+				return ($row['num'] > 0);
+			}
+		}
+
+		return false;
+	}
+
+	public static function createRating(PDO $db, int $userID, int $itemID, int $matchedItemID): string {
+
+		$lower = min($itemID, $matchedItemID);
+		$upper = max($itemID, $matchedItemID);
+
+		$query = "INSERT INTO User_ratings
+					 	SET lhsItemID = :lhsItemID,
+							rhsItemID = :rhsItemID,
+							userID = :userID,
+							accessCode = :accessCode";
+
+		$accessCode = Item::ratingAccessCode($userID, $lower, $upper);
+		$stmt = $db->prepare ( $query );
+		$stmt->bindValue ( ':lhsItemID', $lower );
+		$stmt->bindValue ( ':rhsItemID', $upper );
+		$stmt->bindValue ( ':userID', $userID );
+		$stmt->bindValue ( ':accessCode',  $accessCode );
+		$stmt->execute ();
+
+		return $accessCode;
+	}
+
+	private static function ratingAccessCode(int $userID, int $itemID1, int $itemID2): string {
+		date_default_timezone_set ( 'UTC' );
+		return md5 ( strtotime ( "now" ) . $userID . $itemID1 . $itemID2 );
 	}
 
 	/**
@@ -322,17 +414,33 @@ class Item {
 	 * @return array		The matched item IDs.
 	 */
 	public function getMatches(): array {
-		$items = array();
+		$items = [];
 
 		if ($this->_itemID > 0) {
-			$query = "SELECT * FROM Item_matches WHERE baseItemID = :itemID AND status != 'deleted'";
+			$query = "SELECT DISTINCT * FROM Item_matches 
+					  WHERE (lhsItemID = :itemID AND lhsStatus != 'deleted')
+					  OR (rhsItemID = :itemID AND rhsStatus != 'deleted')";
 
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
-				$items [] = $row['matchingItemID'];
+				$item = [];
+
+				if ($row['rhsItemID'] == $this->_itemID) {
+					$item ['myItemID'] = $row['rhsItemID'];
+					$item ['otherItemID'] = $row['lhsItemID'];
+					$item ['myStatus'] = $row['rhsStatus'];
+					$item ['otherStatus'] = $row['lhsStatus'];
+				} else {
+					$item ['myItemID'] = $row['lhsItemID'];
+					$item ['otherItemID'] = $row['rhsItemID'];
+					$item ['myStatus'] = $row['lhsStatus'];
+					$item ['otherStatus'] = $row['rhsStatus'];
+				}
+
+				$items[] = $item;
 			}
 		}
 

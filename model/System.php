@@ -10,6 +10,8 @@ if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }
 
+require_once  __DIR__ . '/../vendor/autoload.php';
+
 /**
  * The System class transmits information from the Humphree
  * Programming Interface to the model and back to Humphree.
@@ -279,31 +281,6 @@ class System {
 	 */
 	public function deleteUser(User $user): bool {
 		try {
-			$user->exists ();
-			
-			// Delete any comments and notes for any items held by the user and then delete the item.
-			$userItems = new UserItems ( $this->db );
-			$userItems->userID = $user->userID;
-			$items = $userItems->getUserItems ();
-			
-			foreach ( $items as $item ) {
-				if ($item->itemID > 0) {
-					$i = new Item ( $this->db );
-					$i->itemID = $item->itemID;
-					$this->deleteItem ( $i );
-				}
-			}
-			
-			// Delete any other comments made by the user
-			$comments = new UserComments ( $this->db );
-			$comments->userID = $user->userID;
-			$userComments = $comments->getUserComments ();
-			
-			foreach ( $userComments as $userComment ) {
-				$userComment->delete ();
-			}
-			
-			// Finally, delete the user.
 			return $user->delete ();
 		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage ();
@@ -489,20 +466,7 @@ class System {
 		}
 		return $categoryItemsArray;
 	}
-	
-	/**
-	 * Counts the number of items held by a user.
-	 *
-	 * @param User $user        	
-	 * @return int
-	 */
-	public function countUserItems(User $user): int {
-		$ui = new UserItems ( $this->db );
-		$ui->userID = $user->userID;
-		$numUserItems = $ui->count ();
-		
-		return $numUserItems;
-	}
+
 	
 	/**
 	 * Removes the given item form the given category.
@@ -583,28 +547,7 @@ class System {
 		
 		return [ ];
 	}
-	
-	/**
-	 * Retrieves all items linked to a user.
-	 *
-	 * @param User $user
-	 *        	The user whose items will be returned.
-	 * @param string $userRole
-	 *        	The role that the user plays for the requested items.
-	 * @return array An array of UserItems objects.
-	 */
-	public function getUserItems(User $user, string $userRole = ""): array {
-		$ui = array ();
-		$u = new UserItems ( $this->db );
-		$u->userID = $user->userID;
-		try {
-			$ui = $u->getUserItems ( $userRole );
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getError ();
-		}
-		return $ui;
-	}
-	
+
 	/**
 	 * Retrieves an item
 	 *
@@ -623,8 +566,7 @@ class System {
 	}
 	
 	/**
-	 * Adds an item to the items table and then adds the id's to
-	 * the UserItems table.
+	 * Adds an item to the items table.
 	 *
 	 * @param Item $item        	
 	 * @param int $categoryID        	
@@ -646,13 +588,7 @@ class System {
 			return 0;
 		}
 	}
-	public function getItemIDForUserItem(int $userItemID): int {
-		$userItem = new UserItems ( $this->db );
-		$userItem->user_itemID = $userItemID;
-		$userItem->get ();
-		return $userItem->itemID;
-	}
-	
+
 	/**
 	 * Updates an item.
 	 *
@@ -983,17 +919,9 @@ class System {
 				$user = new User ( $this->db );
 				$user->userID = $item->owningUserID;
 				$user = $user->get ();
-				$userRatings = new UserRatings ( $this->db );
-				$stats = $userRatings->getStats ( $user );
 				$owner ['userID'] = $user->userID;
 				$owner ['user'] = $user->user;
 				$owner ['email'] = $user->email;
-				$owner ['numSellRatings'] = $stats ['numSellRatings'];
-				$owner ['avgSellRating'] = $stats ['avgSellRating'];
-				$owner ['numBuyRatings'] = $stats ['numBuyRatings'];
-				$owner ['avgBuyRating'] = $stats ['avgBuyRating'];
-				$owner ['totalNumRatings'] = $stats ['totalNumRatings'];
-				$owner ['avgRating'] = $stats ['avgRating'];
 				return $owner;
 			} catch ( ModelException $e ) {
 				$_SESSION ['error'] = $e->getMessage ();
@@ -1002,58 +930,6 @@ class System {
 		} else {
 			$_SESSION ['error'] = self::ERROR_ITEM_NOT_EXIST;
 			return $owner;
-		}
-	}
-	
-	/**
-	 * The addSellerRating() method adds a seller rating of a buyer for a transaction.
-	 * It returns a UserRating object with the information necessary to email the buyer.
-	 *
-	 * @param UserRatings $sellerRating        	
-	 * @return bool
-	 */
-	public function addSellerRating(UserRatings $sellerRating): UserRatings {
-		$ur = new UserRatings ( $this->db );
-		$ur->userID = $sellerRating->userID;
-		$ur->itemID = $sellerRating->itemID;
-		$ur->sellrating = $sellerRating->sellrating;
-		try {
-			return $ur->addSellerRating ();
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return $ur = new UserRatings ( $this->db );
-		}
-	}
-	
-	/**
-	 * The addBuyerRating() method adds a buyer rating of a seller for a transaction.
-	 *
-	 * @param UserRatings $buyerRating        	
-	 * @return bool
-	 */
-	public function addBuyerRating(UserRatings $buyerRating): bool {
-		try {
-			return $buyerRating->addBuyerRating ();
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return false;
-		}
-	}
-	
-	/**
-	 * Returns a users rating stats.
-	 *
-	 * @param int $userID        	
-	 * @return array
-	 */
-	public function getUserRatings($user): array {
-		$ur = array ();
-		$userRatings = new UserRatings ( $this->db );
-		try {
-			return $userRatings->getStats ( $user );
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return $ur;
 		}
 	}
 
@@ -1168,12 +1044,12 @@ class System {
 
 			// we take a maximum of 10 matches.
 			foreach (array_slice($searchResults, 0, 10) as $result) {
-				$item->addMatch($result->itemID);
+				$item->addMatchWith($result->itemID);
 			}
 		}
 	}
 
-	public function getMatchedItemsFor(int $itemID) {
+	public function getMatchedItemsFor(int $itemID): array {
 		$item = new Item($this->db);
 		$item->itemID = $itemID;
 		return $item->getMatches();
@@ -1192,6 +1068,76 @@ class System {
 	public function discardMatch(int $itemID, int $matchedItemID) {
 		$item = new Item($this->db);
 		$item->itemID = $itemID;
-		$item->discardMatch($matchedItemID);
+		$item->discardMatchWith($matchedItemID);
+	}
+
+	public function acceptMatch(int $itemID, int $matchedItemID) {
+		if (!$this->isFullyAcceptedMatch($itemID, $matchedItemID)) {
+			$item = new Item($this->db);
+			$item->itemID = $itemID;
+			$item->acceptMatchWith($matchedItemID);
+
+			if ($this->isFullyAcceptedMatch($itemID, $matchedItemID)) {
+				$this->handleCompletedTransaction($itemID, $matchedItemID);
+			}
+		}
+	}
+
+	public function isFullyAcceptedMatch(int $itemID, int $matchedItemID): bool {
+		$item = new Item($this->db);
+		$item->itemID = $itemID;
+		return $item->isFullyAcceptedMatchWith($matchedItemID);
+	}
+
+	public function handleCompletedTransaction(int $itemID, int $matchedItemID) {
+		$thisItem = new Item($this->db);
+		$thisItem->itemID = $itemID;
+		$thisUser =  $this->getItemOwner($thisItem);
+		$thisCode = Item::createRating($this->db, $thisUser['userID'], $itemID, $matchedItemID);
+		$this->sendRequestFeedbackEmail($thisUser, 'http://humphree.org/LeaveFeedback/' . $thisCode);
+
+		$otherItem = new Item($this->db);
+		$otherItem->itemID = $matchedItemID;
+		$otherUser = $this->getItemOwner($otherItem);
+		$otherCode = Item::createRating($this->db, $otherUser['userID'], $itemID, $matchedItemID);
+		$this->sendRequestFeedbackEmail($otherUser, 'http://humphree.org/LeaveFeedback/' . $otherCode);
+	}
+
+	private function sendRequestFeedbackEmail(array $user, string $feedbackUrl) : void {
+		$this->sendEmail(
+			$user,
+			'Feedback on your transaction',
+			'<a href="' . $feedbackUrl . '">Click here</a> to leave feedback.');
+	}
+
+	public function sendEmail(array $toUser, string $subject, string $body) {
+		$mail = $this->getMailer();
+		$mail->addAddress('s3202752@student.rmit.edu.au', $toUser['user']);
+		$mail->addAddress($toUser['email'], $toUser['user']);
+		$mail->Subject  = $subject;
+		$mail->Body     = $body;
+
+		if(!$mail->send()) {
+			echo 'Message was not sent.';
+			echo 'Mailer error: ' . $mail->ErrorInfo;
+		} else {
+			echo 'Message has been sent.';
+		}
+	}
+
+	private function getMailer() : PHPMailer\PHPMailer\PHPMailer {
+
+		$mail = new PHPMailer\PHPMailer\PHPMailer();
+		$mail->setFrom('no-reply@humphree.org', 'Humphree');
+		$mail->isHTML(true);
+		$mail->IsSMTP();
+		$mail->Host = "smtp.office365.com";
+		$mail->SMTPAuth = true;
+		$mail->Username = 'no-reply@humphree.org';
+		$mail->Password = 'TestTest88';
+		$mail->Port = 587;
+		$mail->SMTPSecure = 'tls';
+
+		return $mail;
 	}
 }

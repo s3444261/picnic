@@ -11,11 +11,10 @@ DROP TABLE IF EXISTS `Notes`;
 DROP TABLE IF EXISTS `Comments`;
 DROP TABLE IF EXISTS `Category_items`;
 DROP TABLE IF EXISTS `User_ratings`;
-DROP TABLE IF EXISTS `User_items`;
 DROP TABLE IF EXISTS `Item_matches`;
 DROP TABLE IF EXISTS `Items`;
-DROP TABLE IF EXISTS `Users`;
 DROP TABLE IF EXISTS `Categories`;
+DROP TABLE IF EXISTS `Users`;
 
 CREATE TABLE `Users` (
   `userID` int(11) NOT NULL AUTO_INCREMENT,
@@ -65,47 +64,32 @@ CREATE TABLE `Items` (
 ALTER TABLE Items ADD FULLTEXT(title, description);
 
 CREATE TABLE `Item_matches` (
-		`baseItemID` bigint(11) NOT NULL,
-		`matchingItemID` bigint(11) NOT NULL,
-		`status` varchar(45) NOT NULL,
-		PRIMARY KEY (`baseItemID`,	`matchingItemID`),
-		KEY `FK_Item_matches_Items_idx` (`baseItemID`),
-		KEY `FK_Item_matches_Items_idx2` (`matchingItemID`),
-		CONSTRAINT `FK_Item_matches_Items` FOREIGN KEY (`baseItemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_Item_matches_Items2` FOREIGN KEY (`matchingItemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE
-		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-CREATE TABLE `User_items` (
-		`user_itemID` int(11) NOT NULL AUTO_INCREMENT,
-		`userID` int(11) NOT NULL,
-		`itemID` bigint(11) NOT NULL,
-    `relationship` varchar(45) NOT NULL,
-    `userStatus` varchar(45) NOT NULL,
-    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		PRIMARY KEY (`user_itemID`),
-		KEY `FK_User_items_Users_idx` (`userID`),
-		KEY `FK_User_items_Items_idx` (`itemID`),
-		CONSTRAINT `FK_User_items_Users` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_User_items_Items` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `UQ_userID_itemID` UNIQUE (`userID`, `itemID`)
+		`lhsItemID` bigint(11) NOT NULL,
+		`rhsItemID` bigint(11) NOT NULL,
+		`lhsStatus` varchar(45) NOT NULL DEFAULT 'none',
+	  `rhsStatus` varchar(45) NOT NULL DEFAULT 'none',
+		PRIMARY KEY (`lhsItemID`,	`rhsItemID`),
+		KEY `FK_Item_matches_Items_idx` (`lhsItemID`),
+		KEY `FK_Item_matches_Items_idx2` (`rhsItemID`),
+		CHECK (lhsItemID < rhsItemID),
+		CONSTRAINT `FK_Item_matches_Items` FOREIGN KEY (`lhsItemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `FK_Item_matches_Items2` FOREIGN KEY (`rhsItemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `User_ratings` (
-		`user_ratingID` int(11) NOT NULL AUTO_INCREMENT,
-    `itemID` bigint(11) NOT NULL,
-    `sellrating` int(11),
-		`userID` int(11),
-		`buyrating` bigint(11) NOT NULL,
-    `transaction` varchar(32) DEFAULT NULL,
+    `lhsItemID` bigint(11) NOT NULL,
+	  `rhsItemID` bigint(11) NOT NULL,
+	  `userID` int(11),
+    `rating` int(11) NULL,
+	  `accessCode` varchar(32),
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		PRIMARY KEY (`user_ratingID`),
-		KEY `FK_User_ratings_Items_idx` (`itemID`),
+    `score_left_at` timestamp NULL,
+		PRIMARY KEY ( `lhsItemID`,  `rhsItemID`,`userID`),
+		KEY `FK_User_ratings_Items_idx` (`lhsItemID`),
+	  KEY `FK_User_ratings_Items_idx2`(`rhsItemID`),
 		KEY `FK_User_ratings_Users_idx` (`userID`),
-		CONSTRAINT `FK_User_ratings_Items` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_User_ratings_Users` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `UQ_itemID` UNIQUE (`itemID`)
+		CONSTRAINT `FK_User_ratings_Item_matches` FOREIGN KEY (`lhsItemID`, `rhsItemID`) REFERENCES `Item_matches` (`lhsItemID`, `rhsItemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `FK_User_ratings_Users` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Category_items` (

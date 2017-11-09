@@ -51,9 +51,6 @@
  * updateItemNote(Note $note): bool
  * deleteItemNote(Note $note): bool
  * getItemOwner(Item $item): array
- * addSellerRating(UserRatings $sellerRating): UserRatings
- * addBuyerRating(UserRatings $buyerRating): bool
- * getUserRatings(int $userID): array
  *
  * -- System.php Test SubBlocks: --
  * createAccount(User $user): bool
@@ -302,22 +299,6 @@
  * -- testGetItemOwnerItemIdInvalid(): void
  * -- testGetItemOwnerItemIdValid(): void
  *
- * addSellerRating(UserRatings $sellerRating): UserRatings
- * -- testAddSellerRatingUserIdInvalid(): void
- * -- testAddSellerRatingItemIdInvalid(): void
- * -- testAddSellerRatingRatingNotSet(): void
- * -- testAddSellerRatingSuccess(): void
- *
- * addBuyerRating(UserRatings $buyerRating): bool
- * -- testAddBuyerRatingTransactionIdEmpty(): void
- * -- testAddBuyerRatingTransactionIdInvalid(): void
- * -- testAddBuyerRatingRatingInvalid(): void
- * -- testAddBuyerRatingSuccess(): void
- *
- * getUserRatings(int $userID): array
- * -- testGetUserRatingsUserIdInvalid(): void
- * -- testGetUserRatingsUserIdValid(): void
- *
  * search(string $searchString): array
  * -- testSearchNegativeResult(): void
  * -- testSearchTitlePositiveResult(): void
@@ -389,8 +370,6 @@ require_once dirname ( __FILE__ ) . '/../../../model/ItemNotes.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Note.php';
 require_once dirname ( __FILE__ ) . '/../../../model/User.php';
 require_once dirname ( __FILE__ ) . '/../../../model/UserComments.php';
-require_once dirname ( __FILE__ ) . '/../../../model/UserItems.php';
-require_once dirname ( __FILE__ ) . '/../../../model/UserRatings.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Users.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Validation.php';
 require_once dirname ( __FILE__ ) . '/../../../model/ModelException.php';
@@ -473,7 +452,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ERROR_USER_EMPTY = 'Username Error: Input is required!';
 	const ERROR_USER_DUPLICATE = 'This user name is not available!';
 	const ERROR_USER_ID_EMPTY = 'Input is required!';
-	const ERROR_USER_ID_NOT_EXIST = 'The UserID does not exist!';
+	const ERROR_USER_ID_NOT_EXIST = 'Invalid userID!';
 	const ERROR_USER_ID_NOT_INT = 'UserID must be an integer!';
 	const ERROR_USER_ITEM_ID_NOT_EXIST = 'The UserItemID does not exist!';
 	const ERROR_USER_NOT_EXIST = 'User does not exist!';
@@ -1956,72 +1935,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			$start ++;
 		}
 	}
-	
-	/*
-	 * countUserItems(User $user): int
-	 */
-	public function testCountUserItemsUserIdEmpty(): void {
-		$pdo = TestPDO::getInstance ();
-		$this->populateUserItems ();
-		$ui = new UserItems ( $pdo );
-		$this->assertEquals ( 0, $ui->count () );
-	}
-	public function testCountUserItemsUserIdInvalid(): void {
-		$pdo = TestPDO::getInstance ();
-		$this->populateUserItems ();
-		$ui = new UserItems ( $pdo );
-		$ui->userID = self::INVALID_ID;
-		$this->assertEquals ( 0, $ui->count () );
-	}
-	public function testCountUserItemsUserIdValid(): void {
-		$pdo = TestPDO::getInstance ();
-		$this->populateUserItems ();
-		$ui = new UserItems ( $pdo );
-		$ui->userID = self::USER_ID_1;
-		$this->assertEquals ( 5, $ui->count () );
-	}
-	
-	/*
-	 * getUserItems(User $user): array
-	 */
-	public function testGetUserItemsUserIdEmpty(): void {
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$this->populateUserItems ();
-		$u = new User ( $pdo );
-		$system->getUserItems ( $u );
 
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_USER_ID_EMPTY, $_SESSION ['error'] );
-	}
-
-	public function testGetUserItemsUserIdInvalid(): void {
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$this->populateUserItems ();
-		$u = new User ( $pdo );
-		$u->userID = self::INVALID_ID;
-		$system->getUserItems ( $u );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-	public function testGetUserItemsUserIdValid(): void {
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$this->populateUserItems ();
-		$u = new User ( $pdo );
-		$u->userID = self::USER_ID_2;
-		$sut = $system->getUserItems ( $u );
-		$i = 6;
-		foreach ( $sut as $obj ) {
-			$this->assertEquals ( $i, $obj->user_itemID );
-			$this->assertEquals ( 2, $obj->userID );
-			$this->assertEquals ( $i, $obj->itemID );
-			$i ++;
-		}
-	}
-	
 	/*
 	 * getItem(Item $item): Item
 	 */
@@ -2707,162 +2621,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertEquals ( self::USER_ID_1, $sut ['userID'] );
 		$this->assertEquals ( 'user1', $sut ['user'] );
 		$this->assertEquals ( 'user1@gmail.com', $sut ['email'] );
-		$this->assertEquals ( 5, $sut ['numSellRatings'] );
-		$this->assertEquals ( 3.0, $sut ['avgSellRating'] );
-		$this->assertEquals ( 4, $sut ['numBuyRatings'] );
-		$this->assertEquals ( 2.5, $sut ['avgBuyRating'] );
-		$this->assertEquals ( 9, $sut ['totalNumRatings'] );
-		$this->assertEquals ( 2.8, $sut ['avgRating'] );
-	}
-	
-	/*
-	 * addSellerRating(UserRatings $sellerRating): UserRatings
-	 */
-	public function testAddSellerRatingUserIdInvalid(): void {
-		$this->populateUserRatings ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$sut = new System ( $pdo );
-		$ur = new UserRatings ( $pdo );
-		$ur->userID = self::INVALID_ID;
-		$ur->itemID = self::ITEM_ID_2;
-		$ur->sellrating = self::SELLRATING_2;
-		$sut->addSellerRating ( $ur );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
 	}
 
-	public function testAddSellerRatingItemIdInvalid(): void {
-		$this->populateUserRatings ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$sut = new System ( $pdo );
-		$ur = new UserRatings ( $pdo );
-		$ur->userID = self::USER_ID_2;
-		$ur->itemID = self::INVALID_ID;
-		$ur->sellrating = self::SELLRATING_2;
-		$sut->addSellerRating ( $ur );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testAddSellerRatingRatingNotSet(): void {
-		$this->populateUserRatings ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$sut = new System ( $pdo );
-		$ur = new UserRatings ( $pdo );
-		$ur->userID = self::USER_ID_2;
-		$ur->itemID = self::ITEM_ID_2;
-		$sut->addSellerRating ( $ur );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_USER_RATING_NOT_SET, $_SESSION ['error'] );
-	}
-
-	public function testAddSellerRatingSuccess(): void {
-		$this->populateUserRatings ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$sut = new System ( $pdo );
-		$ur = new UserRatings ( $pdo );
-		$ur->userID = self::USER_ID_2;
-		$ur->itemID = self::ITEM_ID_2;
-		$ur->sellrating = self::SELLRATING_2;
-		$sut = $sut->addSellerRating ( $ur );
-		$this->assertEquals ( self::USER_RATING_ID_2, $sut->user_ratingID );
-		$this->assertEquals ( self::ITEM_ID_2, $sut->itemID );
-		$this->assertEquals ( self::SELLRATING_2, $sut->sellrating );
-		$this->assertEquals ( self::USER_ID_2, $sut->userID );
-	}
-	
-	/*
-	 * addBuyerRating(UserRatings $buyerRating): bool
-	 */
-	public function testAddBuyerRatingTransactionIdEmpty(): void {
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$sut = $this->addSellerRating ();
-		$sut->transaction = '';
-		$sut->buyrating = self::BUYRATING_2;
-		$system->addBuyerRating ( $sut );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_INCORRECT_TRANSACTION_ID, $_SESSION ['error'] );
-	}
-
-	public function testAddBuyerRatingTransactionIdInvalid(): void {
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$sut = $this->addSellerRating ();
-		$sut->transaction = self::INVALID_ID;
-		$sut->buyrating = self::BUYRATING_2;
-		$system->addBuyerRating ( $sut );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_INCORRECT_TRANSACTION_ID, $_SESSION ['error'] );
-	}
-
-	public function testAddBuyerRatingRatingInvalid(): void {
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$sut = $this->addSellerRating ();
-		$sut->buyrating = self::INVALID_ID;
-		$system->addBuyerRating ( $sut );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_USER_RATING_NOT_SET, $_SESSION ['error'] );
-	}
-	public function testAddBuyerRatingSuccess(): void {
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$sut = $this->addSellerRating ();
-		$sut->buyrating = self::BUYRATING_2;
-		$system->addBuyerRating ( $sut );
-		$ur = new UserRatings ( $pdo );
-		$ur->user_ratingID = $sut->user_ratingID;
-		$ur->get ();
-
-		$this->assertEquals ( self::BUYRATING_2, $ur->buyrating );
-		$this->assertNull ( $ur->transaction );
-	}
-	
-	/*
-	 * getUserRatings(int $userID): array
-	 */
-	public function testGetUserRatingsUserIdInvalid(): void {
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$this->populateAdditionalUserRatings ();
-		$u = new User ( $pdo );
-		$u->userID = self::INVALID_ID;
-		$system->getUserRatings ( $u );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_USER_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-	public function testGetUserRatingsUserIdValid(): void {
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$this->populateAdditionalUserRatings ();
-		$u = new User ( $pdo );
-		$u->userID = self::USER_ID_1;
-		$stats = $system->getUserRatings ( $u );
-		$this->assertEquals ( 5, $stats ['numSellRatings'] );
-		$this->assertEquals ( 3.0, $stats ['avgSellRating'] );
-		$this->assertEquals ( 4, $stats ['numBuyRatings'] );
-		$this->assertEquals ( 2.5, $stats ['avgBuyRating'] );
-		$this->assertEquals ( 9, $stats ['totalNumRatings'] );
-		$this->assertEquals ( 2.8, $stats ['avgRating'] );
-	}
 	
 	/**
 	 * Does not return anything.
@@ -3813,13 +3573,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				$item->title = 'title' . $k;
 				$item->set ();
 
-				$userRating = new UserRatings ( $pdo );
-				$userRating->itemID = $item->itemID;
-				$userRating->sellrating = 5;
-				$userRating->userID = $user->userID;
-				$userRating->buyrating = 4;
-				$userRating->set ();
-
 				for($m = 1; $m <= 5; $m ++) {
 					$note = new Note ( $pdo );
 					$note->note = 'note' . $l;
@@ -3840,13 +3593,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 
 					$l ++;
 				}
-
-				$userItem = new UserItems ( $pdo );
-				$userItem->userID = $user->userID;
-				$userItem->itemID = $item->itemID;
-				$userItem->relationship = 'relationship' . $i . $l;
-				$userItem->userStatus = 'userStatus' . $i . $l;
-				$userItem->set ();
 
 				if ($j % 5 == 0) {
 					$n ++;
@@ -3930,18 +3676,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				$item->owningUserID = $user->userID;
 				$item->title = 'title' . $l;
 				$item->set ();
-
-				$userItem = new UserItems ( $pdo );
-				$userItem->userID = $user->userID;
-				$userItem->itemID = $item->itemID;
-				$userItem->relationship = 'relationship' . $i . $l;
-				$userItem->userStatus = 'userStatus' . $i . $l;
-
-				if ($userItem->userID == 3 && $userItem->itemID == 15) {
-					// Don't set.
-				} else {
-					$userItem->set ();
-				}
 
 				$l ++;
 			}
@@ -4060,90 +3794,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 
 		$i2->set ();
 
-		$ui = new UserItems ( $pdo, [
-				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_2
-		] );
-
-		$ui->set ();
-
-		$ur = new UserRatings ( $pdo, [
-				self::ITEM_ID => self::ITEM_ID_1,
-				self::SELLRATING => self::SELLRATING_1,
-				self::USER_ID => self::USER_ID_1,
-				self::BUYRATING => self::BUYRATING_1
-		] );
-
-		$ur->set ();
-	}
-	protected function addSellerRating(): UserRatings {
-		// Regenerate a fresh database.
-		TestPDO::CreateTestDatabaseAndUser ();
-		$pdo = TestPDO::getInstance ();
-		DatabaseGenerator::Generate ( $pdo );
-
-		$u1 = new User ( $pdo, [
-				self::USER => self::USER_ONE,
-				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE
-		] );
-
-		$u1->set ();
-
-		$u2 = new User ( $pdo, [
-				self::USER => self::USER_TWO,
-				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO
-		] );
-
-		$u2->set ();
-
-		$i1 = new Item ( $pdo, [
-				self::OWNING_USER_ID => $u1->userID,
-				self::TITLE => self::TITLE_1
-		] );
-
-		$i1->set ();
-
-		$i2 = new Item ( $pdo, [
-				self::OWNING_USER_ID => $u1->userID,
-				self::TITLE => self::TITLE_2
-		] );
-		$i2->set ();
-
-		$ui = new UserItems ( $pdo, [
-				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_1
-		] );
-
-		$ui->set ();
-
-		$ui = new UserItems ( $pdo, [
-				self::USER_ID => self::USER_ID_1,
-				self::ITEM_ID => self::ITEM_ID_2
-		] );
-
-		$ui->set ();
-
-		$ur = new UserRatings ( $pdo, [
-				self::ITEM_ID => self::ITEM_ID_1,
-				self::SELLRATING => self::SELLRATING_1,
-				self::USER_ID => self::USER_ID_1,
-				self::BUYRATING => self::BUYRATING_1
-		] );
-
-		$ur->set ();
-
-		$sut = new UserRatings ( $pdo );
-		$sut->userID = self::USER_ID_2;
-		$sut->itemID = self::ITEM_ID_2;
-		$sut->sellrating = self::SELLRATING_2;
-		$sut->addSellerRating ();
-
-		$sut = new UserRatings ( $pdo );
-		$sut->user_ratingID = self::USER_RATING_ID_2;
-
-		return $sut->get ();
 	}
 
 	protected function populateAdditionalUserRatings(): void {
@@ -4180,51 +3830,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				$item->title = 'title' . $l;
 				$item->set ();
 
-				$userItem = new UserItems ( $pdo );
-				$userItem->userID = $i;
-				$userItem->itemID = $l;
-				$userItem->relationship = 'relationship' . $i . $l;
-				$userItem->userStatus = 'userStatus' . $i . $l;
-
-				if ($userItem->userID == 3 && $userItem->itemID == 15) {
-					// Don't set.
-				} else {
-					$userItem->set ();
-				}
-
 				$l ++;
 			}
-		}
-		
-		$k = 1;
-		$l = 5;
-		
-		for($i = 1; $i <= 14; $i ++) {
-			if ($i > 0 && $i < 6) {
-				$j = 2;
-			} elseif ($i > 5 && $i < 11) {
-				$j = 3;
-			} else {
-				$j = 1;
-			}
-			
-			$ur = new UserRatings ( $pdo, [ 
-					self::ITEM_ID => $i,
-					self::SELLRATING => $k,
-					self::USER_ID => $j,
-					self::BUYRATING => $l 
-			] );
-
-			$ur->set ();
-
-			if ($k == 5) {
-				$k = 0;
-			}
-			$k ++;
-			if ($l == 1) {
-				$l = 6;
-			}
-			$l --;
 		}
 	}
 	protected function populateAll(): void {
@@ -4269,13 +3876,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				$item->title = 'title' . $k;
 				$item->set ();
 
-				$userRating = new UserRatings ( $pdo );
-				$userRating->itemID = $k;
-				$userRating->sellrating = 5;
-				$userRating->userID = $i;
-				$userRating->buyrating = 4;
-				$userRating->set ();
-
 				for($m = 1; $m <= 5; $m ++) {
 					$note = new Note ( $pdo );
 					$note->note = 'note' . $l;
@@ -4296,13 +3896,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 
 					$l ++;
 				}
-
-				$userItem = new UserItems ( $pdo );
-				$userItem->userID = $user->userID;
-				$userItem->itemID = $item->itemID;
-				$userItem->relationship = 'relationship' . $i . $l;
-				$userItem->userStatus = 'userStatus' . $i . $l;
-				$userItem->set ();
 
 				$categoryItem = new CategoryItems ( $pdo );
 				$categoryItem->categoryID = $i + 1;
