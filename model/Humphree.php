@@ -1047,7 +1047,7 @@ class Humphree {
 	}
 
 	public function acceptMatch($itemID, $matchedItemID) {
-		$this->system->acceptMatch ($itemID, $matchedItemID);
+		$this->system->acceptMatch (new ProductionMailer(), $itemID, $matchedItemID);
 	}
 
 	public function isValidRatingCode(string $accessCode) : bool {

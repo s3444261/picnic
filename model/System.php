@@ -10,8 +10,6 @@ if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
 }
 
-require_once  __DIR__ . '/../vendor/autoload.php';
-
 /**
  * The System class transmits information from the Humphree
  * Programming Interface to the model and back to Humphree.
@@ -1071,14 +1069,14 @@ class System {
 		$item->discardMatchWith($matchedItemID);
 	}
 
-	public function acceptMatch(int $itemID, int $matchedItemID) {
+	public function acceptMatch(Mailer $mailer, int $itemID, int $matchedItemID) {
 		if (!$this->isFullyAcceptedMatch($itemID, $matchedItemID)) {
 			$item = new Item($this->db);
 			$item->itemID = $itemID;
 			$item->acceptMatchWith($matchedItemID);
 
 			if ($this->isFullyAcceptedMatch($itemID, $matchedItemID)) {
-				$this->handleCompletedTransaction($itemID, $matchedItemID);
+				$this->handleCompletedTransaction($mailer, $itemID, $matchedItemID);
 			}
 		}
 	}
@@ -1109,55 +1107,25 @@ class System {
 		return $item->isFullyAcceptedMatchWith($matchedItemID);
 	}
 
-	public function handleCompletedTransaction(int $myItemID, int $otherItemID) {
+	public function handleCompletedTransaction(Mailer $mailer, int $myItemID, int $otherItemID) {
 		$thisItem = new Item($this->db);
 		$thisItem->itemID = $myItemID;
 		$thisUser =  $this->getItemOwner($thisItem);
 		$thisCode = Item::createRating($this->db, $myItemID, $otherItemID);
-		$this->sendRequestFeedbackEmail($thisUser, 'http://humphree.org/Dashboard/LeaveFeedback/' . $thisCode);
+		$this->sendRequestFeedbackEmail($mailer, $thisUser, 'http://humphree.org/Dashboard/LeaveFeedback/' . $thisCode);
 
 		$otherItem = new Item($this->db);
 		$otherItem->itemID = $otherItemID;
 		$otherUser = $this->getItemOwner($otherItem);
 		$otherCode = Item::createRating($this->db, $otherItemID, $myItemID);
-		$this->sendRequestFeedbackEmail($otherUser, 'http://humphree.org/Dashboard/LeaveFeedback/' . $otherCode);
+		$this->sendRequestFeedbackEmail($mailer, $otherUser, 'http://humphree.org/Dashboard/LeaveFeedback/' . $otherCode);
 	}
 
-	private function sendRequestFeedbackEmail(array $user, string $feedbackUrl) : void {
-		$this->sendEmail(
-			$user,
+	private function sendRequestFeedbackEmail(Mailer $mailer, array $user, string $feedbackUrl) : void {
+		$mailer->SendMail(
+			$user['user'],
+			$user['email'],
 			'Feedback on your transaction',
 			'<a href="' . $feedbackUrl . '">Click here</a> to leave feedback.');
-	}
-
-	public function sendEmail(array $toUser, string $subject, string $body) {
-		$mail = $this->getMailer();
-		$mail->addAddress('s3202752@student.rmit.edu.au', $toUser['user']);
-		$mail->addAddress($toUser['email'], $toUser['user']);
-		$mail->Subject  = $subject;
-		$mail->Body     = $body;
-
-		if(!$mail->send()) {
-			echo 'Message was not sent.';
-			echo 'Mailer error: ' . $mail->ErrorInfo;
-		} else {
-			echo 'Message has been sent.';
-		}
-	}
-
-	private function getMailer() : PHPMailer\PHPMailer\PHPMailer {
-
-		$mail = new PHPMailer\PHPMailer\PHPMailer();
-		$mail->setFrom('no-reply@humphree.org', 'Humphree');
-		$mail->isHTML(true);
-		$mail->IsSMTP();
-		$mail->Host = "smtp.office365.com";
-		$mail->SMTPAuth = true;
-		$mail->Username = 'no-reply@humphree.org';
-		$mail->Password = 'TestTest88';
-		$mail->Port = 587;
-		$mail->SMTPSecure = 'tls';
-
-		return $mail;
 	}
 }
