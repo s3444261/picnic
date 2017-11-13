@@ -67,47 +67,6 @@ h1 {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Customisation */
 
 .material-icons.md-light {
@@ -167,4 +126,12 @@ img.item-image {
 
 .table td.message-row {
     border-top: none;
+}
+
+.myBox {
+    cursor: pointer;
+}
+
+.myBox:hover {
+    background-color: #f9f9f9;
 }
