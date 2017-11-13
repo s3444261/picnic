@@ -14,7 +14,8 @@ ini_set ( 'display_errors', 1 );
 date_default_timezone_set('Australia/Melbourne');
 define('MODULE', '');
 if(gethostname() == 'Grant-PC' ||
-	gethostname() == 'Newbie' ){
+	gethostname() == 'Newbie' ||
+	gethostname() == 'DESKTOP-HBREVOT'){
 	define('BASE', '/picnic');
 } else {
 	define('BASE', '');

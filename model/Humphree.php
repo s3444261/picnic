@@ -1050,6 +1050,25 @@ class Humphree {
 		$this->system->acceptMatch ($itemID, $matchedItemID);
 	}
 
+	public function isValidRatingCode(string $accessCode) : bool {
+		return $this->system->isValidRatingCode($accessCode);
+	}
+
+	public function leaveRatingForCode(string $accessCode, int $rating) {
+		$this->system->leaveRatingForCode($accessCode, $rating);
+	}
+
+	public function isRatingLeftForCode(string $accessCode): bool {
+		return $this->system->isRatingLeftForCode($accessCode);
+	}
+
+	public function getRatingInfoForCode(string $accessCode): array {
+		return $this->system->getRatingInfoForCode ($accessCode);
+	}
+
+	public function feedbackCodeBelongsToUser(string $accessCode, int $userID) {
+		return $this->system->feedbackCodeBelongsToUser ($accessCode, $userID);
+	}
 
 	/**
 	 * Searches Item Titles based on search string and returns an array of Items.

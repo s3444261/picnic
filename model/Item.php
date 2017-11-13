@@ -63,6 +63,70 @@ class Item {
 		return $items;
 	}
 
+	public static function leaveRatingForCode($db, string $accessCode, int $rating) {
+		$query = "UPDATE User_ratings SET rating = :rating, rating_left_at = CURRENT_TIMESTAMP WHERE accessCode = :accessCode";
+
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':accessCode', $accessCode );
+		$stmt->bindParam ( ':rating', $rating );
+		$stmt->execute ();
+	}
+
+	public static function isRatingLeftForCode($db, string $accessCode): bool {
+		$query = "SELECT rating FROM User_ratings WHERE accessCode = :accessCode";
+
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':accessCode', $accessCode );
+		$stmt->execute ();
+		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+
+		return $row['rating'] !== null;
+	}
+
+	public static function getRatingInfoForCode($db, string $accessCode): array {
+		$query = "SELECT * FROM User_ratings WHERE accessCode = :accessCode";
+
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':accessCode', $accessCode );
+		$stmt->execute ();
+		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+
+		$result = [];
+		$result['sourceItemID'] = $row ['sourceItemID'];
+		$result['targetItemID'] = $row ['targetItemID'];
+
+		return $result;
+	}
+
+	public static function isValidRatingCode($db, $accessCode): bool {
+		$query = "SELECT COUNT*(*) as num FROM User_ratings WHERE accessCode = :accessCode";
+
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':accessCode', $accessCode );
+		$stmt->execute ();
+		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+
+		return $row['num'] != 0;
+	}
+
+	public static function feedbackCodeBelongsToUser($db, string $accessCode, int $userID) {
+		$query = "SELECT sourceItemID FROM User_ratings WHERE accessCode = :accessCode";
+
+		$stmt = $db->prepare ( $query );
+		$stmt->bindParam ( ':accessCode', $accessCode );
+		$stmt->execute ();
+
+		 if ($row = $stmt->fetch ( PDO::FETCH_ASSOC )) {
+			 $item = new Item($db);
+			 $item->itemID = $row['sourceItemID'];
+			 $item->get();
+
+			 return $item->_owningUserID == $userID;
+		 }
+
+		 return false;
+	}
+
 	public function &__get($name) {
 		$name = '_' . $name;
 		return $this->$name;
@@ -381,31 +445,25 @@ class Item {
 		return false;
 	}
 
-	public static function createRating(PDO $db, int $userID, int $itemID, int $matchedItemID): string {
-
-		$lower = min($itemID, $matchedItemID);
-		$upper = max($itemID, $matchedItemID);
-
+	public static function createRating(PDO $db, int $sourceItemID, int $targetItemID): string {
 		$query = "INSERT INTO User_ratings
-					 	SET lhsItemID = :lhsItemID,
-							rhsItemID = :rhsItemID,
-							userID = :userID,
+					 	SET sourceItemID = :sourceItemID,
+						    targetItemID = :targetItemID,
 							accessCode = :accessCode";
 
-		$accessCode = Item::ratingAccessCode($userID, $lower, $upper);
+		$accessCode = Item::ratingAccessCode($sourceItemID, $targetItemID);
 		$stmt = $db->prepare ( $query );
-		$stmt->bindValue ( ':lhsItemID', $lower );
-		$stmt->bindValue ( ':rhsItemID', $upper );
-		$stmt->bindValue ( ':userID', $userID );
+		$stmt->bindValue ( ':sourceItemID', $sourceItemID );
+		$stmt->bindValue ( ':targetItemID', $targetItemID );
 		$stmt->bindValue ( ':accessCode',  $accessCode );
 		$stmt->execute ();
 
 		return $accessCode;
 	}
 
-	private static function ratingAccessCode(int $userID, int $itemID1, int $itemID2): string {
+	private static function ratingAccessCode(int $itemID1, int $itemID2): string {
 		date_default_timezone_set ( 'UTC' );
-		return md5 ( strtotime ( "now" ) . $userID . $itemID1 . $itemID2 );
+		return md5 ( strtotime ( "now" ) . $itemID1 . $itemID2 );
 	}
 
 	/**

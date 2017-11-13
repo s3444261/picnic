@@ -1083,24 +1083,44 @@ class System {
 		}
 	}
 
+	public function leaveRatingForCode(string $accessCode, int $rating) {
+		Item::leaveRatingForCode($this->db, $accessCode, $rating);
+	}
+
+	public function isValidRatingCode($accessCode) {
+		return Item::isValidRatingCode($this->db, $accessCode);
+	}
+
+	public function isRatingLeftForCode(string $accessCode): bool {
+		return Item::isRatingLeftForCode($this->db, $accessCode);
+	}
+
+	public function getRatingInfoForCode(string $accessCode): array {
+		return Item::getRatingInfoForCode($this->db, $accessCode);
+	}
+
+	public function feedbackCodeBelongsToUser(string $accessCode, int $userID) {
+		return Item::feedbackCodeBelongsToUser($this->db, $accessCode, $userID);
+	}
+
 	public function isFullyAcceptedMatch(int $itemID, int $matchedItemID): bool {
 		$item = new Item($this->db);
 		$item->itemID = $itemID;
 		return $item->isFullyAcceptedMatchWith($matchedItemID);
 	}
 
-	public function handleCompletedTransaction(int $itemID, int $matchedItemID) {
+	public function handleCompletedTransaction(int $myItemID, int $otherItemID) {
 		$thisItem = new Item($this->db);
-		$thisItem->itemID = $itemID;
+		$thisItem->itemID = $myItemID;
 		$thisUser =  $this->getItemOwner($thisItem);
-		$thisCode = Item::createRating($this->db, $thisUser['userID'], $itemID, $matchedItemID);
-		$this->sendRequestFeedbackEmail($thisUser, 'http://humphree.org/LeaveFeedback/' . $thisCode);
+		$thisCode = Item::createRating($this->db, $myItemID, $otherItemID);
+		$this->sendRequestFeedbackEmail($thisUser, 'http://humphree.org/Dashboard/LeaveFeedback/' . $thisCode);
 
 		$otherItem = new Item($this->db);
-		$otherItem->itemID = $matchedItemID;
+		$otherItem->itemID = $otherItemID;
 		$otherUser = $this->getItemOwner($otherItem);
-		$otherCode = Item::createRating($this->db, $otherUser['userID'], $itemID, $matchedItemID);
-		$this->sendRequestFeedbackEmail($otherUser, 'http://humphree.org/LeaveFeedback/' . $otherCode);
+		$otherCode = Item::createRating($this->db, $otherItemID, $myItemID);
+		$this->sendRequestFeedbackEmail($otherUser, 'http://humphree.org/Dashboard/LeaveFeedback/' . $otherCode);
 	}
 
 	private function sendRequestFeedbackEmail(array $user, string $feedbackUrl) : void {

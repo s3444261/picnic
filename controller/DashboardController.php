@@ -127,6 +127,57 @@ class DashboardController {
 		header('Location: ' . BASE . '/Home');
 	}
 
+	public function LeaveFeedback(string $code) {
+		if (!$this->auth()) {
+			$_SESSION['loginRedirect'] = $_SERVER[REQUEST_URI];
+			header('Location: ' . BASE . '/Account/Login');
+			return;
+		}
+
+		$h = new Humphree(Picnic::getInstance());
+		if (!$h->feedbackCodeBelongsToUser($code, $_SESSION['userID'])) {
+			$view = new LeaveFeedbackView($code);
+			$view->Render('invalidFeedbackCode');
+			return;
+		}
+
+		//todo : check auth!
+		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+			$h = new Humphree(Picnic::getInstance());
+
+			if ($h->isRatingLeftForCode($code)) {
+				$view = new LeaveFeedbackView($code);
+				$view->Render('feedbackAlreadyLeft');
+			} else {
+				$view = new LeaveFeedbackView($code);
+				$view->Render('leaveFeedback');
+			}
+		} else if ($_SERVER['REQUEST_METHOD'] === 'POST'
+				&& isset($_POST['submit'])) {
+			try {
+				if (!isset($_POST['rating'])) {
+					throw new ValidationException("Please select a rating score.");
+				}
+
+				$v = new Validation();
+				$v->emptyField($_POST['rating']);
+				$v->numberGreaterThanZero($_POST['rating']);
+
+				$h = new Humphree(Picnic::getInstance());
+				$h->leaveRatingForCode($code, $_POST['rating']);
+
+				$view = new LeaveFeedbackView($code);
+				$view->Render('feedbackLeft');
+			} catch (ValidationException $e) {
+				$view = new LeaveFeedbackView($code);
+				$_SESSION['error'] = $e->getError();
+				$view->Render('leaveFeedback');
+			}
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
+
 	public function MarkMessageRead(int $messageID) {
 		if ($this->auth()) {
 			$h = new Humphree(Picnic::getInstance());

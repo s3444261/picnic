@@ -52,7 +52,14 @@ class AccountController {
 
 					if ($user->login()) {
 						$_SESSION[MODULE] = true;
-						$view->Render('loggedIn');
+
+						if (isset($_SESSION['loginRedirect'])) {
+							header('Location: ' . $_SESSION['loginRedirect']);
+							unset($_SESSION['loginRedirect']);
+						} else {
+							$view->Render('loggedIn');
+						}
+
 						return;
 					} else {
 						$view->SetData('error', 'Invalid username or password.');

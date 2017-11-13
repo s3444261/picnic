@@ -77,19 +77,16 @@ CREATE TABLE `Item_matches` (
 		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `User_ratings` (
-    `lhsItemID` bigint(11) NOT NULL,
-	  `rhsItemID` bigint(11) NOT NULL,
-	  `userID` int(11),
+    `sourceItemID` bigint(11) NOT NULL,
+	  `targetItemID` bigint(11) NOT NULL,
     `rating` int(11) NULL,
 	  `accessCode` varchar(32),
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `score_left_at` timestamp NULL,
-		PRIMARY KEY ( `lhsItemID`,  `rhsItemID`,`userID`),
-		KEY `FK_User_ratings_Items_idx` (`lhsItemID`),
-	  KEY `FK_User_ratings_Items_idx2`(`rhsItemID`),
-		KEY `FK_User_ratings_Users_idx` (`userID`),
-		CONSTRAINT `FK_User_ratings_Item_matches` FOREIGN KEY (`lhsItemID`, `rhsItemID`) REFERENCES `Item_matches` (`lhsItemID`, `rhsItemID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_User_ratings_Users` FOREIGN KEY (`userID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
+    `rating_left_at` timestamp NULL,
+		PRIMARY KEY ( `sourceItemID`,  `targetItemID`),
+		KEY `FK_User_ratings_Items_idx` (`sourceItemID`),
+	  KEY `FK_User_ratings_Items_idx2`(`targetItemID`),
+		CONSTRAINT `FK_User_ratings_Item_matches` FOREIGN KEY (`sourceItemID`, `targetItemID`) REFERENCES `Item_matches` (`lhsItemID`, `rhsItemID`) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Category_items` (
