@@ -41,6 +41,67 @@ class ItemView extends View
 		return $this-> getItemAttribute('itemID');
 	}
 
+	public function currentUserIsItemOwner() {
+		return $this->isLoggedInUser()
+			&& $this->owningUserId() === $_SESSION['userID'];
+	}
+
+	private function getFullyMatchedItem() {
+		$h = new Humphree(Picnic::getInstance());
+		$otherItemID = $h->getFullyMatchedItemId($this->itemID());
+		return $h->getItem($otherItemID);
+	}
+
+	public function fullyMatchedItemTitle() {
+		$otherItem = $this->getFullyMatchedItem();
+		return $otherItem['title'];
+	}
+
+	public function fullyMatchedItemUrl() {
+		$otherItem = $this->getFullyMatchedItem();
+		return BASE . '/Item/View/' . $otherItem['itemID'];
+	}
+	public function currentUserIsFullyMatchedItemOwner() {
+		if (!$this->isLoggedInUser()) {
+			return false;
+		}
+
+		$otherItem = $this->getFullyMatchedItem();
+		$otherItemOwnerID = $otherItem['owningUserID'];
+		return $otherItemOwnerID === $_SESSION['userID'];
+	}
+
+	public function itemIsVisibleToCurrentUser(): bool {
+		if ($this->itemIsDeleted()) {
+			return false;
+		}
+
+		if ($this->itemIsActive()) {
+			return true;
+		}
+
+		if ($this->itemIsCompleted()) {
+			if ($this->currentUserIsItemOwner() || $this->currentUserIsFullyMatchedItemOwner() ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public function itemIsActive(): bool {
+		return ( $this-> getItemAttribute('status') === 'Active');
+	}
+
+	private function itemIsDeleted(): bool {
+   		return ( $this-> getItemAttribute('status') === 'Deleted');
+	}
+
+	public function itemIsCompleted(): bool {
+		return ( $this-> getItemAttribute('status') === 'Completed');
+	}
+
+
 	public function hasInfoMessage() {
 		return (isset($this->data['info']) && $this->data['info'] !== '');
 	}
@@ -99,6 +160,10 @@ class ItemView extends View
 
 	public function itemPrice() {
 		return $this->getItemAttribute('price');
+	}
+
+	public function owningUserId() {
+		return $this->getItemAttribute('owningUserID');
 	}
 
 	public function itemCondition() {

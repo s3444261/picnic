@@ -1101,6 +1101,10 @@ class System {
 		return Item::feedbackCodeBelongsToUser($this->db, $accessCode, $userID);
 	}
 
+	public function getFullyMatchedItemId(int $itemID) {
+		return Item::getFullyMatchedItemId($this->db, $itemID);
+	}
+
 	public function isFullyAcceptedMatch(int $itemID, int $matchedItemID): bool {
 		$item = new Item($this->db);
 		$item->itemID = $itemID;

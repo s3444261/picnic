@@ -134,9 +134,14 @@ class DashboardController {
 			return;
 		}
 
+		if (!isset($code) || $code === '') {
+			header('Location: ' . BASE . '/Home');
+			return;
+		}
+
 		$h = new Humphree(Picnic::getInstance());
 		if (!$h->feedbackCodeBelongsToUser($code, $_SESSION['userID'])) {
-			$view = new LeaveFeedbackView($code);
+			$view = new View();
 			$view->Render('invalidFeedbackCode');
 			return;
 		}

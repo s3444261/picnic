@@ -629,7 +629,7 @@ class Humphree {
 		
 		return $it;
 	}
-	
+
 	/**
 	 * Adds an item.
 	 *
@@ -683,6 +683,10 @@ class Humphree {
 		} else {
 			return false;
 		}
+	}
+
+	public function getFullyMatchedItemId(int $itemID) {
+		return $this->system->getFullyMatchedItemId($itemID);
 	}
 
 	public function getMatchedItemsFor(int $itemID): array {

@@ -292,20 +292,18 @@ class Item {
 	public function delete(): bool {
 		if ($this->exists ()) {
 			
-			$query = "DELETE FROM Items
-						WHERE itemID = :itemID";
+			$query = "UPDATE Items 
+					  SET status = :status
+					  WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
+			$stmt->bindValue ( ':status', 'Deleted' );
 			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
-			if (! $this->exists ()) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
+			return ($stmt->rowCount() == 1);
 		}
+
+		throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
 	}
 	
 	/**
@@ -446,6 +444,25 @@ class Item {
 		}
 
 		return false;
+	}
+
+	public static function getFullyMatchedItemId($db, int $itemID) {
+		$query = "SELECT * FROM Item_matches
+				  WHERE (lhsItemID = :itemID OR rhsItemID = :itemID)
+				  AND lhsStatus = 'Accepted' AND  rhsStatus = 'Accepted'";
+
+		$stmt = $db->prepare ( $query );
+		$stmt->bindValue ( ':itemID', $itemID );
+		$stmt->execute ();
+
+		if ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+
+			if ($row['lhsItemID'] == $itemID) {
+				return $row['rhsItemID'];
+			} else {
+				return $row['lhsItemID'];
+			}
+		}
 	}
 
 	public static function createRating(PDO $db, int $sourceItemID, int $targetItemID): string {
