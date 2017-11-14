@@ -105,13 +105,23 @@
 
                     <strong>Items that match this item:</strong>
 
-                    <?php foreach ($this->matchedItems() as $matchedItem) { ?>
                     <div class="row">
-                        <a href="<?php echo BASE . '/Item/View/' . $matchedItem['otherItemID']; ?>"><?php echo $matchedItem['otherItem']['title']; ?></a>
+                    <?php foreach ($this->matchedItems() as $matchedItem) { ?>
+                        <div class="col-sm-6 col-md-4 col-xl-3 top-n-tail">
+                          <div class="card myBox">
+                            <img class="card-img-top" src="<?php echo BASE.'/Item/Thumb/'.$matchedItem['otherItem']['itemID'] ?>" alt="">
+                            <div class="card-body">
+                                <h4 class="card-title truncate">
+                                    <a href="<?php echo BASE . '/Item/View/' . $matchedItem['otherItemID']; ?>"><?php echo ucwords (strtolower( ( $matchedItem['otherItem']['title'] ) ) ); ?></a>
+                                </h4>
+                                <h3 class="card-text text-center price top-padding"><?php echo '$' . $matchedItem['otherItem']['price'] ?></h3>
+                                <a href="<?php echo BASE.'/Item/View/'.$matchedItem['otherItem']['itemID'] ?>" class="btn btn-primary btn-block">Info</a>
+                            </div>
+                        </div>
                     </div>
                     <?php } ?>
                 </div>
-
+            </div>
             <?php } ?>
 		</div> <!-- end col-9 -->
 		<!-- Right margin -->
