@@ -184,9 +184,9 @@ class ItemsTest extends PHPUnit\Framework\TestCase{
 					$item->itemcondition = 'Used';
 				}
 				if($i % 3 == 0){
-					$item->status = 'ForSale';
+					$item->type = 'ForSale';
 				} else {
-					$item->status = 'Wanted';
+					$item->type = 'Wanted';
 				} 
 				try {
 					$categoryItems = new CategoryItems($pdo);

@@ -1,4 +1,4 @@
-INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, type) VALUES
   (28015, 484, 'NEW Boys Speedo Endurance+ Swimming Jammer Jammers Swim Trunks Swimwear - Black', 'NEW Boys Speedo Endurance+ Swimming Jammer Jammers Swim Trunks Swimwear - Black in Sporting Goods, Swimming, Swimwear', '29.00', 2, 'New', 'ForSale'),
   (28016, 28, 'Swimming Goggles Anti-fog Swim UV Glasses Adjustable Kids Children Boys Girls', 'Features: Anti Fog, UV Protection, Waterproof, Adjustable. Eyewear Type: Swimming Goggles. Ages: for more than 5 years old kids. 1 Swimming Goggle. Color: show as pictures.', '3.69', 1, 'New', 'Wanted'),
   (28017, 409, 'Men Women Adults Silicone Swim Swimming Cap Durable Flexible Australia Stock', 'One swim cap. Material : Silicone. High elasticity which can fir your head well without feeling too tight. Product View.', '4.95', 4, 'New', 'ForSale'),

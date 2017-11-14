@@ -17,6 +17,7 @@ require_once dirname ( __FILE__ ) . '/ModelException.php';
  * @property string $_quantity;
  * @property string $_itemcondition;
  * @property string $_price;
+ * @property string $_type;
  * @property string $_status;
  * @property string $_created_at;
  * @property string $_updated_at;
@@ -30,6 +31,7 @@ class Item {
 	private $_itemcondition = '';
 	private $_price = '';
 	private $_status = '';
+	private $_type = '';
 	private $_created_at;
 	private $_updated_at;
 	private $db;
@@ -67,8 +69,8 @@ class Item {
 		$query = "UPDATE User_ratings SET rating = :rating, rating_left_at = CURRENT_TIMESTAMP WHERE accessCode = :accessCode";
 
 		$stmt = $db->prepare ( $query );
-		$stmt->bindParam ( ':accessCode', $accessCode );
-		$stmt->bindParam ( ':rating', $rating );
+		$stmt->bindValue ( ':accessCode', $accessCode );
+		$stmt->bindValue ( ':rating', $rating );
 		$stmt->execute ();
 	}
 
@@ -76,7 +78,7 @@ class Item {
 		$query = "SELECT rating FROM User_ratings WHERE accessCode = :accessCode";
 
 		$stmt = $db->prepare ( $query );
-		$stmt->bindParam ( ':accessCode', $accessCode );
+		$stmt->bindValue ( ':accessCode', $accessCode );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 
@@ -87,7 +89,7 @@ class Item {
 		$query = "SELECT * FROM User_ratings WHERE accessCode = :accessCode";
 
 		$stmt = $db->prepare ( $query );
-		$stmt->bindParam ( ':accessCode', $accessCode );
+		$stmt->bindValue ( ':accessCode', $accessCode );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 
@@ -102,7 +104,7 @@ class Item {
 		$query = "SELECT COUNT*(*) as num FROM User_ratings WHERE accessCode = :accessCode";
 
 		$stmt = $db->prepare ( $query );
-		$stmt->bindParam ( ':accessCode', $accessCode );
+		$stmt->bindValue ( ':accessCode', $accessCode );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 
@@ -113,7 +115,7 @@ class Item {
 		$query = "SELECT sourceItemID FROM User_ratings WHERE accessCode = :accessCode";
 
 		$stmt = $db->prepare ( $query );
-		$stmt->bindParam ( ':accessCode', $accessCode );
+		$stmt->bindValue ( ':accessCode', $accessCode );
 		$stmt->execute ();
 
 		 if ($row = $stmt->fetch ( PDO::FETCH_ASSOC )) {
@@ -150,7 +152,7 @@ class Item {
 			$query = "SELECT * FROM Items WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_owningUserID = $row ['owningUserID'];
@@ -159,7 +161,8 @@ class Item {
 			$this->_quantity = $row ['quantity'];
 			$this->_itemcondition = $row ['itemcondition'];
 			$this->_price = $row ['price'];
-			$this->_status = $row ['itemStatus'];
+			$this->_type = $row ['type'];
+			$this->_status = $row ['status'];
 			$this->_created_at = $row ['created_at'];
 			$this->_updated_at = $row ['updated_at'];
 			return $this;
@@ -194,17 +197,17 @@ class Item {
 							quantity = :quantity,
 							itemcondition = :itemcondition,
 							price = :price,
-							itemStatus = :status,
+							type = :type,
 							created_at = NULL";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':owningUserID', $this->_owningUserID );
-			$stmt->bindParam ( ':title', $this->_title );
-			$stmt->bindParam ( ':description', $this->_description );
-			$stmt->bindParam ( ':quantity', $this->_quantity );
-			$stmt->bindParam ( ':itemcondition', $this->_itemcondition );
-			$stmt->bindParam ( ':price', $this->_price );
-			$stmt->bindParam ( ':status', $this->_status );
+			$stmt->bindValue ( ':owningUserID', $this->_owningUserID );
+			$stmt->bindValue ( ':title', $this->_title );
+			$stmt->bindValue ( ':description', $this->_description );
+			$stmt->bindValue ( ':quantity', $this->_quantity );
+			$stmt->bindValue ( ':itemcondition', $this->_itemcondition );
+			$stmt->bindValue ( ':price', $this->_price );
+			$stmt->bindValue ( ':type', $this->_type );
 			$stmt->execute ();
 			$this->_itemID = $this->db->lastInsertId ();
 			if ($this->_itemID > 0) {
@@ -231,7 +234,7 @@ class Item {
 			$query = "SELECT * FROM Items WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
@@ -250,8 +253,8 @@ class Item {
 			if (strlen ( $this->_price ) < 1) {
 				$this->_price = $row ['price'];
 			}
-			if (strlen ( $this->_status ) < 1) {
-				$this->_status = $row ['title'];
+			if (strlen ( $this->_type ) < 1) {
+				$this->_type = $row ['title'];
 			}
 			
 			$query = "UPDATE Items
@@ -260,17 +263,17 @@ class Item {
 							quantity = :quantity,
 							itemcondition = :itemcondition,
 							price = :price,
-							itemStatus = :status
+							type = :type
 						WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
-			$stmt->bindParam ( ':title', $this->_title );
-			$stmt->bindParam ( ':description', $this->_description );
-			$stmt->bindParam ( ':quantity', $this->_quantity );
-			$stmt->bindParam ( ':itemcondition', $this->_itemcondition );
-			$stmt->bindParam ( ':price', $this->_price );
-			$stmt->bindParam ( ':status', $this->_status );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':title', $this->_title );
+			$stmt->bindValue ( ':description', $this->_description );
+			$stmt->bindValue ( ':quantity', $this->_quantity );
+			$stmt->bindValue ( ':itemcondition', $this->_itemcondition );
+			$stmt->bindValue ( ':price', $this->_price );
+			$stmt->bindValue ( ':type', $this->_type );
 			$stmt->execute ();
 			return true;
 		} else {
@@ -293,7 +296,7 @@ class Item {
 						WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
 				return true;
@@ -316,7 +319,7 @@ class Item {
 			$query = "SELECT COUNT(*) AS numRows FROM Items WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			if ($row ['numRows'] > 0) {
@@ -344,11 +347,11 @@ class Item {
 	}
 
 	public function discardMatchWith(int $itemID) {
-		$this->setStatusForMatchWith($itemID, 'deleted');
+		$this->setStatusForMatchWith($itemID, 'Rejected');
 	}
 
 	public function acceptMatchWith(int $itemID) {
-		$this->setStatusForMatchWith($itemID, 'accepted');
+		$this->setStatusForMatchWith($itemID, 'Accepted');
 	}
 
 	private function setStatusForMatchWith(int $itemID, string $status) {
@@ -461,6 +464,17 @@ class Item {
 		return $accessCode;
 	}
 
+	public function markCompleted() {
+		$query = "UPDATE Items
+				  SET status = :status
+				  WHERE itemID = :itemID";
+
+		$stmt = $this->db->prepare ( $query );
+		$stmt->bindValue ( ':status', 'Completed' );
+		$stmt->bindValue ( ':itemID', $this->_itemID );
+		$stmt->execute ();
+	}
+
 	private static function ratingAccessCode(int $itemID1, int $itemID2): string {
 		date_default_timezone_set ( 'UTC' );
 		return md5 ( strtotime ( "now" ) . $itemID1 . $itemID2 );
@@ -476,8 +490,8 @@ class Item {
 
 		if ($this->_itemID > 0) {
 			$query = "SELECT DISTINCT * FROM Item_matches 
-					  WHERE (lhsItemID = :itemID AND lhsStatus != 'deleted')
-					  OR (rhsItemID = :itemID AND rhsStatus != 'deleted')";
+					  WHERE (lhsItemID = :itemID AND lhsStatus != 'Rejected')
+					  OR (rhsItemID = :itemID AND rhsStatus != 'Rejected')";
 
 			$stmt = $this->db->prepare ( $query );
 			$stmt->bindValue ( ':itemID', $this->_itemID );
@@ -532,8 +546,8 @@ class Item {
 		if ($this->_price) {
 			echo 'price => ' . $this->_price . '<br/>';
 		}
-		if ($this->_status) {
-			echo 'status => ' . $this->_status . '<br/>';
+		if ($this->_type) {
+			echo 'status => ' . $this->_type . '<br/>';
 		}
 	}
 }

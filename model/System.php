@@ -448,17 +448,17 @@ class System {
 	 * @param Category $category        	
 	 * @param int $pageNumber        	
 	 * @param int $itemsPerPage        	
-	 * @param string $status        	
+	 * @param string $type
 	 * @return array
 	 */
-	public function getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage, string $status): array {
+	public function getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage, string $type): array {
 		$pn = $pageNumber;
 		$ipp = $itemsPerPage;
 		$categoryItemsArray = array ();
 		$categoryItems = new CategoryItems ( $this->db );
 		$categoryItems->categoryID = $category->categoryID;
 		try {
-			$categoryItemsArray = $categoryItems->getCategoryItemsByPage ( $pn, $ipp, $status );
+			$categoryItemsArray = $categoryItems->getCategoryItemsByPage ( $pn, $ipp, $type );
 		} catch ( ModelException $e ) {
 			$_SESSION ['error'] = $e->getMessage ();
 		}
@@ -1017,16 +1017,16 @@ class System {
 		$item->itemID = $itemID;
 		$item->get();
 
-		if ($item->status === 'ForSale' || $item->status === 'Wanted') {
+		if ($item->type === 'ForSale' || $item->type === 'Wanted') {
 			$category = $this->getItemCategory($item->itemID);
 
-			$desiredStatus = ($item->status === 'ForSale' ? 'Wanted' : 'ForSale');
+			$desiredStatus = ($item->type === 'ForSale' ? 'Wanted' : 'ForSale');
 
-			if ($item->status === 'ForSale') {
+			if ($item->type === 'ForSale') {
 				// We allow a 25% variation on min price, no max.
 				$minPrice = (floatval($item->price) * 0.75);
 				$maxPrice = 0x7FFFFFFF;
-			} elseif ($item->status === 'Wanted') {
+			} elseif ($item->type === 'Wanted') {
 				// We allow a 50% variation on max price, no min.
 				$minPrice = 0;
 				$maxPrice = (floatval($item->price) * 1.5);
@@ -1111,14 +1111,22 @@ class System {
 		$thisItem = new Item($this->db);
 		$thisItem->itemID = $myItemID;
 		$thisUser =  $this->getItemOwner($thisItem);
+		$this->markItemCompleted($myItemID);
 		$thisCode = Item::createRating($this->db, $myItemID, $otherItemID);
 		$this->sendRequestFeedbackEmail($mailer, $thisUser, 'http://humphree.org/Dashboard/LeaveFeedback/' . $thisCode);
 
 		$otherItem = new Item($this->db);
 		$otherItem->itemID = $otherItemID;
 		$otherUser = $this->getItemOwner($otherItem);
+		$this->markItemCompleted($otherItemID);
 		$otherCode = Item::createRating($this->db, $otherItemID, $myItemID);
 		$this->sendRequestFeedbackEmail($mailer, $otherUser, 'http://humphree.org/Dashboard/LeaveFeedback/' . $otherCode);
+	}
+
+	private function markItemCompleted(int $itemID) {
+		$item = new Item($this->db);
+		$item->itemID = $itemID;
+		$thisUser =  $item->markCompleted();
 	}
 
 	private function sendRequestFeedbackEmail(Mailer $mailer, array $user, string $feedbackUrl) : void {

@@ -233,7 +233,7 @@ class Comment {
 			$query = "SELECT COUNT(*) AS numRows FROM Comments WHERE commentID = :commentID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':commentID', $this->_commentID );
+			$stmt->bindValue ( ':commentID', $this->_commentID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			return ($row ['numRows'] > 0);

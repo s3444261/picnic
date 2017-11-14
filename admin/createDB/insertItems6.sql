@@ -1,4 +1,4 @@
-INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, type) VALUES
   (10006, 131, 'Men Women Lab Coat Medical Doctor Scientist Healthcare Dress Up Uniform Costume', '100% Brand New Laboratory / warehouse / Doctor coat. Color: White Material: 65% polyester and 35% cotton.
  1 Chest pocket, 2 Hand Pockets Ideal for Medical, Warehouse work and engineering.
  Sizes: M, L, XL Size To Fit Chest Chest Sleeve Length Length M 40" 115CM 81.5CM 101CM L 44" 125CM 82.5CM 102CM XL 48" 135CM 83.5CM 103CM  

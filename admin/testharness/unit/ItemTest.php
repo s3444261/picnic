@@ -63,7 +63,7 @@ class ItemTest extends PicnicTestCase {
 	const QUANTITY = 'quantity';
 	const CONDITION = 'itemcondition';
 	const PRICE = 'price';
-	const STATUS = 'status';
+	const TYPE = 'type';
 	const CREATION_DATE = 'created_at';
 	const MODIFIED_DATE = 'updated_at';
 	const USER_ID_1 = 1;
@@ -71,30 +71,30 @@ class ItemTest extends PicnicTestCase {
 	const TITLE_1 = 'title1';
 	const DESCRIPTION_1 = 'description1';
 	const QUANTITY_1 = 'quantity1';
-	const CONDITION_1 = 'condition1';
+	const CONDITION_1 = 'Used';
 	const PRICE_1 = 'price1';
-	const STATUS_1 = 'active';
+	const TYPE_1 = 'ForSale';
 	const ITEM_ID_2 = 2;
 	const TITLE_2 = 'title2';
 	const DESCRIPTION_2 = 'description2';
 	const QUANTITY_2 = 'quantity2';
-	const CONDITION_2 = 'condition2';
+	const CONDITION_2 = 'New';
 	const PRICE_2 = 'price2';
-	const STATUS_2 = 'active';
+	const TYPE_2 = 'ForSale';
 	const ITEM_ID_3 = 3;
 	const TITLE_3 = 'title3';
 	const DESCRIPTION_3 = 'description3';
 	const QUANTITY_3 = 'quantity3';
-	const CONDITION_3 = 'condition3';
+	const CONDITION_3 = 'New';
 	const PRICE_3 = 'price3';
-	const STATUS_3 = 'active';
+	const TYPE_3 = 'Wanted';
 	const ITEM_ID_4 = 4;
 	const TITLE_4 = 'title4';
 	const DESCRIPTION_4 = 'description4';
 	const QUANTITY_4 = 'quantity4';
-	const CONDITION_4 = 'condition4';
+	const CONDITION_4 = 'Used';
 	const PRICE_4 = 'price4';
-	const STATUS_4 = 'active';
+	const TYPE_4 = 'Wanted';
 	const ERROR_ITEM_NOT_EXIST = 'Item does not exist!';
 	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
 	const ERROR_ITEM_NOT_CREATED = 'The item was not created!';
@@ -122,15 +122,11 @@ class ItemTest extends PicnicTestCase {
 				self::QUANTITY => self::QUANTITY_1,
 				self::CONDITION => self::CONDITION_1,
 				self::PRICE => self::PRICE_1,
-				self::STATUS => self::STATUS_1 
+				self::TYPE => self::TYPE_1
 		];
 		
 		$item = new Item ( $pdo, $args );
-		try {
-			$item->set ();
-		} catch ( ModelException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+		$item->set ();
 		
 		$args2 = [ 
 				self::ITEM_ID => self::ITEM_ID_2,
@@ -140,16 +136,12 @@ class ItemTest extends PicnicTestCase {
 				self::QUANTITY => self::QUANTITY_2,
 				self::CONDITION => self::CONDITION_2,
 				self::PRICE => self::PRICE_2,
-				self::STATUS => self::STATUS_2 
+				self::TYPE => self::TYPE_2
 		];
 		
 		$item = new Item ( $pdo, $args2 );
-		try {
-			$item->set ();
-		} catch ( ModelException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
-		
+		$item->set ();
+
 		$args3 = [ 
 				self::ITEM_ID => self::ITEM_ID_3,
 				self::OWNING_USER_ID => self::USER_ID_1,
@@ -158,15 +150,12 @@ class ItemTest extends PicnicTestCase {
 				self::QUANTITY => self::QUANTITY_3,
 				self::CONDITION => self::CONDITION_3,
 				self::PRICE => self::PRICE_3,
-				self::STATUS => self::STATUS_3 
+				self::TYPE => self::TYPE_3
 		];
 		
 		$item = new Item ( $pdo, $args3 );
-		try {
-			$item->set ();
-		} catch ( ModelException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+		$item->set ();
+
 	}
 	protected function tearDown(): void {
 		TestPDO::CleanUp ();
@@ -193,7 +182,7 @@ class ItemTest extends PicnicTestCase {
 				self::QUANTITY => self::QUANTITY_1,
 				self::CONDITION => self::CONDITION_1,
 				self::PRICE => self::PRICE_1,
-				self::STATUS => self::STATUS_1 
+				self::TYPE => self::TYPE_1
 		];
 	}
 	public function testAttributes(): void {
@@ -226,18 +215,14 @@ class ItemTest extends PicnicTestCase {
 	}
 	public function testGetItemValidItemId(): void {
 		$sut = $this->createSutWithId ( self::ITEM_ID_2 );
-		try {
-			$sut->get ();
-		} catch ( ModelException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+		$sut->get ();
 		$this->assertEquals ( self::ITEM_ID_2, $sut->itemID );
 		$this->assertEquals ( self::TITLE_2, $sut->title );
 		$this->assertEquals ( self::DESCRIPTION_2, $sut->description );
 		$this->assertEquals ( self::QUANTITY_2, $sut->quantity );
 		$this->assertEquals ( self::CONDITION_2, $sut->itemcondition );
 		$this->assertEquals ( self::PRICE_2, $sut->price );
-		$this->assertEquals ( self::STATUS_2, $sut->status );
+		$this->assertEquals ( self::TYPE_2, $sut->type );
 	}
 	
 	/*
@@ -256,25 +241,18 @@ class ItemTest extends PicnicTestCase {
 		$sut->quantity = self::QUANTITY_4;
 		$sut->itemcondition = self::CONDITION_4;
 		$sut->price = self::PRICE_4;
-		$sut->status = self::STATUS_4;
-		try {
-			$sut->itemID = $sut->set ();
-		} catch ( ModelException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+		$sut->type = self::TYPE_4;
+        $sut->itemID = $sut->set ();
+
 		$sut = $this->createSutWithId ( $sut->itemID );
-		try {
-			$sut->get ();
-			$this->assertEquals ( self::ITEM_ID_4, $sut->itemID );
-			$this->assertEquals ( self::TITLE_4, $sut->title );
-			$this->assertEquals ( self::DESCRIPTION_4, $sut->description );
-			$this->assertEquals ( self::QUANTITY_4, $sut->quantity );
-			$this->assertEquals ( self::CONDITION_4, $sut->itemcondition );
-			$this->assertEquals ( self::PRICE_4, $sut->price );
-			$this->assertEquals ( self::STATUS_4, $sut->status );
-		} catch ( ModelException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+		$sut->get ();
+		$this->assertEquals ( self::ITEM_ID_4, $sut->itemID );
+		$this->assertEquals ( self::TITLE_4, $sut->title );
+		$this->assertEquals ( self::DESCRIPTION_4, $sut->description );
+		$this->assertEquals ( self::QUANTITY_4, $sut->quantity );
+		$this->assertEquals ( self::CONDITION_4, $sut->itemcondition );
+		$this->assertEquals ( self::PRICE_4, $sut->price );
+		$this->assertEquals ( self::TYPE_4, $sut->type );
 	}
 	
 	/*
@@ -301,7 +279,7 @@ class ItemTest extends PicnicTestCase {
 		$sut->quantity = self::QUANTITY_4;
 		$sut->itemcondition = self::CONDITION_4;
 		$sut->price = self::PRICE_4;
-		$sut->status = self::STATUS_4;
+		$sut->status = self::TYPE_4;
 		$this->assertTrue ( $sut->update () );
 		$this->assertEquals ( self::ITEM_ID_3, $sut->itemID );
 		$this->assertEquals ( self::TITLE_4, $sut->title );
@@ -309,7 +287,7 @@ class ItemTest extends PicnicTestCase {
 		$this->assertEquals ( self::QUANTITY_4, $sut->quantity );
 		$this->assertEquals ( self::CONDITION_4, $sut->itemcondition );
 		$this->assertEquals ( self::PRICE_4, $sut->price );
-		$this->assertEquals ( self::STATUS_4, $sut->status );
+		$this->assertEquals ( self::TYPE_4, $sut->status );
 	}
 	
 	/*

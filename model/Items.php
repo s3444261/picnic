@@ -56,12 +56,14 @@ class Items {
 		if (strlen ( $searchString ) > 0) {
 			
 			$query = 'SELECT *, MATCH (title, description) AGAINST (:searchString) AS relevance FROM Items
-						WHERE MATCH (title, description)
+						WHERE status = :status AND 
+						MATCH (title, description)
 						AGAINST (:searchString)
 						ORDER BY relevance DESC
 						LIMIT ' . ($pageNumber - 1) * $itemsPerPage . ', ' . $itemsPerPage;
 			
 			$stmt = $this->db->prepare ( $query );
+			$stmt->bindValue ( ':status', 'Active' );
 			$stmt->bindValue ( ':searchString', $searchString );
 			$stmt->execute ();
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
@@ -72,7 +74,7 @@ class Items {
 				$item->quantity = $row ['quantity'];
 				$item->itemcondition = $row ['itemcondition'];
 				$item->price = $row ['price'];
-				$item->status = $row ['itemStatus'];
+				$item->type = $row ['type'];
 				$item->created_at = $row ['created_at'];
 				$item->updated_at = $row ['updated_at'];
 				
@@ -99,11 +101,13 @@ class Items {
 		
 		$items = array ();
 		$query = "SELECT * FROM Items
-					WHERE MATCH (title, description)
+					WHERE status = :status AND 
+					MATCH (title, description)
 					AGAINST (:searchString IN BOOLEAN MODE)";
 		
 		if (strlen($searchString) > 0) {
 			$stmt = $this->db->prepare ( $query );
+			$stmt->bindValue ( ':status', 'Active' );
 			$stmt->bindValue ( ':searchString', $searchString );
 			$stmt->execute ();
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
@@ -114,7 +118,7 @@ class Items {
 				$item->quantity = $row ['quantity'];
 				$item->itemcondition = $row ['itemcondition'];
 				$item->price = $row ['price'];
-				$item->status = $row ['itemStatus'];
+				$item->type = $row ['type'];
 				$item->created_at = $row ['created_at'];
 				$item->updated_at = $row ['updated_at'];
 				
@@ -148,82 +152,58 @@ class Items {
 		
 		if($args[self::SEARCH_MINOR_CATEGORY_ID] > 0
 				|| $args[self::SEARCH_MAJOR_CATEGORY_ID] > 0){
-			$query = "SELECT i.itemID, i.owningUserID, i.title, i.description,";
-			$query = $query . " i.quantity, i.itemcondition, i.price, i.itemStatus,";
-			$query = $query . " i.created_at, i.updated_at";
+			$query = "SELECT i.itemID, i.owningUserID, i.title, i.description,
+					 i.quantity, i.itemcondition, i.price, i.type,
+					 i.created_at, i.updated_at";
 
 			if (strlen($args[self::SEARCH_TEXT]) > 0) {
 				$query = $query . 		", MATCH (title, description) AGAINST (:srchText IN BOOLEAN MODE) AS relevance";
 			}
 
-			$query = $query . " from Items i";
-			$query = $query . " join Category_items ci";
-			$query = $query . " on i.itemID = ci.itemID";
+			$query = $query . " FROM Items i
+								JOIN Category_items ci
+								ON i.itemID = ci.itemID";
 		}
+
+		$query = $query . " WHERE status = :status";
 
 		$initialLength = strlen($query);
 		
-		if(strlen($args[self::SEARCH_TEXT]) > 0) {
-			$query = $query . " WHERE MATCH (title, description)
+		if (strlen($args[self::SEARCH_TEXT]) > 0) {
+			$query = $query . " AND MATCH (title, description)
 								AGAINST (:srchText IN BOOLEAN MODE)";
 		}
 
-		if($args[self::SEARCH_MIN_PRICE] > 0) {
-			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE CAST(price AS DECIMAL(10,2)) >= :srchMinPrice";
-			} else {
-				$query = $query . " AND CAST(price AS DECIMAL(10,2)) >= :srchMinPrice";
-			}
+		if ($args[self::SEARCH_MIN_PRICE] > 0) {
+			$query = $query . " AND CAST(price AS DECIMAL(10,2)) >= :srchMinPrice";
 		}
 
-		if($args[self::SEARCH_MAX_PRICE] < 0x7FFFFFFF) {
-			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE CAST(price AS DECIMAL(10,2)) <= :srchMaxPrice";
-			} else {
-				$query = $query . " AND CAST(price AS DECIMAL(10,2)) <= :srchMaxPrice";
-			}
+		if ($args[self::SEARCH_MAX_PRICE] < 0x7FFFFFFF) {
+			$query = $query . " AND CAST(price AS DECIMAL(10,2)) <= :srchMaxPrice";
 		}
+
 		if($args[self::SEARCH_MIN_QUANTITY] > 1){
-			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE CAST(quantity AS UNSIGNED) >= :srchQuantity";
-			} else {
-				$query = $query . " AND CAST(quantity AS UNSIGNED) >= :srchQuantity";
-			}
+			$query = $query . " AND CAST(quantity AS UNSIGNED) >= :srchQuantity";
 		}
 		
-		if(strlen($args[self::SEARCH_CONDITION]) > 0){
-			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE itemcondition = :srchCondition";
-			} else {
-				$query = $query . " AND itemcondition = :srchCondition";
-			}
+		if (strlen($args[self::SEARCH_CONDITION]) > 0){
+			$query = $query . " AND itemcondition = :srchCondition";
 		}
 		
-		if(strlen($args[self::SEARCH_STATUS]) > 0){
-			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE itemStatus = :srchStatus";
-			} else {
-				$query = $query . " AND itemStatus = :srchStatus";
-			}
+		if( strlen($args[self::SEARCH_STATUS]) > 0){
+			$query = $query . " AND type = :type";
 		}
 		
-		if($args[self::SEARCH_MINOR_CATEGORY_ID] > 0){
-			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE categoryID = :categoryID";
-			} else {
-				$query = $query . " AND categoryID = :categoryID";
-			}
-		} elseif($args[self::SEARCH_MAJOR_CATEGORY_ID] > 0){
-			if(strlen($query) == $initialLength){
-				$query = $query . " WHERE categoryID IN(SELECT categoryID from Categories WHERE parentID = :categoryID)";
-			} else {
-				$query = $query . " AND categoryID IN(SELECT categoryID from Categories WHERE parentID = :categoryID)";
-			}
+		if ($args[self::SEARCH_MINOR_CATEGORY_ID] > 0){
+			$query = $query . " AND categoryID = :categoryID";
+		} else if ($args[self::SEARCH_MAJOR_CATEGORY_ID] > 0){
+			$query = $query . " AND categoryID IN(SELECT categoryID from Categories WHERE parentID = :categoryID)";
 		}
 
 		$query = $query . ' LIMIT ' . ($pageNumber - 1) * $itemsPerPage . ', ' . $itemsPerPage;
 
 		$stmt = $this->db->prepare ( $query );
+		$stmt->bindValue ( ':status', 'Active' );
 
 		if(strlen($args[self::SEARCH_TEXT]) > 0){ 
 			$stmt->bindValue ( ':srchText', $args[self::SEARCH_TEXT] );
@@ -241,7 +221,7 @@ class Items {
 			$stmt->bindValue ( ':srchCondition',  $args[self::SEARCH_CONDITION] );
 		}
 		if(strlen($args[self::SEARCH_STATUS]) > 0){ 
-			$stmt->bindValue ( ':srchStatus', $args[self::SEARCH_STATUS] );
+			$stmt->bindValue ( ':type', $args[self::SEARCH_STATUS] );
 		}
 		if($args[self::SEARCH_MINOR_CATEGORY_ID] > 0){ 
 			$stmt->bindValue ( ':categoryID', $args[self::SEARCH_MINOR_CATEGORY_ID] );
@@ -259,7 +239,7 @@ class Items {
 			$item->quantity = $row ['quantity'];
 			$item->itemcondition = $row ['itemcondition'];
 			$item->price = $row ['price'];
-			$item->status = $row ['itemStatus'];
+			$item->type = $row ['type'];
 			$item->created_at = $row ['created_at'];
 			$item->updated_at = $row ['updated_at'];
 			

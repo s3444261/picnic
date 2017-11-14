@@ -61,7 +61,7 @@ class Category {
 			$query = "SELECT * FROM Categories WHERE categoryID = :categoryID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':categoryID', $this->_categoryID );
+			$stmt->bindValue ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_parentID = $row ['parentID'];
@@ -109,7 +109,7 @@ class Category {
 			$stmt = $this->db->prepare ( $query );
 
 			$stmt->bindValue ( ':parentID', $this->_parentID);
-			$stmt->bindParam ( ':category', $this->_category );
+			$stmt->bindValue ( ':category', $this->_category );
 			$stmt->execute ();
 			
 			if ($stmt->rowCount () > 0) {
@@ -136,7 +136,7 @@ class Category {
 			$query = "SELECT * FROM Categories WHERE categoryID = :categoryID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':categoryID', $this->_categoryID );
+			$stmt->bindValue ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
@@ -161,9 +161,9 @@ class Category {
 						WHERE categoryID = :categoryID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':categoryID', $this->_categoryID );
-			$stmt->bindParam ( ':parentID', $this->_parentID );
-			$stmt->bindParam ( ':category', $this->_category );
+			$stmt->bindValue ( ':categoryID', $this->_categoryID );
+			$stmt->bindValue ( ':parentID', $this->_parentID );
+			$stmt->bindValue ( ':category', $this->_category );
 			$stmt->execute ();
 			return true;
 		} else {
@@ -184,7 +184,7 @@ class Category {
 						WHERE categoryID = :categoryID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':categoryID', $this->_categoryID );
+			$stmt->bindValue ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
 				return true;
@@ -207,7 +207,7 @@ class Category {
 			$query = "SELECT COUNT(*) AS numRows FROM Categories WHERE categoryID = :categoryID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':categoryID', $this->_categoryID );
+			$stmt->bindValue ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			if ($row ['numRows'] > 0) {

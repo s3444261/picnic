@@ -511,23 +511,23 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const TITLE_1 = 'title1';
 	const DESCRIPTION_1 = 'description1';
 	const QUANTITY_1 = 'quantity1';
-	const CONDITION_1 = 'condition1';
+	const CONDITION_1 = 'New';
 	const PRICE_1 = 'price1';
-	const STATUS_1 = 'active';
+	const STATUS_1 = 'Active';
 	const ITEM_ID_2 = 2;
 	const TITLE_2 = 'title2';
 	const DESCRIPTION_2 = 'description2';
 	const QUANTITY_2 = 'quantity2';
-	const CONDITION_2 = 'condition2';
+	const CONDITION_2 = 'New';
 	const PRICE_2 = 'price2';
-	const STATUS_2 = 'active';
+	const STATUS_2 = 'Active';
 	const ITEM_ID_3 = 3;
 	const TITLE_3 = 'title3';
 	const DESCRIPTION_3 = 'description3';
 	const QUANTITY_3 = 'quantity3';
-	const CONDITION_3 = 'condition3';
+	const CONDITION_3 = 'Used';
 	const PRICE_3 = 'price3';
-	const STATUS_3 = 'active';
+	const STATUS_3 = 'Active';
 	const ITEM_ID_16 = 16;
 	const TITLE_16 = 'title16';
 	const ITEM_ID_INVALID = 4000;
@@ -1726,7 +1726,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::CATEGORY_ID => self::CATEGORY_ID_INVALID 
 		] );
 		$category = $system->getCategory ( $sut );
-		$this->assertSame ( '400', $category->categoryID );
+		$this->assertSame ( 400, $category->categoryID );
 		$this->assertSame ( null, $category->parentID );
 		$this->assertEmpty ( $category->category );
 
@@ -1740,7 +1740,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::CATEGORY_ID => self::CATEGORY_ID_3 
 		] );
 		$category = $system->getCategory ( $sut );
-		$this->assertSame ( '3', $category->categoryID );
+		$this->assertSame ( 3, $category->categoryID );
 		$this->assertSame ( '1', $category->parentID );
 		$this->assertSame ( self::CATEGORY_3, $category->category );
 	}
@@ -1964,7 +1964,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::ITEM_ID => self::ITEM_ID_INVALID 
 		] );
 		$item = $system->getItem ( $sut );
-		$this->assertSame ( '4000', $item->itemID );
+		$this->assertSame ( 4000, $item->itemID );
 		$this->assertEmpty ( $item->title );
 		$this->assertEmpty ( $item->description );
 		$this->assertEmpty ( $item->quantity );
@@ -1984,7 +1984,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::ITEM_ID => self::ITEM_ID_2 
 		] );
 		$item = $system->getItem ( $sut );
-		$this->assertSame ( '2', $item->itemID );
+		$this->assertSame ( 2, $item->itemID );
 		$this->assertSame ( self::TITLE_2, $item->title );
 		$this->assertSame ( self::DESCRIPTION_2, $item->description );
 		$this->assertSame ( self::QUANTITY_2, $item->quantity );
@@ -3973,9 +3973,9 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					$item->itemcondition = 'Used';
 				}
 				if($i % 3 == 0){
-					$item->status = 'ForSale';
+					$item->type = 'ForSale';
 				} else {
-					$item->status = 'Wanted';
+					$item->type = 'Wanted';
 				}
 				try {
 					$categoryItems = new CategoryItems($pdo);

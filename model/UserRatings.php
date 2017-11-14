@@ -80,7 +80,7 @@ class UserRatings {
 			$query = "SELECT * FROM User_ratings WHERE user_ratingID = :user_ratingID";
 
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
+			$stmt->bindValue ( ':user_ratingID', $this->_user_ratingID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_user_ratingID = $row ['user_ratingID'];
@@ -112,12 +112,12 @@ class UserRatings {
 						created_at = NULL";
 
 		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':itemID', $this->_itemID );
-		$stmt->bindParam ( ':sellrating', $this->_sellrating );
-		$stmt->bindParam ( ':userID', $this->_userID );
-		$stmt->bindParam ( ':buyrating', $this->_buyrating );
+		$stmt->bindValue ( ':itemID', $this->_itemID );
+		$stmt->bindValue ( ':sellrating', $this->_sellrating );
+		$stmt->bindValue ( ':userID', $this->_userID );
+		$stmt->bindValue ( ':buyrating', $this->_buyrating );
 		$transactionCode = $this->transactionCode();
-		$stmt->bindParam ( ':transaction', $transactionCode);
+		$stmt->bindValue ( ':transaction', $transactionCode);
 		$stmt->execute ();
 		$this->_user_ratingID = $this->db->lastInsertId ();
 		if ($this->_user_ratingID > 0) {
@@ -139,7 +139,7 @@ class UserRatings {
 			$query = "SELECT * FROM User_ratings WHERE user_ratingID = :user_ratingID";
 
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
+			$stmt->bindValue ( ':user_ratingID', $this->_user_ratingID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
@@ -168,12 +168,12 @@ class UserRatings {
 						WHERE user_ratingID = :user_ratingID";
 
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
-			$stmt->bindParam ( ':sellrating', $this->_sellrating );
-			$stmt->bindParam ( ':userID', $this->_userID );
-			$stmt->bindParam ( ':buyrating', $this->_buyrating );
-			$stmt->bindParam ( ':transaction', $this->_transaction );
+			$stmt->bindValue ( ':user_ratingID', $this->_user_ratingID );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':sellrating', $this->_sellrating );
+			$stmt->bindValue ( ':userID', $this->_userID );
+			$stmt->bindValue ( ':buyrating', $this->_buyrating );
+			$stmt->bindValue ( ':transaction', $this->_transaction );
 			$stmt->execute ();
 			return true;
 		} else {
@@ -194,7 +194,7 @@ class UserRatings {
 						WHERE user_ratingID = :user_ratingID";
 
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
+			$stmt->bindValue ( ':user_ratingID', $this->_user_ratingID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
 				return true;
@@ -221,7 +221,7 @@ class UserRatings {
 						WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			if($stmt->rowCount() > 0){
 				return true;
@@ -248,7 +248,7 @@ class UserRatings {
 						WHERE userID = :userID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':userID', $this->_userID );
+			$stmt->bindValue ( ':userID', $this->_userID );
 			$stmt->execute ();
 			if($stmt->rowCount() > 0){
 				return true;
@@ -270,7 +270,7 @@ class UserRatings {
 			$query = "SELECT COUNT(*) AS numRows FROM User_ratings WHERE user_ratingID = :user_ratingID";
 
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':user_ratingID', $this->_user_ratingID );
+			$stmt->bindValue ( ':user_ratingID', $this->_user_ratingID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			if ($row ['numRows'] > 0) {
@@ -334,8 +334,8 @@ class UserRatings {
 							WHERE transaction = :transaction";
 				
 				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':buyrating', $this->_buyrating );
-				$stmt->bindParam ( ':transaction', $this->_transaction );
+				$stmt->bindValue ( ':buyrating', $this->_buyrating );
+				$stmt->bindValue ( ':transaction', $this->_transaction );
 				$stmt->execute ();
 				if($stmt->rowCount() > 0){
 					return true;
@@ -369,7 +369,7 @@ class UserRatings {
 							WHERE ui.userID = :userID";
 				
 				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':userID', $user->userID );
+				$stmt->bindValue ( ':userID', $user->userID );
 				$stmt->execute ();
 				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 				
@@ -383,7 +383,7 @@ class UserRatings {
 							WHERE userID = :userID";
 				
 				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':userID', $user->userID);
+				$stmt->bindValue ( ':userID', $user->userID);
 				$stmt->execute ();
 				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 				

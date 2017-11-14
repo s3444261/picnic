@@ -11,7 +11,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-3"><strong>Type</strong></div>
-        <div class="col-md-6"><span class="btn btn-sm btn-success"><?php echo $this->itemStatus() ?></span></div>
+        <div class="col-md-6"><span class="btn btn-sm btn-success"><?php echo $this->itemType() ?></span></div>
     </div>
     <div class="row">
         <div class="col-md-3"><strong>Category</strong></div>

@@ -55,7 +55,7 @@
                             <div class="col-md-4">
                                 <div class="row">
                                     <div class="col-md-6 col-sm-4 col-4"><strong>Status</strong></div>
-                                    <div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-warning"><?php echo $this->itemStatus() ?></span></div>
+                                    <div class="col-md-6 col-sm-8 col-8"><span class="badge badge-pill badge-warning"><?php echo $this->itemType() ?></span></div>
                                 </div>
                             </div>
                         </div>

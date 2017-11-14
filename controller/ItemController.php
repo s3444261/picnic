@@ -321,8 +321,8 @@ class ItemController {
 	private function validateItemData($data) {
 		$validate = new Validation ();
 
-		if (isset($data['status'])) {
-			$validate->emptyField($data['status']);
+		if (isset($data['type'])) {
+			$validate->emptyField($data['type']);
 		} else {
 			throw new ValidationException('Please enter a listing type.');
 		}

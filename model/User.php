@@ -99,7 +99,7 @@ class User {
 				$query = "SELECT * FROM Users WHERE userID = :userID";
 				
 				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->bindValue ( ':userID', $this->_userID );
 				$stmt->execute ();
 				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 				$this->_user = $row ['user'];
@@ -134,7 +134,7 @@ class User {
 			$query = "SELECT userID FROM Users WHERE email = :email";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':email', $this->_email );
+			$stmt->bindValue ( ':email', $this->_email );
 			$stmt->execute ();
 			if ($stmt->rowCount () > 0) {
 				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -175,14 +175,14 @@ class User {
     					activate = :activate";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':user', $this->_user );
-			$stmt->bindParam ( ':email', $this->_email );
+			$stmt->bindValue ( ':user', $this->_user );
+			$stmt->bindValue ( ':email', $this->_email );
 			$encryptedPassword = $this->encryptPassword ();
-			$stmt->bindParam ( ':password', $encryptedPassword );
+			$stmt->bindValue ( ':password', $encryptedPassword );
 			$initialStatus = $this->initialStatus ();
-			$stmt->bindParam ( ':status', $initialStatus );
+			$stmt->bindValue ( ':status', $initialStatus );
 			$activationCode = $this->activationCode ();
-			$stmt->bindParam ( ':activate', $activationCode );
+			$stmt->bindValue ( ':activate', $activationCode );
 			$stmt->execute ();
 			if ($stmt->rowCount () > 0) {
 				$this->_userID = $this->db->lastInsertId ();
@@ -217,7 +217,7 @@ class User {
 				$query = "SELECT * FROM Users WHERE userID = :userID";
 				
 				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->bindValue ( ':userID', $this->_userID );
 				$stmt->execute ();
 				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 				
@@ -249,11 +249,11 @@ class User {
 						WHERE userID = :userID";
 				
 				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':userID', $this->_userID );
-				$stmt->bindParam ( ':user', $this->_user );
-				$stmt->bindParam ( ':email', $this->_email );
-				$stmt->bindParam ( ':status', $this->_status );
-				$stmt->bindParam ( ':blocked', $this->_blocked );
+				$stmt->bindValue ( ':userID', $this->_userID );
+				$stmt->bindValue ( ':user', $this->_user );
+				$stmt->bindValue ( ':email', $this->_email );
+				$stmt->bindValue ( ':status', $this->_status );
+				$stmt->bindValue ( ':blocked', $this->_blocked );
 				$stmt->execute ();
 				if ($stmt->rowCount () > 0) {
 					return true;
@@ -274,7 +274,7 @@ class User {
 		$query = "SELECT * FROM Items WHERE owningUserID = :userID";
 
 		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':userID', $this->userID );
+		$stmt->bindValue ( ':userID', $this->userID );
 		$stmt->execute ();
 
 		$objects = array ();
@@ -288,7 +288,8 @@ class User {
 			$userItem->quantity = $row ['quantity'];
 			$userItem->itemcondition = $row ['itemcondition'];
 			$userItem->price = $row ['price'];
-			$userItem->status = $row ['itemStatus'];
+			$userItem->status = $row ['status'];
+			$userItem->type = $row ['type'];
 			$userItem->created_at = $row ['created_at'];
 			$userItem->updated_at = $row ['updated_at'];
 			$objects [] = $userItem;
@@ -321,8 +322,8 @@ class User {
 						WHERE userID = :userID";
 					
 					$stmt = $this->db->prepare ( $query );
-					$stmt->bindParam ( ':userID', $this->_userID );
-					$stmt->bindParam ( ':password', $this->_password );
+					$stmt->bindValue ( ':userID', $this->_userID );
+					$stmt->bindValue ( ':password', $this->_password );
 					$stmt->execute ();
 					if ($stmt->rowCount () > 0) {
 						return true;
@@ -361,7 +362,7 @@ class User {
 								WHERE userID = :userID";
 				
 				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->bindValue ( ':userID', $this->_userID );
 				$stmt->execute ();
 				try {
 					if (! $this->exists ()) {
@@ -398,7 +399,7 @@ class User {
 				$query = "SELECT COUNT(*) AS numRows FROM Users WHERE userID = :userID";
 				
 				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->bindValue ( ':userID', $this->_userID );
 				$stmt->execute ();
 				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 				if ($row ['numRows'] > 0) {
@@ -433,7 +434,7 @@ class User {
 							WHERE user = :user";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':user', $this->_user );
+			$stmt->bindValue ( ':user', $this->_user );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
@@ -461,7 +462,7 @@ class User {
 							WHERE email = :email";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':email', $this->_email );
+			$stmt->bindValue ( ':email', $this->_email );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
@@ -506,7 +507,7 @@ class User {
 			$query = "SELECT userID FROM Users WHERE activate = :activate";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':activate', $this->_activate );
+			$stmt->bindValue ( ':activate', $this->_activate );
 			$stmt->execute ();
 			if ($stmt->rowCount () > 0) {
 				$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -542,7 +543,7 @@ class User {
 					WHERE userID = :userID";
 				
 				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':userID', $this->_userID );
+				$stmt->bindValue ( ':userID', $this->_userID );
 				$stmt->execute ();
 				
 				try {
@@ -596,8 +597,8 @@ class User {
 					AND activate IS NULL";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':email', $this->_email );
-			$stmt->bindParam ( ':password', $this->_password );
+			$stmt->bindValue ( ':email', $this->_email );
+			$stmt->bindValue ( ':password', $this->_password );
 			$stmt->execute ();
 			
 			if ($stmt->rowCount () > 0) {
@@ -652,8 +653,8 @@ class User {
 					AND activate IS NULL";
 		
 		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':email', $this->_email );
-		$stmt->bindParam ( ':password', $this->_password );
+		$stmt->bindValue ( ':email', $this->_email );
+		$stmt->bindValue ( ':password', $this->_password );
 		$stmt->execute ();
 		if ($stmt->rowCount () == 1) {
 			return true;
@@ -728,7 +729,7 @@ class User {
 		$query = "SELECT * FROM Users WHERE user = :user";
 		
 		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':user', $this->_user );
+		$stmt->bindValue ( ':user', $this->_user );
 		$stmt->execute ();
 		$numUser = $stmt->rowCount ();
 		
@@ -749,7 +750,7 @@ class User {
 		$query = "SELECT * FROM Users WHERE email = :email";
 		
 		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':email', $this->_email );
+		$stmt->bindValue ( ':email', $this->_email );
 		$stmt->execute ();
 		$numEmail = $stmt->rowCount ();
 		

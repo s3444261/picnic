@@ -100,7 +100,7 @@ class Categories {
 			} else {
 				$query = "SELECT * FROM Categories WHERE parentID = :parentID ORDER BY category";
 				$stmt = $this->db->prepare($query);
-				$stmt->bindParam(':parentID', $parentID);
+				$stmt->bindValue(':parentID', $parentID);
 			}
 
 			$stmt->execute();

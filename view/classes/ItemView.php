@@ -66,19 +66,19 @@ class ItemView extends View
 	}
 
 	public function isItemForSale() {
-		return $this->itemStatus() === 'ForSale';
+		return $this->itemType() === 'ForSale';
 	}
 
 	public function isItemWanted() {
-		return $this->itemStatus()=== 'Wanted';
+		return $this->itemType()=== 'Wanted';
 	}
 
 	public function isMajorCategorySelected() {
 		return $this->getItemAttribute('majorCategory') !== -1;
 	}
 
-	public function itemStatus() {
-		return $this-> getItemAttribute('status');
+	public function itemType() {
+		return $this-> getItemAttribute('type');
 	}
 
 	public function itemTitle() {

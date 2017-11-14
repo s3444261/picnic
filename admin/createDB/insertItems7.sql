@@ -1,4 +1,4 @@
-INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, type) VALUES
   (12007, 296, 'NAM JOO HYUK POSTER UGIZ KOREAN CLOTHING LINE ENDORSED BY NAM JOO HYUK', 'UGIZ KOREAN CLOTHING LINE ENDORSED BY NAM JOO HYUK. Huntingdale Station. Narre Warren Station. Available locations.', '4.00', 7, 'New', 'ForSale'),
   (12008, 428, 'Harley Quinn Limited Edition Framed Memorabilia', 'This Limited Edition Framed Memorabilia of Harley Quinn features a facsimile signature and photos of her in the movie Suicide Squad. Black and Silver or Plain Black timber fra me which is hand made by us, not a cheap plastic frame from OS.', '79.00', 4, 'New', 'Wanted'),
   (12009, 175, 'RETRO VINTAGE FRAME S. RAJKO  NEW PRINT TRETCHKOFF ERA', 'RETRO VINTAGE FRAME S. RAJKO  NEW PRINT TRETCHKOFF ERA in Collectables, Posters, Photographic, Posters', '230.00', 3, 'New', 'ForSale'),

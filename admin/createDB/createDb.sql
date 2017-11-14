@@ -48,15 +48,17 @@ ALTER TABLE Categories
 
 CREATE TABLE `Items` (
 		`itemID` bigint(11) NOT NULL AUTO_INCREMENT,
+	  `type` ENUM('ForSale', 'Wanted') NOT NULL,
   	`owningUserID` int(11) NOT NULL,
 		`title` text NOT NULL,
 		`description` text NOT NULL,
-		`quantity` varchar(45) NOT NULL,
-		`itemcondition` varchar(45) NOT NULL,
-		`price` varchar(45) NOT NULL,
-		`itemStatus` varchar(45) NOT NULL,
+		`quantity` varchar(12) NOT NULL,
+		`itemcondition` ENUM('New', 'Used') NOT NULL,
+		`price` varchar(16) NOT NULL,
+		`status` ENUM('Active', 'Deleted', 'Completed') NOT NULL DEFAULT 'Active',
 		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	  CHECK (quantity > 0),
 		PRIMARY KEY (`itemID`),
   	CONSTRAINT `FK_Items_Users` FOREIGN KEY (`owningUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -66,8 +68,8 @@ ALTER TABLE Items ADD FULLTEXT(title, description);
 CREATE TABLE `Item_matches` (
 		`lhsItemID` bigint(11) NOT NULL,
 		`rhsItemID` bigint(11) NOT NULL,
-		`lhsStatus` varchar(45) NOT NULL DEFAULT 'none',
-	  `rhsStatus` varchar(45) NOT NULL DEFAULT 'none',
+		`lhsStatus` ENUM('None', 'Accepted', 'Rejected') NOT NULL DEFAULT 'None',
+	  `rhsStatus` ENUM('None', 'Accepted', 'Rejected') NOT NULL DEFAULT 'None',
 		PRIMARY KEY (`lhsItemID`,	`rhsItemID`),
 		KEY `FK_Item_matches_Items_idx` (`lhsItemID`),
 		KEY `FK_Item_matches_Items_idx2` (`rhsItemID`),
@@ -84,6 +86,8 @@ CREATE TABLE `User_ratings` (
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `rating_left_at` timestamp NULL,
 		PRIMARY KEY ( `sourceItemID`,  `targetItemID`),
+	  CHECK (rating > 0),
+	  CHECK (rating <= 5),
 		KEY `FK_User_ratings_Items_idx` (`sourceItemID`),
 	  KEY `FK_User_ratings_Items_idx2`(`targetItemID`),
 		CONSTRAINT `FK_User_ratings_Item_matches` FOREIGN KEY (`sourceItemID`, `targetItemID`) REFERENCES `Item_matches` (`lhsItemID`, `rhsItemID`) ON DELETE CASCADE ON UPDATE CASCADE

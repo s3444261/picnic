@@ -37,7 +37,7 @@ class UserComments {
 		$query = "SELECT COUNT(*) AS numComments FROM Comments WHERE userID = :userID";
 		
 		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':userID', $this->_userID );
+		$stmt->bindValue ( ':userID', $this->_userID );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 		return $row ['numComments'];
@@ -53,7 +53,7 @@ class UserComments {
 		$query = "SELECT * FROM Comments WHERE toUserID = :userID OR fromUserID = :userID";
 		
 		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':userID', $this->_userID );
+		$stmt->bindValue ( ':userID', $this->_userID );
 		$stmt->execute ();
 		$objects = array ();
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {

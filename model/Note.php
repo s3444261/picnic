@@ -56,7 +56,7 @@ class Note {
 			$query = "SELECT * FROM Notes WHERE noteID = :noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':noteID', $this->_noteID );
+			$stmt->bindValue ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_note = $row ['note'];
@@ -85,7 +85,7 @@ class Note {
 						created_at = NULL";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':note', $this->_note );
+			$stmt->bindValue ( ':note', $this->_note );
 			$stmt->execute ();
 			if ($stmt->rowCount () > 0) {
 				$this->_noteID = $this->db->lastInsertId ();
@@ -112,7 +112,7 @@ class Note {
 			$query = "SELECT * FROM Notes WHERE noteID = :noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':noteID', $this->_noteID );
+			$stmt->bindValue ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
@@ -125,8 +125,8 @@ class Note {
 						WHERE noteID = :noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':noteID', $this->_noteID );
-			$stmt->bindParam ( ':note', $this->_note );
+			$stmt->bindValue ( ':noteID', $this->_noteID );
+			$stmt->bindValue ( ':note', $this->_note );
 			$stmt->execute ();
 			return true;
 		} else {
@@ -148,7 +148,7 @@ class Note {
 						WHERE noteID = :noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':noteID', $this->_noteID );
+			$stmt->bindValue ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
 				return true;
@@ -171,7 +171,7 @@ class Note {
 			$query = "SELECT COUNT(*) AS numRows FROM Notes WHERE noteID = :noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':noteID', $this->_noteID );
+			$stmt->bindValue ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			if ($row ['numRows'] > 0) {

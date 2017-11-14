@@ -1,4 +1,4 @@
-INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, type) VALUES
   (6004, 456, 'Girlfriend Magazine Riverdale Lili And Cole cover', 'Girlfriend Magazine Riverdale Lili And Cole cover in Books, Magazines, Magazines', '12.00', 8, 'New', 'ForSale'),
   (6005, 14, 'The Picture''s Home Girls Summer Special Men''s Magazine - # 4 2000', 'The Picture''s Home Girls Summer Special Men''s Magazine - # 4 2000 in Books, Magazines, Magazines', '15.00', 9, 'New', 'Wanted'),
   (6006, 229, 'Revenge of the Picture Holiday Book 1993 Men''s Magazine', 'Contents as pic 2 & 3.', '12.50', 8, 'New', 'ForSale'),

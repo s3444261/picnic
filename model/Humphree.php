@@ -452,13 +452,13 @@ class Humphree {
 	 * @param int $categoryID        	
 	 * @param int $pageNumber        	
 	 * @param int $itemsPerPage        	
-	 * @param string $status        	
+	 * @param string $type
 	 * @return array
 	 */
-	public function getCategoryItemsByPage(int $categoryID, int $pageNumber, int $itemsPerPage, string $status): array {
+	public function getCategoryItemsByPage(int $categoryID, int $pageNumber, int $itemsPerPage, string $type): array {
 		$category = new Category ( $this->db );
 		$category->categoryID = $categoryID;
-		$categoryItems = $this->system->getCategoryItemsByPage ( $category, $pageNumber, $itemsPerPage, $status );
+		$categoryItems = $this->system->getCategoryItemsByPage ( $category, $pageNumber, $itemsPerPage, $type );
 		$its = array ();
 		
 		foreach ( $categoryItems as $item ) {
@@ -470,7 +470,6 @@ class Humphree {
 			$it ['quantity'] = $item->quantity;
 			$it ['itemcondition'] = $item->itemcondition;
 			$it ['price'] = $item->price;
-			$it ['status'] = $item->status;
 			$its [] = $it;
 		}
 		
@@ -491,14 +490,14 @@ class Humphree {
 		return $numUserItems;
 	}
 
-	public function getUserOwnedItems(int $userID, string $itemStatus = ''): array {
+	public function getUserOwnedItems(int $userID, string $type = ''): array {
 		$user = new User ( $this->db );
 		$user->userID = $userID;
 		$items = $this->system->getUserOwnedItems ( $userID );
 		$result = array();
 
 		foreach ( $items as $item ) {
-			if ($itemStatus === '' || $item->status == $itemStatus) {
+			if ($type === '' || $item->type == $type) {
 				$it = array ();
 				$it ['itemID'] = $item->itemID;
 				$it ['owningUserID'] = $item->owningUserID;
@@ -612,6 +611,7 @@ class Humphree {
 		$it ['itemcondition'] = $item->itemcondition;
 		$it ['price'] = $item->price;
 		$it ['status'] = $item->status;
+		$it ['type'] = $item->type;
 
 		$notes = $this->system->getItemNotes ( $item );
 		$ns = array ();
@@ -646,8 +646,7 @@ class Humphree {
 		$it->quantity = $item ['quantity'];
 		$it->itemcondition = $item ['itemcondition'];
 		$it->price = $item ['price'];
-		$it->status = $item ['status'];
-
+		$it->type = $item ['type'];
 		return  $this->system->addItem ($it, $categoryID );
 	}
 	

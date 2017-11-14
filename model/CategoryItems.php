@@ -178,7 +178,7 @@ class CategoryItems {
 						WHERE categoryID = :categoryID";
 
 		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':categoryID', $this->_categoryID );
+		$stmt->bindValue ( ':categoryID', $this->_categoryID );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 		return $row ['num'];
@@ -197,7 +197,7 @@ class CategoryItems {
 					WHERE itemID = :itemID";
 
 		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':itemID', $itemID );
+		$stmt->bindValue ( ':itemID', $itemID );
 		$stmt->execute ();
 
 		$category = new Category($this->db);
@@ -225,7 +225,7 @@ class CategoryItems {
 				WHERE categoryID = :categoryID";
 
 		$stmt = $this->db->prepare ( $query );
-		$stmt->bindParam ( ':categoryID', $this->_categoryID );
+		$stmt->bindValue ( ':categoryID', $this->_categoryID );
 		$stmt->execute ();
 		$objects = array ();
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
@@ -248,11 +248,11 @@ class CategoryItems {
 	 *
 	 * @param int $pageNumber        	
 	 * @param int $itemsPerPage        	
-	 * @param string $status        	
+	 * @param string $type
 	 * @throws ModelException
 	 * @return array
 	 */
-	public function getCategoryItemsByPage(int $pageNumber, int $itemsPerPage, string $status): array {
+	public function getCategoryItemsByPage(int $pageNumber, int $itemsPerPage, string $type): array {
 		$v = new Validation ();
 		
 		try {
@@ -268,12 +268,14 @@ class CategoryItems {
 			
 			$query = "SELECT Category_items.itemID FROM Category_items INNER JOIN Items ON Category_items.itemID = Items.itemID
 					WHERE Category_items.categoryID = :categoryID
-					AND Items.itemStatus = :status
+					AND status = :status
+					AND Items.type = :type
 					LIMIT " . $pn . "," . $ipp;
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':categoryID', $this->_categoryID );
-			$stmt->bindParam ( ':status', $status );
+			$stmt->bindValue ( ':categoryID', $this->_categoryID );
+			$stmt->bindValue ( ':status', 'Active' );
+			$stmt->bindValue ( ':type', $type );
 			$stmt->execute ();
 			$objects = array ();
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {

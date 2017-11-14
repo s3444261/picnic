@@ -1,4 +1,4 @@
-INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, type) VALUES
   (32017, 225, 'Pinball Bingo Original Backglass', 'Pinball Bingo Original Backglass in Video Games & Consoles, Coin-Operated, Pinball', '294.65', 2, 'New', 'ForSale'),
   (32018, 190, 'Arcade Machine Flat Pack', 'The cabinet will be pre drilled, so all you need to do is line up the pieces and screw together. Speaker holes can be drilled into the cabinet at your request free of charge. The footprint of the cabinet is quite compact and will fit anywhere!', '250.00', 7, 'New', 'Wanted'),
   (32019, 164, 'GOTTLIEB Close Encounters of the Third Kind Pinball Machine (1978)', 'This is a GOTTLIEB Close Encounters of the Third Kind pinball machine made in 1978. Close Encounters pinball machine plays fast and smooth and is in good working condition. Also, some light sockets underneath the playfield need replacing, particularly the playfield bonus score ones.', '281.45', 8, 'New', 'ForSale'),

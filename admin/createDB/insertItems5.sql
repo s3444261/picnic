@@ -1,4 +1,4 @@
-INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, itemStatus) VALUES
+INSERT INTO Items (itemID, owningUserID, title, description, price, quantity, itemcondition, type) VALUES
   (8005, 179, '', '', '99.74', 7, 'New', 'ForSale'),
   (8006, 198, 'Nikon D750 DSLR Camera Body Jap', 'Nikon D750 DSLR Camera Body Jap 1 x Nikon D750 DSLR Camera Body Jap. Autofocus System 51 focus points (including 15 cross-type sensors; f/8 supported by 11 sensors), AF-assist illuminator (range approx. ).', '1,720.88', 5, 'New', 'Wanted'),
   (8007, 29, 'Nikon D7200 Body DSLR Camera Brand New 1 Yr Warranty BNIB', 'The camera features a 24.2MP CMOS sensor with no optical low-pass filter, which maximizes resolution. It has an ISO range of 100-25600 that expands up to 102400 in black & white only. The autofocus system remains 51-points with 15 cross-type sensors but now all of those points can focus down to -3EV.', '998.55', 5, 'New', 'ForSale'),

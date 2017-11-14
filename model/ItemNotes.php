@@ -57,7 +57,7 @@ class ItemNotes {
 			$query = "SELECT * FROM Item_notes WHERE item_noteID = :item_noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':item_noteID', $this->_item_noteID );
+			$stmt->bindValue ( ':item_noteID', $this->_item_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_itemID = $row ['itemID'];
@@ -92,8 +92,8 @@ class ItemNotes {
 					AND noteID = :noteID";
 					
 					$stmt = $this->db->prepare ( $query );
-					$stmt->bindParam ( ':itemID', $this->_itemID );
-					$stmt->bindParam ( ':noteID', $this->_noteID );
+					$stmt->bindValue ( ':itemID', $this->_itemID );
+					$stmt->bindValue ( ':noteID', $this->_noteID );
 					$stmt->execute ();
 					if ($stmt->rowCount () > 0) {
 						$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -105,8 +105,8 @@ class ItemNotes {
 						noteID = :noteID";
 						
 						$stmt = $this->db->prepare ( $query );
-						$stmt->bindParam ( ':itemID', $this->_itemID );
-						$stmt->bindParam ( ':noteID', $this->_noteID );
+						$stmt->bindValue ( ':itemID', $this->_itemID );
+						$stmt->bindValue ( ':noteID', $this->_noteID );
 						$stmt->execute ();
 						$this->_item_noteID = $this->db->lastInsertId ();
 						if ($this->_item_noteID > 0) {
@@ -140,7 +140,7 @@ class ItemNotes {
 			$query = "SELECT * FROM Item_notes WHERE item_noteID = :item_noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':item_noteID', $this->_item_noteID );
+			$stmt->bindValue ( ':item_noteID', $this->_item_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
@@ -164,9 +164,9 @@ class ItemNotes {
 						WHERE item_noteID = :item_noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':item_noteID', $this->_item_noteID );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
-			$stmt->bindParam ( ':noteID', $this->_noteID );
+			$stmt->bindValue ( ':item_noteID', $this->_item_noteID );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			return true;
 		} else {
@@ -190,7 +190,7 @@ class ItemNotes {
 						WHERE item_noteID = :item_noteID";
 				
 				$stmt = $this->db->prepare ( $query );
-				$stmt->bindParam ( ':item_noteID', $this->_item_noteID );
+				$stmt->bindValue ( ':item_noteID', $this->_item_noteID );
 				$stmt->execute ();
 				if (! $this->exists ()) {
 					return true;
@@ -215,7 +215,7 @@ class ItemNotes {
 			$query = "SELECT COUNT(*) AS numRows FROM Item_notes WHERE item_noteID = :item_noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':item_noteID', $this->_item_noteID );
+			$stmt->bindValue ( ':item_noteID', $this->_item_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			if ($row ['numRows'] > 0) {
@@ -240,7 +240,7 @@ class ItemNotes {
 			$query = "SELECT COUNT(*) AS numRows FROM Item_notes WHERE noteID = :noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':noteID', $this->_noteID );
+			$stmt->bindValue ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			if ($row ['numRows'] > 0) {
@@ -265,7 +265,7 @@ class ItemNotes {
 			$query = "SELECT COUNT(*) AS numRows FROM Item_notes WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			if ($row ['numRows'] > 0) {
@@ -293,7 +293,7 @@ class ItemNotes {
 							WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			return $row ['num'];
@@ -317,7 +317,7 @@ class ItemNotes {
 			$query = "SELECT * FROM Item_notes WHERE itemID = :itemID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':itemID', $this->_itemID );
+			$stmt->bindValue ( ':itemID', $this->_itemID );
 			$stmt->execute ();
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 				$itemNote = new ItemNotes ( $this->db );
@@ -347,7 +347,7 @@ class ItemNotes {
 			$query = "SELECT * FROM Item_notes WHERE noteID = :noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':noteID', $this->_noteID );
+			$stmt->bindValue ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			$this->_item_noteID = $row ['item_noteID'];
@@ -373,7 +373,7 @@ class ItemNotes {
 					WHERE noteID = :noteID";
 			
 			$stmt = $this->db->prepare ( $query );
-			$stmt->bindParam ( ':noteID', $this->_noteID );
+			$stmt->bindValue ( ':noteID', $this->_noteID );
 			$stmt->execute ();
 			if ($stmt->rowCount () > 0) {
 				if ($n->delete ()) {

@@ -91,14 +91,14 @@
     </div>
     <div class="form-check form-check-inline">
         <label class="radio-inline">
-            <input type="radio" name="status" value="ForSale" <?php if ($this->isItemForSale()) {
+            <input type="radio" name="type" value="ForSale" <?php if ($this->isItemForSale()) {
     			echo 'checked="checked"';
     		} ?>> <span class="btn btn-sm btn-info">For Sale</span>
         </label>
     </div>
     <div class="form-check form-check-inline">
         <label class="radio-inline">
-            <input type="radio" name="status" value="Wanted" <?php if ($this->isItemWanted()) {
+            <input type="radio" name="type" value="Wanted" <?php if ($this->isItemWanted()) {
     			echo 'checked="checked"';
     		} ?>> <span class="btn btn-sm btn-warning">Wanted</span>
         </label>
@@ -130,7 +130,7 @@
     </select>
 </div>
 
-<div class="form-group"
+<div class="form-group">
     <label for="title">Title</label>
     <input type="text" class="form-control" name="title" id="title" placeholder="Example: Tamiya BRZ model kit 1:24"
            value="<?php echo $this->itemTitle() ?>" required>

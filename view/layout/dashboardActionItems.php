@@ -72,7 +72,7 @@
                                                     data-target="#sendDialog<?php echo $this->getMatchToItemID($m) ?>">Send message
                                             </button>
 
-                                            <?php if ($this->myStatus($m) === 'none') { ?>
+                                            <?php if ($this->myStatus($m) === 'None') { ?>
                                             <button type="button" class="dropdown-item" data-toggle="modal"
                                                     data-target="#acceptDialog<?php echo $this->getMatchToItemID($m) ?>">Accept match
                                             </button>
