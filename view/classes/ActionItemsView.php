@@ -95,6 +95,10 @@ class ActionItemsView extends View
 		return BASE . '/Dashboard/SendMessage';
 	}
 
+	public function imageUrl(string $file) : string {
+		return BASE . '/img/' . $file;
+	}
+
 	public function discardMatchUrl(array $item) : string {
 		return BASE . '/Dashboard/DiscardMatch/' . $this->myItemID($item) . '/' . $this->otherItemID($item);
 	}

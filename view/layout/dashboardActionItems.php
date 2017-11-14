@@ -59,10 +59,18 @@
                                         <a href="<?php echo $this->viewOtherItemUrl($m) ?>"><?php echo $this->otherItemTitle($m) ?></a>
                                     </td>
                                     <td>
-                                        <?php echo $this->myStatus($m) ?>
+                                        <?php if ($this->myStatus($m) === 'Accepted') { ?>
+                                            <img src="<?php echo $this->imageUrl('thumbs_up.png') ?>" width="40" height="40" />
+										<?php } else if ($this->myStatus($m) === 'Rejected') { ?>
+                                            <img src="<?php echo $this->imageUrl('thumbs_down.png') ?>" width="40" height="40" />
+										<?php } ?>
                                     </td>
                                     <td>
-                                        <?php echo $this->otherStatus($m) ?>
+										<?php if ($this->otherStatus($m) === 'Accepted') { ?>
+                                            <img src="<?php echo $this->imageUrl('thumbs_up.png') ?>" width="40" height="40" />
+										<?php } else if ($this->otherStatus($m) === 'Rejected') { ?>
+                                            <img src="<?php echo $this->imageUrl('thumbs_down.png') ?>" width="40" height="40" />
+										<?php } ?>
                                     </td>
                                     <td>
                                         <a class="dropdown-toggle btn btn-primary btn-block" data-toggle="dropdown"
