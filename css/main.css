@@ -117,6 +117,7 @@ img.item-image {
 
 .item-header {
     padding: 2em 0 1em;
+    font-weight: 300;
 }
 
 .item-desc {
@@ -145,4 +146,12 @@ img.item-image {
 
 .display-4 {
     font-size: 2.5rem;
+}
+
+a:not([href]):not([tabindex]) {
+    color: white;
+}
+
+span.error {
+    visibility: hidden;
 }

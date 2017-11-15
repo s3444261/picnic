@@ -127,7 +127,9 @@
                                             <img class="card-img-top" src="<?php echo BASE.'/Item/Thumb/'.$matchedItem['otherItem']['itemID'] ?>" alt="">
                                             <div class="card-body">
                                                 <h4 class="card-title truncate">
-                                                    <a href="<?php echo BASE . '/Item/View/' . $matchedItem['otherItemID']; ?>"><?php echo ucwords (strtolower( ( $matchedItem['otherItem']['title'] ) ) ); ?></a>
+                                                    <!-- <a href="<?php echo BASE . '/Item/View/' . $matchedItem['otherItemID']; ?>"> -->
+                                                        <?php echo ucwords (strtolower( ( $matchedItem['otherItem']['title'] ) ) ); ?>
+                                                    <!-- </a> -->
                                                 </h4>
                                                 <h3 class="card-text text-center price top-padding"><?php echo '$' . $matchedItem['otherItem']['price'] ?></h3>
                                                 <a href="<?php echo BASE.'/Item/View/'.$matchedItem['otherItem']['itemID'] ?>" class="btn btn-primary btn-block">Info</a>
