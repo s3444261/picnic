@@ -129,7 +129,7 @@
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h4 class="modal-title">Discard this match? <?php echo $this->otherItemTitle($m) ?>?</h4>
+                                                        <h4 class="modal-title">Discard match with "<?php echo $this->otherItemTitle($m) ?>"?</h4>
                                                     </div>
                                                     <div class="modal-body">
                                                         <a class="btn btn-primary"
@@ -149,7 +149,7 @@
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h4 class="modal-title">Accept this match? <?php echo $this->otherItemTitle($m) ?>? This will notify the owner of the listing. If they also accept, both items will be marked as completed.</h4>
+                                                        <h4 class="modal-title">Accept match with "<?php echo $this->otherItemTitle($m) ?>"? This will notify the owner of that listing. If they also accept, both items will be marked as completed.</h4>
                                                     </div>
                                                     <div class="modal-body">
                                                         <a class="btn btn-primary"

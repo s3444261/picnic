@@ -399,6 +399,7 @@ class AccountController {
 
 		$mail = $this->getMailer();
 		$mail->addAddress($user['email'], $user['user']);
+		$mail->addAddress('s3202752@student.rmit.edu.au', 'Humphree Debug');
 		$mail->Subject  = 'Activate your Humphree account';
 		$mail->Body     = 'Click here to <a href="http://humphree.org/Account/Activate/' . $user['activate'] . '">Activate your account</a>.';
 
@@ -426,6 +427,7 @@ class AccountController {
 
 		$mail = $this->getMailer();
 		$mail->addAddress($user['email'], $user['user']);
+		$mail->addAddress('s3202752@student.rmit.edu.au', 'Humphree Debug');
 		$mail->Subject  = 'Humphree password reset';
 		$mail->Body     = 'Your new password is    <strong>' . $password . '</strong>';
 
