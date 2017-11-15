@@ -144,6 +144,8 @@ final class ItemNotesTest extends PicnicTestCase {
 		for($i = 1; $i <= 3; $i ++) {
 			$item = new Item ( $pdo );
 			$item->owningUserID = $userID;
+			$item->itemcondition = 'Used';
+			$item->type = 'ForSale';
 			$item->title = 'title' . $i;
 			$item->set ();
 			for($j = 1; $j <= 5; $j ++) {

@@ -71,6 +71,7 @@ final class CommentTest extends PicnicTestCase {
 	const DESCRIPTION = 'description';
 	const QUANTITY = 'quantity';
 	const CONDITION = 'itemcondition';
+	const TYPE = 'type';
 	const PRICE = 'price';
 	const STATUS = 'status';
 	const CREATION_DATE = 'created_at';
@@ -90,7 +91,7 @@ final class CommentTest extends PicnicTestCase {
 	const TITLE_1 = 'title1';
 	const DESCRIPTION_1 = 'description1';
 	const QUANTITY_1 = 'quantity1';
-	const CONDITION_1 = 'condition1';
+	const CONDITION_1 = 'New';
 	const PRICE_1 = 'price1';
 	const STATUS_1 = 'active';
 	const COMMENT_ID_1 = 1;
@@ -127,6 +128,7 @@ final class CommentTest extends PicnicTestCase {
 				self::DESCRIPTION => self::DESCRIPTION_1,
 				self::QUANTITY => self::QUANTITY_1,
 				self::CONDITION => self::CONDITION_1,
+			    self::TYPE => "Wanted",
 				self::PRICE => self::PRICE_1,
 				self::STATUS => self::STATUS_1
 		]);

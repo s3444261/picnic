@@ -254,7 +254,7 @@ class Item {
 				$this->_price = $row ['price'];
 			}
 			if (strlen ( $this->_type ) < 1) {
-				$this->_type = $row ['title'];
+				$this->_type = $row ['type'];
 			}
 			
 			$query = "UPDATE Items

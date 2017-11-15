@@ -33,6 +33,7 @@ class UserCommentsTest extends PHPUnit\Framework\TestCase {
 	const DESCRIPTION = 'description';
 	const QUANTITY = 'quantity';
 	const CONDITION = 'itemcondition';
+	const TYPE = 'type';
 	const PRICE = 'price';
 	const EMAIL_ADDRESS_ONE = 'peter@gmail.com';
 	const PASSWORD_ONE = 'TestTest88';
@@ -87,7 +88,8 @@ class UserCommentsTest extends PHPUnit\Framework\TestCase {
 			self::TITLE => "blah",
 			self::DESCRIPTION => "blah",
 			self::QUANTITY => 1,
-			self::CONDITION => "blah",
+			self::CONDITION => "Used",
+			self::TYPE => "Wanted",
 			self::PRICE => 1,
 			self::STATUS => "ForSale"
 		]);
