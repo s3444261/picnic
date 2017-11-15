@@ -67,6 +67,18 @@ h1 {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* Customisation */
 
 .material-icons.md-light {
@@ -134,4 +146,40 @@ img.item-image {
 
 .myBox:hover {
     background-color: #f9f9f9;
+}
+
+
+/*Responsive typography*/
+
+
+/*html {
+    font-size: 14px;
+}
+
+@include media-breakpoint-up(sm) {
+    html {
+        font-size: 16px;
+    }
+    .display-4 {
+        font-size: 2.5rem;
+    }
+}
+
+@include media-breakpoint-up(md) {
+    html {
+        font-size: 20px;
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    html {
+        font-size: 28px;
+    }
+}*/
+
+
+/*Ensure header size is not too large for small screens*/
+
+.display-4 {
+    font-size: 2.5rem;
 }

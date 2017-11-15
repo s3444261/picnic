@@ -33,7 +33,7 @@
 				<?php echo Pager::Render('pagination pagination-sm list-inline', $this->data ['pagerData'], true); ?>
             </div>
 
-			<table class="table listUser">
+			<table class="table table-responsive listUser">
 				<thead>
 					<tr>
 						<th class="col-md-1">Username</th>
