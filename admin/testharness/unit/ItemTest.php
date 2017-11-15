@@ -306,8 +306,8 @@ class ItemTest extends PicnicTestCase {
 	public function testDeleteItemItemIdValid(): void {
 		$sut = $this->createSutWithId ( self::ITEM_ID_3 );
 		$this->assertTrue ( $sut->delete () );
-		$this->expectExceptionMessage ( self::ERROR_ITEM_NOT_EXIST );
 		$sut->get ();
+		$this->assertEquals('Deleted', $sut->status);
 	}
 	
 	/*
