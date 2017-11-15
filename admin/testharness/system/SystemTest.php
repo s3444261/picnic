@@ -2045,9 +2045,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$i = new Item ( $pdo );
 		$i->owningUserID = self::USER_ID_1;
+		$i->itemcondition = 'New';
+		$i->type = 'ForSale';
 		$i->title = self::TITLE_16;
 
-		$itemID = $system->addItem ( $i, self::CATEGORY_ID_1 );
+		$itemID = $system->addItem ( $i, self::CATEGORY_ID_2 );
 		$this->assertEquals ( self::ITEM_ID_16, $itemID );
 
 		$i->itemID = self::ITEM_ID_16;
@@ -3687,6 +3689,11 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				$item->title = 'title' . $l;
 				$item->set ();
 
+				$categoryItem = new CategoryItems ( $pdo );
+				$categoryItem->categoryID = 2;
+				$categoryItem->itemID = $item->itemID;
+				$categoryItem->set ();
+
 				$l ++;
 			}
 		}
@@ -3841,6 +3848,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			for($j = 1; $j <= 5; $j ++) {
 				$item = new Item ( $pdo );
 				$item->owningUserID = $user->userID;
+				$item->type = 'ForSale';
+				$item->itemcondition = 'Used';
 				$item->title = 'title' . $l;
 				$item->set ();
 
