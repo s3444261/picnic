@@ -67,6 +67,8 @@ h1 {
 }
 
 
+
+
 /* Customisation */
 
 .material-icons.md-light {
@@ -137,6 +139,8 @@ img.item-image {
 }
 
 
+
+
 /*Responsive typography*/
 
 
@@ -173,11 +177,13 @@ img.item-image {
 }
 
 
+
+
 /*Messing about with the card view (category.php) to try and reduce the varying height issues.*/
 
-.card-img-top {
+/*.card-img-top {
     -o-object-fit: contain;
     object-fit: cover;
     max-height: 250px;
     vertical-align: top;
-}
+}*/
