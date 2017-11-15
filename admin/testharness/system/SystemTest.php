@@ -1990,6 +1990,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertSame ( self::DESCRIPTION_2, $item->description );
 		$this->assertSame ( self::QUANTITY_2, $item->quantity );
 		$this->assertSame ( self::CONDITION_2, $item->itemcondition );
+		$this->assertSame ( 'Wanted', $item->type );
 		$this->assertSame ( self::PRICE_2, $item->price );
 		$this->assertSame ( self::STATUS_2, $item->status );
 	}
@@ -3438,6 +3439,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::DESCRIPTION => self::DESCRIPTION_1,
 				self::QUANTITY => self::QUANTITY_1,
 				self::CONDITION => self::CONDITION_1,
+			    self::TYPE => 'Wanted',
 				self::PRICE => self::PRICE_1,
 				self::ITEM_STATUS => self::STATUS_1 
 		];
@@ -3452,6 +3454,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::DESCRIPTION => self::DESCRIPTION_2,
 				self::QUANTITY => self::QUANTITY_2,
 				self::CONDITION => self::CONDITION_2,
+				self::TYPE => 'Wanted',
 				self::PRICE => self::PRICE_2,
 				self::ITEM_STATUS => self::STATUS_2 
 		];
@@ -3466,6 +3469,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				self::DESCRIPTION => self::DESCRIPTION_3,
 				self::QUANTITY => self::QUANTITY_3,
 				self::CONDITION => self::CONDITION_3,
+				self::TYPE => 'Wanted',
 				self::PRICE => self::PRICE_3,
 				self::ITEM_STATUS => self::STATUS_3 
 		];
@@ -3572,6 +3576,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			for($j = 1; $j <= 5; $j ++) {
 				$item = new Item ( $pdo );
 				$item->owningUserID = $user->userID;
+				$item->itemcondition = 'New';
+				$item->type = 'ForSale';
 				$item->title = 'title' . $k;
 				$item->set ();
 
@@ -3676,6 +3682,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			for($j = 1; $j <= 5; $j ++) {
 				$item = new Item ( $pdo );
 				$item->owningUserID = $user->userID;
+				$item->itemcondition = 'Used';
+				$item->type = 'ForSale';
 				$item->title = 'title' . $l;
 				$item->set ();
 
@@ -3704,6 +3712,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		for($i = 1; $i <= 3; $i ++) {
 			$item = new Item ( $pdo );
 			$item->owningUserID = $user->userID;
+			$item->itemcondition = 'Used';
+			$item->type = 'Wanted';
 			$item->title = 'title' . $i;
 			$item->set ();
 
@@ -3738,6 +3748,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		for($i = 1; $i <= 3; $i ++) {
 			$item = new Item ( $pdo );
 			$item->owningUserID = $user->userID;
+			$item->itemcondition = 'Used';
+			$item->type = 'Wanted';
 			$item->title = 'title' . $i;
 			$item->set ();
 
