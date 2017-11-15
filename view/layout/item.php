@@ -41,9 +41,7 @@
 
                         <div class="row">
                             <div class="col-md-4">
-                                <!-- To use hi-res images and let the CSS handle the sizing use the following line in lieu of the version with the inline styles -->
-                                <!-- <img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->itemID() ?>" /> -->
-                                <img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->itemID() ?>" style="min-width:300px; min-height:300px" />
+                                <img class="item-image" src="<?php echo BASE.'/Item/Image/'.$this->itemID() ?>" />
                             </div>
                             <div class="col-md-8">
                                 <div class="row">
