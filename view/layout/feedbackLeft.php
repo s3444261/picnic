@@ -12,7 +12,7 @@
 		<div class="col"></div>
 		<div class="col-9">
 			<div class="jumbotron panel panel-default">
-				<h1 class="display-3 text-center">Feedback registered</h1>
+				<h1 class="display-4 text-center">Feedback registered</h1>
 				<div class="alert alert-info">
 					Your rating has been registered for <?php echo $this->ratingUserName() ?>. Thanks!
 				</div>

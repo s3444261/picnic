@@ -13,7 +13,7 @@
         <div class="col"></div>
         <div class="col-9">
             <div class="jumbotron panel panel-default">
-                <h1 class="display-3 text-center">Change Password</h1>
+                <h1 class="display-4 text-center">Change Password</h1>
 
                 <?php if (isset ($this->data['error'])) { ?>
                     <div class="alert alert-danger"><?php echo $this->data['error'] ?></div>

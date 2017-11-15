@@ -79,7 +79,7 @@
 		<div class="col"></div>
 		<div class="col-9">
 			<div class="jumbotron panel panel-default">
-				<h1 class="display-3 text-center">Advanced Search</h1>
+				<h1 class="display-43 text-center">Advanced Search</h1>
 				<hr>
 
 				<form data-toggle="validator" role="form" action="<?php echo BASE . '/Search/Results'?>">

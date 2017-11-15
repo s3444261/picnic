@@ -14,7 +14,7 @@
 		<div class="col"></div>
 		<div class="col-9">
 			<div class="jumbotron panel panel-default">
-				<h1 class="display-3 text-center">Mark Item as Found/Sold</h1>
+				<h1 class="display-4 text-center">Mark Item as Found/Sold</h1>
 				<h4 class="text-center">Coming soon!</h4>
 			</div>
 		</div>

@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col"></div>
         <div class="col-md-9">
-            <h1>Contact</h1>
+            <h1 class="display-4">Contact</h1>
         </div>
         <div class="col"></div>
     </div>

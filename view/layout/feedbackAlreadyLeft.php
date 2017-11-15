@@ -12,7 +12,7 @@
         <div class="col"></div>
         <div class="col-9">
             <div class="jumbotron panel panel-default">
-                <h1 class="display-3 text-center">Error</h1>
+                <h1 class="display-4 text-center">Error</h1>
                 <div class="alert alert-danger">
 					Feedback has already been left for this transaction.
 				</div>

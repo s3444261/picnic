@@ -15,7 +15,7 @@
         <div class="col-md-9">
             <div class="jumbotron">
                 <!-- <h1 class="text-center">Humphree</h1> -->
-                <h2 class="display-3 text-center">Privacy Policy</h2>
+                <h2 class="display-4 text-center">Privacy Policy</h2>
                 <hr>
                 <p> Humphree Pty Ltd is committed to providing quality services to you and this policy outlines our ongoing obligations to you in respect of how we manage your Personal Information.</p>
                 <p> We have adopted the National Privacy Principles (NPPs) contained in the Privacy Act 1988 (Cth) (the Privacy Act). The NPPs govern the way in which we collect, use, disclose, store, secure and dispose of your Personal Information.</p>

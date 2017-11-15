@@ -119,7 +119,7 @@
         <div class="col"></div>
         <div class="col-9">
             <div class="jumbotron panel panel-default">
-                <h1 class="display-3 text-center">Edit item</h1>
+                <h1 class="display-4 text-center">Edit item</h1>
                 <hr>
 
 				<?php if ($this->hasError()) { ?>

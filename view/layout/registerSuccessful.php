@@ -14,7 +14,7 @@
         <div class="col"></div>
         <div class="col-9">
             <div class="jumbotron panel panel-default">
-                <h1 class="display-3 text-center">Sign-up successful</h1>
+                <h1 class="display-4 text-center">Sign-up successful</h1>
                 <div class="alert alert-success text-center">
                     An email has been sent to the specified email address.<br />Please open your inbox and click the <strong>"Activate account"</strong> link.
                 </div>

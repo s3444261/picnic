@@ -14,7 +14,7 @@
         <div class="col"></div>
         <div class="col-9">
             <div class="jumbotron panel panel-default">
-                <h1 class="display-3 text-center">Forgot Password</h1>
+                <h1 class="display-4 text-center">Forgot Password</h1>
                 <div class="alert alert-info">
                     A new password has been sent to the given email address, if the email address was found.
                 </div>

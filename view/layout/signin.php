@@ -15,7 +15,7 @@
         <div class="col-md-9">
                 <div class="jumbotron panel panel-default">
                     <?php if (!isset ($_SESSION [MODULE])) { ?>
-                        <h1 class="display-3 text-center">Login</h1>
+                        <h1 class="display-4 text-center">Login</h1>
 
                         <?php if (isset ($this->data['error'])) { ?>
                             <div class="alert alert-danger"><?php echo $this->data['error'] ?></div>

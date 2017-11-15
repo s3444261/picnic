@@ -14,7 +14,7 @@
         <div class="col"></div>
         <div class="col-9">
             <div class="jumbotron panel panel-default">
-                <h1 class="display-3 text-center">Account activated</h1>
+                <h1 class="display-4 text-center">Account activated</h1>
                 <div class="alert alert-success text-center">
                     Congratulations! Your account is now activated and you may contact sellers or list your own items for sale.
                 </div>

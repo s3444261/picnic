@@ -15,7 +15,7 @@
         <div class="col-md-9">
             <div class="jumbotron">
                 <!-- <h1 class="text-center">Humphree</h1> -->
-                <h1 class="display-3 text-center">Terms And Conditions</h1>
+                <h1 class="display-4 text-center">Terms And Conditions</h1>
                 <hr>
                 <h2>Credit</h2>
                 <p> This document was created using a Contractology template available at

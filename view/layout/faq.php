@@ -14,7 +14,7 @@
 		<div class="col"></div> <!-- left margin -->
 		<div class="col-md-9">
 			<div class="jumbotron">
-				<h1 class="display-3 text-center">FAQ</h1>
+				<h1 class="display-4 text-center">FAQ</h1>
 				<hr>
 
 				<h4>How do I buy an item for sale?</h4>

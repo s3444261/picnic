@@ -14,7 +14,7 @@
         <div class="col"></div> <!-- left margin -->
         <div class="col-9">
             <div class="jumbotron panel panel-default">
-                <h1 class="display-3 text-center">Successfully logged in</h1>
+                <h1 class="display-4 text-center">Successfully logged in</h1>
                 <div class="text-center top-n-tail">
                     <a class="btn btn-primary" href="<?php echo BASE . '/Category/View'; ?>" role="button">View Listings</a>
                     <a class="btn btn-primary" href="<?php echo BASE . '/Item/Create' ?>" role="button">Sell Items</a>
