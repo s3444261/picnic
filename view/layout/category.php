@@ -71,6 +71,7 @@
             <?php foreach ( $this->data['forSaleItems'] as $item ) { ?>
 
               <div class="col-sm-6 col-md-4 col-xl-3 top-n-tail">
+
                 <div class="card myBox">
                   <img class="card-img-top" src="<?php echo BASE.'/Item/Thumb/'.$item['itemID'] ?>" alt="Card image cap">
                   <div class="card-body">
