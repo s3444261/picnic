@@ -396,6 +396,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const DESCRIPTION = 'description';
 	const QUANTITY = 'quantity';
 	const CONDITION = 'itemcondition';
+	const TYPE = 'type';
 	const PRICE = 'price';
 	const ITEM_STATUS = 'status';
 	
@@ -1905,7 +1906,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$c = new Category ( $pdo );
 		$c->categoryID = self::CATEGORY_ID_3;
-		$system->getCategoryItemsByPage ( $c, self::ITEMS_PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE, '' );
+		$system->getCategoryItemsByPage ( $c, self::ITEMS_PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE, 'ForSale' );
 
 		$this->assertTrue( isset ( $_SESSION ['error'] ));
 		$this->assertEquals ( self::ERROR_ZERO, $_SESSION ['error'] );
@@ -1916,7 +1917,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$system = new System ( $pdo );
 		$c = new Category ( $pdo );
 		$c->categoryID = self::CATEGORY_ID_3;
-		$system->getCategoryItemsByPage ( $c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO, '' );
+		$system->getCategoryItemsByPage ( $c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO, 'ForSale' );
 
 		$this->assertTrue( isset ( $_SESSION ['error'] ));
 		$this->assertEquals ( self::ERROR_ZERO, $_SESSION ['error'] );
@@ -1928,7 +1929,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->populateCategoryItems ();
 		$c = new Category ( $pdo );
 		$c->categoryID = self::CATEGORY_ID_3;
-		$ci = $system->getCategoryItemsByPage ( $c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE, '' );
+		$ci = $system->getCategoryItemsByPage ( $c, self::ITEMS_PAGE_NUMBER, self::ITEMS_PER_PAGE, 'ForSale' );
 		$start = 47;
 		foreach ( $ci as $item ) {
 			$this->assertEquals ( $start, $item->itemID );
@@ -3510,7 +3511,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					self::TITLE => 'title' . $i,
 					self::DESCRIPTION => 'description' . $i,
 					self::QUANTITY => 'quantity' . $i,
-					self::CONDITION => 'condition' . $i,
+					self::CONDITION => 'New',
+				    self::TYPE => 'ForSale',
 					self::PRICE => 'price' . $i,
 					self::STATUS => '' 
 			] );
@@ -3873,6 +3875,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			for($j = 1; $j <= 5; $j ++) {
 				$item = new Item ( $pdo );
 				$item->owningUserID = $user->userID;
+				$item->type = 'ForSale';
+				$item->itemcondition = 'New';
 				$item->title = 'title' . $k;
 				$item->set ();
 
