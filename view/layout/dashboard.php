@@ -16,7 +16,7 @@
                 <div class="container-fluid">
                     <h1 id="ForSale" class="display-4 text-center top-n-tail">My Items For Sale (<?php echo count($this->data['forSaleItems']);  ?>)</h1>
 
-                    <table class="table table-striped">
+                    <table class="table table-responsive table-striped">
                         <thead class="thead-dark">
                             <tr>
                                 <th></th>
@@ -58,7 +58,7 @@
                 <div class="container-fluid">
                     <h1 id="Wanted"  class="display-4 text-center top-n-tail">My Wanted Items (<?php echo count($this->data['wantedItems']);  ?>)</h1>
 
-                    <table class="table table-striped">
+                    <table class="table table-responsive table-striped">
                         <thead>
                         <tr>
                             <th></th>

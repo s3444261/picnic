@@ -14,7 +14,7 @@
 		<div class="col"></div>
 		<div class="col-9">
 		    <div class="jumbotron panel panel-default">
-		        <h1 class="display-3 text-center">Forgot Password</h1>
+		        <h1 class="display-4 text-center">Forgot Password</h1>
 				<form data-toggle="validator" role="form" method="post" action="DoForgotPassword">
 					<div class="form-group">
 						<label for="email">Enter your email address and we'll email you a new password.</label>

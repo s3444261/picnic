@@ -33,7 +33,7 @@
 				<?php if ( count($this->data['forSaleItems']) === 0) { ?>
                     <div class="text-center"><strong>You have no items for sale.</strong></div>
 				<?php }else {?>
-                    <table class="table table-striped">
+                    <table class="table table-responsive table-striped">
                         <thead class="thead-dark">
                         <tr>
                             <th></th>

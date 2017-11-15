@@ -37,7 +37,7 @@
 					<?php if ($this->totalMatches() === 0) { ?>
                         <div class="text-center"><strong>You have no action items.</strong></div>
 					<?php } else {?>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead class="thead-dark">
                                 <div class="row">
                                     <tr>

@@ -37,7 +37,7 @@
 					<?php if ($this->inboxMessageCount() === 0) { ?>
                         <div class="text-center"><strong>Your inbox is empty.</strong></div>
 					<?php } else {?>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead class="thead-dark">
                             <div class="row">
                                 <tr>
@@ -158,7 +158,7 @@
 					<?php if ($this->sentMessageCount() === 0) { ?>
                         <div class="text-center"><strong>You have no sent messages.</strong></div>
 					<?php } else {?>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead class="thead-dark">
                             <div class="row">
                                 <tr>
