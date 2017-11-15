@@ -84,6 +84,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	const DESCRIPTION = 'description';
 	const QUANTITY = 'quantity';
 	const CONDITION = 'itemcondition';
+	const TYPE = 'type';
 	const PRICE = 'price';
 	const STATUS = 'status';
 	const CATEGORY_ID_1 = 1;
@@ -148,7 +149,8 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 					self::TITLE => 'title' . $i,
 					self::DESCRIPTION => 'description' . $i,
 					self::QUANTITY => 'quantity' . $i,
-					self::CONDITION => 'condition' . $i,
+					self::CONDITION => 'New',
+					self::TYPE => 'ForSale',
 					self::PRICE => 'price' . $i,
 					self::STATUS => '' 
 			] );
@@ -327,20 +329,20 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	public function testGetCategoryItemsPageNumberZero(): void {
 		$sut = $this->createDefaultSut ();
 		$this->expectExceptionMessage ( self::ERROR_ZERO );
-		$sut->getCategoryItemsByPage ( self::PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE, '' );
+		$sut->getCategoryItemsByPage ( self::PAGE_NUMBER_ZERO, self::ITEMS_PER_PAGE, 'ForSale' );
 	}
 
 	public function testGetCategoryItemsItemsPerPageZero(): void {
 		$sut = $this->createDefaultSut ();
 		$this->expectExceptionMessage ( self::ERROR_ZERO );
-		$sut->getCategoryItemsByPage ( self::PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO, '' );
+		$sut->getCategoryItemsByPage ( self::PAGE_NUMBER, self::ITEMS_PER_PAGE_ZERO, 'ForSale' );
 	}
 
 	public function testGetCategoryItemsSuccess(): void {
 		$sut = $this->createDefaultSut ();
 		$sut->categoryID = self::CATEGORY_ID_3;
 		try {
-			$items = $sut->getCategoryItemsByPage ( self::PAGE_NUMBER, self::ITEMS_PER_PAGE, '' );
+			$items = $sut->getCategoryItemsByPage ( self::PAGE_NUMBER, self::ITEMS_PER_PAGE, 'ForSale' );
 
 			$start = 47;
 			
