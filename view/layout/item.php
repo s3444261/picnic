@@ -87,37 +87,29 @@
 
                         <div class="container" >
                             <hr />
-                            <div class="row col-md-12 item-desc-header top-n-tail">
-                                <p>
-								<?php if ($this->isItemForSale()) {
-									echo 'This item is being sold by <strong>' . $this->itemOwnerName() . '</strong>. ';
-								} else {
-									echo 'This item is wanted by <strong> ' . $this->itemOwnerName() . '</strong>. ';
-								} ?>
 
-
-                                <?php if ($this->itemOwnerHasRating()) {
-                                    for ($i =0; $i < $this->itemOwnerRating(); ++$i) {
-                                        echo 'X ';
-                                    }
-
-									for ($i = $this->itemOwnerRating(); $i < 5; ++$i) {
-										echo 'O ';
-									}
-									echo '(' . $this->itemOwnerRatingCount() . ' ratings)';
-                                 } else {
-									echo '(not yet rated)';
-								}?>
-                                </p>
-                            </div>
-                            <hr />
                             <div class="row col-md-12 item-desc-header top-n-tail">
 								<?php if ($this->isItemForSale()) {
-									echo '<strong>Send a message to the seller</strong>';
+									echo '<strong>Send a message to the seller - ' . $this->itemOwnerName() .'</strong> ';
 								} else {
-									echo '<strong>Send a message to the buyer</strong>';
+									echo '<strong>Send a message to the buyer - ' . $this->itemOwnerName() .'</strong> ';
 								} ?>
 
+                                <div>
+                                    <?php if ($this->itemOwnerHasRating()) {
+                                        for ($i =0; $i < $this->itemOwnerRating(); ++$i) {
+                                            echo '<img src="' . BASE . '/img/star_lit.jpg" width="24" height="24" />';
+                                        }
+
+                                        for ($i = $this->itemOwnerRating(); $i < 5; ++$i) {
+                                            echo '<img src="' . BASE . '/img/star_unlit.png" width="24" height="24" />';
+                                        }
+
+                                        echo '(' . $this->itemOwnerRatingCount() . ' rating' . ($this->itemOwnerRatingCount() === 1 ? '' : 's') . ')';
+                                    } else {
+                                        echo ' (not yet rated)';
+                                    }?>
+                                </div>
                             </div>
 
 							<?php if ($this->hasError()) { ?>
