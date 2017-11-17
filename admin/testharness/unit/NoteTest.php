@@ -4,7 +4,7 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
 /*
@@ -100,7 +100,7 @@ final class NoteTest extends PicnicTestCase {
 	protected function createDefaultSut() {
 		return new Note ( TestPDO::getInstance () );
 	}
-	protected function createSutWithId($id) {
+	protected function createSutWithId(int $id) {
 		return new Note ( TestPDO::getInstance (), [ 
 				self::NOTE_ID => $id 
 		] );

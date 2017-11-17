@@ -1,12 +1,10 @@
 <?php
-use phpDocumentor\Reflection\Types\Self_;
-
 /**
  * @author Troy Derrick <s3202752@student.rmit.edu.au>
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 require_once dirname ( __FILE__ ) . '/ModelException.php';
 
@@ -94,7 +92,7 @@ class Items {
 	 * � means NOT
 	 * [no operator] means OR
 	 * 
-	 * @param array $searchArray
+	 * @param string $searchString
 	 * @return array
 	 */
 	public function searchArray(string $searchString): array {
@@ -167,8 +165,6 @@ class Items {
 
 		$query = $query . " WHERE status = :status";
 
-		$initialLength = strlen($query);
-		
 		if (strlen($args[self::SEARCH_TEXT]) > 0) {
 			$query = $query . " AND MATCH (title, description)
 								AGAINST (:srchText IN BOOLEAN MODE)";
@@ -249,4 +245,3 @@ class Items {
 		return $items;
 	}
 }
-?>

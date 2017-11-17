@@ -4,7 +4,7 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 ?>
 
@@ -118,7 +118,7 @@
 					</div>
 
 					<div class="form-group">
-						<label for="category">Search in sub-category</label>
+						<label for="minorCategory">Search in sub-category</label>
 						<select class="form-control" id="minorCategory" name="minorCategory" disabled="disabled" required>
 							<option value="-1">All Sub-categories</option>
 						</select>

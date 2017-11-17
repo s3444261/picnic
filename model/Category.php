@@ -4,16 +4,15 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
 /**
- *
- * @property integer $_categoryID;
- * @property integer $_parentID;
- * @property string $_category;
- * @property string $_created_at;
- * @property string $_updated_at;
+ * @property int categoryID
+ * @property int parentID
+ * @property string category
+ * @property string created_at
+ * @property string updated_at
  */
 class Category {
 	private $_categoryID = 0;
@@ -28,7 +27,7 @@ class Category {
 	const ERROR_CATEGORY_NOT_UPDATED = 'The category was not updated!';
 	const ERROR_PARENT_ID_NOT_EXIST = 'The parent category does not exist!';
 	const ERROR_PARENT_ID_NONE = 'Input is required!';
-	
+
 	// Constructor
 	function __construct(PDO $pdo, $args = array()) {
 		$this->db = $pdo;
@@ -75,7 +74,7 @@ class Category {
 	}
 	
 	/**
-	 * Inserts the category paramaters into the database.
+	 * Inserts the category parameters into the database.
 	 * The categoryID is returned. If the parentID doesn't
 	 * exist or the category parameter is empty, an exception is thrown.
 	 * 
@@ -86,19 +85,19 @@ class Category {
 		$v = new Validation ();
 		
 		try {
-			if ($this->parentID !== null) {
-				$v->emptyField ( $this->parentID );
-				$v->number ( $this->parentID );
+			if ($this->_parentID !== null) {
+				$v->emptyField ( $this->_parentID );
+				$v->number ( $this->_parentID );
 			}
 
-			$v->emptyField ( $this->category );
+			$v->emptyField ( $this->_category );
 			
-			if ($this->parentID !== null) {
-				$this->categoryID = $this->parentID;
+			if ($this->_parentID !== null) {
+				$this->_categoryID = $this->_parentID;
 				if (! $this->exists ()) {
 					throw new ModelException ( self::ERROR_PARENT_ID_NOT_EXIST );
 				}
-				$this->categoryID = NULL;
+				$this->_categoryID = NULL;
 			}
 
 			$query = "INSERT INTO Categories
@@ -140,9 +139,9 @@ class Category {
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
 			
-			if (is_numeric ( $this->_parentID ) && $this->parentID > 0) {
+			if (is_numeric ( $this->_parentID ) && $this->_parentID > 0) {
 				$trueCategoryID = $this->_categoryID;
-				$this->_categoryID = $this->parentID;
+				$this->_categoryID = $this->_parentID;
 				if ($this->exists ()) {
 					$this->_categoryID = $trueCategoryID;
 				} else {
@@ -219,22 +218,4 @@ class Category {
 			return false;
 		}
 	}
-	
-	/**
-	 * Display Object Contents
-	 */
-	public function printf(): void {
-		echo '<br /><strong>Category Object:</strong><br />';
-		
-		if ($this->_id) {
-			echo 'id => ' . $this->_id . '<br/>';
-		}
-		if ($this->_parentID) {
-			echo 'parentID => ' . $this->_parentID . '<br/>';
-		}
-		if ($this->_category) {
-			echo 'category => ' . $this->_category . '<br/>';
-		}
-	}
 }
-?>

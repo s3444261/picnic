@@ -5,7 +5,7 @@
  * Foster, Diane - s3387562@student.rmit.edu.au
  * Goodreds, Allen - s3492264@student.rmit.edu.au
  * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+ * Putro, Edwan - s3418650@student.rmit.edu.au
  */
 
 /*
@@ -116,30 +116,29 @@ final class CategoryTest extends PicnicTestCase {
 			$this->assertEquals('Exception', $e->getMessage());
 		}
 	}
+
 	protected function tearDown(): void {
 		TestPDO::CleanUp ();
 	}
+
 	protected function createDefaultSut() {
 		return new Category ( TestPDO::getInstance () );
 	}
-	protected function createSutWithId($id) {
+
+	protected function createSutWithId(int $id) {
 		return new Category ( TestPDO::getInstance (), [ 
 				self::CATEGORY_ID => $id 
 		] );
 	}
+
 	protected function getValidId() {
 		return 1;
 	}
+
 	protected function getInvalidId() {
 		return 200;
 	}
-	protected function getExpectedAttributesForGet() {
-		return [ 
-				self::CATEGORY_ID => self::CATEGORY_ID_1,
-				self::PARENT_ID => self::PARENT_ID_0,
-				self::CATEGORY_NAME => self::CATEGORY_1 
-		];
-	}
+
 	public function testAttributes(): void {
 		$values = [ 
 				self::CATEGORY_ID => self::CATEGORY_ID_2,
@@ -160,11 +159,13 @@ final class CategoryTest extends PicnicTestCase {
 		$this->expectExceptionMessage ( self::ERROR_CATEGORY_NOT_EXIST );
 		$sut->get ();
 	}
+
 	public function testGetCategoryInvalidCategoryId(): void {
 		$sut = $this->createSutWithId ( $this->getInvalidId () );
 		$this->expectExceptionMessage ( self::ERROR_CATEGORY_NOT_EXIST );
 		$sut->get ();
 	}
+
 	public function testGetCategoryValidCategoryId(): void {
 		$sut = $this->createSutWithId ( self::CATEGORY_ID_2 );
 		try {
@@ -185,6 +186,7 @@ final class CategoryTest extends PicnicTestCase {
 		$sut->category = self::CATEGORY_4;
 		$this->assertEquals ( self::CATEGORY_ID_4, $sut->set () );
 	}
+
 	public function testSetCategoryInvalidParentId(): void {
 		$sut = $this->createDefaultSut ();
 		$sut->parentID = $this->getInvalidId ();
@@ -192,12 +194,14 @@ final class CategoryTest extends PicnicTestCase {
 		$this->expectExceptionMessage ( self::ERROR_PARENT_ID_NOT_EXIST );
 		$sut->set ();
 	}
+
 	public function testSetCategoryNoCategory(): void {
 		$sut = $this->createDefaultSut ();
 		$sut->parentID = self::PARENT_ID_1;
 		$this->expectExceptionMessage ( self::ERROR_CATEGORY_NONE );
 		$sut->set ();
 	}
+
 	public function testSetCategorySuccess(): void {
 		$sut = $this->createDefaultSut ();
 		$sut->parentID = self::PARENT_ID_3;
@@ -225,38 +229,45 @@ final class CategoryTest extends PicnicTestCase {
 		$sut = $this->createDefaultSut ();
 		$this->assertFalse ( $sut->update () );
 	}
+
 	public function testUpdateCategoryInvalidCategoryId(): void {
 		$sut = $this->createSutWithId ( $this->getInvalidId () );
 		$this->assertFalse ( $sut->update () );
 	}
+
 	public function testUpdateCategoryNoParentId(): void {
 		$sut = $this->createSutWithId ( self::CATEGORY_ID_3 );
 		$sut->category = self::CATEGORY_4;
 		$this->assertTrue ( $sut->update () );
 	}
+
 	public function testUpdateCategoryInvalidParentId(): void {
 		$sut = $this->createSutWithId ( self::CATEGORY_ID_3 );
 		$sut->parentID = $this->getInvalidId ();
 		$sut->category = self::CATEGORY_4;
 		$this->assertTrue ( $sut->update () );
 	}
+
 	public function testUpdateCategoryNoCategory(): void {
 		$sut = $this->createSutWithId ( self::CATEGORY_ID_3 );
 		$sut->parentID = self::PARENT_ID_1;
 		$this->assertTrue ( $sut->update () );
 	}
+
 	public function testUpdateCategoryParentId(): void {
 		$sut = $this->createSutWithId ( self::CATEGORY_ID_3 );
 		$sut->parentID = self::PARENT_ID_2;
 		$sut->category = self::CATEGORY_3;
 		$this->assertTrue ( $sut->update () );
 	}
+
 	public function testUpdateCategoryCategory(): void {
 		$sut = $this->createSutWithId ( self::CATEGORY_ID_3 );
 		$sut->parentID = self::PARENT_ID_1;
 		$sut->category = self::CATEGORY_4;
 		$this->assertTrue ( $sut->update () );
 	}
+
 	public function testUpdateCategoryAll(): void {
 		$sut = $this->createSutWithId ( self::CATEGORY_ID_3 );
 		$sut->parentID = self::PARENT_ID_3;

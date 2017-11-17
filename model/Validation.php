@@ -5,8 +5,9 @@
  * @author Foster, Diane - s3387562@student.rmit.edu.au
  * @author Goodreds, Allen - s3492264@student.rmit.edu.au
  * @author Kinkead, Grant - s3444261@student.rmit.edu.au
- * @author Putro, Edwan - edwanhp@gmail.com
+ * @author Putro, Edwan - s3418650@student.rmit.edu.au
  */
+
 class Validation {
 	const ERROR_PASSWORDS_NOT_MATCH = 'Password Error: Passwords do not match!';
 	const ERROR_FIELD_EMPTY = 'Input is required!';
@@ -16,8 +17,6 @@ class Validation {
 	const ERROR_NOT_ALPHANUMERIC = 'Input must be a alphanumeric!';
 	const ERROR_NOT_ALPHA = 'Input must consist of letters only!';
 	const ERROR_NOT_NUMBER_OR_HYPHEN = 'Must only consist of numbers and/or hyphens!';
-	const ERROR_NOT_DATE = 'Input must be valid date!';
-	const ERROR_NOT_TODAY_OR_FUTURE = 'Date must be todays date or a future date!';
 	const ERROR_EMAIL_NOT_VALID = 'Email address must be valid!';
 	const ERROR_STRLEN_LESS_THAN_FOUR = 'Input must be at least 4 characters in length!';
 	const ERROR_STRLEN_LESS_THAN_EIGHT = 'Input must be at least 8 characters in length!';
@@ -114,35 +113,7 @@ class Validation {
 			throw new ValidationException ( $errorMessage );
 		}
 	}
-	
-	/**
-	 * Validates a date.
-	 *
-	 * @param $content
-	 * @throws ValidationException
-	 */
-	public function confirmDate($content) {
-		$errorMessage = null;
-		
-		try {
-			$this->isDate ( $content );
-		} catch ( ValidationException $e ) {
-			if ($errorMessage == null) {
-				$errorMessage = 'Date Error: ' . $e->getError ();
-			} else {
-				$errorMessage = $errorMessage . '<br />' . $e->getError ();
-			}
-		}
-		
-		if ($errorMessage != null) {
-			throw new ValidationException ( $errorMessage );
-		}
-	}
-	
-	/*
-	 * Base Methods.
-	 */
-	
+
 	/**
 	 * Tests for an empty field.
 	 *
@@ -233,38 +204,7 @@ class Validation {
 			throw new ValidationException ( self::ERROR_NOT_NUMBER_OR_HYPHEN );
 		}
 	}
-	
-	/**
-	 * Tests that input is a date.
-	 *
-	 * @param $content
-	 * @throws ValidationException
-	 */
-	public function isDate($content) {
-		if (! $this->validateDate ( $content, 'Y-m-d' ) && strlen ( $content ) > 0) {
-			throw new ValidationException ( self::ERROR_NOT_DATE );
-		}
-	}
-	
-	/**
-	 * Tests that the date is either today or a future date.
-	 *
-	 * @param $content
-	 * @throws ValidationException
-	 */
-	public function notPastDate($content) {
-		$date = date_create ( $content );
-		$paymentDate = date_format ( $date, 'Yz' );
-		$paymentDate = intval ( $paymentDate );
-		$currentDate = date_create ( date ( 'm/d/Y h:i:s a', time () ) );
-		$currentDate = date_format ( $currentDate, 'Yz' );
-		$currentDate = intval ( $currentDate );
-		
-		if ($paymentDate < $currentDate) {
-			throw new ValidationException ( self::ERROR_NOT_TODAY_OR_FUTURE );
-		}
-	}
-	
+
 	/**
 	 * Validates a date.
 	 * From PHP Manual.
@@ -311,20 +251,19 @@ class Validation {
 	 */
 	public function atLeastEight($content) {
 		if (strlen ( $content ) < 8) {
-			throw new ValidationException ( ERROR_STRLEN_LESS_THAN_EIGHT );
+			throw new ValidationException ( self::ERROR_STRLEN_LESS_THAN_EIGHT );
 		}
 	}
 	
 	/**
 	 * Tests for string length 32 characters long.
 	 *
-	 * @param $content
+	 * @param string $content
 	 * @throws ValidationException
 	 */
-	public function activation($content) {
+	public function activation(string $content) {
 		if (strlen ( $content ) != 32) {
 			throw new ValidationException ( self::ERROR_ACTIVATION_STRLEN_NOT_THIRTY_TWO );
 		}
 	}
 }
-?>

@@ -4,7 +4,7 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
 /*
@@ -214,24 +214,24 @@ class UserTest extends PicnicTestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
-		$args1 = [ 
+		$args1 = [
 				self::USER => self::USER_ONE,
 				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE 
+				self::PASSWORD => self::PASSWORD_ONE
 		];
-		
-		$args2 = [ 
+
+		$args2 = [
 				self::USER => self::USER_TWO,
 				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO 
+				self::PASSWORD => self::PASSWORD_TWO
 		];
-		
-		$args3 = [ 
+
+		$args3 = [
 				self::USER => self::USER_THREE,
 				self::EMAIL => self::EMAIL_ADDRESS_THREE,
-				self::PASSWORD => self::PASSWORD_THREE 
+				self::PASSWORD => self::PASSWORD_THREE
 		];
-		
+
 		// Populate the Users table.
 		
 		for($i = 1; $i < 4; $i ++) {
@@ -262,7 +262,7 @@ class UserTest extends PicnicTestCase {
 	protected function createDefaultSut() {
 		return new User ( TestPDO::getInstance () );
 	}
-	protected function createSutWithId($id) {
+	protected function createSutWithId(int $id) {
 		return new User ( TestPDO::getInstance (), [ 
 				self::USER_ID => $id 
 		] );
@@ -339,24 +339,24 @@ class UserTest extends PicnicTestCase {
 		$sut = $this->createDefaultSut ();
 		$sut->email = NULL;
 		$this->expectExceptionMessage ( self::ERROR_EMAIL_EMPTY );
-		$sut = $sut->getUserIdByEmail ( $sut );
+		$sut->getUserIdByEmail ();
 	}
 	public function testGetUserIdByEmailBadEmail(): void {
 		$sut = $this->createDefaultSut ();
 		$sut->email = self::EMAIL_BAD;
 		$this->expectExceptionMessage ( self::ERROR_EMAIL_INVALID );
-		$sut = $sut->getUserIdByEmail ( $sut );
+		$sut->getUserIdByEmail ();
 	}
 	public function testGetUserIdByEmailNotExistEmail(): void {
 		$sut = $this->createDefaultSut ();
 		$sut->email = self::WRONG_EMAIL_ADDRESS;
 		$this->expectExceptionMessage ( self::ERROR_EMAIL_NOT_EXIST );
-		$sut = $sut->getUserIdByEmail ( $sut );
+		$sut->getUserIdByEmail ();
 	}
 	public function testGetUserIdByEmailExistEmail(): void {
 		$sut = $this->createDefaultSut ();
 		$sut->email = self::EMAIL_ADDRESS_TWO;
-		$sut->userID = $sut->getUserIdByEmail ( $sut );
+		$sut->userID = $sut->getUserIdByEmail ();
 		$this->assertEquals ( self::USER_ID_2, $sut->userID );
 	}
 	

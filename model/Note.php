@@ -4,15 +4,13 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
 /**
  *
- * @property integer $_noteID;
- * @property string $_note;
- * @property string $_created_at;
- * @property string $_updated_at;
+ * @property int noteID
+ * @property string note
  */
 class Note {
 	private $_noteID = 0;
@@ -183,19 +181,4 @@ class Note {
 			return false;
 		}
 	}
-	
-	/**
-	 * Display Object Contents
-	 */
-	public function printf() {
-		echo '<br /><strong>Note Object:</strong><br />';
-		
-		if ($this->_id) {
-			echo 'id => ' . $this->_id . '<br/>';
-		}
-		if ($this->_note) {
-			echo 'note => ' . $this->_note . '<br/>';
-		}
-	}
 }
-?>

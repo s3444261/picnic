@@ -4,7 +4,7 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 class UserComments {
 	private $_userID = '';
@@ -27,22 +27,7 @@ class UserComments {
 		$name = '_' . $name;
 		$this->$name = $value;
 	}
-	
-	/**
-	 * Count number of occurences of comment for a user.
-	 *
-	 * @return int
-	 */
-	public function count(): int {
-		$query = "SELECT COUNT(*) AS numComments FROM Comments WHERE userID = :userID";
-		
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindValue ( ':userID', $this->_userID );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		return $row ['numComments'];
-	}
-	
+
 	/**
 	 * Retrieves all comments made by a user and returns them
 	 * as an array of comments.
@@ -50,7 +35,9 @@ class UserComments {
 	 * @return array
 	 */
 	public function getUserComments(): array {
-		$query = "SELECT * FROM Comments WHERE toUserID = :userID OR fromUserID = :userID";
+		$query = "SELECT * 
+				  FROM Comments 
+				  WHERE toUserID = :userID OR fromUserID = :userID";
 		
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindValue ( ':userID', $this->_userID );
@@ -66,4 +53,3 @@ class UserComments {
 		return $objects;
 	}
 }
-?>

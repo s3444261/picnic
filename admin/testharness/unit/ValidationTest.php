@@ -4,7 +4,7 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 declare ( strict_types = 1 );
 
@@ -264,91 +264,15 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		if ($numberHyphenError) {
 			$unitTestResults = $unitTestResults . $numberHyphenError;
 		}
-		
-		// Test isDate($content)
-		// isDate($content) with valid date
-		$content = '2015-02-28';
-		$b16 = true;
-		$isDateError = null;
-		try {
-			$v->isDate ( $content );
-		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Input must be valid date!' ) == 0) {
-				$b16 = false;
-				$isDateError = 'Failed caught error isDate($content) with valid date.<br />';
-			}
-		}
-		// isDate($content) with invalid date
-		$content = '2015-02-30';
-		$b17 = false;
-		try {
-			$v->isDate ( $content );
-		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Input must be valid date!' ) == 0) {
-				$b17 = true;
-			}
-		}
-		if (! $b17) {
-			$isDateError = $isDateError = 'Failed validated isDate($content) with invalid date.<br />';
-		}
-		
-		if ($isDateError) {
-			$unitTestResults = $unitTestResults . $isDateError;
-		}
-		
-		// Test notPastDate($content)
+
 		date_default_timezone_set ( 'Australia/Melbourne' );
 		$currentDate = date_create ( date ( 'm/d/Y h:i:s a', time () ) );
-		$todayDate = date_format ( $currentDate, 'Y-m-d' );
 		$currentYear = date_format ( $currentDate, 'Y' );
 		$currentMonth = date_format ( $currentDate, 'm' );
 		$currentDay = date_format ( $currentDate, 'd' );
 		$nextYear = $currentYear + 1;
 		$lastYear = $currentYear - 1;
-		$pastDate = $lastYear . '-' . $currentMonth . '-' . $currentDay;
-		$futureDate = $nextYear . '-' . $currentMonth . '-' . $currentDay;
-		
-		// notPastDate($content) with past date
-		$content = $pastDate;
-		$b18 = false;
-		$notPastDateError = null;
-		try {
-			$v->notPastDate ( $content );
-		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Date must be todays date or a future date!' ) == 0) {
-				$b18 = true;
-			}
-		}
-		if (! $b18) {
-			$notPastDateError = 'Failed validated notPastDate($content) with past date.<br />';
-		}
-		// notPastDate($content) with todays date
-		$content = $todayDate;
-		$b19 = true;
-		try {
-			$v->notPastDate ( $content );
-		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Date must be todays date or a future date!' ) == 0) {
-				$b19 = false;
-				$notPastDateError = $notPastDateError . 'Failed caught error notPastDate($content) with todays date.<br />';
-			}
-		}
-		// notPastDate($content) with future date
-		$content = $futureDate;
-		$b20 = true;
-		try {
-			$v->notPastDate ( $content );
-		} catch ( ValidationException $e ) {
-			if (strcmp ( $e->getError (), 'Date must be todays date or a future date!' ) == 0) {
-				$b20 = false;
-				$notPastDateError = $notPastDateError . 'Failed caught error notPastDate($content) with future date.<br />';
-			}
-		}
-		
-		if ($notPastDateError) {
-			$unitTestResults = $unitTestResults . $notPastDateError;
-		}
-		
+
 		// Test validateEmail($content)
 		// validateEmail($content) with valid email
 		$content = 'john@hotmail.com';
@@ -408,11 +332,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		if (! $b24) {
 			$atLeastFourError = $atLeastFourError . 'Failed validated atLeastFour($content) with invalid content.<br />';
 		}
-		
-		if ($atLeastFourError) {
-			$unitTestResults = $unitTestResults . $atLeastFourError;
-		}
-		
-		$this->assertTrue ( $b5 && $b6 && $b7 && $b8 && $b9 && $b14 && $b15 && $b16 && $b17 && $b18 && $b19 && $b20 && $b21 && $b22 && $b23 && $b24 );
+
+		$this->assertTrue ( $b5 && $b6 && $b7 && $b8 && $b9 && $b14 && $b15 && $b21 && $b22 && $b23 && $b24 );
 	}
 }

@@ -4,7 +4,7 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
@@ -187,7 +187,7 @@ class System {
 	}
 	
 	/**
-	 * Retrieves a user based on the users ID.
+	 * Retrieves a user based on the user's ID.
 	 *
 	 * @param User $user
 	 *        	User Object.
@@ -288,7 +288,7 @@ class System {
 	
 	/**
 	 * Allows and administrator to add a Category and
-	 * specify its position in the heirachy.
+	 * specify its position in the hierarchy.
 	 *
 	 * @param Category $category
 	 *        	Category Object.
@@ -312,7 +312,7 @@ class System {
 	
 	/**
 	 * Allows and administrator to update a Category and
-	 * its position in the heirachy.
+	 * its position in the hierarchy.
 	 *
 	 * @param Category $category
 	 *        	Category object.
@@ -343,8 +343,9 @@ class System {
 			}
 		} else {
 			$_SESSION ['error'] = self::ERROR_CATEGORY_NOT_EXIST;
-			return false;
 		}
+
+		return false;
 	}
 	
 	/**
@@ -355,7 +356,6 @@ class System {
 	 * @return Category
 	 */
 	public function getCategory(Category $category): Category {
-		$c = new Category ( $this->db );
 		$c = $category;
 		try {
 			$c = $c->get ();
@@ -371,13 +371,13 @@ class System {
 	 * @return array
 	 */
 	public function getCategories(): array {
-		$c = array ();
 		$cat = new Categories ( $this->db );
 		try {
 			$c = $cat->getCategories ();
 			return $c;
 		} catch ( Exception $e ) {
 			$_SESSION ['error'] = $e->getMessage ();
+			return [];
 		}
 	}
 	
@@ -484,7 +484,7 @@ class System {
 	}
 	
 	/**
-	 * Afds the given item to the given category.
+	 * Adds the given item to the given category.
 	 *
 	 * @param int $itemID
 	 *        	The item to be added.
@@ -522,7 +522,8 @@ class System {
 			$array ['parentID'] = $category->parentID;
 			return $array;
 		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getError ();
+			$_SESSION ['error'] = $e->getError();
+			return [];
 		}
 	}
 	
@@ -594,7 +595,6 @@ class System {
 	 * @return bool
 	 */
 	public function updateItem(Item $item): bool {
-		$i = new Item ( $this->db );
 		$i = $item;
 		try {
 			$i->update ();
@@ -713,25 +713,6 @@ class System {
 			return false;
 		}
 	}
-	
-	/**
-	 * Deletes all comments associated with an item and deletes their respective
-	 * entries in ItemComments
-	 *
-	 * @param Item $item        	
-	 * @return bool
-	 */
-	public function deleteItemComments(Item $item): bool {
-		$itemComment = new Comment ( $this->db );
-		$itemComment->itemID = $item->itemID;
-		try {
-			$itemComment->deleteItemComments ();
-			return true;
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return false;
-		}
-	}
 
 	/**
 	 * Returns all comments associated with the given user ID, where the user is the sender.
@@ -837,7 +818,7 @@ class System {
 			return false;
 		}
 		try {
-			if ($itemNote->item_noteID = $itemNote->set () > 0) {
+			if (($itemNote->item_noteID = $itemNote->set ()) > 0) {
 				return true;
 			} else {
 				return false;
@@ -851,7 +832,7 @@ class System {
 	/**
 	 * Updates an ItemNote
 	 *
-	 * @param ItemNotes $itemNote        	
+	 * @param Note $note
 	 * @return bool
 	 */
 	public function updateItemNote(Note $note): bool {
@@ -948,7 +929,7 @@ class System {
 	/**
 	 * Searches an items title on an array of strings.
 	 * 
-	 * @param array $searchArray
+	 * @param string $searchString
 	 * @return array
 	 */
 	public function searchArray(string $searchString): array {
@@ -1082,23 +1063,23 @@ class System {
 	}
 
 	public function leaveRatingForCode(string $accessCode, int $rating) {
-		Item::leaveRatingForCode($this->db, $accessCode, $rating);
+		UserRatings::leaveRatingForCode($this->db, $accessCode, $rating);
 	}
 
 	public function isValidRatingCode($accessCode) {
-		return Item::isValidRatingCode($this->db, $accessCode);
+		return UserRatings::isValidRatingCode($this->db, $accessCode);
 	}
 
 	public function isRatingLeftForCode(string $accessCode): bool {
-		return Item::isRatingLeftForCode($this->db, $accessCode);
+		return UserRatings::isRatingLeftForCode($this->db, $accessCode);
 	}
 
 	public function getRatingInfoForCode(string $accessCode): array {
-		return Item::getRatingInfoForCode($this->db, $accessCode);
+		return UserRatings::getRatingInfoForCode($this->db, $accessCode);
 	}
 
 	public function feedbackCodeBelongsToUser(string $accessCode, int $userID) {
-		return Item::feedbackCodeBelongsToUser($this->db, $accessCode, $userID);
+		return UserRatings::feedbackCodeBelongsToUser($this->db, $accessCode, $userID);
 	}
 
 	public function getFullyMatchedItemId(int $itemID) {
@@ -1130,7 +1111,7 @@ class System {
 	private function markItemCompleted(int $itemID) {
 		$item = new Item($this->db);
 		$item->itemID = $itemID;
-		$thisUser =  $item->markCompleted();
+		$item->markCompleted();
 	}
 
 	private function sendRequestFeedbackEmail(Mailer $mailer, array $user, string $feedbackUrl) : void {
@@ -1145,7 +1126,7 @@ class System {
 		return UserRatings::getUserHasRating($this->db, $userID);
 	}
 
-	public function getUserRatingCount($userID): bool {
+	public function getUserRatingCount($userID): int {
 		return UserRatings::getUserRatingCount($this->db, $userID);
 	}
 

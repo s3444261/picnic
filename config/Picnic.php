@@ -1,17 +1,15 @@
 <?php
-/*
- * Authors: 
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
- *
- * Picnic Class
- * 
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
+ */
+
+/**
  * The Picnic Class extends PDO and provides a singleton instance
- * connection to the picnic database by accessing the constants
- * in db.php.
+ * connection to the picnic database.
  */
 include '../../dbPicnic.php';
 
@@ -35,4 +33,4 @@ class Picnic extends PDO {
 		return self::$instance;
 	}
 }
-?>
+

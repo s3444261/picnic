@@ -5,7 +5,7 @@
  * Foster, Diane - s3387562@student.rmit.edu.au
  * Goodreds, Allen - s3492264@student.rmit.edu.au
  * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+ * Putro, Edwan - s3418650@student.rmit.edu.au
  */
 declare ( strict_types = 1 );
 
@@ -48,25 +48,25 @@ class UserCommentsTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
-		
-		$args1 = [ 
+
+		$args1 = [
 				self::USER => self::USER_ONE,
 				self::EMAIL => self::EMAIL_ADDRESS_ONE,
-				self::PASSWORD => self::PASSWORD_ONE 
+				self::PASSWORD => self::PASSWORD_ONE
 		];
-		
-		$args2 = [ 
+
+		$args2 = [
 				self::USER => self::USER_TWO,
 				self::EMAIL => self::EMAIL_ADDRESS_TWO,
-				self::PASSWORD => self::PASSWORD_TWO 
+				self::PASSWORD => self::PASSWORD_TWO
 		];
-		
-		$args3 = [ 
+
+		$args3 = [
 				self::USER => self::USER_THREE,
 				self::EMAIL => self::EMAIL_ADDRESS_THREE,
-				self::PASSWORD => self::PASSWORD_THREE 
+				self::PASSWORD => self::PASSWORD_THREE
 		];
-		
+
 		for($i = 1; $i < 4; $i ++) {
 			${'u' . $i} = new User ( $pdo, ${'args' . $i} );
 			try {

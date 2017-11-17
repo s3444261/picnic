@@ -5,7 +5,7 @@
  * Foster, Diane - s3387562@student.rmit.edu.au
  * Goodreds, Allen - s3492264@student.rmit.edu.au
  * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+ * Putro, Edwan - s3418650@student.rmit.edu.au
  */
 
 /*
@@ -111,7 +111,7 @@ class ItemTest extends PicnicTestCase {
 		$user->email = "test@test.com";
 		$user->password = "fRRR44@fff";
 		$user->status = "good";
-		$userID = $user->set();
+		$user->set();
 
 		// Insert items.
 		$args = [ 
@@ -163,7 +163,7 @@ class ItemTest extends PicnicTestCase {
 	protected function createDefaultSut() {
 		return new Item ( TestPDO::getInstance () );
 	}
-	protected function createSutWithId($id) {
+	protected function createSutWithId(int $id) {
 		return new Item ( TestPDO::getInstance (), [ 
 				self::ITEM_ID => $id 
 		] );

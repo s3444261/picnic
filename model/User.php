@@ -4,7 +4,7 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 require_once __DIR__ . '/../config/config.php';
 
@@ -12,13 +12,13 @@ define ( 'SALT', 'TooMuchSalt' );
 
 /**
  *
- * @property integer $_userID;
- * @property string $_user;
- * @property string $_email;
- * @property string $_password;
- * @property string $_status;
- * @property string $_activate;
- * @property string $_blocked;
+ * @property int userID
+ * @property string user
+ * @property string email
+ * @property string status
+ * @property bool blocked
+ * @property string activate
+ * @property string password
  */
 class User {
 	private $_userID = '';
@@ -72,7 +72,7 @@ class User {
 	}
 	
 	/**
-	 * Static methos for Salt
+	 * Static method for Salt
 	 *
 	 * @return string
 	 */
@@ -149,9 +149,9 @@ class User {
 	}
 	
 	/**
-	 * Inserts the user paramaters into the database including a
+	 * Inserts the user parameters into the database including a
 	 * salted/encrypted password.
-	 * Initialstatus is 'active'.
+	 * Initial status is 'active'.
 	 * The userID is returned.
 	 *
 	 * @throws ModelException
@@ -416,7 +416,7 @@ class User {
 	}
 	
 	/**
-	 * Count number of occurences of a user.
+	 * Count number of occurrences of a user.
 	 *
 	 * @throws ModelException
 	 * @return int
@@ -445,7 +445,7 @@ class User {
 	}
 	
 	/**
-	 * Count number of occurences of an email address.
+	 * Count number of occurrences of an email address.
 	 *
 	 * @throws ModelException
 	 * @return int
@@ -501,8 +501,8 @@ class User {
 		$v = new Validation ();
 		
 		try {
-			$v->emptyField ( $this->activate );
-			$v->activation ( $this->activate );
+			$v->emptyField ( $this->_activate );
+			$v->activation ( $this->_activate );
 			
 			$query = "SELECT userID FROM Users WHERE activate = :activate";
 			
@@ -549,7 +549,7 @@ class User {
 				try {
 					$this->get ();
 					
-					if (is_null ( $this->activate )) {
+					if (is_null ( $this->_activate )) {
 						return true;
 					} else {
 						throw new ModelException ( self::ERROR_ACTIVATION_FAILURE );
@@ -573,7 +573,7 @@ class User {
 	 * which is verified by activate being set to NULL. Should all the stars align, the
 	 * remaining attributes for the object are retrieved from the database. Providing
 	 * a session exists, the session variables are set and a string is returned announcing
-	 * that the user is loggedin. In any other instance a message is returned announcing
+	 * that the user is logged in. In any other instance a message is returned announcing
 	 * that the user is not logged in.
 	 *
 	 * @throws ModelException
@@ -668,12 +668,12 @@ class User {
 	 * This method was obtained from:
 	 * https://www.phpjabbers.com/generate-a-random-password-with-php-php70.html
 	 *
-	 * @param unknown $length        	
-	 * @param unknown $count        	
-	 * @param unknown $characters        	
+	 * @param int $length
+	 * @param int $count
+	 * @param string $characters
 	 * @return array
 	 */
-	public function randomPassword($length, $count, $characters): array {
+	public function randomPassword(int $length, int $count, string $characters): array {
 		
 		// $length - the length of the generated password
 		// $count - number of passwords to be generated
@@ -683,15 +683,14 @@ class User {
 		$symbols = array ();
 		$passwords = array ();
 		$used_symbols = '';
-		$pass = '';
-		
+
 		// an array of different character types
 		$symbols ["lower_case"] = 'abcdefghijklmnopqrstuvwxyz';
 		$symbols ["upper_case"] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$symbols ["numbers"] = '1234567890';
 		$symbols ["special_symbols"] = '!?~@#-_+[]{}';
 		
-		$characters = explode ( ",", $characters ); // get characters types to be used for the passsword
+		$characters = explode ( ",", $characters ); // get characters types to be used for the password
 		foreach ( $characters as $key => $value ) {
 			$used_symbols .= $symbols [$value]; // build a string with all characters
 		}
@@ -748,52 +747,16 @@ class User {
 	 */
 	public function checkEmailExist(): bool {
 		$query = "SELECT * FROM Users WHERE email = :email";
-		
-		$stmt = $this->db->prepare ( $query );
-		$stmt->bindValue ( ':email', $this->_email );
-		$stmt->execute ();
-		$numEmail = $stmt->rowCount ();
-		
+
+		$stmt = $this->db->prepare($query);
+		$stmt->bindValue(':email', $this->_email);
+		$stmt->execute();
+		$numEmail = $stmt->rowCount();
+
 		if ($numEmail > 0) {
-			throw new ModelException ( self::ERROR_EMAIL_DUPLICATE );
+			throw new ModelException (self::ERROR_EMAIL_DUPLICATE);
 		} else {
 			return false;
 		}
 	}
-	
-	/**
-	 * Display Object Contents
-	 *
-	 * @return string
-	 */
-	public function printf(): string {
-		echo '<br /><strong>User Object:</strong><br />';
-		if ($this->_userID) {
-			echo 'userID => ' . $this->_userID . '<br/>';
-		}
-		if ($this->_user) {
-			echo 'user => ' . $this->_user . '<br/>';
-		}
-		if ($this->_email) {
-			echo 'email => ' . $this->_email . '<br/>';
-		}
-		if ($this->_password) {
-			echo 'password => ' . $this->_password . '<br/>';
-		}
-		if ($this->_status) {
-			echo 'status => ' . $this->_status . '<br/>';
-		}
-		if ($this->_activate) {
-			echo 'activate => ' . $this->_activate . '<br/>';
-		} elseif ($this->_activate == NULL) {
-			echo 'activate => NULL<br/>';
-		}
-		if ($this->_created_at) {
-			echo 'created_at => ' . $this->_created_at . '<br/>';
-		}
-		if ($this->_updated_at) {
-			echo 'updated_at => ' . $this->_updated_at . '<br/>';
-		}
-	}
 }
-?>

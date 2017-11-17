@@ -4,14 +4,13 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
 /**
- *
- * @property integer $_item_noteID;
- * @property integer $_itemID;
- * @property integer $_noteID;
+ * @property int itemID
+ * @property int noteID
+ * @property int item_noteID
  */
 class ItemNotes {
 	private $_item_noteID = 0;
@@ -417,22 +416,4 @@ class ItemNotes {
 			throw new ModelException ( self::ERROR_ITEM_ID_NOT_EXIST );
 		}
 	}
-	
-	/**
-	 * Display Object Contents
-	 */
-	public function printf() {
-		echo '<br /><strong>Note Object:</strong><br />';
-		
-		if ($this->_id) {
-			echo 'id => ' . $this->_id . '<br/>';
-		}
-		if ($this->_itemID) {
-			echo 'itemID => ' . $this->_itemID . '<br/>';
-		}
-		if ($this->_noteID) {
-			echo 'noteID => ' . $this->_noteID . '<br/>';
-		}
-	}
 }
-?>

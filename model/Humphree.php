@@ -1,13 +1,11 @@
 <?php
-use phpDocumentor\Reflection\Types\Array_;
-
 /**
  *
  * @author Troy Derrick <s3202752@student.rmit.edu.au>
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 if (session_status () == PHP_SESSION_NONE) {
 	session_start ();
@@ -81,7 +79,7 @@ class Humphree {
 	}
 	
 	/**
-	 * Verfies the email address of the new user and makes the account active.
+	 * Verifies the email address of the new user and makes the account active.
 	 *
 	 * @param int $userID
 	 *        	The userID of the account holder.
@@ -275,7 +273,7 @@ class Humphree {
 	}
 	
 	/**
-	 * Allows an administrator to add a category and specify it's position in the heirachy.
+	 * Allows an administrator to add a category and specify it's position in the hierarchy.
 	 *
 	 * @param int $parentID
 	 *        	The ID of the parent category.
@@ -300,7 +298,7 @@ class Humphree {
 	}
 	
 	/**
-	 * Allows an administrator to update a categories name and its position in the heirachy.
+	 * Allows an administrator to update a categories name and its position in the hierarchy.
 	 *
 	 * @param int $categoryID
 	 *        	The ID of a category.
@@ -475,20 +473,6 @@ class Humphree {
 		
 		return $its;
 	}
-	
-	/**
-	 * Counts the number of items in a user.
-	 *
-	 * @param int $userID        	
-	 * @return int
-	 */
-	public function countUserItems(int $userID): int {
-		$user = new User ( $this->db );
-		$user->userID = $userID;
-		$numUserItems = $this->system->countUserItems ( $user );
-		
-		return $numUserItems;
-	}
 
 	public function getUserOwnedItems(int $userID, string $type = ''): array {
 		$user = new User ( $this->db );
@@ -514,83 +498,6 @@ class Humphree {
 		return $result;
 	}
 
-	/**
-	 * Retrieves all items linked to a User.
-	 *
-	 * @param int $userID
-	 *        	The ID of the user whose items will be returned.
-	 *        	
-	 * @param string $userRole
-	 *        	The role that the user plays for the requested items.
-	 *        	
-	 * @param string $itemStatus
-	 *        	The desired item status.
-	 *        	
-	 * @return array An array containing the results.
-	 */
-	public function getUserItems(int $userID, string $userRole, string $itemStatus): array {
-		$user = new User ( $this->db );
-		$user->userID = $userID;
-		$userItems = $this->system->getUserItems ( $user, $userRole );
-		$its = array ();
-		
-		foreach ( $userItems as $userItem ) {
-			
-			$it = array ();
-			
-			$item = new Item ( $this->db );
-			$item->itemID = $userItem->itemID;
-			$item = $this->system->getItem ( $item );
-			
-			if ($item->status == $itemStatus) {
-				$it ['itemID'] = $item->itemID;
-				$it ['title'] = $item->title;
-				$it ['description'] = $item->description;
-				$it ['quantity'] = $item->quantity;
-				$it ['itemcondition'] = $item->itemcondition;
-				$it ['price'] = $item->price;
-				$it ['status'] = $item->status;
-				
-				$comments = $this->system->getItemComments ( $item );
-				$cs = array ();
-				
-				foreach ( $comments as $comment ) {
-					$c = array ();
-					
-					$c ['commentID'] = $comment->commentID;
-					$c ['userID'] = $comment->userID;
-					$user = new User ( $this->db );
-					$user->userID = $comment->userID;
-					$user = $this->system->getUser ( $user );
-					$c ['user'] = $user->user;
-					$c ['comment'] = $comment->comment;
-					
-					$cs [] = $c;
-				}
-				
-				$it ['comments'] = $cs;
-				
-				$notes = $this->system->getItemNotes ( $item );
-				$ns = array ();
-				
-				foreach ( $notes as $note ) {
-					$n = array ();
-					
-					$n ['noteID'] = $note->noteID;
-					$n ['note'] = $note->note;
-					
-					$ns [] = $n;
-				}
-				
-				$it ['notes'] = $ns;
-				
-				$its [] = $it;
-			}
-		}
-		
-		return $its;
-	}
-	
 	/**
 	 * Retrieves an item.
 	 *
@@ -928,7 +835,7 @@ class Humphree {
 	}
 
 	/**
-	 * Afds the given item to the given category.
+	 * Adds the given item to the given category.
 	 *
 	 * @param int $itemID		The item to be added.
 	 * @param int $categoryID	The category to which it will be added.
@@ -1114,7 +1021,7 @@ class Humphree {
 	/**
 	 * Searches Item title on an array of strings
 	 * 
-	 * @param array $searchArgs
+	 * @param string $searchString
 	 * @return array
 	 */
 	public function searchArray(string $searchString): array {

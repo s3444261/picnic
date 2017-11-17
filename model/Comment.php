@@ -4,19 +4,18 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
 /**
- *
- * @property integer $_commentID;
- * @property integer $_toUserID;
- * @property integer $_fromUserID;
- * @property integer $_itemID;
- * @property string $_comment;
- * @property string $_status;
- * @property string $_created_at;
- * @property string $_updated_at;
+ * @property int commentID
+ * @property int itemID
+ * @property int toUserID
+ * @property int fromUserID
+ * @property string comment
+ * @property string status
+ * @property string created_at
+ * @property string updated_at
  */
 class Comment {
 	private $_commentID = 0;
@@ -151,7 +150,7 @@ class Comment {
 	}
 	
 	/**
-	 * Confirmat the object already exsits in the database.
+	 * Confirm the object already exists in the database.
 	 * If it does, it
 	 * goes on to check the UserID and the Comment. If either value is invalid
 	 * then the original values are used.

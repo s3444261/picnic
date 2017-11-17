@@ -4,14 +4,12 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
 /**
- *
- * @property integer $_category_itemID;
- * @property integer $_categoryID;
- * @property integer $_itemID;
+ * @property int itemID
+ * @property int categoryID
  */
 class CategoryItems {
 	private $_categoryID = 0;
@@ -230,7 +228,7 @@ class CategoryItems {
 		$objects = array ();
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$item = new Item ( $this->db );
-			$item->_itemID = $row ['itemID'];
+			$item->itemID = $row ['itemID'];
 			try {
 				$item->get ();
 			} catch ( ModelException $e ) {
@@ -292,20 +290,6 @@ class CategoryItems {
 			return $objects;
 		} catch ( ValidationException $e ) {
 			throw new ModelException ( $e->getMessage () );
-		}
-	}
-	
-	/**
-	 * Prints the current instance attributes.
-	 */
-	public function printf() {
-		echo '<br /><strong>CategoryItem Object:</strong><br />';
-
-		if ($this->_categoryID) {
-			echo 'categoryID => ' . $this->_categoryID . '<br/>';
-		}
-		if ($this->_itemID) {
-			echo 'itemID => ' . $this->_itemID . '<br/>';
 		}
 	}
 }

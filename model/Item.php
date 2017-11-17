@@ -4,23 +4,23 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 require_once dirname ( __FILE__ ) . '/ModelException.php';
 
 /**
  *
- * @property integer $_itemID;
- * @property integer $_owningUserID ;
- * @property string $_title;
- * @property string $_description;
- * @property string $_quantity;
- * @property string $_itemcondition;
- * @property string $_price;
- * @property string $_type;
- * @property string $_status;
- * @property string $_created_at;
- * @property string $_updated_at;
+ * @property integer itemID;
+ * @property string title
+ * @property string description
+ * @property int quantity
+ * @property string itemcondition
+ * @property string price
+ * @property string type
+ * @property string created_at
+ * @property string updated_at
+ * @property int owningUserID
+ * @property string status
  */
 class Item {
 	private $_itemID = 0;
@@ -50,7 +50,7 @@ class Item {
 		}
 	}
 
-	public static function getAllItemIDs($db): array {
+	public static function getAllItemIDs(PDO $db): array {
 
 		$query = "SELECT itemID FROM Items";
 
@@ -65,70 +65,6 @@ class Item {
 		return $items;
 	}
 
-	public static function leaveRatingForCode($db, string $accessCode, int $rating) {
-		$query = "UPDATE User_ratings SET rating = :rating, rating_left_at = CURRENT_TIMESTAMP WHERE accessCode = :accessCode";
-
-		$stmt = $db->prepare ( $query );
-		$stmt->bindValue ( ':accessCode', $accessCode );
-		$stmt->bindValue ( ':rating', $rating );
-		$stmt->execute ();
-	}
-
-	public static function isRatingLeftForCode($db, string $accessCode): bool {
-		$query = "SELECT rating FROM User_ratings WHERE accessCode = :accessCode";
-
-		$stmt = $db->prepare ( $query );
-		$stmt->bindValue ( ':accessCode', $accessCode );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-
-		return $row['rating'] !== null;
-	}
-
-	public static function getRatingInfoForCode($db, string $accessCode): array {
-		$query = "SELECT * FROM User_ratings WHERE accessCode = :accessCode";
-
-		$stmt = $db->prepare ( $query );
-		$stmt->bindValue ( ':accessCode', $accessCode );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-
-		$result = [];
-		$result['sourceItemID'] = $row ['sourceItemID'];
-		$result['targetItemID'] = $row ['targetItemID'];
-
-		return $result;
-	}
-
-	public static function isValidRatingCode($db, $accessCode): bool {
-		$query = "SELECT COUNT*(*) as num FROM User_ratings WHERE accessCode = :accessCode";
-
-		$stmt = $db->prepare ( $query );
-		$stmt->bindValue ( ':accessCode', $accessCode );
-		$stmt->execute ();
-		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-
-		return $row['num'] != 0;
-	}
-
-	public static function feedbackCodeBelongsToUser($db, string $accessCode, int $userID) {
-		$query = "SELECT sourceItemID FROM User_ratings WHERE accessCode = :accessCode";
-
-		$stmt = $db->prepare ( $query );
-		$stmt->bindValue ( ':accessCode', $accessCode );
-		$stmt->execute ();
-
-		 if ($row = $stmt->fetch ( PDO::FETCH_ASSOC )) {
-			 $item = new Item($db);
-			 $item->itemID = $row['sourceItemID'];
-			 $item->get();
-
-			 return $item->_owningUserID == $userID;
-		 }
-
-		 return false;
-	}
-
 	public function &__get($name) {
 		$name = '_' . $name;
 		return $this->$name;
@@ -141,8 +77,8 @@ class Item {
 	/**
 	 * First confirms the item object exists in the database.
 	 * If it doesn't, an
-	 * exception is thrown. If it does exsit, it retrieves the attributes from the database.
-	 * The attributes are set and returnes+.
+	 * exception is thrown. If it does exist, it retrieves the attributes from the database.
+	 * The attributes are set and returned.
 	 *
 	 * @throws ModelException
 	 * @return Item
@@ -182,12 +118,12 @@ class Item {
 	public function set(): int {
 		$v = new Validation ();
 		try {
-			$v->emptyField ( $this->title );
-			$v->numberGreaterThanZero( $this->owningUserID );
+			$v->emptyField ( $this->_title );
+			$v->numberGreaterThanZero( $this->_owningUserID );
 
 			// make sure the claimed owning user exists
 			$user = new User($this->db);
-			$user->userID = $this->owningUserID;
+			$user->userID = $this->_owningUserID;
 			$user->get();
 
 			$query = "INSERT INTO Items
@@ -282,7 +218,7 @@ class Item {
 	}
 	
 	/**
-	 * Checks the item exsits in the database.
+	 * Checks the item exists in the database.
 	 * If it does, it is
 	 * deleted and true is returned.
 	 *
@@ -446,7 +382,7 @@ class Item {
 		return false;
 	}
 
-	public static function getFullyMatchedItemId($db, int $itemID) {
+	public static function getFullyMatchedItemId(PDO $db, int $itemID): int {
 		$query = "SELECT * FROM Item_matches
 				  WHERE (lhsItemID = :itemID OR rhsItemID = :itemID)
 				  AND lhsStatus = 'Accepted' AND  rhsStatus = 'Accepted'";
@@ -463,6 +399,8 @@ class Item {
 				return $row['lhsItemID'];
 			}
 		}
+
+		throw new ModelException('NOo completed match found for item ID ' . $itemID);
 	}
 
 	public static function createRating(PDO $db, int $sourceItemID, int $targetItemID): string {
@@ -535,37 +473,4 @@ class Item {
 
 		return $items;
 	}
-
-	/**
-	 * Display Object Contents
-	 */
-	public function printf() {
-		echo '<br /><strong>Item Object:</strong><br />';
-		
-		if ($this->_id) {
-			echo 'id => ' . $this->_id . '<br/>';
-		}
-		if ($this->_owningUserID) {
-			echo 'owningUserID => ' . $this->_owningUserID . '<br/>';
-		}
-		if ($this->_title) {
-			echo 'title => ' . $this->_title . '<br/>';
-		}
-		if ($this->_description) {
-			echo 'description => ' . $this->_description . '<br/>';
-		}
-		if ($this->_quantity) {
-			echo 'quantity => ' . $this->_quantity . '<br/>';
-		}
-		if ($this->_itemcondition) {
-			echo 'itemcondition => ' . $this->_itemcondition . '<br/>';
-		}
-		if ($this->_price) {
-			echo 'price => ' . $this->_price . '<br/>';
-		}
-		if ($this->_type) {
-			echo 'status => ' . $this->_type . '<br/>';
-		}
-	}
 }
-?>

@@ -5,7 +5,7 @@
 * Foster, Diane - s3387562@student.rmit.edu.au
 * Goodreds, Allen - s3492264@student.rmit.edu.au
 * Kinkead, Grant - s3444261@student.rmit.edu.au
-* Putro, Edwan - edwanhp@gmail.com
+* Putro, Edwan - s3418650@student.rmit.edu.au
 */
 ?>
 
@@ -39,13 +39,12 @@
 					</div>
 					<?php } else {?>
 					<table class="table table-responsive">
-						<div class="row">
-							<thead class="thead-dark">
-								<?php foreach ($this->inboxMessages() as $m) { ?>
-								<tr>
-									<th style="width: 70%">Item: <a href="<?php echo $this->viewItemUrl($m) ?>"><?php echo $this->itemTitle($m) ?></a></th>
-									<th style="width: 30%"></th>
-								</tr>
+                        <thead class="thead-dark">
+                            <?php foreach ($this->inboxMessages() as $m) { ?>
+                            <tr>
+                                <th style="width: 70%">Item: <a href="<?php echo $this->viewItemUrl($m) ?>"><?php echo $this->itemTitle($m) ?></a></th>
+                                <th style="width: 30%"></th>
+                            </tr>
 						</thead>
 						<tr>
 							<td>

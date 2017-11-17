@@ -1,11 +1,10 @@
 <?php
-/*
- * Authors: 
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
 require_once  __DIR__ . '/../config/Picnic.php';
@@ -129,7 +128,7 @@ class DashboardController {
 
 	public function LeaveFeedback(string $code) {
 		if (!$this->auth()) {
-			$_SESSION['loginRedirect'] = $_SERVER[REQUEST_URI];
+			$_SESSION['loginRedirect'] = $_SERVER['REQUEST_URI'];
 			header('Location: ' . BASE . '/Account/Login');
 			return;
 		}
@@ -146,7 +145,6 @@ class DashboardController {
 			return;
 		}
 
-		//todo : check auth!
 		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 			$h = new Humphree(Picnic::getInstance());
 

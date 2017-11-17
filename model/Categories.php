@@ -4,10 +4,8 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
-
-
 
 class Categories {
 
@@ -69,8 +67,10 @@ class Categories {
 	/**
 	 * Retrieves all categories for the given parent category and
 	 * returns them as an array of category objects.
-	 * 
-	 * @param $parentID		The ID of the parent category.
+	 *
+	 * @param int $parentID The ID of the parent category.
+	 * @return array
+	 * @throws ModelException
 	 */
 	public function getCategoriesIn(int $parentID): array {
 		$v = new Validation();
@@ -121,22 +121,4 @@ class Categories {
 		}
 		return $objects;
 	}
-
-	/**
-	 * Display Object Contents
-	 */
-	public function printf(): void {
-		echo '<br /><strong>Category Object:</strong><br />';
-		
-		if ($this->_id) {
-			echo 'id => ' . $this->_id . '<br/>';
-		}
-		if ($this->_parentID) {
-			echo 'parentID => ' . $this->_parentID . '<br/>';
-		}
-		if ($this->_category) {
-			echo 'category => ' . $this->_category . '<br/>';
-		}
-	}
 }
-?>

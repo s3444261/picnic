@@ -5,7 +5,7 @@
  * Foster, Diane - s3387562@student.rmit.edu.au
  * Goodreds, Allen - s3492264@student.rmit.edu.au
  * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - edwanhp@gmail.com
+ * Putro, Edwan - s3418650@student.rmit.edu.au
  */
 ?>
 
@@ -39,15 +39,12 @@
 					<?php } else {?>
                         <table class="table table-responsive">
                             <thead class="thead-dark">
-                                <div class="row">
-                                    <tr>
-                                        <th scope="col">My Item</th>
-                                        <th scope="col">Match</th>
-                                        <th scope="col">My Status</th>
-                                        <th scope="col">Other Status</th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </div>
+                                <th scope="col">My Item</th>
+                                <th scope="col">Match</th>
+                                <th scope="col">My Status</th>
+                                <th scope="col">Other Status</th>
+                                <th scope="col"></th>
+
                             </thead>
                             <tbody>
                             <?php foreach ($this->matches() as $m) { ?>

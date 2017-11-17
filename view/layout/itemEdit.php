@@ -4,7 +4,7 @@
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <edwanhp@gmail.com>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 ?>
 
@@ -24,13 +24,13 @@
                 sleep(500).then(function() {
                     img.show();
                 });
-            }
+            };
 
             reader.readAsDataURL(input.files[0]);
         }
     }
     function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise(resolve => setTimeout(resolve, ms);)
     }
 
     // ref:   https://stackoverflow.com/a/28843763
