@@ -41,6 +41,22 @@ class ItemView extends View
 		return $this-> getItemAttribute('itemID');
 	}
 
+	public function itemOwnerName(): string {
+		$h = new Humphree(Picnic::getInstance());
+		$user =  $h->getUser($this->owningUserId());
+		return $user['user'];
+	}
+
+	public function itemOwnerHasRating():int {
+		$h = new Humphree(Picnic::getInstance());
+		return $h->getUserHasRating($this->owningUserId());
+	}
+
+	public function itemOwnerRating():int {
+		$h = new Humphree(Picnic::getInstance());
+		return $h->getUserRating($this->owningUserId());
+	}
+
 	public function currentUserIsItemOwner() {
 		return $this->isLoggedInUser()
 			&& $this->owningUserId() === $_SESSION['userID'];

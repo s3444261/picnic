@@ -87,7 +87,29 @@
 
                         <div class="container" >
                             <hr />
+                            <div class="row col-md-12 item-desc-header top-n-tail">
+                                <p>
+								<?php if ($this->isItemForSale()) {
+									echo 'This item is being sold by <strong>' . $this->itemOwnerName() . '</strong>. ';
+								} else {
+									echo 'This item is wanted by <strong> ' . $this->itemOwnerName() . '</strong>. ';
+								} ?>
 
+
+                                <?php if ($this->itemOwnerHasRating()) {
+                                    for ($i =0; $i < $this->itemOwnerRating(); ++$i) {
+                                        echo 'X ';
+                                    }
+
+									for ($i = $this->itemOwnerRating(); $i < 5; ++$i) {
+										echo 'O ';
+									}
+                                 } else {
+									echo '(not yet rated)';
+								}?>
+                                </p>
+                            </div>
+                            <hr />
                             <div class="row col-md-12 item-desc-header top-n-tail">
 								<?php if ($this->isItemForSale()) {
 									echo '<strong>Send a message to the seller</strong>';

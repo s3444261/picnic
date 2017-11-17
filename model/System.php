@@ -1140,4 +1140,12 @@ class System {
 			'Feedback on your transaction',
 			'<a href="' . $feedbackUrl . '">Click here</a> to leave feedback.');
 	}
+
+	public function getUserHasRating($userID): bool {
+		return UserRatings::getUserHasRating($this->db, $userID);
+	}
+
+	public function getUserRating($userID): int {
+		return UserRatings::getUserRating($this->db, $userID);
+	}
 }

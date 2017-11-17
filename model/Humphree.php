@@ -701,6 +701,14 @@ class Humphree {
 		return $results;
 	}
 
+	public function getUserHasRating(int $userID): bool {
+		return $this->system->getUserHasRating($userID);
+	}
+
+	public function getUserRating(int $userID): int {
+		return $this->system->getUserRating($userID);
+	}
+
 	/**
 	 * Retrieves all comments for an item.
 	 *
