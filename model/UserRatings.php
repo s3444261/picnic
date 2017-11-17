@@ -61,6 +61,10 @@ class UserRatings {
 	}
 
 	public static function getUserHasRating($db, int $userID): bool {
+		return (UserRatings::getUserRatingCount($db, $userID) > 0);
+	}
+
+	public static function getUserRatingCount($db, int $userID): bool {
 		$query = "SELECT COUNT(*) as numRows 
 				  FROM User_ratings AS r 
 				  JOIN Items AS i ON ((r.sourceItemID = i.itemID) OR (r.targetItemID = i.itemID) ) 
@@ -71,9 +75,8 @@ class UserRatings {
 		$stmt->bindValue ( ':userID',$userID );
 		$stmt->execute ();
 		$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-		return ($row ['numRows'] > 0);
+		return $row ['numRows'];
 	}
-
 	public static function getUserRating($db, $userID) {
 		$query = "SELECT AVG(r.rating) as rating 
 				  FROM User_ratings AS r 

@@ -1145,6 +1145,10 @@ class System {
 		return UserRatings::getUserHasRating($this->db, $userID);
 	}
 
+	public function getUserRatingCount($userID): bool {
+		return UserRatings::v($this->db, $userID);
+	}
+
 	public function getUserRating($userID): int {
 		return UserRatings::getUserRating($this->db, $userID);
 	}

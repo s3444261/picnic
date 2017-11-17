@@ -52,6 +52,11 @@ class ItemView extends View
 		return $h->getUserHasRating($this->owningUserId());
 	}
 
+	public function itemOwnerRatingCount():int {
+		$h = new Humphree(Picnic::getInstance());
+		return $h->getUserRatingCount($this->owningUserId());
+	}
+
 	public function itemOwnerRating():int {
 		$h = new Humphree(Picnic::getInstance());
 		return $h->getUserRating($this->owningUserId());

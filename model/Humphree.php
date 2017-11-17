@@ -705,6 +705,10 @@ class Humphree {
 		return $this->system->getUserHasRating($userID);
 	}
 
+	public function getUserRatingCount(int $userID): int {
+		return $this->system->getUserRatingCount($userID);
+	}
+
 	public function getUserRating(int $userID): int {
 		return $this->system->getUserRating($userID);
 	}

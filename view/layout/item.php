@@ -104,6 +104,7 @@
 									for ($i = $this->itemOwnerRating(); $i < 5; ++$i) {
 										echo 'O ';
 									}
+									echo '(' . $this->itemOwnerRatingCount() . ' ratings)';
                                  } else {
 									echo '(not yet rated)';
 								}?>
