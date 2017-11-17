@@ -1146,7 +1146,7 @@ class System {
 	}
 
 	public function getUserRatingCount($userID): bool {
-		return UserRatings::v($this->db, $userID);
+		return UserRatings::getUserRatingCount($this->db, $userID);
 	}
 
 	public function getUserRating($userID): int {
