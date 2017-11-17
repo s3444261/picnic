@@ -428,21 +428,7 @@ class Humphree {
 		
 		return $numItemComments;
 	}
-	
-	/**
-	 * Counts the number of notes for an Item.
-	 *
-	 * @param int $itemID        	
-	 * @return int
-	 */
-	public function countItemNotes(int $itemID): int {
-		$item = new Item ( $this->db );
-		$item->itemID = $itemID;
-		$numItemNotes = $this->system->countItemNotes ( $item );
-		
-		return $numItemNotes;
-	}
-	
+
 	/**
 	 * Retrieves all items for an itemID and returns them based on the status of the item, the number
 	 * of items per page and the page of items requested.
@@ -520,20 +506,6 @@ class Humphree {
 		$it ['status'] = $item->status;
 		$it ['type'] = $item->type;
 
-		$notes = $this->system->getItemNotes ( $item );
-		$ns = array ();
-		
-		foreach ( $notes as $note ) {
-			$n = array ();
-			
-			$n ['noteID'] = $note->noteID;
-			$n ['note'] = $note->note;
-			
-			$ns [] = $n;
-		}
-		
-		$it ['notes'] = $ns;
-		
 		return $it;
 	}
 
@@ -852,104 +824,6 @@ class Humphree {
 	 */
 	public function getItemCategory(int $itemID): array {
 		return $this->system->getItemCategory($itemID);
-	}
-
-	/**
-	 * Retrieves all notes for an item.
-	 *
-	 * @param int $itemID        	
-	 * @return array
-	 */
-	public function getItemNotes(int $itemID): array {
-		$item = new Item ( $this->db );
-		$item->itemID = $itemID;
-		$itemNotes = $this->system->getItemNotes ( $item );
-		$ns = array ();
-		
-		foreach ( $itemNotes as $itemNote ) {
-			$n = array ();
-			
-			$n ['noteID'] = $itemNote->noteID;
-			$n ['note'] = $itemNote->note;
-			
-			$ns [] = $n;
-		}
-		return $ns;
-	}
-	
-	/**
-	 * Retrieves an item based on a noteID
-	 *
-	 * @param int $noteID        	
-	 * @return array
-	 */
-	public function getItemNote(int $noteID): array {
-		$note = new Note ( $this->db );
-		$note->noteID = $noteID;
-		$item = $this->system->getItemNote ( $note );
-		$it = array ();
-		$it ['itemID'] = $item->itemID;
-		$it ['title'] = $item->title;
-		$it ['description'] = $item->description;
-		$it ['quantity'] = $item->quantity;
-		$it ['itemcondition'] = $item->itemcondition;
-		$it ['price'] = $item->price;
-		$it ['status'] = $item->status;
-		
-		return $it;
-	}
-	
-	/**
-	 * Adds a note to a respective item.
-	 *
-	 * @param int $itemID        	
-	 * @param string $note        	
-	 * @return bool
-	 */
-	public function addItemNote(int $itemID, string $note): bool {
-		$item = new Item ( $this->db );
-		$n = new Note ( $this->db );
-		$item->itemID = $itemID;
-		$n->note = $note;
-		if ($this->system->addItemNote ( $item, $n )) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	/**
-	 * Updates a note.
-	 *
-	 * @param int $noteID        	
-	 * @param string $note        	
-	 * @return bool
-	 */
-	public function updateItemNote(int $noteID, string $note): bool {
-		$n = new Note ( $this->db );
-		$n->noteID = $noteID;
-		$n->note = $note;
-		if ($this->system->updateItemNote ( $n )) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	/**
-	 * Deletes a note from the database.
-	 *
-	 * @param int $noteID        	
-	 * @return bool
-	 */
-	public function deleteItemNote(int $noteID): bool {
-		$n = new Note ( $this->db );
-		$n->noteID = $noteID;
-		if ($this->system->deleteItemNote ( $n )) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 	
 	/**

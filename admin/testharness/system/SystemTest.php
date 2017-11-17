@@ -1,11 +1,10 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - s3418650@student.rmit.edu.au
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
 /*
@@ -366,8 +365,6 @@ require_once dirname ( __FILE__ ) . '/../../../model/CategoryItems.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Comment.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Item.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Items.php';
-require_once dirname ( __FILE__ ) . '/../../../model/ItemNotes.php';
-require_once dirname ( __FILE__ ) . '/../../../model/Note.php';
 require_once dirname ( __FILE__ ) . '/../../../model/User.php';
 require_once dirname ( __FILE__ ) . '/../../../model/UserComments.php';
 require_once dirname ( __FILE__ ) . '/../../../model/Users.php';
@@ -536,31 +533,10 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 	const ITEMS_PER_PAGE = 6;
 	const ITEMS_PAGE_NUMBER_ZERO = 0;
 	const ITEMS_PER_PAGE_ZERO = 0;
-	const ITEM_NOTE_ID_1 = 1;
-	const NOTE_ID_1 = 1;
-	const ITEM_NOTE_ID_2 = 2;
-	const NOTE_ID_2 = 2;
-	const NOTE_ID_15 = 15;
-	const NOTE_NEW = 'New Note';
-	const ITEM_COMMENT_ID_1 = 1;
 	const COMMENT_ID_1 = 1;
-	const ITEM_COMMENT_ID_2 = 2;
 	const COMMENT_ID_2 = 2;
-	const COMMENT_ID_15 = 15;
 	const COMMENT_NEW = 'New Note';
-	const USER_ITEM_ID_1 = 1;
-	const USER_ITEM_ID_15 = 15;
-	const RELATIONSHIP_1 = 'Relationship1';
-	const RELATIONSHIP_2 = 'Relationship2';
-	const USERSTATUS_1 = 'UserStatus1';
-	const USERSTATUS_2 = 'UserStatus2';
-	const USER_RATING_ID_1 = 1;
-	const SELLRATING_1 = 3;
-	const BUYRATING_1 = 4;
-	const USER_RATING_ID_2 = 2;
-	const SELLRATING_2 = 4;
-	const BUYRATING_2 = 3;
-	
+
 	// Search Constants
 	const STRING_NOT_EXIST = 'Hammer';
 	const TITLE_EXIST = 'Word3 word4';
@@ -1694,13 +1670,12 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 
 	public function testDeleteCategoryCategoryIdValid(): void {
 		unset ( $_SESSION ['error'] );
-		if ($this->populateDeleteCategory ()) {
-			$pdo = TestPDO::getInstance ();
-			$system = new System ( $pdo );
-			$c = new Category ( $pdo );
-			$c->categoryID = 2;
-			$system->deleteCategory ( $c );
-		}
+		$this->populateDeleteCategory ();
+		$pdo = TestPDO::getInstance ();
+		$system = new System ( $pdo );
+		$c = new Category ( $pdo );
+		$c->categoryID = 2;
+		$system->deleteCategory ( $c );
 		$this->assertFalse ( $c->exists () );
 	}
 	
@@ -1866,37 +1841,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$numItems = $system->countItemComments ( $item );
 		$this->assertEquals ( 5, $numItems );
 	}
-	
-	/*
-	 * countItemNotes(Item $item): int
-	 */
-	public function testCountItemNotesItemIdEmpty(): void {
-		$pdo = TestPDO::getInstance ();
-		$this->populateItemNotes ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$numItems = $system->countItemNotes ( $item );
-		$this->assertEquals ( 0, $numItems );
-	}
-	public function testCountItemNotesItemIdInvalid(): void {
-		$pdo = TestPDO::getInstance ();
-		$this->populateItemNotes ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::INVALID_ID;
-		$numItems = $system->countItemNotes ( $item );
-		$this->assertEquals ( 0, $numItems );
-	}
-	public function testCountItemNotesItemIdValid(): void {
-		$pdo = TestPDO::getInstance ();
-		$this->populateItemNotes ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::ITEM_ID_2;
-		$numItems = $system->countItemNotes ( $item );
-		$this->assertEquals ( 5, $numItems );
-	}
-	
+
 	/*
 	 * getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage, string $status): array
 	 */
@@ -2347,246 +2292,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$this->assertTrue ( $system->deleteItemComment ( $comment ) );
 	}
 
-	/*
-	 * getItemNotes(Item $item): array
-	 */
-	public function testGetItemNotesItemIdEmpty(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$system->getItemNotes ( $item );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testGetItemNotesItemIdInvalid(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::INVALID_ID;
-		$system->getItemNotes ( $item );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testGetItemNotesItemIdValid(): void {
-		$this->populateItemNotes ();
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::ITEM_ID_2;
-		$notes = $system->getItemNotes ( $item );
-		$i = 6;
-		foreach ( $notes as $note ) {
-			$this->assertEquals ( $i, $note->item_noteID );
-			$this->assertEquals ( 2, $note->itemID );
-			$this->assertEquals ( $i, $note->noteID );
-			$i ++;
-		}
-	}
-	
-	/*
-	 * getItemNote(Note $note): Note
-	 */
-	public function testGetItemNoteNoteIdEmpty(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$note = new Note ( $pdo );
-		$system->getItemNote ( $note );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testGetItemNoteNoteIdInvalid(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$note = new Note ( $pdo );
-		$note->noteID = self::INVALID_ID;
-		$system->getItemNote ( $note );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testGetItemNoteNoteIdValid(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$note = new Note ( $pdo );
-		$note->noteID = self::NOTE_ID_2;
-		$item = $system->getItemNote ( $note );
-
-		$this->assertEquals ( self::ITEM_ID_1, $item->itemID );
-		$this->assertEquals ( 'title1', $item->title );
-	}
-	
-	/*
-	 * addItemNote(Item $item, Note $note): bool
-	 */
-	public function testAddItemNoteEmpty(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$note = new Note ( $pdo );
-		$system->addItemNote ( $item, $note );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_NOTE_EMPTY, $_SESSION ['error'] );
-	}
-
-	public function testAddItemNoteInvalidItemId(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::INVALID_ID;
-		$note = new Note ( $pdo );
-		$note->note = self::NOTE_NEW;
-		$system->addItemNote ( $item, $note );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testAddItemNoteSuccess(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::ITEM_ID_3;
-		$note = new Note ( $pdo );
-		$note->note = self::NOTE_NEW;
-
-		$this->assertTrue ( $system->addItemNote ( $item, $note ) );
-	}
-	
-	/*
-	 * updateItemNote(Note $note): bool
-	 */
-	public function testUpdateItemNotesNoNotesId(): void {
-		$this->populateItemNotes ();
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$note = new Note ( $pdo );
-		$system->updateItemNote ( $note );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testUpdateItemNotesInvalidNoteId(): void {
-		$this->populateItemNotes ();
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$note = new Note ( $pdo );
-		$note->noteID = self::INVALID_ID;
-		$system->updateItemNote ( $note );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testUpdateItemNotesSuccess(): void {
-		$this->populateItemNotes ();
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$note = new Note ( $pdo );
-		$note->noteID = self::NOTE_ID_1;
-		$note->note = self::NOTE_NEW;
-
-		$this->assertTrue ( $system->updateItemNote ( $note ) );
-	}
-	
-	/*
-	 * deleteItemNote(Note $note): bool
-	 */
-	public function testDeleteItemNoteNoteIdEmpty(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$note = new Note ( $pdo );
-		$system->deleteItemNote ( $note );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testDeleteItemNoteNoteIdInvalid(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$note = new Note ( $pdo );
-		$note->noteID = self::INVALID_ID;
-		$system->deleteItemNote ( $note );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_NOTE_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testDeleteItemNoteNoteIdValid(): void {
-		$this->populateItemNotes ();
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$note = new Note ( $pdo );
-		$note->noteID = self::NOTE_ID_1;
-		$this->assertTrue ( $system->deleteItemNote ( $note ) );
-	}
-	
-	/*
-	 * deleteItemNotes(Item $item): bool
-	 */
-	public function testDeleteItemNotesItemIdEmpty(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$system->deleteItemNotes ( $item );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-
-	public function testDeleteItemNotesItemIdInvalid(): void {
-		$this->populateItemNotes ();
-		unset ( $_SESSION ['error'] );
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::INVALID_ID;
-		$system->deleteItemNotes ( $item );
-
-		$this->assertTrue( isset ( $_SESSION ['error'] ));
-		$this->assertEquals ( self::ERROR_ITEM_ID_NOT_EXIST, $_SESSION ['error'] );
-	}
-	public function testDeleteItemNotesItemIdValid(): void {
-		$this->populateItemNotes ();
-		$pdo = TestPDO::getInstance ();
-		$system = new System ( $pdo );
-		$item = new Item ( $pdo );
-		$item->itemID = self::ITEM_ID_1;
-
-		$this->assertTrue ( $system->deleteItemNotes ( $item ) );
-	}
-	
 	/*
 	 * getItemOwner(Item $item): array
 	 */
@@ -3541,7 +3246,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			}
 		}
 	}
-	protected function populateDeleteCategory(): bool {
+	protected function populateDeleteCategory(): void {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
@@ -3584,10 +3289,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				$item->set ();
 
 				for($m = 1; $m <= 5; $m ++) {
-					$note = new Note ( $pdo );
-					$note->note = 'note' . $l;
-					$note->set ();
-
 					$comment = new Comment ( $pdo );
 					$comment->toUserID = $user->userID;
 					$comment->fromUserID = $user->userID;
@@ -3595,12 +3296,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					$comment->comment = 'comment' . $l;
 					$comment->status = 'status' . $l;
 					$comment->set ();
-
-					$itemNote = new ItemNotes ( $pdo );
-					$itemNote->itemID = $item->itemID;
-					$itemNote->noteID = $note->noteID;
-					$itemNote->set ();
-
 					$l ++;
 				}
 
@@ -3618,7 +3313,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			
 			$l ++;
 		}
-		return true;
 	}
 
 	protected function populateUsers(): void {
@@ -3751,7 +3445,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 
 		$user->set ();
 
-		$l = 1;
 		for($i = 1; $i <= 3; $i ++) {
 			$item = new Item ( $pdo );
 			$item->owningUserID = $user->userID;
@@ -3759,24 +3452,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 			$item->type = 'Wanted';
 			$item->title = 'title' . $i;
 			$item->set ();
-
-			for($j = 1; $j <= 5; $j ++) {
-				$note = new Note ( $pdo );
-				$note->note = 'note' . $l;
-				$note->set ();
-
-				$itemNote = new ItemNotes ( $pdo );
-				$itemNote->itemID = $i;
-				$itemNote->noteID = $l;
-
-				if ($itemNote->itemID == 3 && $itemNote->noteID == 15) {
-					// Don't set.
-				} else {
-					$itemNote->set ();
-				}
-
-				$l ++;
-			}
 		}
 	}
 	protected function populateUserRatings(): void {
@@ -3902,10 +3577,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 				$item->set ();
 
 				for($m = 1; $m <= 5; $m ++) {
-					$note = new Note ( $pdo );
-					$note->note = 'note' . $l;
-					$note->set ();
-
 					$comment = new Comment ( $pdo );
 					$comment->toUserID = $user->userID;
 					$comment->fromUserID = $user->userID;
@@ -3913,11 +3584,6 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 					$comment->comment = 'comment' . $l;
 					$comment->status = 'status' . $l;
 					$comment->set ();
-
-					$itemNote = new ItemNotes ( $pdo );
-					$itemNote->itemID = $item->itemID;
-					$itemNote->noteID = $note->noteID;
-					$itemNote->set ();
 
 					$l ++;
 				}

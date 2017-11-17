@@ -19,8 +19,6 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 	const ERROR_NOT_ALPHANUMERIC = 'Input must be a alphanumeric!';
 	const ERROR_NOT_ALPHA = 'Input must consist of letters only!';
 	const ERROR_NOT_NUMBER_OR_HYPHEN = 'Must only consist of numbers and/or hyphens!';
-	const ERROR_NOT_DATE = 'Input must be valid date!';
-	const ERROR_NOT_TODAY_OR_FUTURE = 'Date must be todays date or a future date!';
 	const ERROR_EMAIL_NOT_VALID = 'Email address must be valid!';
 	const ERROR_STRLEN_LESS_THAN_FOUR = 'Input must be at least 4 characters in length!';
 	const ERROR_STRLEN_LESS_THAN_EIGHT = 'Input must be at least 8 characters in length!';
@@ -173,7 +171,6 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		} catch ( ValidationException $e ) {
 			if (strcmp ( $e->getError (), 'At least one uppercase letter, one lowercase letter, one digit and a minimum of eight characters!' ) == 0) {
 				$b5 = false;
-				$oneUpperOneLowerOneDigitGreaterEightError = $oneUpperOneLowerOneDigitGreaterEightError . 'Failed caught error oneUpperOneLowerOneDigitGreaterEight($content) with correct content.<br />';
 			}
 		}
 		
@@ -187,9 +184,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 				$b6 = true;
 			}
 		}
-		if (! $b6) {
-			$oneUpperOneLowerOneDigitGreaterEightError = $oneUpperOneLowerOneDigitGreaterEightError . 'Failed validated oneUpperOneLowerOneDigitGreaterEight($content) without an uppercase character.<br />';
-		}
+
 		// oneUpperOneLowerOneDigitGreaterEight($content) without a lowercase character
 		$content = 'TESTTEST88';
 		$b7 = false;
@@ -200,9 +195,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 				$b7 = true;
 			}
 		}
-		if (! $b7) {
-			$oneUpperOneLowerOneDigitGreaterEightError = $oneUpperOneLowerOneDigitGreaterEightError . 'Failed validated oneUpperOneLowerOneDigitGreaterEight($content) without an lowercase character.<br />';
-		}
+
 		// oneUpperOneLowerOneDigitGreaterEight($content) without a numeric character
 		$content = 'TestTestTest';
 		$b8 = false;
@@ -213,9 +206,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 				$b8 = true;
 			}
 		}
-		if (! $b8) {
-			$oneUpperOneLowerOneDigitGreaterEightError = $oneUpperOneLowerOneDigitGreaterEightError . 'Failed validated oneUpperOneLowerOneDigitGreaterEight($content) without a numeric character.<br />';
-		}
+
 		// oneUpperOneLowerOneDigitGreaterEight($content) less than eight characters
 		$content = 'Test88';
 		$b9 = false;
@@ -226,14 +217,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 				$b9 = true;
 			}
 		}
-		if (! $b9) {
-			$oneUpperOneLowerOneDigitGreaterEightError = $oneUpperOneLowerOneDigitGreaterEightError . 'Failed validated oneUpperOneLowerOneDigitGreaterEight($content) less than eight characters.<br />';
-		}
-		
-		if ($oneUpperOneLowerOneDigitGreaterEightError) {
-			$unitTestResults = $unitTestResults . $oneUpperOneLowerOneDigitGreaterEightError;
-		}
-		
+
 		// Test numberHyphen($content)
 		// numberHyphen($content) with number & hyphen content
 		$content = '123-456';
@@ -244,7 +228,6 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		} catch ( ValidationException $e ) {
 			if (strcmp ( $e->getError (), 'Must only consist of numbers and/or hyphens!' ) == 0) {
 				$b14 = false;
-				$numberHyphenError = 'Failed caught error numberHyphen($content) with number & hyphen content.<br />';
 			}
 		}
 		// numberHyphen($content) with content other than numbers & hyphens
@@ -257,21 +240,6 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 				$b15 = true;
 			}
 		}
-		if (! $b15) {
-			$numberHyphenError = $numberHyphenError = 'Failed validated alpha($content) with content other than numbers & hyphens.<br />';
-		}
-		
-		if ($numberHyphenError) {
-			$unitTestResults = $unitTestResults . $numberHyphenError;
-		}
-
-		date_default_timezone_set ( 'Australia/Melbourne' );
-		$currentDate = date_create ( date ( 'm/d/Y h:i:s a', time () ) );
-		$currentYear = date_format ( $currentDate, 'Y' );
-		$currentMonth = date_format ( $currentDate, 'm' );
-		$currentDay = date_format ( $currentDate, 'd' );
-		$nextYear = $currentYear + 1;
-		$lastYear = $currentYear - 1;
 
 		// Test validateEmail($content)
 		// validateEmail($content) with valid email
@@ -283,7 +251,6 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		} catch ( ValidationException $e ) {
 			if (strcmp ( $e->getError (), 'Email address must be valid!' ) == 0) {
 				$b21 = false;
-				$validateEmailError = 'Failed validated validateEmail($content) with valid email.<br />';
 			}
 		}
 		
@@ -297,14 +264,7 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 				$b22 = true;
 			}
 		}
-		if (! $b22) {
-			$validateEmailError = $validateEmailError . 'Failed validated validateEmail($content) with invalid email.<br />';
-		}
-		
-		if ($validateEmailError) {
-			$unitTestResults = $unitTestResults . $validateEmailError;
-		}
-		
+
 		// Test atLeastFour($content)
 		// atLeastFour($content) with valid content
 		$content = 'aaaa';
@@ -315,7 +275,6 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 		} catch ( ValidationException $e ) {
 			if (strcmp ( $e->getError (), 'Input must be at least 4 characters in length!' ) == 0) {
 				$b23 = false;
-				$atLeastFourError = 'Failed validated atLeastFour($content) with valid content.<br />';
 			}
 		}
 		
@@ -328,9 +287,6 @@ class ValidationTest extends PHPUnit\Framework\TestCase {
 			if (strcmp ( $e->getError (), 'Input must be at least 4 characters in length!' ) == 0) {
 				$b24 = true;
 			}
-		}
-		if (! $b24) {
-			$atLeastFourError = $atLeastFourError . 'Failed validated atLeastFour($content) with invalid content.<br />';
 		}
 
 		$this->assertTrue ( $b5 && $b6 && $b7 && $b8 && $b9 && $b14 && $b15 && $b21 && $b22 && $b23 && $b24 );

@@ -1,12 +1,12 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - s3418650@student.rmit.edu.au
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
+
 
 /*
  * TEST SUMMARY
@@ -107,7 +107,7 @@ class ItemTest extends PicnicTestCase {
 		DatabaseGenerator::Generate ( $pdo );
 
 		$user = new User($pdo);
-		$user->user = "f sfsd fsd f";
+		$user->user = "Some user";
 		$user->email = "test@test.com";
 		$user->password = "fRRR44@fff";
 		$user->status = "good";

@@ -429,19 +429,7 @@ class System {
 		$ic->itemID = $item->itemID;
 		return $ic->countCommentsForItem ();
 	}
-	
-	/**
-	 * Counts the number of notes for an item.
-	 *
-	 * @param Item $item        	
-	 * @return int
-	 */
-	public function countItemNotes(Item $item): int {
-		$in = new ItemNotes ( $this->db );
-		$in->itemID = $item->itemID;
-		return $in->count ();
-	}
-	
+
 	/**
 	 * Retrieves all items linked to a Category.
 	 *
@@ -763,125 +751,6 @@ class System {
 		}
 	}
 
-	/**
-	 * Retrieves all notes for an item and returns them as an array of
-	 * Notes objects.
-	 *
-	 * @param Item $item        	
-	 * @return array
-	 */
-	public function getItemNotes(Item $item): array {
-		$in = new ItemNotes ( $this->db );
-		$in->itemID = $item->itemID;
-		$notes = array ();
-		try {
-			$notes = $in->getItemNotes ();
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-		}
-		return $notes;
-	}
-	
-	/**
-	 * Retrieves an Item associated with a note.
-	 *
-	 * @param Note $note        	
-	 * @return Item
-	 */
-	public function getItemNote(Note $note): Item {
-		$in = new ItemNotes ( $this->db );
-		$in->noteID = $note->noteID;
-		$item = new Item ( $this->db );
-		try {
-			$item->itemID = $in->getItemNote ()->itemID;
-			$item->get ();
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-		}
-		return $item;
-	}
-	
-	/**
-	 * Adds an item and a note to ItemNotes.
-	 *
-	 * @param Item $item        	
-	 * @param Note $note        	
-	 * @return bool
-	 */
-	public function addItemNote(Item $item, Note $note): bool {
-		$itemNote = new ItemNotes ( $this->db );
-		$itemNote->itemID = $item->itemID;
-		try {
-			$itemNote->noteID = $note->set ();
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return false;
-		}
-		try {
-			if (($itemNote->item_noteID = $itemNote->set ()) > 0) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return false;
-		}
-	}
-	
-	/**
-	 * Updates an ItemNote
-	 *
-	 * @param Note $note
-	 * @return bool
-	 */
-	public function updateItemNote(Note $note): bool {
-		try {
-			$note->update ();
-			return true;
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return false;
-		}
-	}
-	
-	/**
-	 * Deletes a note from both ItemNotes and Notes
-	 *
-	 * @param Note $note        	
-	 * @return bool
-	 */
-	public function deleteItemNote(Note $note): bool {
-		$itemNote = new ItemNotes ( $this->db );
-		$itemNote->noteID = $note->noteID;
-		try {
-			$itemNote->deleteItemNote ();
-			return true;
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return false;
-		}
-	}
-	
-	/**
-	 * Deletes all notes associated with an item and deletes their respective
-	 * entries in ItemNotes
-	 *
-	 * @param Item $item        	
-	 * @return bool
-	 */
-	public function deleteItemNotes(Item $item): bool {
-		$itemNote = new ItemNotes ( $this->db );
-		$itemNote->itemID = $item->itemID;
-		try {
-			$itemNote->deleteItemNotes ();
-			return true;
-		} catch ( ModelException $e ) {
-			$_SESSION ['error'] = $e->getMessage ();
-			return false;
-		}
-	}
-	
 	/**
 	 * Retrieves everything known about a user with respect to an
 	 * item and returns them as an array.

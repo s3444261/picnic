@@ -120,23 +120,3 @@ CREATE TABLE `Comments` (
 	CONSTRAINT `FK_Comments_ToUser` FOREIGN KEY (`toUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `FK_Comments_FromUser` FOREIGN KEY (`fromUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-CREATE TABLE `Notes` (
-		`noteID` int(11) NOT NULL AUTO_INCREMENT,
-		`note` text NOT NULL,
-		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		PRIMARY KEY (`noteID`)
-		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-CREATE TABLE `Item_notes` (
-		`item_noteID` int(11) NOT NULL AUTO_INCREMENT,
-		`itemID` bigint(11) NOT NULL,
-		`noteID` int(11) NOT NULL,
-		PRIMARY KEY (`item_noteID`),
-		KEY `FK_Item_notes_Item_idx` (`itemID`),
-		KEY `FK_Item_notes_Note_idx` (`noteID`),
-		CONSTRAINT `FK_Item_notes_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `FK_Item_notes_Note` FOREIGN KEY (`noteID`) REFERENCES `Notes` (`noteID`) ON DELETE CASCADE ON UPDATE CASCADE,
-		CONSTRAINT `UQ_itemID_noteID` UNIQUE (`itemID`, `noteID`)
-		) ENGINE=MyISAM DEFAULT CHARSET=latin1;

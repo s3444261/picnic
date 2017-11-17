@@ -1,11 +1,10 @@
 <?php
-/*
- * Authors:
- * Derrick, Troy - s3202752@student.rmit.edu.au
- * Foster, Diane - s3387562@student.rmit.edu.au
- * Goodreds, Allen - s3492264@student.rmit.edu.au
- * Kinkead, Grant - s3444261@student.rmit.edu.au
- * Putro, Edwan - s3418650@student.rmit.edu.au
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
 /*
@@ -62,8 +61,7 @@
  * -- testGetCategoryItemsSuccess(): void
  *
  */
-declare ( strict_types = 1 )
-	;
+declare ( strict_types = 1 );
 
 require_once 'TestPDO.php';
 require_once dirname ( __FILE__ ) . '/../../createDB/DatabaseGenerator.php';
@@ -109,7 +107,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 	const ERROR_ZERO = 'Number must be greater than zero!';
 	const ERROR_CATEGORY_ID_NOT_EXIST = 'The categoryID does not exist!';
 	const ERROR_ITEM_ID_NOT_EXIST = 'The itemID does not exist!';
-	const ERROR_CATEGORYITEM_EXISTS = 'The categoryItem already exists!';
+	const ERROR_CATEGORY_ITEM_EXISTS = 'The categoryItem already exists!';
 	
 	protected function setUp(): void {
 		TestPDO::CreateTestDatabaseAndUser ();
@@ -136,7 +134,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 		$c->set ();
 
 		$user = new User($pdo);
-		$user->user = "f sfsd fsd f";
+		$user->user = "Some user";
 		$user->email = "test@test.com";
 		$user->password = "fRRR44@fff";
 		$user->status = "good";
@@ -224,7 +222,7 @@ class CategoryItemsTest extends PHPUnit\Framework\TestCase {
 
 	public function testSetDuplicate(): void {
 		$sut = $this->createSutWithId($this->getValidItemId(), $this->getValidCategoryId());
-		$this->expectExceptionMessage ( self::ERROR_CATEGORYITEM_EXISTS);
+		$this->expectExceptionMessage ( self::ERROR_CATEGORY_ITEM_EXISTS);
 		$sut->set ();
 	}
 	

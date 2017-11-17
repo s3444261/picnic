@@ -655,33 +655,15 @@ class UserTest extends PicnicTestCase {
 				self::USER_ID => 1,
 				self::PASSWORD => self::PASSWORD_ADD 
 		] );
-		try {
-			$sut->get ();
-		} catch ( ModelException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
+
+		$sut->get ();
 		$oldPassword = $sut->password;
 		$sut->password = self::PASSWORD_ADD;
-		try {
-			$this->assertTrue ( $sut->updatePassword () );
-		} catch ( ModelException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
-		try {
-			$sut->get ();
-		} catch ( ModelException $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
-		try {
-			$newPassword = $sut->get ()->password;
-		} catch ( Exception $e ) {
-			$this->assertEquals('Exception', $e->getMessage());
-		}
-		if (strlen ( $oldPassword ) > 0 && strlen ( $newPassword ) > 0 && $oldPassword != $newPassword) {
-			$this->assertTrue ( true );
-		} else {
-			$this->assertTrue ( false );
-		}
+		$this->assertTrue ( $sut->updatePassword () );
+		$sut->get ();
+		$newPassword = $sut->get ()->password;
+
+		$this->assertTrue (strlen ( $oldPassword ) > 0 && strlen ( $newPassword ) > 0 && $oldPassword != $newPassword);
 	}
 	
 	/*
