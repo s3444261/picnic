@@ -155,3 +155,11 @@ img.item-image {
 span.error {
     visibility: hidden;
 }
+
+.list-inline-item:not(:last-child) {
+    margin-right: 0;
+}
+
+.list-inline-item:not(:last-child)>span {
+    margin: 0 5px;
+}

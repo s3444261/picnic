@@ -29,9 +29,9 @@
 
 			<h1 class="display-4 text-center top-n-tail">Administration - Users</h1>
 
-            <div class="text-center">
-				<?php echo Pager::Render('pagination pagination-sm list-inline', $this->data ['pagerData'], true); ?>
-            </div>
+            <nav aria-label="Page navigation example">
+            	<?php echo Pager::Render('pagination pagination-sm list-inline', $this->data ['pagerData'], true); ?>
+            </nav>
 
 			<table class="table table-responsive listUser">
 				<thead>
