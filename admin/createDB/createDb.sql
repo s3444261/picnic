@@ -6,8 +6,6 @@
  * Putro, Edwan - s3418650@student.rmit.edu.au
  */
 
-DROP TABLE IF EXISTS `Item_notes`;
-DROP TABLE IF EXISTS `Notes`;
 DROP TABLE IF EXISTS `Comments`;
 DROP TABLE IF EXISTS `Category_items`;
 DROP TABLE IF EXISTS `User_ratings`;
@@ -62,8 +60,6 @@ CREATE TABLE `Items` (
 		PRIMARY KEY (`itemID`),
   	CONSTRAINT `FK_Items_Users` FOREIGN KEY (`owningUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-		
-ALTER TABLE Items ADD FULLTEXT(title, description);
 
 CREATE TABLE `Item_matches` (
 		`lhsItemID` bigint(11) NOT NULL,

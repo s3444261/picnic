@@ -9,8 +9,7 @@
 
 class DatabaseGenerator
 {
-	public static function RunScript(PDO $pdo, string $path) : void
-	{
+	public static function RunScript(PDO $pdo, string $path) : void {
 		$file = fopen($path, 'r');
 		$query = fread($file, filesize($path));
 		fclose($file);
@@ -19,32 +18,34 @@ class DatabaseGenerator
 		$stmt->execute();
 	}
 
-	public static function Generate(PDO $pdo): void
-	{
-		DatabaseGenerator::RunScript($pdo, __DIR__.'/createDb.sql');
+	public static function Generate(PDO $pdo): void {
+		self::RunScript($pdo, __DIR__.'/createDb.sql');
 	}
 
-	public static function Populate(PDO $pdo): void
-	{
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertUsers.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertCategories.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems1.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems2.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems3.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems4.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems5.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems6.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems7.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems8.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems9.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems10.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems11.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems12.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems13.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems14.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems15.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems16.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItems17.sql');
-		DatabaseGenerator::RunScript($pdo,__DIR__.'/insertItemCategories.sql');
+	public static function Populate(PDO $pdo): void {
+		self::RunScript($pdo,__DIR__.'/insertUsers.sql');
+		self::RunScript($pdo,__DIR__.'/insertCategories.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems1.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems2.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems3.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems4.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems5.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems6.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems7.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems8.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems9.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems10.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems11.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems12.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems13.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems14.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems15.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems16.sql');
+		self::RunScript($pdo,__DIR__.'/insertItems17.sql');
+		self::RunScript($pdo,__DIR__.'/insertItemCategories.sql');
+	}
+
+	public static function CreateFullTextIndex(PDO $pdo): void {
+		self::RunScript($pdo,__DIR__.'/createFullTextIndex.sql');
 	}
 }

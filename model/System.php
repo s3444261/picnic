@@ -849,42 +849,40 @@ class System {
 		return $items->searchAdvanced ($args, $pageNumber, $itemsPerPage);
 	}
 
-	private function runMatchingFor(int $itemID) {
-
+	private function runMatchingFor(int $itemID)
+	{
 		$item = new Item($this->db);
 		$item->itemID = $itemID;
 		$item->get();
 
-		if ($item->type === 'ForSale' || $item->type === 'Wanted') {
-			$category = $this->getItemCategory($item->itemID);
+		$category = $this->getItemCategory($item->itemID);
 
-			$desiredStatus = ($item->type === 'ForSale' ? 'Wanted' : 'ForSale');
+		$desiredStatus = ($item->type === 'ForSale' ? 'Wanted' : 'ForSale');
 
-			if ($item->type === 'ForSale') {
-				// We allow a 25% variation on min price, no max.
-				$minPrice = (floatval($item->price) * 0.75);
-				$maxPrice = 0x7FFFFFFF;
-			} elseif ($item->type === 'Wanted') {
-				// We allow a 50% variation on max price, no min.
-				$minPrice = 0;
-				$maxPrice = (floatval($item->price) * 1.5);
-			} else {
-				// We effectively don't consider price.
-				$minPrice = 0;
-				$maxPrice = 0x7FFFFFFF;
-			}
+		if ($item->type === 'ForSale') {
+			// We allow a 25% variation on min price, no max.
+			$minPrice = (floatval($item->price) * 0.75);
+			$maxPrice = 0x7FFFFFFF;
+		} elseif ($item->type === 'Wanted') {
+			// We allow a 50% variation on max price, no min.
+			$minPrice = 0;
+			$maxPrice = (floatval($item->price) * 1.5);
+		} else {
+			// We effectively don't consider price.
+			$minPrice = 0;
+			$maxPrice = 0x7FFFFFFF;
+		}
 
-			// remove all non alphanumeric chars from the title so we don't confuse the search engine.
-			$cleanedTitle =  preg_replace("/[^A-Za-z0-9 ]/", ' ', $item->title);
+		// remove all non alphanumeric chars from the title so we don't confuse the search engine.
+		$cleanedTitle = preg_replace("/[^A-Za-z0-9 ]/", ' ', $item->title);
 
-			$searchResults = $this->searchAdvanced($cleanedTitle, $minPrice, $maxPrice, 1, $item->itemcondition, $desiredStatus, $category['parentID'], $category['categoryID'], 1, 10);
+		$searchResults = $this->searchAdvanced($cleanedTitle, $minPrice, $maxPrice, 1, $item->itemcondition, $desiredStatus, $category['parentID'], $category['categoryID'], 1, 10);
 
-			$item->removeAllMatches();
+		$item->removeAllMatches();
 
-			// we take a maximum of 10 matches.
-			foreach (array_slice($searchResults, 0, 10) as $result) {
-				$item->addMatchWith($result->itemID);
-			}
+		// we take a maximum of 10 matches.
+		foreach (array_slice($searchResults, 0, 10) as $result) {
+			$item->addMatchWith($result->itemID);
 		}
 	}
 
@@ -899,8 +897,14 @@ class System {
 
 		$allItems = Item::getAllItemIDs($this->db);
 
+		$count = 0;
 		foreach ($allItems as $itemID) {
 			$this->runMatchingFor($itemID);
+
+			if ($count % 1000 === 0) {
+				echo $count . ' items matched<br />';
+				flush();
+			}
 		}
 	}
 

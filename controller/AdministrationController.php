@@ -179,11 +179,29 @@ class AdministrationController {
 
 	public function RebuildDatabase()
 	{
+		echo 'Creating database...<br />';
+		flush();
+
 		DatabaseGenerator::Generate(Picnic::getInstance());
+
+		echo 'Populating database...<br />';
+		flush();
+
 		DatabaseGenerator::Populate(Picnic::getInstance());
+
+		echo 'Generating full-text indexes...<br />';
+		flush();
+
+		DatabaseGenerator::CreateFullTextIndex(Picnic::getInstance());
+
+		echo 'Matching items...<br />';
+		flush();
 
 		$h = new Humphree(Picnic::getInstance());
 		$h->runMatchingForAllItems();
+
+		echo 'Deleting unused images...<br />';
+		flush();
 
 		for ($i = 32591; $i < 33000; ++$i) {
 			$paddedItemId = str_pad($i, 4, '0', STR_PAD_LEFT);
@@ -199,7 +217,6 @@ class AdministrationController {
 			if (file_exists($thumbPath)) {
 				unlink($thumbPath);
 			}
-
 		}
 
 		$view = new View();
