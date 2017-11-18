@@ -29,7 +29,7 @@ CREATE TABLE `Users` (
   PRIMARY KEY (`userID`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   UNIQUE KEY `user_UNIQUE` (`user`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Categories` (
 		`categoryID` int(11) NOT NULL AUTO_INCREMENT,
@@ -38,7 +38,7 @@ CREATE TABLE `Categories` (
 		`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   	`updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		PRIMARY KEY (`categoryID`)
-		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 ALTER TABLE Categories
 		ADD CONSTRAINT FK_Categories_Categories
@@ -61,7 +61,7 @@ CREATE TABLE `Items` (
 	  CHECK (quantity > 0),
 		PRIMARY KEY (`itemID`),
   	CONSTRAINT `FK_Items_Users` FOREIGN KEY (`owningUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
-		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 		
 ALTER TABLE Items ADD FULLTEXT(title, description);
 
@@ -76,7 +76,7 @@ CREATE TABLE `Item_matches` (
 		CHECK (lhsItemID < rhsItemID),
 		CONSTRAINT `FK_Item_matches_Items` FOREIGN KEY (`lhsItemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
 		CONSTRAINT `FK_Item_matches_Items2` FOREIGN KEY (`rhsItemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE
-		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `User_ratings` (
     `sourceItemID` bigint(11) NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE `User_ratings` (
 		KEY `FK_User_ratings_Items_idx` (`sourceItemID`),
 	  KEY `FK_User_ratings_Items_idx2`(`targetItemID`),
 		CONSTRAINT `FK_User_ratings_Item_matches` FOREIGN KEY (`sourceItemID`, `targetItemID`) REFERENCES `Item_matches` (`lhsItemID`, `rhsItemID`) ON DELETE CASCADE ON UPDATE CASCADE
-		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Category_items` (
 	`itemID` bigint(11) NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE `Category_items` (
 	KEY `FK_Category_idx` (`categoryID`),
 	CONSTRAINT `FK_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `FK_Category` FOREIGN KEY (`categoryID`) REFERENCES `Categories` (`categoryID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Comments` (
 	`commentID` int(11) NOT NULL AUTO_INCREMENT,
@@ -119,4 +119,4 @@ CREATE TABLE `Comments` (
   CONSTRAINT `FK_Comments_Item` FOREIGN KEY (`itemID`) REFERENCES `Items` (`itemID`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `FK_Comments_ToUser` FOREIGN KEY (`toUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `FK_Comments_FromUser` FOREIGN KEY (`fromUserID`) REFERENCES `Users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

@@ -886,7 +886,10 @@ class System {
 				$maxPrice = 0x7FFFFFFF;
 			}
 
-			$searchResults = $this->searchAdvanced($item->title, $minPrice, $maxPrice, 1, $item->itemcondition, $desiredStatus, $category['parentID'], $category['categoryID'], 1, 10);
+			// remove all non alphanumeric chars from the title so we don't confuse the search engine.
+			$cleanedTitle =  preg_replace("/[^A-Za-z0-9 ]/", ' ', $item->title);
+
+			$searchResults = $this->searchAdvanced($cleanedTitle, $minPrice, $maxPrice, 1, $item->itemcondition, $desiredStatus, $category['parentID'], $category['categoryID'], 1, 10);
 
 			$item->removeAllMatches();
 
