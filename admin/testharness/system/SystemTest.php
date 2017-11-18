@@ -556,6 +556,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
 		DatabaseGenerator::CreateFullTextIndex( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 
 		// Insert a root category
 		$root = new Category ( $pdo );
@@ -2885,6 +2886,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
@@ -2909,6 +2911,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 
 		$user = new User ( $pdo, [
 			'user' => 'user',
@@ -2968,6 +2971,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 		
 		// Populate the Category Table
 		// Insert a root category
@@ -3030,6 +3034,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 		
 		// Populate the Category Table
 		// Insert a root category
@@ -3099,6 +3104,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
@@ -3132,6 +3138,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
@@ -3177,6 +3184,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 		
 		$user = new User ( $pdo, [ 
 				'user' => 'user',
@@ -3216,6 +3224,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 
 		$user = new User ( $pdo, [
 			'user' => 'user',
@@ -3239,6 +3248,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 
 		$u1 = new User ( $pdo, [
 				self::USER => self::USER_ONE,
@@ -3277,6 +3287,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 		
 		// Insert a root category
 		$root = new Category ( $pdo );
@@ -3316,6 +3327,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 		
 		// Populate the Categories Table
 		
@@ -3385,6 +3397,7 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 		
 		// Populate the Category Table
 		$j = 1;
