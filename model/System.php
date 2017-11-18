@@ -794,18 +794,6 @@ class System {
 		$items = new Items ( $this->db );
 		return $items->search ($searchString, $pageNumber, $itemsPerPage);
 	}
-	
-	/**
-	 * Searches an items title on an array of strings.
-	 * 
-	 * @param string $searchString
-	 * @return array
-	 */
-	public function searchArray(string $searchString): array {
-		
-		$items = new Items ( $this->db );
-		return $items->searchArray ($searchString);
-	}
 
 	/**
 	 * Interim Advanced Search method
@@ -907,7 +895,7 @@ class System {
 	}
 
 	public function runMatchingForAllItems() {
-		set_time_limit(1000);
+		set_time_limit(3000);
 
 		$allItems = Item::getAllItemIDs($this->db);
 

@@ -84,50 +84,6 @@ class Items {
 			return $items;
 		}
 	}
-	
-	/**
-	 * This method uses boolean full text searches.  See http://www.vionblog.com/mysql-full-text-search-with-multiple-words/
-	 * for a full explanation.
-	 * + means AND
-	 * � means NOT
-	 * [no operator] means OR
-	 * 
-	 * @param string $searchString
-	 * @return array
-	 */
-	public function searchArray(string $searchString): array {
-		
-		$items = array ();
-		$query = "SELECT * FROM Items
-					WHERE status = :status AND 
-					MATCH (title, description)
-					AGAINST (:searchString IN BOOLEAN MODE)";
-		
-		if (strlen($searchString) > 0) {
-			$stmt = $this->db->prepare ( $query );
-			$stmt->bindValue ( ':status', 'Active' );
-			$stmt->bindValue ( ':searchString', $searchString );
-			$stmt->execute ();
-			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
-				$item = new Item ( $this->db );
-				$item->itemID = $row ['itemID'];
-				$item->title = $row ['title'];
-				$item->description = $row ['description'];
-				$item->quantity = $row ['quantity'];
-				$item->itemcondition = $row ['itemcondition'];
-				$item->price = $row ['price'];
-				$item->type = $row ['type'];
-				$item->created_at = $row ['created_at'];
-				$item->updated_at = $row ['updated_at'];
-				
-				$items [] = $item;
-			}
-			
-			return $items;
-		} else {
-			return $items;
-		}
-	}
 
 	/**
 	 * Interim advanced search method.
