@@ -555,7 +555,8 @@ class SystemTest extends PHPUnit\Framework\TestCase {
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
-		
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
+
 		// Insert a root category
 		$root = new Category ( $pdo );
 		$root->{self::CATEGORY_NAME} = self::CATEGORY_1;

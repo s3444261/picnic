@@ -107,6 +107,7 @@ class ItemsTest extends PHPUnit\Framework\TestCase{
 		TestPDO::CreateTestDatabaseAndUser ();
 		$pdo = TestPDO::getInstance ();
 		DatabaseGenerator::Generate ( $pdo );
+		DatabaseGenerator::CreateFullTextIndex( $pdo );
 
 		// Populate the Category Table
 		$j = 1;

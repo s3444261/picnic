@@ -905,6 +905,8 @@ class System {
 				echo $count . ' items matched<br />';
 				flush();
 			}
+
+			++$count;
 		}
 	}
 
