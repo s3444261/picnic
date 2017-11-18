@@ -56,7 +56,7 @@ class AdminCategoriesView extends View{
 	}
 
 	public function usersUrl(): string {
-		return BASE . '/Administration';
+		return BASE . '/Administration/Users';
 	}
 
 	public function categoriesUrl(): string {

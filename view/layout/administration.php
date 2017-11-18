@@ -17,7 +17,7 @@
             <!-- tab headers -->
             <ul class="nav nav-tabs nav-justified">
                 <li class="nav-item">
-                    <a class="nav-link active" href="<?php echo BASE . '/Administration' ?>">Users</a>
+                    <a class="nav-link active" href="<?php echo BASE . '/Administration/Users' ?>">Users</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo BASE . '/Administration/ViewCategories' ?>">Categories</a>

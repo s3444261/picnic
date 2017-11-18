@@ -23,9 +23,9 @@
 							<li>Home
 								<ul>
 									<li><a href="<?php echo BASE . '/Search/Advanced' ?>">Search</a></li>
-									<li><a href="<?php echo BASE . '/About' ?>">About</a></li>
-									<li><a href="<?php echo BASE . '/TermsOfService' ?>">Terms of Service</a></li>
-									<li><a href="<?php echo BASE . '/PrivacyPolicy' ?>">Privacy Policy</a></li>
+									<li><a href="<?php echo BASE . '/Help/About' ?>">About</a></li>
+									<li><a href="<?php echo BASE . '/Help/TermsOfService' ?>">Terms of Service</a></li>
+									<li><a href="<?php echo BASE . '/Help/PrivacyPolicy' ?>">Privacy Policy</a></li>
 								</ul>
 							</li>
 							<li>Browse Listings
@@ -96,7 +96,7 @@
 
 							<?php if (isset($_SESSION['status']) && $_SESSION['status'] == 'admin') { ?>
                                 <li>Admin<ul>
-                                        <li><a href="<?php echo BASE . '/Administration' ?>">Manage Users</a></li>
+                                        <li><a href="<?php echo BASE . '/Administration/Users' ?>">Manage Users</a></li>
                                         <li><a href="<?php echo BASE . '/Administration/ViewCategories' ?>">Manage Categories</a></li>
                                     </ul>
 

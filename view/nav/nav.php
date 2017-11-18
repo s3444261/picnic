@@ -47,7 +47,7 @@
             <?php
             if (isset ( $_SESSION ['status'] )) {
                 if ($_SESSION ['status'] == 'admin') {
-                echo '<a class="dropdown-item" href="' . BASE . '/Administration">Admin</a>';
+                echo '<a class="dropdown-item" href="' . BASE . '/Administration/Users">Admin</a>';
               }
             }
             ?>

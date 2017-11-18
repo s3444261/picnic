@@ -32,7 +32,7 @@ class UserRatings {
 	 * @param int $userID			The ID of the user to be queried.
 	 * @return int					The number of ratings that have been left.
 	 */
-	public static function getUserRatingCount($db, int $userID): int {
+	public static function getUserRatingCount(PDO $db, int $userID): int {
 		$query = "SELECT COUNT(*) as numRows 
 				  FROM User_ratings AS r 
 				  JOIN Items AS i ON (r.targetItemID = i.itemID)
@@ -54,7 +54,7 @@ class UserRatings {
 	 * @param int $userID			The ID of the user to be queried.
 	 * @return int					The aggregate rating score.
 	 */
-	public static function getUserRating($db, $userID): int {
+	public static function getUserRating(PDO $db, int $userID): int {
 		$query = "SELECT AVG(r.rating) as rating 
 				  FROM User_ratings AS r 
 				  JOIN Items AS i ON (r.targetItemID = i.itemID) 
@@ -75,7 +75,7 @@ class UserRatings {
 	 * @param string $accessCode	A unique access code representing the transaction.
 	 * @param int $rating			The rating score to be stored.
 	 */
-	public static function leaveRatingForCode($db, string $accessCode, int $rating): void {
+	public static function leaveRatingForCode(PDO $db, string $accessCode, int $rating): void {
 		$query = "UPDATE User_ratings 
 				  SET rating = :rating, rating_left_at = CURRENT_TIMESTAMP 
 				  WHERE accessCode = :accessCode";
@@ -93,7 +93,7 @@ class UserRatings {
 	 * @param string $accessCode	A unique access code representing the transaction.
 	 * @return bool					True if a rating has been stored, false otherwise.
 	 */
-	public static function isRatingLeftForCode($db, string $accessCode): bool {
+	public static function isRatingLeftForCode(PDO $db, string $accessCode): bool {
 		$query = "SELECT rating 
 				  FROM User_ratings 
 				  WHERE accessCode = :accessCode";
@@ -113,7 +113,7 @@ class UserRatings {
 	 * @param string $accessCode	A unique access code representing the transaction.
 	 * @return array				An array containing information on the transaction.
 	 */
-	public static function getRatingInfoForCode($db, string $accessCode): array {
+	public static function getRatingInfoForCode(PDO $db, string $accessCode): array {
 		$query = "SELECT * 
 				  FROM User_ratings 
 				  WHERE accessCode = :accessCode";
@@ -137,7 +137,7 @@ class UserRatings {
 	 * @param string $accessCode	The access code to be tested.
 	 * @return bool					True if the code is valid, false otherwise.
 	 */
-	public static function isValidRatingCode($db, string $accessCode): bool {
+	public static function isValidRatingCode(PDO $db, string $accessCode): bool {
 		$query = "SELECT COUNT(*) as numRows
 				  FROM User_ratings 
 				  WHERE accessCode = :accessCode";
@@ -158,7 +158,7 @@ class UserRatings {
 	 * @param int $userID			The user to be tested..
 	 * @return bool					True if the access code belongs to the user, false otherwise.
 	 */
-	public static function feedbackCodeBelongsToUser($db, string $accessCode, int $userID): bool {
+	public static function feedbackCodeBelongsToUser(PDO $db, string $accessCode, int $userID): bool {
 		$query = "SELECT sourceItemID 
 				  FROM User_ratings 
 				  WHERE accessCode = :accessCode";

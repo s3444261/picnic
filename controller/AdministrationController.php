@@ -1,21 +1,23 @@
 <?php
+
+require_once  __DIR__ . '/../admin/createDB/DatabaseGenerator.php';
+require_once  __DIR__ . '/../config/Picnic.php';
+
 /**
+ * Controller for administration-related functions.
+ *
  * @author Troy Derrick <s3202752@student.rmit.edu.au>
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
  * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
-
-require_once  __DIR__ . '/../admin/createDB/DatabaseGenerator.php';
-require_once  __DIR__ . '/../config/Picnic.php';
-
 class AdministrationController {
 
 	/**
-	 * Displays the main admin page.
+	 * Displays the main user administration page.
 	 */
-	public function index() : void {
+	public function Users(): void {
 		if ($this->auth())  {
 			$h = new Humphree(Picnic::getInstance());
 
@@ -28,124 +30,15 @@ class AdministrationController {
 			$view->SetData('pagerData', $pagerData);
 			$view->Render('administration');
 		} else {
-			header('Location: ' . BASE . '/Home');
+			$this->handleUnauthorised();
 		}
 	}
 
 	/**
-	 * Updates the user attributes if they are valid, then displays the main admin page.
-	 * @param int $userID
+	 * Displays a page for changing the given user's password.
+	 *
+	 * @param int $userID		The ID of the user whose password will be changed.
 	 */
-	public function updateUser(int $userID): void {
-		if ($this->auth()) {
-			$user = new User (Picnic::getInstance());
-			$v = new Validation ();
-
-			// Process on submission of user.
-			if (isset ($_POST ['user'])) {
-
-				// Validate the user.
-				try {
-					$v->userName($_POST ['user']);
-				} catch (ValidationException $e) {
-					$_SESSION ['error'] = $e->getError();
-				}
-
-				if (isset ($_SESSION ['error'])) {
-					unset ($_POST ['user']);
-					header('Location: Administration');
-				} else {
-					$user->user = $_POST ['user'];
-					unset ($_POST ['user']);
-
-					// Validate the email.
-					try {
-						$v->email($_POST ['email']);
-					} catch (ValidationException $e) {
-						$_SESSION ['error'] = $e->getError();
-					}
-
-					if (isset ($_SESSION ['error'])) {
-						unset ($_POST ['email']);
-						header('Location: Administration');
-					} else {
-						$user->email = $_POST ['email'];
-						unset ($_POST ['email']);
-						$user->status = $_POST ['status'];
-						unset ($_POST ['status']);
-						$user->userID = $userID;
-						try {
-							$user->update();
-						} catch (ModelException $e) {
-							// temporary -- to catch the case where no change was made to the data, in which
-							// case update throws due to now rows being modified.
-						}
-
-
-						header('Location: ' . BASE . '/Administration');
-					}
-				}
-			}
-		} else {
-			header('Location: ' . BASE . '/Home');
-		}
-	}
-
-	/**
-	 * Updates the user password if it is valid, then displays the main admin page.
-	 * @param int $userID
-	 */
-	public function doChangePassword(int $userID): void {
-		if ($this->auth()) {
-			$user = new User (Picnic::getInstance());
-			$v = new Validation ();
-
-			if (isset ($_POST ['password1']) && isset ($_POST ['password2'])) {
-
-				// Validate the password.
-				try {
-					$v->password($_POST ['password1']);
-				} catch (ValidationException $e) {
-					$_SESSION ['error'] = $e->getError();
-				}
-
-				if (isset ($_SESSION ['error'])) {
-					unset ($_POST ['password1']);
-					unset ($_POST ['password2']);
-					header('Location: ' . BASE . '/Administration/ChangePassword/' . $userID);
-				} else {
-
-					// Compare passwords.
-					try {
-						$v->comparePasswords($_POST ['password1'], $_POST ['password2']);
-					} catch (ValidationException $e) {
-						$_SESSION ['error'] = $e->getError();
-					}
-
-					if (isset ($_SESSION ['error'])) {
-						unset ($_POST ['password1']);
-						unset ($_POST ['password2']);
-						header('Location: Administration');
-					} else {
-						$user->password = $_POST ['password1'];
-						unset ($_POST ['password1']);
-						unset ($_POST ['password2']);
-						$user->userID = $userID;
-						$user->updatePassword();
-
-						header('Location: ' . BASE . '/Administration');
-					}
-				}
-			}
-		} else {
-			header('Location: ' . BASE . '/Home');
-		}
-	}
-
-	public function Categories() {
-
-	}
-
 	public function ChangePassword(int $userID) {
 		if ($this->auth()) {
 			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -166,14 +59,14 @@ class AdministrationController {
 	/**
 	 * Displays a page allowing editing of the user with the given ID.
 	 *
-	 * @param $id
+	 * @param $userID
 	 * 			The ID of the user to be edited.
 	 */
-	public function EditUser($id): void {
+	public function EditUser(int $userID): void {
 		if ($this->auth()) {
 			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 				$user = new User (Picnic::getInstance());
-				$user->userID = $id;
+				$user->userID = $userID;
 
 				if ($user->get()) {
 
@@ -191,7 +84,7 @@ class AdministrationController {
 					return;
 				}
 			} else if (isset ($_POST ['update'])) {
-				$this->updateUser($id);
+				$this->updateUser($userID);
 				return;
 			}
 		}
@@ -202,14 +95,14 @@ class AdministrationController {
 	/**
 	 * Deletes the user with the given ID.
 	 *
-	 * @param $id
+	 * @param $userID
 	 * 			The ID of the user to be deleted.
 	 */
-	public function DeleteUser($id): void {
+	public function DeleteUser(int $userID): void {
 		if ($this->auth()) {
 			$h = new Humphree(Picnic::getInstance());
-			$h->deleteUser($id);
-			header('Location: ' . BASE . '/Administration');
+			$h->deleteUser($userID);
+			header('Location: ' . BASE . '/Administration/Users');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
@@ -227,7 +120,7 @@ class AdministrationController {
 			if (!$h->blockUser($userID)) {
 				$_SESSION['error'] = 'Failed to block the user.';
 			}
-			header('Location: ' . BASE . '/Administration');
+			header('Location: ' . BASE . '/Administration/Users');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
@@ -246,7 +139,7 @@ class AdministrationController {
 				$_SESSION['error'] = 'Failed to unblock the user.';
 			}
 
-			header('Location: ' . BASE . '/Administration');
+			header('Location: ' . BASE . '/Administration/Users');
 		} else {
 			header('Location: ' . BASE . '/Home');
 		}
@@ -320,5 +213,119 @@ class AdministrationController {
 			&& isset($_SESSION['status'])
 			&& $_SESSION['userID'] > 0
 			&& $_SESSION['status'] === 'admin';
+	}
+
+	/**
+	 * Updates the user attributes if they are valid, then displays the main admin page.
+	 * @param int $userID
+	 */
+	private function updateUser(int $userID): void {
+		if ($this->auth()) {
+			$user = new User (Picnic::getInstance());
+			$v = new Validation ();
+
+			// Process on submission of user.
+			if (isset ($_POST ['user'])) {
+
+				// Validate the user.
+				try {
+					$v->userName($_POST ['user']);
+				} catch (ValidationException $e) {
+					$_SESSION ['error'] = $e->getError();
+				}
+
+				if (isset ($_SESSION ['error'])) {
+					unset ($_POST ['user']);
+					header('Location: Administration');
+				} else {
+					$user->user = $_POST ['user'];
+					unset ($_POST ['user']);
+
+					// Validate the email.
+					try {
+						$v->email($_POST ['email']);
+					} catch (ValidationException $e) {
+						$_SESSION ['error'] = $e->getError();
+					}
+
+					if (isset ($_SESSION ['error'])) {
+						unset ($_POST ['email']);
+						header('Location: Administration');
+					} else {
+						$user->email = $_POST ['email'];
+						unset ($_POST ['email']);
+						$user->status = $_POST ['status'];
+						unset ($_POST ['status']);
+						$user->userID = $userID;
+						try {
+							$user->update();
+						} catch (ModelException $e) {
+							// temporary -- to catch the case where no change was made to the data, in which
+							// case update throws due to now rows being modified.
+						}
+
+
+						header('Location: ' . BASE . '/Administration/Users');
+					}
+				}
+			}
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
+
+	/**
+	 * Updates the user password if it is valid, then displays the main admin page.
+	 * @param int $userID
+	 */
+	private function doChangePassword(int $userID): void {
+		if ($this->auth()) {
+			$user = new User (Picnic::getInstance());
+			$v = new Validation ();
+
+			if (isset ($_POST ['password1']) && isset ($_POST ['password2'])) {
+
+				// Validate the password.
+				try {
+					$v->password($_POST ['password1']);
+				} catch (ValidationException $e) {
+					$_SESSION ['error'] = $e->getError();
+				}
+
+				if (isset ($_SESSION ['error'])) {
+					unset ($_POST ['password1']);
+					unset ($_POST ['password2']);
+					header('Location: ' . BASE . '/Administration/ChangePassword/' . $userID);
+				} else {
+
+					// Compare passwords.
+					try {
+						$v->comparePasswords($_POST ['password1'], $_POST ['password2']);
+					} catch (ValidationException $e) {
+						$_SESSION ['error'] = $e->getError();
+					}
+
+					if (isset ($_SESSION ['error'])) {
+						unset ($_POST ['password1']);
+						unset ($_POST ['password2']);
+						header('Location: Administration');
+					} else {
+						$user->password = $_POST ['password1'];
+						unset ($_POST ['password1']);
+						unset ($_POST ['password2']);
+						$user->userID = $userID;
+						$user->updatePassword();
+
+						header('Location: ' . BASE . '/Administration/Users');
+					}
+				}
+			}
+		} else {
+			header('Location: ' . BASE . '/Home');
+		}
+	}
+
+	private function handleUnauthorised(): void {
+		header('Location: ' . BASE . '/Home');
 	}
 }
