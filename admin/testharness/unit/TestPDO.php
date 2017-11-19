@@ -7,7 +7,7 @@
  * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 
-include __DIR__ . "/../../../../../dbPicnic.php";
+include __DIR__ . "/../../../../dbPicnic.php";
 
 class TestPDO extends PDO {
 	private static $instance;

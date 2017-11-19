@@ -29,7 +29,7 @@ class Category {
 	const ERROR_PARENT_ID_NONE = 'Input is required!';
 
 	// Constructor
-	function __construct(PDO $pdo, $args = array()) {
+	function __construct(PDO $pdo, $args = []) {
 		$this->db = $pdo;
 		
 		foreach ( $args as $key => $val ) {

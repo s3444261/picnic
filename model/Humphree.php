@@ -126,7 +126,7 @@ class Humphree {
 		$user = new User ( $this->db );
 		$user->email = $email;
 		$user = $this->system->forgotPassword ( $user );
-		$userArray = array ();
+		$userArray = [];
 		$userArray ['userID'] = $user->userID;
 		$userArray ['email'] = $user->email;
 		$userArray ['password'] = $user->password;
@@ -176,7 +176,7 @@ class Humphree {
 	 * @return array
 	 */
 	public function getUser(int $userID): array {
-		$userArray = array ();
+		$userArray = [];
 		$user = new User ( $this->db );
 		$user->userID = $userID;
 		$user = $this->system->getUser ( $user );
@@ -199,11 +199,11 @@ class Humphree {
 	 * @return array
 	 */
 	public function getUsers(int $page, int $usersPerPage): array {
-		$usersArray = array ();
+		$usersArray = [];
 		$users = $this->system->getUsers ( $page, $usersPerPage );
 		
 		foreach ( $users as $user ) {
-			$userArray = array ();
+			$userArray = [];
 			$userArray ['userID'] = $user->userID;
 			$userArray ['user'] = $user->user;
 			$userArray ['email'] = $user->email;
@@ -345,7 +345,7 @@ class Humphree {
 	 * @return array
 	 */
 	public function getCategory(int $categoryID): array {
-		$cat = array ();
+		$cat = [];
 		$category = new Category ( $this->db );
 		$category->categoryID = $categoryID;
 		$category = $this->system->getCategory ( $category );
@@ -362,11 +362,11 @@ class Humphree {
 	 * @return array
 	 */
 	public function getCategories(): array {
-		$cats = array ();
+		$cats = [];
 		$categories = $this->system->getCategories ();
 		
 		foreach ( $categories as $category ) {
-			$cat = array ();
+			$cat = [];
 			$cat ['categoryID'] = $category->categoryID;
 			$cat ['parentID'] = $category->parentID;
 			$cat ['category'] = $category->category;
@@ -385,11 +385,11 @@ class Humphree {
 	 * @return array
 	 */
 	public function getCategoriesIn(int $parentID): array {
-		$cats = array ();
+		$cats = [];
 		$categories = $this->system->getCategoriesIn ( $parentID );
 		
 		foreach ( $categories as $category ) {
-			$cat = array ();
+			$cat = [];
 			$cat ['categoryID'] = $category->categoryID;
 			$cat ['parentID'] = $category->parentID;
 			$cat ['category'] = $category->category;
@@ -443,10 +443,10 @@ class Humphree {
 		$category = new Category ( $this->db );
 		$category->categoryID = $categoryID;
 		$categoryItems = $this->system->getCategoryItemsByPage ( $category, $pageNumber, $itemsPerPage, $type );
-		$its = array ();
+		$its = [];
 		
 		foreach ( $categoryItems as $item ) {
-			$it = array ();
+			$it = [];
 			
 			$it ['itemID'] = $item->itemID;
 			$it ['title'] = $item->title;
@@ -464,11 +464,11 @@ class Humphree {
 		$user = new User ( $this->db );
 		$user->userID = $userID;
 		$items = $this->system->getUserOwnedItems ( $userID );
-		$result = array();
+		$result = [];
 
 		foreach ( $items as $item ) {
 			if (($type === '' || $item->type == $type) && $item->status !== 'Deleted' ) {
-				$it = array ();
+				$it = [];
 				$it ['itemID'] = $item->itemID;
 				$it ['owningUserID'] = $item->owningUserID;
 				$it ['title'] = $item->title;
@@ -494,7 +494,7 @@ class Humphree {
 		$item = new Item ( $this->db );
 		$item->itemID = $itemID;
 		$item = $this->system->getItem ( $item );
-		$it = array ();
+		$it = [];
 
 		$it ['itemID'] = $item->itemID;
 		$it ['owningUserID'] = $item->owningUserID;
@@ -602,10 +602,10 @@ class Humphree {
 		$item = new Item ( $this->db );
 		$item->itemID = $itemID;
 		$itemComments = $this->system->getItemComments ( $item );
-		$cs = array ();
+		$cs = [];
 		
 		foreach ( $itemComments as $itemComment ) {
-			$c = array ();
+			$c = [];
 			
 			$c ['commentID'] = $itemComment->commentID;
 			$c ['userID'] = $itemComment->userID;
@@ -630,7 +630,7 @@ class Humphree {
 		$comment = new Comment ( $this->db );
 		$comment->commentID = $commentID;
 		$comment->get();
-		$it = array ();
+		$it = [];
 		$it ['commentID'] = $comment->commentID;
 		$it ['itemID'] = $comment->itemID;
 		$it ['toUserID'] = $comment->toUserID;
@@ -653,7 +653,7 @@ class Humphree {
 		$comment = new Comment ( $this->db );
 		$comment->commentID = $commentID;
 		$item = $this->system->getItemComment ( $comment );
-		$it = array ();
+		$it = [];
 		$it ['itemID'] = $item->itemID;
 		$it ['title'] = $item->title;
 		$it ['description'] = $item->description;
@@ -784,11 +784,11 @@ class Humphree {
 	 * @return array 			The converted array.
 	 */
 	private function commentToArray(Comment $comment) : array {
-		$it = array ();
+		$it = [];
 		$it ['commentID'] = $comment->commentID;
 		$it ['item'] = $this->getItem($comment->itemID);
-		$it ['toUser'] = $this->getuser($comment->toUserID);
-		$it ['fromUser'] = $this->getuser($comment->fromUserID);
+		$it ['toUser'] = $this->getUser($comment->toUserID);
+		$it ['fromUser'] = $this->getUser($comment->fromUserID);
 		$it ['comment'] = $comment->comment;
 		$it ['status'] =  $comment->status;
 		$it ['created_at'] = $comment->created_at;
@@ -876,9 +876,9 @@ class Humphree {
 	 */
 	public function search(string $searchString, int $pageNumber, int $itemsPerPage): array {
 		$items = $this->system->search ( $searchString, $pageNumber, $itemsPerPage );
-		$its = array ();
+		$its = [];
 		foreach ( $items as $item ) {
-			$it = array ();
+			$it = [];
 			$it ['itemID'] = $item->itemID;
 			$it ['title'] = $item->title;
 			$it ['description'] = $item->description;
@@ -931,9 +931,9 @@ class Humphree {
 			$pageNumber,
 			$itemsPerPage);
 
-		$its = array ();
+		$its = [];
 		foreach ( $results as $result ) {
-			$it = array ();
+			$it = [];
 			$it ['itemID'] = $result->itemID;
 			$it ['title'] = $result->title;
 			$it ['description'] = $result->description;
@@ -955,7 +955,7 @@ class Humphree {
 		string $srchStatus,
 		int $majorCategoryID,
 		int $minorCategoryID) {
-		$MAX_RESULTS = 1000;
+		$maxResults = 1000;
 
 		return sizeof(
 			$this->searchAdvanced(
@@ -968,7 +968,7 @@ class Humphree {
 				$majorCategoryID,
 				$minorCategoryID,
 				1,
-				$MAX_RESULTS));
+				$maxResults));
 	}
 
 	public function runMatchingForAllItems()

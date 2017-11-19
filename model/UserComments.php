@@ -9,7 +9,7 @@
 class UserComments {
 	private $_userID = '';
 	private $db;
-	function __construct(PDO $pdo, $args = array()) {
+	function __construct(PDO $pdo, $args = []) {
 		$this->db = $pdo;
 		
 		foreach ( $args as $key => $val ) {
@@ -42,7 +42,7 @@ class UserComments {
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindValue ( ':userID', $this->_userID );
 		$stmt->execute ();
-		$objects = array ();
+		$objects = [];
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$comment = new Comment ( $this->db );
 			$comment->commentID = $row ['commentID'];

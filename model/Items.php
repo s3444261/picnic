@@ -21,7 +21,7 @@ class Items {
 	const SEARCH_STATUS = 'srchStatus';
 	
 	// Constructor
-	function __construct(PDO $pdo, $args = array()) {
+	function __construct(PDO $pdo, $args = []) {
 		$this->db = $pdo;
 		
 		foreach ( $args as $key => $val ) {
@@ -49,7 +49,7 @@ class Items {
 	 * @return array
 	 */
 	public function search(string $searchString, int $pageNumber = 1, int $itemsPerPage = 5000): array {
-		$items = array ();
+		$items = [];
 		
 		if (strlen ( $searchString ) > 0) {
 			
@@ -95,7 +95,7 @@ class Items {
 	 * @internal param int $maxResults
 	 */
 	public function searchAdvanced(array $args, int $pageNumber = 1, int $itemsPerPage = 5000): array {
-		$items = array();
+		$items = [];
 
 		$query = "SELECT *";
 		if (strlen($args[self::SEARCH_TEXT]) > 0) {

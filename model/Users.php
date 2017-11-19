@@ -11,7 +11,7 @@ class Users {
 
 	private $db;
 
-	function __construct(PDO $pdo, $args = array()) {
+	function __construct(PDO $pdo, $args = []) {
 
 		$this->db = $pdo;
 
@@ -63,7 +63,7 @@ class Users {
 	public function getUsers(int $pageNumber, int $usersPerPage): array {
 		
 		$v = new Validation();
-		$users = array ();
+		$users = [];
 		
 		try {
 			$v->number($pageNumber);

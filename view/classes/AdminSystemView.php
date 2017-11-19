@@ -9,23 +9,23 @@
 
 class AdminSystemView extends View{
 
-	function __construct() {
-		$this->SetData('navData', new NavData(NavData::Account));
-	}
+    function __construct() {
+        $this->SetData('navData', new NavData(NavData::Account));
+    }
 
-	public function usersUrl(): string {
-		return BASE . '/Administration/Users';
-	}
+    public function usersUrl(): string {
+        return BASE . '/Administration/Users';
+    }
 
-	public function categoriesUrl(): string {
-		return BASE . '/Administration/ViewCategories';
-	}
+    public function categoriesUrl(): string {
+        return BASE . '/Administration/ViewCategories';
+    }
 
-	public function systemUrl(): string {
-		return BASE . '/Administration/System';
-	}
+    public function systemUrl(): string {
+        return BASE . '/Administration/System';
+    }
 
-	public function rebuildDbUrl(): string {
-		return BASE . '/Administration/RebuildDatabase';
-	}
+    public function rebuildDbUrl(): string {
+        return BASE . '/Administration/RebuildDatabase';
+    }
 }

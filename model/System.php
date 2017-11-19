@@ -215,7 +215,7 @@ class System {
 	 * @return array
 	 */
 	public function getUsers(int $pageNumber, int $usersPerPage): array {
-		$usersArray = array ();
+		$usersArray = [];
 		$users = new Users ( $this->db );
 		try {
 			$usersArray = $users->getUsers ( $pageNumber, $usersPerPage );
@@ -389,7 +389,7 @@ class System {
 	 * @return array
 	 */
 	public function getCategoriesIn(int $parentID): array {
-		$c = array ();
+		$c = [];
 		$cat = new Categories ( $this->db );
 		try {
 			$c = $cat->getCategoriesIn ( $parentID );
@@ -442,7 +442,7 @@ class System {
 	public function getCategoryItemsByPage(Category $category, int $pageNumber, int $itemsPerPage, string $type): array {
 		$pn = $pageNumber;
 		$ipp = $itemsPerPage;
-		$categoryItemsArray = array ();
+		$categoryItemsArray = [];
 		$categoryItems = new CategoryItems ( $this->db );
 		$categoryItems->categoryID = $category->categoryID;
 		try {
@@ -624,7 +624,7 @@ class System {
 	public function getItemComments(Item $item): array {
 		$ic = new Comment ( $this->db );
 		$ic->itemID = $item->itemID;
-		$comments = array ();
+		$comments = [];
 		try {
 			$comments = $ic->getItemComments ();
 		} catch ( ModelException $e ) {
@@ -759,7 +759,7 @@ class System {
 	 * @return array
 	 */
 	public function getItemOwner(Item $item): array {
-		$owner = array ();
+		$owner = [];
 		
 		if ($item->exists ()) {
 			try {
@@ -811,7 +811,7 @@ class System {
 	 * @return array
 	 */
 	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID, int $pageNumber = 1, int $itemsPerPage = 5000): array {
-		$args = array ();
+		$args = [];
 		$args [Items::SEARCH_TEXT] = '';
 		$args [Items::SEARCH_MINOR_CATEGORY_ID] = 0;
 		$args [Items::SEARCH_MAJOR_CATEGORY_ID] = 0;

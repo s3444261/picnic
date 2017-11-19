@@ -44,7 +44,7 @@ class Comment {
 	const ERROR_USER_ID_NOT_INT 		= 'UserID must be an integer!';
 
 	// Constructor
-	function __construct(PDO $pdo, $args = array()) {
+	function __construct(PDO $pdo, $args = []) {
 		$this->db = $pdo;
 		
 		foreach ( $args as $key => $val ) {
@@ -253,7 +253,7 @@ class Comment {
 		$stmt->bindValue ( ':userID', $userID);
 		$stmt->execute ();
 
-		$objects = array ();
+		$objects = [];
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$comment = new Comment ( $this->db );
 			$comment->_commentID = $row [self::DB_COL_ID];
@@ -276,7 +276,7 @@ class Comment {
 		$stmt->bindValue ( ':userID', $userID);
 		$stmt->execute ();
 
-		$objects = array ();
+		$objects = [];
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$comment = new Comment ( $this->db );
 			$comment->_commentID = $row [self::DB_COL_ID];
@@ -299,7 +299,7 @@ class Comment {
 		$stmt->bindValue ( ':userID', $userID);
 		$stmt->execute ();
 
-		$objects = array ();
+		$objects = [];
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$comment = new Comment ( $this->db );
 			$comment->_commentID = $row [self::DB_COL_ID];
@@ -317,7 +317,7 @@ class Comment {
 	 * @throws ModelException
 	 */
 	public function getItemComments(): array {
-		$objects = array ();
+		$objects = [];
 		$i = new Item ( $this->db );
 		$i->itemID = $this->_itemID;
 

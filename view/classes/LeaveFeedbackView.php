@@ -8,64 +8,64 @@
  */
 
 class LeaveFeedbackView extends View {
-	private $_myItem;
-	private $_otherItem;
-	private $_ratingUser;
-	private $_accessCode;
+    private $_myItem;
+    private $_otherItem;
+    private $_ratingUser;
+    private $_accessCode;
 
-	function __construct(string $accessCode) {
-		$this->SetData('navData', new NavData(NavData::Account));
+    function __construct(string $accessCode) {
+        $this->SetData('navData', new NavData(NavData::Account));
 
-		$h = new Humphree(Picnic::getInstance());
+        $h = new Humphree(Picnic::getInstance());
 
-		$rating = $h->getRatingInfoForCode($accessCode);
-		$this->_accessCode = $accessCode;
-		$this->_myItem = $h->getItem($rating['sourceItemID']);
-		$this->_otherItem = $h->getItem($rating['targetItemID']);
-		$this->_ratingUser = $h->getUser($this->_otherItem['owningUserID']);
-	}
+        $rating = $h->getRatingInfoForCode($accessCode);
+        $this->_accessCode = $accessCode;
+        $this->_myItem = $h->getItem($rating['sourceItemID']);
+        $this->_otherItem = $h->getItem($rating['targetItemID']);
+        $this->_ratingUser = $h->getUser($this->_otherItem['owningUserID']);
+    }
 
-	public function hasError() {
-		return (isset($_SESSION['error']) && $_SESSION['error'] !== '');
-	}
+    public function hasError(): bool {
+        return (isset($_SESSION['error']) && $_SESSION['error'] !== '');
+    }
 
-	public function error() {
-		if ($this->hasError()) {
-			return $_SESSION['error'];
-		}
+    public function error(): string {
+        if ($this->hasError()) {
+            return $_SESSION['error'];
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	public function ratingUserName(): string {
-		return $this->_ratingUser['user'];
-	}
+    public function ratingUserName(): string {
+        return $this->_ratingUser['user'];
+    }
 
-	public function myItemTitle(): string {
-		return $this->_myItem['title'];
-	}
+    public function myItemTitle(): string {
+        return $this->_myItem['title'];
+    }
 
-	public function otherItemTitle(): string {
-		return $this->_otherItem['title'];
-	}
+    public function otherItemTitle(): string {
+        return $this->_otherItem['title'];
+    }
 
-	public function myItemId(): string {
-		return $this->_myItem['itemID'];
-	}
+    public function myItemID(): string {
+        return $this->_myItem['itemID'];
+    }
 
-	public function otherItemId(): string {
-		return $this->_otherItem['itemID'];
-	}
+    public function otherItemID(): string {
+        return $this->_otherItem['itemID'];
+    }
 
-	public function myItemUrl(): string {
-		return BASE . '/Item/View/' . $this->myItemID();
-	}
+    public function myItemUrl(): string {
+        return BASE . '/Item/View/' . $this->myItemID();
+    }
 
-	public function otherItemUrl(): string {
-		return BASE . '/Item/View/' . $this->otherItemID();
-	}
+    public function otherItemUrl(): string {
+        return BASE . '/Item/View/' . $this->otherItemID();
+    }
 
-	public function postUrl(): string {
-		return BASE . '/Dashboard/LeaveFeedback/' . $this->_accessCode;
-	}
+    public function postUrl(): string {
+        return BASE . '/Dashboard/LeaveFeedback/' . $this->_accessCode;
+    }
 }

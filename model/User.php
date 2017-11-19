@@ -43,7 +43,7 @@ class User {
 	const ERROR_ACTIVATION_CODE_NOT_MATCH = 'Activation Codes did not match!';
 	const ERROR_USER_DUPLICATE = 'This user name is not available!';
 	const ERROR_EMAIL_DUPLICATE = 'This email address is not available!';
-	function __construct(PDO $pdo, $args = array()) {
+	function __construct(PDO $pdo, $args = []) {
 		$this->db = $pdo;
 		
 		foreach ( $args as $key => $val ) {
@@ -277,7 +277,7 @@ class User {
 		$stmt->bindValue ( ':userID', $this->userID );
 		$stmt->execute ();
 
-		$objects = array ();
+		$objects = [];
 
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$userItem = new Item ($this->db);
@@ -630,7 +630,7 @@ class User {
 	 * @return bool
 	 */
 	public function logout(): bool {
-		$_SESSION = array ();
+		$_SESSION = [];
 		if (session_status () == PHP_SESSION_ACTIVE) {
 			session_destroy ();
 		}
@@ -680,8 +680,8 @@ class User {
 		// $characters - types of characters to be used in the password
 		
 		// define variables used within the function
-		$symbols = array ();
-		$passwords = array ();
+		$symbols = [];
+		$passwords = [];
 		$used_symbols = '';
 
 		// an array of different character types

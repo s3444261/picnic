@@ -39,7 +39,7 @@ class Item {
 	const ERROR_ITEM_ID_NOT_EXIST = 'The ItemID does not exist!';
 	
 	// Constructor
-	function __construct(PDO $pdo, $args = array()) {
+	function __construct(PDO $pdo, $args = []) {
 		$this->db = $pdo;
 		
 		foreach ( $args as $key => $val ) {

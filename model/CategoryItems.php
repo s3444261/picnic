@@ -21,7 +21,7 @@ class CategoryItems {
 	const ERROR_ITEM_ID_NOT_EXIST = 'The itemID does not exist!';
 	
 	// Constructor
-	function __construct(PDO $pdo, $args = array()) {
+	function __construct(PDO $pdo, $args = []) {
 		$this->db = $pdo;
 		
 		foreach ( $args as $key => $val ) {
@@ -225,7 +225,7 @@ class CategoryItems {
 		$stmt = $this->db->prepare ( $query );
 		$stmt->bindValue ( ':categoryID', $this->_categoryID );
 		$stmt->execute ();
-		$objects = array ();
+		$objects = [];
 		while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$item = new Item ( $this->db );
 			$item->itemID = $row ['itemID'];
@@ -275,7 +275,7 @@ class CategoryItems {
 			$stmt->bindValue ( ':status', 'Active' );
 			$stmt->bindValue ( ':type', $type );
 			$stmt->execute ();
-			$objects = array ();
+			$objects = [];
 			while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 				$item = new Item ( $this->db );
 				$item->itemID = $row ['itemID'];

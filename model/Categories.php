@@ -15,7 +15,7 @@ class Categories {
 	const ERROR_PARENT_ID_NOT_EXIST = 'The parentID does not exist!';
 	
 	// Constructor
-	function __construct(PDO $pdo, $args = array()) {
+	function __construct(PDO $pdo, $args = []) {
 		
 		$this->db = $pdo;
 		
@@ -49,7 +49,7 @@ class Categories {
 
 		$stmt = $this->db->prepare ( $query );
 		$stmt->execute ();
-		$objects = array();
+		$objects = [];
 		while($row = $stmt->fetch ( PDO::FETCH_ASSOC )){
 			
 			$object = new Category($this->db);
@@ -74,7 +74,7 @@ class Categories {
 	 */
 	public function getCategoriesIn(int $parentID): array {
 		$v = new Validation();
-		$objects = array();
+		$objects = [];
 		
 		try {
 			$v->emptyField($parentID);

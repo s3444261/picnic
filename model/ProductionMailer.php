@@ -32,7 +32,7 @@ class ProductionMailer extends Mailer
 		$mail = new PHPMailer\PHPMailer\PHPMailer();
 		$mail->setFrom('no-reply@humphree.org', 'Humphree');
 		$mail->isHTML(true);
-		$mail->IsSMTP();
+		$mail->isSMTP();
 		$mail->Host = "smtp.office365.com";
 		$mail->SMTPAuth = true;
 		$mail->Username = 'no-reply@humphree.org';

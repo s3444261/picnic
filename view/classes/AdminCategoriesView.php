@@ -9,61 +9,63 @@
 
 class AdminCategoriesView extends View{
 
-	private $_majorCategories;
+    private $_majorCategories;
 
-	function __construct() {
-		$this->SetData('navData', new NavData(NavData::Account));
-		$h = new Humphree(Picnic::getInstance());
-		$this->_majorCategories = $h->getCategoriesIn(Category::ROOT_CATEGORY);
-	}
+    function __construct() {
+        $this->SetData('navData', new NavData(NavData::Account));
+        $h = new Humphree(Picnic::getInstance());
+        $this->_majorCategories = $h->getCategoriesIn(Category::ROOT_CATEGORY);
+    }
 
-	public function getMajorCategories() : array {
-		return $this->_majorCategories;
-	}
+    public function getMajorCategories() : array {
+        return $this->_majorCategories;
+    }
 
-	public function getMinorCategories(array $category) : array {
-		$h = new Humphree(Picnic::getInstance());
-		return $h->getCategoriesIn($this->categoryId($category));
-	}
+    public function getMinorCategories(array $category) : array {
+        $h = new Humphree(Picnic::getInstance());
+        return $h->getCategoriesIn($this->categoryId($category));
+    }
 
-	public function categoryId(array $category): string {
-		return $category['categoryID'];
-	}
-	
-	public function categoryName(array $category): string {
-		return $category['category'];
-	}
+    public function categoryId(array $category): string {
+        return $category['categoryID'];
+    }
+    
+    public function categoryName(array $category): string {
+        return $category['category'];
+    }
 
-	public function countCategoryItems(array $category) : int {
-		$h = new Humphree(Picnic::getInstance());
-		return $h->countCategoryItems($this->categoryId($category));
-	}
+    public function countCategoryItems(array $category) : int {
+        $h = new Humphree(Picnic::getInstance());
+        return $h->countCategoryItems($this->categoryId($category));
+    }
 
-	public function canDelete(array $category) {
-		$h = new Humphree(Picnic::getInstance());
-		return ($h->countCategoryItems($this->categoryId($category)) === 0) && (count($h->getCategoriesIn($this->categoryId($category))) === 0) ;
-	}
+    public function canDelete(array $category): bool {
+        $h = new Humphree(Picnic::getInstance());
+        return ($h->countCategoryItems($this->categoryId($category)) === 0)
+            && (count($h->getCategoriesIn($this->categoryId($category))) === 0) ;
+    }
 
-	public function addMinorCategoryUrl(array $category): string {
-		return BASE . '/Administration/AddMinorCategory/' . $this->categoryId($category);
-	}
+    public function addMinorCategoryUrl(array $category): string {
+        return BASE . '/Administration/AddMinorCategory/' . $this->categoryId($category);
+    }
 
-	public function addMajorCategoryUrl(): string {
-		return BASE . '/Administration/AddMajorCategory';
-	}
-	public function deleteCategoryUrl(array $category): string {
-		return BASE . '/Administration/DeleteCategory/' . $this->categoryId($category);
-	}
+    public function addMajorCategoryUrl(): string {
+        return BASE . '/Administration/AddMajorCategory';
+    }
 
-	public function usersUrl(): string {
-		return BASE . '/Administration/Users';
-	}
+    public function deleteCategoryUrl(array $category): string {
+        return BASE . '/Administration/DeleteCategory/' . $this->categoryId($category);
+    }
 
-	public function categoriesUrl(): string {
-		return BASE . '/Administration/ViewCategories';
-	}
+    public function usersUrl(): string {
+        return BASE . '/Administration/Users';
+    }
 
-	public function systemUrl(): string {
-		return BASE . '/Administration/System';
-	}
+    public function categoriesUrl(): string {
+        return BASE . '/Administration/ViewCategories';
+    }
+
+    public function systemUrl(): string {
+        return BASE . '/Administration/System';
+    }
 }

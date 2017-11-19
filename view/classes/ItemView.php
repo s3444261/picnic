@@ -14,228 +14,228 @@
  */
 class ItemView extends View
 {
-	function __construct() {
-		$this->SetData('navData', new NavData(NavData::ViewListings));
-	}
+    function __construct() {
+        $this->SetData('navData', new NavData(NavData::ViewListings));
+    }
 
-	public function isLoggedInUser() {
-		return isset($_SESSION['userID']);
-	}
+    public function isLoggedInUser(): bool {
+        return isset($_SESSION['userID']);
+    }
 
-	public function majorCategories() {
-		$h = new Humphree(Picnic::getInstance());
-		return $h->getCategoriesIn(Category::ROOT_CATEGORY);
-	}
+    public function majorCategories(): array {
+        $h = new Humphree(Picnic::getInstance());
+        return $h->getCategoriesIn(Category::ROOT_CATEGORY);
+    }
 
-	public function minorCategories() {
-		$h = new Humphree(Picnic::getInstance());
-		return $h->getCategories();
-	}
+    public function minorCategories(): array {
+        $h = new Humphree(Picnic::getInstance());
+        return $h->getCategories();
+    }
 
-	public function matchedItems() {
-		$h = new Humphree(Picnic::getInstance());
-		return $h->getMatchedItemsFor($this->itemID());
-	}
+    public function matchedItems(): array {
+        $h = new Humphree(Picnic::getInstance());
+        return $h->getMatchedItemsFor($this->itemID());
+    }
 
-	public function itemID() {
-		return $this-> getItemAttribute('itemID');
-	}
+    public function itemID(): int {
+        return $this-> getItemAttribute('itemID');
+    }
 
-	public function itemOwnerName(): string {
-		$h = new Humphree(Picnic::getInstance());
-		$user =  $h->getUser($this->owningUserId());
-		return $user['user'];
-	}
+    public function itemOwnerName(): string {
+        $h = new Humphree(Picnic::getInstance());
+        $user =  $h->getUser($this->owningUserId());
+        return $user['user'];
+    }
 
-	public function itemOwnerHasRating():int {
-		$h = new Humphree(Picnic::getInstance());
-		return $h->getUserHasRating($this->owningUserId());
-	}
+    public function itemOwnerHasRating():int {
+        $h = new Humphree(Picnic::getInstance());
+        return $h->getUserHasRating($this->owningUserId());
+    }
 
-	public function itemOwnerRatingCount():int {
-		$h = new Humphree(Picnic::getInstance());
-		return $h->getUserRatingCount($this->owningUserId());
-	}
+    public function itemOwnerRatingCount():int {
+        $h = new Humphree(Picnic::getInstance());
+        return $h->getUserRatingCount($this->owningUserId());
+    }
 
-	public function itemOwnerRating():int {
-		$h = new Humphree(Picnic::getInstance());
-		return $h->getUserRating($this->owningUserId());
-	}
+    public function itemOwnerRating():int {
+        $h = new Humphree(Picnic::getInstance());
+        return $h->getUserRating($this->owningUserId());
+    }
 
-	public function currentUserIsItemOwner() {
-		return $this->isLoggedInUser()
-			&& $this->owningUserId() === $_SESSION['userID'];
-	}
+    public function currentUserIsItemOwner(): bool {
+        return $this->isLoggedInUser()
+            && $this->owningUserId() === $_SESSION['userID'];
+    }
 
-	private function getFullyMatchedItem() {
-		$h = new Humphree(Picnic::getInstance());
-		$otherItemID = $h->getFullyMatchedItemId($this->itemID());
-		return $h->getItem($otherItemID);
-	}
+    private function getFullyMatchedItem(): array {
+        $h = new Humphree(Picnic::getInstance());
+        $otherItemID = $h->getFullyMatchedItemId($this->itemID());
+        return $h->getItem($otherItemID);
+    }
 
-	public function fullyMatchedItemTitle() {
-		$otherItem = $this->getFullyMatchedItem();
-		return $otherItem['title'];
-	}
+    public function fullyMatchedItemTitle(): string {
+        $otherItem = $this->getFullyMatchedItem();
+        return $otherItem['title'];
+    }
 
-	public function fullyMatchedItemUrl() {
-		$otherItem = $this->getFullyMatchedItem();
-		return BASE . '/Item/View/' . $otherItem['itemID'];
-	}
-	public function currentUserIsFullyMatchedItemOwner() {
-		if (!$this->isLoggedInUser()) {
-			return false;
-		}
+    public function fullyMatchedItemUrl(): string {
+        $otherItem = $this->getFullyMatchedItem();
+        return BASE . '/Item/View/' . $otherItem['itemID'];
+    }
 
-		$otherItem = $this->getFullyMatchedItem();
-		$otherItemOwnerID = $otherItem['owningUserID'];
-		return $otherItemOwnerID === $_SESSION['userID'];
-	}
+    public function currentUserIsFullyMatchedItemOwner(): bool {
+        if (!$this->isLoggedInUser()) {
+            return false;
+        }
 
-	public function itemIsVisibleToCurrentUser(): bool {
-		if ($this->itemIsDeleted()) {
-			return false;
-		}
+        $otherItem = $this->getFullyMatchedItem();
+        $otherItemOwnerID = $otherItem['owningUserID'];
+        return $otherItemOwnerID === $_SESSION['userID'];
+    }
 
-		if ($this->itemIsActive()) {
-			return true;
-		}
+    public function itemIsVisibleToCurrentUser(): bool {
+        if ($this->itemIsDeleted()) {
+            return false;
+        }
 
-		if ($this->itemIsCompleted()) {
-			if ($this->currentUserIsItemOwner() || $this->currentUserIsFullyMatchedItemOwner() ) {
-				return true;
-			}
-		}
+        if ($this->itemIsActive()) {
+            return true;
+        }
 
-		return false;
-	}
+        if ($this->itemIsCompleted()) {
+            if ($this->currentUserIsItemOwner() || $this->currentUserIsFullyMatchedItemOwner() ) {
+                return true;
+            }
+        }
 
-	public function itemIsActive(): bool {
-		return ( $this-> getItemAttribute('status') === 'Active');
-	}
+        return false;
+    }
 
-	private function itemIsDeleted(): bool {
-   		return ( $this-> getItemAttribute('status') === 'Deleted');
-	}
+    public function itemIsActive(): bool {
+        return ( $this-> getItemAttribute('status') === 'Active');
+    }
 
-	public function itemIsCompleted(): bool {
-		return ( $this-> getItemAttribute('status') === 'Completed');
-	}
+    private function itemIsDeleted(): bool {
+           return ( $this-> getItemAttribute('status') === 'Deleted');
+    }
 
+    public function itemIsCompleted(): bool {
+        return ( $this-> getItemAttribute('status') === 'Completed');
+    }
 
-	public function hasInfoMessage() {
-		return (isset($this->data['info']) && $this->data['info'] !== '');
-	}
+    public function hasInfoMessage(): bool {
+        return (isset($this->data['info']) && $this->data['info'] !== '');
+    }
 
-	public function infoMessage() {
-		if (isset($this->data['info']) && $this->data['info'] !== '') {
-			return $this->data['info'];
-		}
+    public function infoMessage(): string {
+        if (isset($this->data['info']) && $this->data['info'] !== '') {
+            return $this->data['info'];
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	public function hasError() {
-		return (isset($_SESSION['error']) && $_SESSION['error'] !== '');
-	}
+    public function hasError(): bool {
+        return (isset($_SESSION['error']) && $_SESSION['error'] !== '');
+    }
 
-	public function error() {
-		if (isset($_SESSION['error']) && $_SESSION['error'] !== '') {
-			return $_SESSION['error'];
-		}
+    public function error(): string {
+        if (isset($_SESSION['error']) && $_SESSION['error'] !== '') {
+            return $_SESSION['error'];
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	public function isItemForSale() {
-		return $this->itemType() === 'ForSale';
-	}
+    public function isItemForSale(): bool {
+        return $this->itemType() === 'ForSale';
+    }
 
-	public function isItemWanted() {
-		return $this->itemType()=== 'Wanted';
-	}
+    public function isItemWanted(): bool {
+        return $this->itemType()=== 'Wanted';
+    }
 
-	public function isMajorCategorySelected() {
-		return $this->getItemAttribute('majorCategory') !== -1;
-	}
+    public function isMajorCategorySelected(): bool {
+        return $this->selectedMajorCategory() !== -1;
+    }
 
-	public function itemType() {
-		return $this-> getItemAttribute('type');
-	}
+    public function itemType(): string {
+        return strval($this-> getItemAttribute('type'));
+    }
 
-	public function itemTitle() {
-		return $this-> getItemAttribute('title');
-	}
+    public function itemTitle(): string {
+        return strval($this-> getItemAttribute('title'));
+    }
 
-	public function itemDescription() {
-		return $this-> getItemAttribute('description');
-	}
+    public function itemDescription(): string {
+        return  strval($this-> getItemAttribute('description'));
+    }
 
-	public function itemQuantity() {
-		return $this->getItemAttribute('quantity');
-	}
+    public function itemQuantity(): string {
+        return strval($this->getItemAttribute('quantity'));
+    }
 
-	public function isMinorCategorySelected() {
-		return $this->getItemAttribute('category') !== -1;
-	}
+    public function isMinorCategorySelected(): bool {
+        return $this->getItemAttribute('category') !== -1;
+    }
 
-	public function itemPrice() {
-		return $this->getItemAttribute('price');
-	}
+    public function itemPrice(): string {
+        return strval($this->getItemAttribute('price'));
+    }
 
-	public function owningUserId() {
-		return $this->getItemAttribute('owningUserID');
-	}
+    public function owningUserId(): int {
+        return $this->getItemAttribute('owningUserID');
+    }
 
-	public function itemCondition() {
-		return $this->getItemAttribute('itemcondition');
-	}
+    public function itemCondition(): string {
+        return strval($this->getItemAttribute('itemcondition'));
+    }
 
-	public function isItemNew() {
-		return $this->itemCondition()=== 'New';
-	}
+    public function isItemNew(): bool {
+        return $this->itemCondition()=== 'New';
+    }
 
-	public function isItemUsed() {
-		return $this->itemCondition()=== 'Used';
-	}
+    public function isItemUsed(): bool {
+        return $this->itemCondition()=== 'Used';
+    }
 
-	public function isSelectedMajorCategory($categoryID) {
-		return $this->getItemAttribute('majorCategory') === $categoryID;
-	}
+    public function isSelectedMajorCategory($categoryID): bool {
+        return $this->selectedMajorCategory() === $categoryID;
+    }
 
-	public function isSelectedMinorCategory($categoryID) {
-		return $this->getItemAttribute('category') === $categoryID;
-	}
+    public function isSelectedMinorCategory($categoryID): bool {
+        return $this->selectedMinorCategory() === $categoryID;
+    }
 
-	public function selectedMinorCategory() {
-		return $this->getItemAttribute('category');
-	}
+    public function selectedMinorCategory(): int {
+        return $this->getItemAttribute('category') ?? -1;
+    }
 
-	public function selectedMajorCategory() {
-		return $this->getItemAttribute('majorCategory');
-	}
+    public function selectedMajorCategory(): int {
+        return $this->getItemAttribute('majorCategory')?? -1;
+    }
 
-	public function selectedMinorCategoryName() {
-		$h = new Humphree(Picnic::getInstance());
-		$category = $h->getCategory($this->selectedMinorCategory());
-		return $category['category'];
-	}
+    public function selectedMinorCategoryName(): string {
+        $h = new Humphree(Picnic::getInstance());
+        $category = $h->getCategory($this->selectedMinorCategory());
+        return $category['category'];
+    }
 
-	public function selectedMajorCategoryName() {
-		$h = new Humphree(Picnic::getInstance());
-		$category = $h->getCategory($this->selectedMajorCategory());
-		return $category['category'];
-	}
+    public function selectedMajorCategoryName(): string {
+        $h = new Humphree(Picnic::getInstance());
+        $category = $h->getCategory($this->selectedMajorCategory());
+        return $category['category'];
+    }
 
-	private function getItemAttribute($name) {
-		if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd'][$name])) {
-			return $_SESSION['itemAdd'][$name];
-		}
+    private function getItemAttribute(string $name) {
+        if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd'][$name])) {
+            return $_SESSION['itemAdd'][$name];
+        }
 
-		if (isset($this->data['item']) && isset($this->data['item'][$name])) {
-			return $this->data['item'][$name];
-		}
+        if (isset($this->data['item']) && isset($this->data['item'][$name])) {
+            return $this->data['item'][$name];
+        }
 
-		return null;
-	}
+        return null;
+    }
 }
