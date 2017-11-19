@@ -179,7 +179,7 @@ class ItemView extends View
 		return $this->getItemAttribute('category') !== -1;
 	}
 
-	public function itemPrice(): float {
+	public function itemPrice() {
 		return $this->getItemAttribute('price');
 	}
 
