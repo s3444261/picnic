@@ -179,7 +179,7 @@ class ItemView extends View
 		return $this->getItemAttribute('category') !== -1;
 	}
 
-	public function itemPrice() {
+	public function itemPrice(): float {
 		return $this->getItemAttribute('price');
 	}
 
@@ -227,7 +227,7 @@ class ItemView extends View
 		return $category['category'];
 	}
 
-	private function getItemAttribute(string $name) {
+	private function getItemAttribute(string $name): mixed {
 		if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd'][$name])) {
 			return $_SESSION['itemAdd'][$name];
 		}
