@@ -1,5 +1,7 @@
 <?php
 
+include '../../dbPicnic.php';
+
 /**
  * Provides a singleton instance for connection to the picnic database.
  *
@@ -9,7 +11,6 @@
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
  * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
-
 class Picnic extends PDO {
 	private static $instance;
 	public static function getInstance() {
