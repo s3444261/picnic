@@ -227,7 +227,7 @@ class ItemView extends View
 		return $category['category'];
 	}
 
-	private function getItemAttribute(string $name): {
+	private function getItemAttribute(string $name) {
 		if (isset($_SESSION['itemAdd']) && isset($_SESSION['itemAdd'][$name])) {
 			return $_SESSION['itemAdd'][$name];
 		}
