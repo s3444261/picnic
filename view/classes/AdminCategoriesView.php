@@ -39,9 +39,10 @@ class AdminCategoriesView extends View{
 		return $h->countCategoryItems($this->categoryId($category));
 	}
 
-	public function canDelete(array $category) {
+	public function canDelete(array $category): bool {
 		$h = new Humphree(Picnic::getInstance());
-		return ($h->countCategoryItems($this->categoryId($category)) === 0) && (count($h->getCategoriesIn($this->categoryId($category))) === 0) ;
+		return ($h->countCategoryItems($this->categoryId($category)) === 0)
+			&& (count($h->getCategoriesIn($this->categoryId($category))) === 0) ;
 	}
 
 	public function addMinorCategoryUrl(array $category): string {
@@ -51,6 +52,7 @@ class AdminCategoriesView extends View{
 	public function addMajorCategoryUrl(): string {
 		return BASE . '/Administration/AddMajorCategory';
 	}
+
 	public function deleteCategoryUrl(array $category): string {
 		return BASE . '/Administration/DeleteCategory/' . $this->categoryId($category);
 	}

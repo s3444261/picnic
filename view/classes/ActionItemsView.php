@@ -107,7 +107,7 @@ class ActionItemsView extends View
 		return BASE . '/Dashboard/AcceptMatch/' . $this->myItemID($item) . '/' . $this->otherItemID($item);
 	}
 
-	public function getMatchToItemID(array $item) {
+	public function getMatchToItemID(array $item): string {
 		return $this->myItemID($item) . '_' . $this->otherItemID($item);
 	}
 

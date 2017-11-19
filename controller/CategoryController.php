@@ -29,7 +29,7 @@ class CategoryController {
 	 */
 	public function View(string $categoryId) {
 
-		if ($categoryId == "") {
+		if ($categoryId === '') {
 			$categoryId = Category::ROOT_CATEGORY;
 		}
 
@@ -42,12 +42,9 @@ class CategoryController {
 
 		$h = new Humphree(Picnic::getInstance());
 
-		// temporarily disabled paging
-	//	$pagerData = Pager::ParsePagerDataFromQuery();
 		$pagerData = new PagerData();
 		$pagerData->pageNumber = 1;
 		$pagerData->itemsPerPage = 200;
-
 
 		$view = new View();
 

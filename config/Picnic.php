@@ -1,17 +1,14 @@
 <?php
+
 /**
+ * Provides a singleton instance for connection to the picnic database.
+ *
  * @author Troy Derrick <s3202752@student.rmit.edu.au>
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
  * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
-
-/**
- * The Picnic Class extends PDO and provides a singleton instance
- * connection to the picnic database.
- */
-include '../../dbPicnic.php';
 
 class Picnic extends PDO {
 	private static $instance;
