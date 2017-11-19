@@ -30,7 +30,7 @@
 
     // Removes all items from the sub-category list.
     function clearSubCategories() {
-        var subCategorySelector = document.getElementById("category");
+        var subCategorySelector = document.getElementById("minorCategory");
 
         // leave the first item, which is the placeholder "Select a Category"
         while (subCategorySelector.options.length > 1) {
@@ -57,7 +57,7 @@
 
     // Adds a new option to the sub-category selector, using the data in the given array.
     function addSubCategoryOption(data) {
-        var subCategorySelector = document.getElementById("category");
+        var subCategorySelector = document.getElementById("minorCategory");
         var option = document.createElement("option");
         option.value = data[1];
         option.text = data[2];
@@ -67,7 +67,7 @@
     // Enables or disables the sub-category selector ,based on whether there is
     // anything to select.
     function setSubCategoryEnablement() {
-        var subCategorySelector = document.getElementById("category");
+        var subCategorySelector = document.getElementById("minorCategory");
         subCategorySelector.disabled = (selectedMajorCategory() === -1);
         subCategorySelector.selectedIndex = 0;
     }

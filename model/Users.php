@@ -22,6 +22,7 @@ class Users {
 			}
 		}
 	}
+
 	public function &__get($name) {
 		$name = '_' . $name;
 		return $this->$name;
@@ -30,7 +31,27 @@ class Users {
 		$name = '_' . $name;
 		$this->$name = $value;
 	}
-	
+
+	public static function isValidUserID(PDO $db, int $userID): bool {
+		$user = new User($db);
+		$user->userID = $userID;
+		return $user->exists();
+	}
+
+	public static function countUsers(PDO $db): int {
+		$query = "SELECT COUNT(*) as count
+					FROM Users";
+
+		$stmt = $db->prepare ( $query );
+		$stmt->execute ();
+
+		if ($row = $stmt->fetch ( PDO::FETCH_ASSOC )) {
+			return $row['count'];
+		}
+
+		return 0;
+	}
+
 	/**
 	 * Retrieves all users that haven't been deleted.
 	 * 
