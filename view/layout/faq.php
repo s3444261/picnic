@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /*
  * Authors:
  * Derrick, Troy - s3202752@student.rmit.edu.au
@@ -71,13 +71,6 @@
 
 			<h4>How do I log out?</h4>
 			Use the ‘logout’ option under the ‘My Account’ menu options.
-
-
-			Other topics
-			How to search and filter adds
-			How do I include an image in my ad
-			What are the advertising rules
-			Ideas here on technical issues: https://help.gumtree.com.au/AU?lang=en_US&l=en_US&c=PKB%3ATechnical_Issue
 
 
 
