@@ -33,7 +33,7 @@ class MessagesView extends View
 		return $this->_inboxMessages;
 	}
 
-	public function sentMessages(): array {
+	public function sentMessages() {
 		return $this->_sentMessages;
 	}
 

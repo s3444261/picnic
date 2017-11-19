@@ -999,12 +999,4 @@ class System {
 	public function getUserRating($userID): int {
 		return UserRatings::getUserRating($this->db, $userID);
 	}
-
-	public function countUsers(): int {
-		return Users::countUsers($this->db);
-	}
-
-	public function isValidUserID(int $userID): bool {
-		return Users::isValidUserID($userID);
-	}
 }

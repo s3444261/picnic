@@ -1,4 +1,11 @@
 <?php
+/**
+ * @author Troy Derrick <s3202752@student.rmit.edu.au>
+ * @author Diane Foster <s3387562@student.rmit.edu.au>
+ * @author Allen Goodreds <s3492264@student.rmit.edu.au>
+ * @author Grant Kinkead <s3444261@student.rmit.edu.au>
+ * @author Edwan Putro <s3418650@student.rmit.edu.au>
+ */
 
 include __DIR__ . '/../config/config.php';
 require_once  __DIR__ . '/../config/Picnic.php';
@@ -6,15 +13,9 @@ require_once  __DIR__ . '/../config/Picnic.php';
 /**
  * The Driver Class is the controller of the application. It determines what is
  * being requested and displays the appropriate views with content that has been
- * generated  by the model.
+ * manufactured by the model.
  *
  * Ref: https://www.sitepoint.com/front-controller-pattern-1/
- *
- * @author Troy Derrick <s3202752@student.rmit.edu.au>
- * @author Diane Foster <s3387562@student.rmit.edu.au>
- * @author Allen Goodreds <s3492264@student.rmit.edu.au>
- * @author Grant Kinkead <s3444261@student.rmit.edu.au>
- * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
 class Driver {
 

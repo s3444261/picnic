@@ -1,16 +1,14 @@
 <?php
-
-require_once  __DIR__ . '/../config/Picnic.php';
-
 /**
- * Controller for the item-related functions.
- *
  * @author Troy Derrick <s3202752@student.rmit.edu.au>
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
  * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
+
+require_once  __DIR__ . '/../config/Picnic.php';
+
 class ItemController {
 	const TEMP_UPLOADS_DIRECTORY = __DIR__ . "/../../temp_uploads/";
 	const THUMB_DIRECTORY = __DIR__ . "/../../item_thumbs/";
@@ -61,9 +59,6 @@ class ItemController {
 		header('Location: ' . BASE . '/Item/View/' . $itemId);
 	}
 
-	/**
-	 * Displays a page for creating a new item.
-	 */
 	public function Create() {
 		if ($this->auth()) {
 			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -113,7 +108,7 @@ class ItemController {
 					}
 				} else if (isset($_POST['cancel'])) {
 					unset($_SESSION['itemAdd']);
-					header('Location: ' . BASE . '/Dashboard/ForSale');
+					header('Location: ' . BASE . '/Dashboard/View');
 				} else {
 					$view = new ItemView();
 					$view->Render('itemAdd');
@@ -125,11 +120,6 @@ class ItemController {
 		header('Location: ' . BASE . '/Home');
 	}
 
-	/**
-	 * Displays a page allowing editing of the item with the given ID.
-	 *
-	 * @param int $itemID	The ID of the item to be edited.
-	 */
 	public function Edit(int $itemID) {
 		if ($this->auth()) {
 			if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -190,7 +180,7 @@ class ItemController {
 					}
 				} else if (isset($_POST['cancel'])) {
 					unset($_SESSION['itemAdd']);
-					header('Location: ' . BASE . '/Dashboard/ForSale');
+					header('Location: ' . BASE . '/Dashboard/View');
 				} else {
 					$view = new ItemView();
 					$view->Render('itemEdit');
@@ -202,15 +192,19 @@ class ItemController {
 		header('Location: ' . BASE . '/Home');
 	}
 
-	/**
-	 * Deletes the item with the given ID.
-	 *
-	 * @param int $itemId	THe ID of the item to be deleted.
-	 */
 	public function Delete(int $itemId) {
 		$h = new Humphree(Picnic::getInstance());
 		$h ->deleteItem($itemId);
-		header('Location: ' . BASE . '/Dashboard/ForSale');
+		header('Location: ' . BASE . '/Dashboard/View');
+	}
+
+	public function MarkFoundOrSold(int $itemId) {
+		$h = new Humphree(Picnic::getInstance());
+
+		$view = new View();
+		$view->SetData('item', $h ->getItem($itemId));
+		$view->SetData('navData',  new NavData(NavData::ViewListings));
+		$view->Render('itemMarkFoundOrSold');
 	}
 
 	/**
@@ -299,14 +293,7 @@ class ItemController {
 			&& ($_SESSION['userID'] > 0);
 	}
 
-	/**
-	 * Verifies that the given item data is valid.
-	 *
-	 * @param array $data			The item data to be validated.
-	 *
-	 * @throws ValidationException	Thrown on validation failure.
-	 */
-	private function validateItemData(array $data) {
+	private function validateItemData($data) {
 		$validate = new Validation ();
 
 		if (isset($data['type'])) {
@@ -348,7 +335,6 @@ class ItemController {
 		} else {
 			throw new ValidationException('Please select an item condition.');
 		}
-
 		if (isset($data['quantity'])) {
 			$validate->numberGreaterThanZero($data ['quantity']);
 		} else {
@@ -362,18 +348,7 @@ class ItemController {
 		}
 	}
 
-	/**
-	 * Creates a lowe-resolution thumbnail from a high-resolution image.
-	 *
-	 * @param string $sourceFile	The path to the high-res file from which the create the thumbnail.
-	 * @param string $targetFile	The path at which to save the created thumbnail.
-	 * @param int $targetWidth		The width of the thumbnail in pixels.
-	 * @param int $targetHeight		The height of the thumbnail in pixels.
-	 * @param mixed $background		An optional background color.
-	 *
-	 * @return bool			True if the thumbnail was created, false on failure.
-	 */
-	private function createThumbnail(string $sourceFile, string $targetFile, int $targetWidth, int $targetHeight, $background = false) {
+	private function createThumbnail($sourceFile, $targetFIle, $targetWidth, $targetHeight, $background=false) {
 		list($original_width, $original_height, $original_type) = getimagesize($sourceFile);
 		if ($original_width > $original_height) {
 			$new_width = $targetWidth;
@@ -414,15 +389,10 @@ class ItemController {
 		}
 
 		imagecopyresampled($new_image, $old_image, $dest_x, $dest_y, 0, 0, $new_width, $new_height, $original_width, $original_height);
-		$imgt($new_image, $targetFile);
-		return file_exists($targetFile);
+		$imgt($new_image, $targetFIle);
+		return file_exists($targetFIle);
 	}
 
-	/**
-	 * Saves an uploaded image file to a temporary location.
-	 *
-	 * @throws ValidationException	Thrown if the upload data is invalid or incomplete.
-	 */
 	private function saveUploadedImageToTempDir(): void {
 
 		if ($_FILES["image"]['name'] === 0) {
@@ -461,13 +431,8 @@ class ItemController {
 		$this->createThumbnail($_FILES["image"]["tmp_name"], $target_file, self::IMAGE_DIMENSION, self::IMAGE_DIMENSION);
 	}
 
-	/**
-	 * Rotates an image that contains EXIF data, to account for any rotation applied by said data.
-	 *
-	 * @param string $fullpath		The full path to the image file to be corrected.
-	 */
-	private function correctImageOrientation(string $fullpath) {
-		// ref:   https://stackoverflow.com/a/24337547
+	// ref:   https://stackoverflow.com/a/24337547
+	private function correctImageOrientation($fullpath) {
 		if (function_exists('exif_read_data')) {
 			ini_set('memory_limit', '256M');
 			$exif = exif_read_data($fullpath);
@@ -492,17 +457,12 @@ class ItemController {
 					}
 					// then rewrite the rotated image back to the disk as $filename
 					imagejpeg($img, $fullpath, 100);
-				}
-			}
-		}
+				} // if there is some rotation necessary
+			} // if have the exif orientation info
+		} // if function exists
 	}
 
-	/**
-	 * Moves an uploaded image file from the temporary location into its final location.
-	 *
-	 * @param int $itemID	The ID of the item whose image will be moved.
-	 */
-	private function moveImageToFinalLocations(int $itemID): void {
+	private function moveImageToFinalLocations($itemID): void {
 		$pathInFinalFolder = intval($itemID / 1000) . '/' . $itemID . '.jpg';
 		$tempFile = self::TEMP_UPLOADS_DIRECTORY . $_SESSION["itemAdd"]["tempImageFile"];
 		$finalFile = self::IMAGE_DIRECTORY . $pathInFinalFolder;
@@ -521,12 +481,6 @@ class ItemController {
 		unlink($tempFile);
 	}
 
-	/**
-	 * Removes suspect text from all entries in the given array.
-	 *
-	 * @param array $dataToSanitize		The array to be cleaned.
-	 * @return array					An array containing the cleaned items.
-	 */
 	private function sanitize(array $dataToSanitize): array {
 		$result = [];
 

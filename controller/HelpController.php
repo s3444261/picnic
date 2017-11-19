@@ -14,44 +14,44 @@ class HelpController {
 	/**
 	 *	Displays the 'About Us' page.
 	 */
-	public function About(): void {
+	public function About() {
 		$this->DisplayPage('about');
 	}
 
 	/**
 	 *	Displays the privacy policy.
 	 */
-	public function PrivacyPolicy(): void {
+	public function PrivacyPolicy() {
 		$this->DisplayPage('privacyPolicy');
 	}
 
 	/**
 	 *	Displays the terms of service.
 	 */
-	public function TermsOfService(): void {
+	public function TermsOfService() {
 		$this->DisplayPage('terms');
 	}
 
 	/**
 	 *	Displays the frequently asked questions.
 	 */
-	public function Faq(): void {
+	public function Faq() {
 		$this->DisplayPage('faq');
 	}
 
 	/**
 	 *	Displays the site map.
 	 */
-	public function SiteMap(): void {
+	public function SiteMap() {
 		$this->DisplayPage('siteMap');
 	}
 
 	/**
-	 * 	Displays the named page.
+	 * 	Displays the named page template.
 	 *
-	 * @param string $templateName		The name of the page to be displayed.
+	 * @param string $templateName		The name of the template to be displayed.
 	 */
-	private function DisplayPage(string $templateName): void {
+	private function DisplayPage(string $templateName) {
 		$view = new View();
 		$view->SetData('navData', new NavData(NavData::Home));
 		$view->Render($templateName);

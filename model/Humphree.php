@@ -165,7 +165,11 @@ class Humphree {
 		$user->user = $userArray ['user'];
 		$user->email = $userArray ['email'];
 		$user->status = $userArray ['status'];
-		return ($this->system->updateUser ( $user ));
+		if ($this->system->updateUser ( $user )) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -214,11 +218,7 @@ class Humphree {
 		}
 		return $usersArray;
 	}
-
-	public function countUsers(): int {
-		return $this->system->countUsers();
-	}
-
+	
 	/**
 	 * Allows an administrator to suspend a users account.
 	 *
@@ -893,7 +893,7 @@ class Humphree {
 	}
 
 	/**
-	 * Advanced search method.
+	 * Interim advanced search method.
 	 *
 	 * @param string $searchText
 	 * @param string $srchMinPrice
@@ -907,77 +907,26 @@ class Humphree {
 	 * @param int $itemsPerPage
 	 * @return array
 	 */
-	public function searchAdvanced(
-		string $searchText,
-		string $srchMinPrice,
-		string $srchMaxPrice,
-		string $srchMinQuantity,
-		string $srchCondition,
-		string $srchStatus,
-		int $majorCategoryID,
-		int $minorCategoryID,
-		int $pageNumber,
-		int $itemsPerPage): array {
-
-		$results = $this->system->searchAdvanced(
-			$searchText,
-			$srchMinPrice,
-			$srchMaxPrice,
-			$srchMinQuantity,
-			$srchCondition,
-			$srchStatus,
-			$majorCategoryID,
-			$minorCategoryID,
-			$pageNumber,
-			$itemsPerPage);
-
+	public function searchAdvanced(string $searchText, string $srchMinPrice, string $srchMaxPrice, string $srchMinQuantity, string $srchCondition, string $srchStatus, int $majorCategoryID, int $minorCategoryID, int $pageNumber, int $itemsPerPage): array {
+		$items = $this->system->searchAdvanced($searchText, $srchMinPrice, $srchMaxPrice, $srchMinQuantity, $srchCondition, $srchStatus, $majorCategoryID, $minorCategoryID, $pageNumber, $itemsPerPage);
 		$its = array ();
-		foreach ( $results as $result ) {
+		foreach ( $items as $item ) {
 			$it = array ();
-			$it ['itemID'] = $result->itemID;
-			$it ['title'] = $result->title;
-			$it ['description'] = $result->description;
-			$it ['quantity'] = $result->quantity;
-			$it ['itemcondition'] = $result->itemcondition;
-			$it ['price'] = $result->price;
-			$it ['status'] = $result->status;
+			$it ['itemID'] = $item->itemID;
+			$it ['title'] = $item->title;
+			$it ['description'] = $item->description;
+			$it ['quantity'] = $item->quantity;
+			$it ['itemcondition'] = $item->itemcondition;
+			$it ['price'] = $item->price;
+			$it ['status'] = $item->status;
+			
 			$its [] = $it;
 		}
 		return $its;
-	}
-
-	public function countAdvancedSearchResults(
-		string $searchText,
-		string $srchMinPrice,
-		string $srchMaxPrice,
-		string $srchMinQuantity,
-		string $srchCondition,
-		string $srchStatus,
-		int $majorCategoryID,
-		int $minorCategoryID) {
-		$MAX_RESULTS = 1000;
-
-		return sizeof(
-			$this->searchAdvanced(
-				$searchText,
-				$srchMinPrice,
-				$srchMaxPrice,
-				$srchMinQuantity,
-				$srchCondition,
-				$srchStatus,
-				$majorCategoryID,
-				$minorCategoryID,
-				1,
-				$MAX_RESULTS));
 	}
 
 	public function runMatchingForAllItems()
 	{
 		$this->system->runMatchingForAllItems();
 	}
-
-	public function isValidUserID(int $userID): bool {
-		return $this->system->isValidUserID($userID);
-	}
-
 }

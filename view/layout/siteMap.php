@@ -52,12 +52,12 @@
                                     </li>
 									<li>
 										<?php if (isset($_SESSION[MODULE])) { ?>
-                                            <li>Dashboard</li>
+                                            <a href="<?php echo BASE . '/Dashboard' ?>">Dashboard</a>
                                             <ul>
                                                 <li><a href="<?php echo BASE . '/Dashboard/ForSale' ?>">Manage Items For Sale</a></li>
                                                 <li><a href="<?php echo BASE . '/Dashboard/Wanted' ?>">Manage Wanted Items</a></li>
                                                 <li><a href="<?php echo BASE . '/Dashboard/Messages' ?>">Message Center</a></li>
-                                                <li><a href="<?php echo BASE . '/Dashboard/ActionItems' ?>">Action Items</a></li>
+                                                <li>Rate Seller</li>
 										    </ul>
 										<?php } else { ?>
                                             Dashboard
@@ -65,7 +65,7 @@
                                                 <li>Manage Items For Sale</li>
                                                 <li>Manage Wanted Items</li>
                                                 <li>Message Center</li>
-                                                <li>Action Items</li>
+                                                <li>Rate Seller</li>
                                             </ul>
 										<?php } ?>
 									</li>

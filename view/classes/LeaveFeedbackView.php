@@ -25,11 +25,11 @@ class LeaveFeedbackView extends View {
 		$this->_ratingUser = $h->getUser($this->_otherItem['owningUserID']);
 	}
 
-	public function hasError(): bool {
+	public function hasError() {
 		return (isset($_SESSION['error']) && $_SESSION['error'] !== '');
 	}
 
-	public function error(): string {
+	public function error() {
 		if ($this->hasError()) {
 			return $_SESSION['error'];
 		}

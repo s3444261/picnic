@@ -1,21 +1,24 @@
 <?php
-
-require_once  __DIR__ . '/../config/Picnic.php';
-require_once  __DIR__ . '/../vendor/autoload.php';
-
 /**
- * Controller for account-related functions.
- *
  * @author Troy Derrick <s3202752@student.rmit.edu.au>
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
  * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
+
+require_once  __DIR__ . '/../config/Picnic.php';
+require_once  __DIR__ . '/../vendor/autoload.php';
+
+/**
+ * Class AccountController
+ *
+ * Controller for account-related functions.
+ */
 class AccountController {
 
 	/**
-	 * Displays the Login page.
+	 * Presents the Login page.
 	 */
 	public function Login() : void 	{
 

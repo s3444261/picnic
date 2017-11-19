@@ -41,7 +41,7 @@
           <div class="dropdown-menu">
             <?php
             if (isset ( $_SESSION [MODULE] )) {
-                echo '<a class="dropdown-item" href="' . BASE . '/Dashboard/Messages">Dashboard</a>';
+                echo '<a class="dropdown-item" href="' . BASE . '/Dashboard">Dashboard</a>';
               }
             ?>
             <?php
