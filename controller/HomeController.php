@@ -14,7 +14,7 @@ class HomeController {
 	/**
 	 * 	Displays the home page.
 	 */
-	public function index() {
+	public function index(): void {
 		$view = new View();
 		$view->SetData('navData',  new NavData(NavData::Home));
 		$view->Render('home');

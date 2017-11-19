@@ -1,14 +1,16 @@
 <?php
+
+require_once  __DIR__ . '/../config/Picnic.php';
+
 /**
+ * Controller for the item-related functions.
+ *
  * @author Troy Derrick <s3202752@student.rmit.edu.au>
  * @author Diane Foster <s3387562@student.rmit.edu.au>
  * @author Allen Goodreds <s3492264@student.rmit.edu.au>
  * @author Grant Kinkead <s3444261@student.rmit.edu.au>
  * @author Edwan Putro <s3418650@student.rmit.edu.au>
  */
-
-require_once  __DIR__ . '/../config/Picnic.php';
-
 class ItemController {
 	const TEMP_UPLOADS_DIRECTORY = __DIR__ . "/../../temp_uploads/";
 	const THUMB_DIRECTORY = __DIR__ . "/../../item_thumbs/";

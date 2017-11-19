@@ -14,26 +14,36 @@
         <div class="col-9">
             <div class="jumbotron panel panel-default">
                 <h1 class="display-4 text-center">Edit user</h1>
-                <hr>
+                <hr />
 
-				<?php if (isset($_SESSION['error'])) { ?>
-                    <div class="alert alert-danger"><?php echo $_SESSION['error'] ?></div>
+				<?php if ($this->hasError()) { ?>
+                    <div class="alert alert-danger"><?php echo $this->errorMessage() ?></div>
 				<?php } ?>
 
-                <form data-toggle="validator" role="form" method="post" action="<?php echo BASE . '/Administration/EditUser/' . $this->data['user']['userID']; ?>">
+                <form data-toggle="validator" role="form" method="post" action="<?php echo $this->submitUrl() ?>">
                     <div class="form-group">
                         <label for="user">Name</label>
-                        <input type="text" class="form-control" name="user" id="user" placeholder="Name" value="<?php echo $this->data['user']['user'] ?>" required>
+                        <input type="text" class="form-control" name="user" id="user" placeholder="Name"
+                               value="<?php echo $this->userName() ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" name="email" id="email" placeholder="Email address" value="<?php echo $this->data['user']['email'] ?>" required>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Email address"
+                               value="<?php echo $this->userEmail() ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select class="form-control" name="status" id="status">
-                            <option <?php if ($this->data['user']['status'] === 'user') { echo 'selected="selected"'; } ?> value="user">user</option>
-                            <option <?php if ($this->data['user']['status'] === 'admin') { echo 'selected="selected"'; } ?> value="admin">admin</option>
+                            <option <?php if ($this->isStandardUser()) {
+								echo ' selected="selected" ';
+							} ?>
+                                    value="user">user
+                            </option>
+                            <option <?php if ($this->isAdminUser()) {
+								echo ' selected="selected" ';
+							} ?>
+                                    value="admin">admin
+                            </option>
                         </select>
                     </div>
 
@@ -44,4 +54,3 @@
         <div class="col"></div>
     </div>
 </div>
-
