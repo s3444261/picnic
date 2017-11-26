@@ -20,7 +20,7 @@ class Category {
 	private $_category = '';
 	private $_created_at;
 	private $_updated_at;
-	private $db;
+	private $_db;
 	const ROOT_CATEGORY = 0;
 	const ERROR_CATEGORY_NOT_EXIST = 'Category does not exist!';
 	const ERROR_CATEGORY_NOT_CREATED = 'The category was not created!';
@@ -30,7 +30,7 @@ class Category {
 
 	// Constructor
 	function __construct(PDO $pdo, $args = []) {
-		$this->db = $pdo;
+		$this->_db = $pdo;
 		
 		foreach ( $args as $key => $val ) {
 			$name = '_' . $key;
@@ -59,7 +59,7 @@ class Category {
 		if ($this->exists ()) {
 			$query = "SELECT * FROM Categories WHERE categoryID = :categoryID";
 			
-			$stmt = $this->db->prepare ( $query );
+			$stmt = $this->_db->prepare ( $query );
 			$stmt->bindValue ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -105,14 +105,14 @@ class Category {
 						category = :category,
 						created_at = NULL";
 			
-			$stmt = $this->db->prepare ( $query );
+			$stmt = $this->_db->prepare ( $query );
 
 			$stmt->bindValue ( ':parentID', $this->_parentID);
 			$stmt->bindValue ( ':category', $this->_category );
 			$stmt->execute ();
 			
 			if ($stmt->rowCount () > 0) {
-				return $this->_categoryID = $this->db->lastInsertId ();
+				return $this->_categoryID = $this->_db->lastInsertId ();
 			} else {
 				throw new ModelException ( self::ERROR_CATEGORY_NOT_CREATED );
 			}
@@ -134,7 +134,7 @@ class Category {
 			
 			$query = "SELECT * FROM Categories WHERE categoryID = :categoryID";
 			
-			$stmt = $this->db->prepare ( $query );
+			$stmt = $this->_db->prepare ( $query );
 			$stmt->bindValue ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
@@ -159,7 +159,7 @@ class Category {
 							category = :category
 						WHERE categoryID = :categoryID";
 			
-			$stmt = $this->db->prepare ( $query );
+			$stmt = $this->_db->prepare ( $query );
 			$stmt->bindValue ( ':categoryID', $this->_categoryID );
 			$stmt->bindValue ( ':parentID', $this->_parentID );
 			$stmt->bindValue ( ':category', $this->_category );
@@ -182,7 +182,7 @@ class Category {
 			$query = "DELETE FROM Categories
 						WHERE categoryID = :categoryID";
 			
-			$stmt = $this->db->prepare ( $query );
+			$stmt = $this->_db->prepare ( $query );
 			$stmt->bindValue ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			if (! $this->exists ()) {
@@ -205,7 +205,7 @@ class Category {
 		if ($this->_categoryID > 0) {
 			$query = "SELECT COUNT(*) AS numRows FROM Categories WHERE categoryID = :categoryID";
 			
-			$stmt = $this->db->prepare ( $query );
+			$stmt = $this->_db->prepare ( $query );
 			$stmt->bindValue ( ':categoryID', $this->_categoryID );
 			$stmt->execute ();
 			$row = $stmt->fetch ( PDO::FETCH_ASSOC );
