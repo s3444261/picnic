@@ -17,13 +17,18 @@
     <div class="col-9">
       <ul class="nav nav-pills nav-justified top-n-tail">
         <li class="nav-item">
-          <a class="nav-link<?php if (!isset($this->data['navData']) || $this->data['navData']->Selected == NavData::Home) { echo ' active'; } ?>" href="<?php echo BASE; ?>/Home">Home</a>
+          <a class="nav-link<?php if (!isset($this->data['navData']) ||
+              $this->data['navData']->Selected === NavData::Home) { echo ' active'; } ?>"
+             href="<?php echo BASE; ?>/Home">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link<?php if (isset($this->data['navData']) && $this->data['navData']->Selected == NavData::ViewListings) { echo ' active'; } ?>" href="<?php echo BASE; ?>/Category/View">View listings</a>
+          <a class="nav-link<?php if (isset($this->data['navData']) &&
+              $this->data['navData']->Selected === NavData::ViewListings) { echo ' active'; } ?>"
+             href="<?php echo BASE; ?>/Category/View">View listings</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link<?php if (isset($this->data['navData']) && $this->data['navData']->Selected == NavData::Account) { echo ' active'; } ?>
+          <a class="nav-link<?php if (isset($this->data['navData']) &&
+              $this->data['navData']->Selected === NavData::Account) { echo ' active'; } ?>
             <?php if (isset ( $_SESSION [MODULE] )) {
                 echo 'dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"';
             } else {

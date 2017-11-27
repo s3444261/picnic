@@ -8,11 +8,11 @@
  */
 
 class SystemException extends Exception {
-	protected $message;
-	function __construct($message) {
-		$this->message = $message;
-	}
-	public function getError() {
-		return $this->message;
-	}
+    protected $message;
+    function __construct($message) {
+        $this->message = $message;
+    }
+    public function getError() {
+        return $this->message;
+    }
 }

@@ -17,7 +17,7 @@
     </div>
     <div class="col"></div> <!-- Right margin -->
   </div> <!-- end .row -->
-	<?php if (isset ( $this->data['subCategories'] )) { ?>
+    <?php if (isset ( $this->data['subCategories'] )) { ?>
     <div class="row">
       <!-- Left margin -->
       <div class="col"></div>
@@ -38,7 +38,6 @@
       <!-- Right margin -->
       <div class="col"></div>
     </div> <!-- end .row -->
-  </div> <!-- end .jumbotron -->
 	<?php } ?>
 </div> <!-- end .container-fluid -->
 
@@ -111,14 +110,5 @@
     </div> <!-- end .col-md-9 -->
     <div class="col"></div> <!-- right margin -->
   </div> <!-- end .row -->
-</div> <!-- end .container-fluid -->
-	<?php } ?>
-<!-- temporarily disabled paging -->
-<!--  <div class="row">-->
-<!--    <div class="col"></div>-->
-<!--    <div class="col-md-9">-->
-<!--      --><?php //echo Pager::Render('pagination pagination-sm', $this->data ['pagerData'], false); ?>
-<!--    </div>-->
-<!--    <div class="col"></div>-->
-<!--  </div>-->
+    <?php } ?>
 </div> <!-- end .container-fluid -->

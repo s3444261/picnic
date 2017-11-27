@@ -52,7 +52,7 @@
                                     </li>
 									<li>
 										<?php if (isset($_SESSION[MODULE])) { ?>
-                                            <li>Dashboard</li>
+                                            Dashboard
                                             <ul>
                                                 <li><a href="<?php echo BASE . '/Dashboard/ForSale' ?>">Manage Items For Sale</a></li>
                                                 <li><a href="<?php echo BASE . '/Dashboard/Wanted' ?>">Manage Wanted Items</a></li>

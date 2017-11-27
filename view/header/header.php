@@ -21,7 +21,8 @@
 <meta name="robots" content="noindex, nofollow" />
 <title>Humphree - Buy and Sell Your Stuff</title>
 <!-- Bootstrap via CDN -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+      integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 <!-- Material icons CSS -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
@@ -33,9 +34,9 @@
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
-		      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-		      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		    <![endif]-->
+<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
 <link rel="shortcut icon" href="<?php echo BASE; ?>/favicon.ico" type="image/x-icon">
 <link rel="icon" href="<?php echo BASE; ?>/favicon.ico" type="image/x-icon">
 </head>
@@ -43,13 +44,13 @@
 <?php
 
 if(isset($_SESSION['error'])){
-	echo '<span class="error">' . $_SESSION['error'] . '</span>';
+    echo '<span class="error">' . $_SESSION['error'] . '</span>';
 
 }
 
 if(isset($_SESSION['message'])){
-	echo '<span class="message">' . $_SESSION['message'] . '</span>';
-	$_SESSION['message'] = null;
+    echo '<span class="message">' . $_SESSION['message'] . '</span>';
+    $_SESSION['message'] = null;
 }
 ?>
 
@@ -60,11 +61,13 @@ if(isset($_SESSION['message'])){
         <!-- Central column -->
         <div class="col-9">
             <a href="<?php echo BASE."/Home" ?>">
-                <img src="<?php echo BASE; ?>/img/logo.png" class="logo img-fluid mx-auto d-block top-n-tail"  alt="Humphree logo">
+                <img src="<?php echo BASE; ?>/img/logo.png" class="logo img-fluid mx-auto d-block top-n-tail"
+                     alt="Humphree logo">
             </a>
             <div class="row">
                 <div class="col"></div>
-                <form class="navbar-form col-md-6 top-n-tail" role="search" action="<?php echo BASE . '/Search/Results'?>">
+                <form class="navbar-form col-md-6 top-n-tail" role="search"
+                      action="<?php echo BASE . '/Search/Results'?>">
                     <div class="input-group add-on">
                         <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">
                         <div class="input-group-btn">

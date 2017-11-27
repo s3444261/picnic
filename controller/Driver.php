@@ -66,11 +66,21 @@ class Driver {
             $path = self::DEFAULT_CONTROLLER_NAME;
         }
 
-        @list($controller, $action, $params) = explode("/", $path, 3);
+        $parts = explode("/", $path, 3);
 
-        $this->setController($controller);
-        $this->setAction($action);
-        $this->setParams(explode("/", $params));
+        if (count($parts) > 0) {
+            $this->setController($parts[0]);
+        }
+
+        if (count($parts) > 1) {
+            $this->setAction($parts[1]);
+        }
+
+        if (count($parts) > 2) {
+            $this->setParams(explode("/", $parts[2]));
+        } else {
+            $this->setParams(['']);
+        }
     }
 
     /**

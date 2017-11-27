@@ -12,26 +12,27 @@ ini_set ( 'display_errors', 1 );
 date_default_timezone_set('Australia/Melbourne');
 define('MODULE', '');
 if(gethostname() == 'Grant-PC' ||
-	gethostname() == 'Newbie' ||
-	gethostname() == 'DESKTOP-HBREVOT'){
-	define('BASE', '/picnic');
+    gethostname() == 'Newbie' ||
+    gethostname() == 'DESKTOP-HBREVOT'){
+    define('BASE', '/picnic');
 } else {
-	define('BASE', '');
+    define('BASE', '');
 }
 class PicnicAutoloader {
-	public static function picnicAutoload($class) {
-		$dir = array (
-			'controller/',
-			'model/',
-			'view/',
-			'view/classes/'
-		);
-		foreach ( $dir as $directory ) {
-			if (file_exists ( $directory . $class . '.php' )) {
-				require_once ($directory . $class . '.php');
-				return;
-			}
-		}
-	}
+    public static function picnicAutoload($class) {
+        $dir = [
+            'controller/',
+            'model/',
+            'view/',
+            'view/classes/'
+        ];
+        foreach ( $dir as $directory ) {
+            if (file_exists ( $directory . $class . '.php' )) {
+                require_once ($directory . $class . '.php');
+                return;
+            }
+        }
+    }
 }
-spl_autoload_register(array('PicnicAutoloader', 'picnicAutoload'), true, true);
+
+spl_autoload_register(['PicnicAutoloader', 'picnicAutoload'], true, true);
