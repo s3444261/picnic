@@ -36,7 +36,10 @@ class HelpController {
      *    Displays the frequently asked questions.
      */
     public function Faq(): void {
-        $this->DisplayPage('faq');
+        $view = new View();
+        $view->SetData('navData', new NavData(NavData::Home));
+        $view->SetData('userIsAdmin',  isset ($_SESSION['status']) && $_SESSION['status'] === 'admin');
+        $view->Render('faq');
     }
 
     /**
