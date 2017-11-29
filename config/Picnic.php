@@ -3,7 +3,7 @@
 include __DIR__ . '/../../../dbPicnic.php';
 
 /**
- * Provides a singleton instance for connection to the picnic database.
+ * A wrapper providing access to the application database.
  *
  * @author Troy Derrick <s3202752@student.rmit.edu.au>
  * @author Diane Foster <s3387562@student.rmit.edu.au>
@@ -13,26 +13,26 @@ include __DIR__ . '/../../../dbPicnic.php';
  */
 class Picnic extends PDO {
     private static $_instance;
-    public static function getInstance() {
-        if (! isset ( self::$_instance )) {
-            
-            $database = [
-                'db_host' => getenv("DB_HOST"),
-                'db_user' => getenv("DB_USER"),
-                'db_pass' => getenv("DB_PW"),
-                'db_name' => getenv("DB_NAME")
-            ];
-            
+
+    /**
+     * Gets the singleton instance of this class.
+     *
+     * @return Picnic   The singleton instance.
+     */
+    public static function getInstance(): Picnic {
+        if (!isset(self::$_instance )) {
+
             self::$_instance = new Picnic (
                 'mysql:host='
-                . $database ['db_host']
-                . ';dbname=' . $database ['db_name'],
-                $database ['db_user'],
-                $database ['db_pass'] );
+                . getenv("DB_HOST")
+                . ';dbname=' . getenv("DB_NAME"),
+                getenv("DB_USER"),
+                getenv("DB_PW"));
             
             // Used to document errors during development.
             self::$_instance->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
         }
+
         return self::$_instance;
     }
 }

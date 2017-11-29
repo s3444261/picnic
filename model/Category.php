@@ -15,18 +15,19 @@
  * @property string updated_at
  */
 class Category {
-    private $_categoryID = 0;
-    private $_parentID = null;
-    private $_category = '';
-    private $_created_at;
-    private $_updated_at;
-    private $_db;
     const ROOT_CATEGORY = 0;
     const ERROR_CATEGORY_NOT_EXIST = 'Category does not exist!';
     const ERROR_CATEGORY_NOT_CREATED = 'The category was not created!';
     const ERROR_CATEGORY_NOT_UPDATED = 'The category was not updated!';
     const ERROR_PARENT_ID_NOT_EXIST = 'The parent category does not exist!';
     const ERROR_PARENT_ID_NONE = 'Input is required!';
+
+    private $_categoryID = 0;
+    private $_parentID = null;
+    private $_category = '';
+    private $_created_at;
+    private $_updated_at;
+    private $_db;
 
     // Constructor
     function __construct(PDO $pdo, $args = []) {

@@ -12,23 +12,34 @@ ini_set ( 'display_errors', 1 );
 date_default_timezone_set('Australia/Melbourne');
 define('MODULE', '');
 if(gethostname() == 'Grant-PC' ||
-    gethostname() == 'Newbie' ||
-    gethostname() == 'DESKTOP-HBREVOT'){
+    gethostname() == 'Newbie') {
     define('BASE', '/picnic');
 } else {
     define('BASE', '');
 }
+
+/**
+ * Autoloader for Picnic classes.
+ */
 class PicnicAutoloader {
-    public static function picnicAutoload($class) {
+    /**
+     * Automatically includes classes within this application.
+     *
+     * @param string $className    The name of the class to be included.
+     */
+    public static function picnicAutoload(string $className) {
         $dir = [
             'controller/',
             'model/',
             'view/',
             'view/classes/'
         ];
+
         foreach ( $dir as $directory ) {
-            if (file_exists ( $directory . $class . '.php' )) {
-                require_once ($directory . $class . '.php');
+            $fullPath =  $directory . $className . '.php';
+            if (file_exists ($fullPath)) {
+
+                require_once ($fullPath);
                 return;
             }
         }
