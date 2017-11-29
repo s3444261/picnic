@@ -28,11 +28,11 @@ class Categories
      * Retrieves all categories and returns them as an array
      * of category objects.
      *
-     * @return array    An array of Category, ordered by name.
+     * @return array    An array of Category.
      */
     public function getCategories(): array
     {
-        $query = "SELECT * FROM Categories ORDER BY category";
+        $query = "SELECT * FROM Categories";
 
         $stmt = $this->_db->prepare($query);
         $stmt->execute();
@@ -40,7 +40,7 @@ class Categories
         $objects = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $objects[] = $this->createCategoryFromRow($row);
+            $objects[] = self::createCategoryFromRow($this->_db, $row);
         }
 
         return $objects;
@@ -86,7 +86,7 @@ class Categories
         $objects = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $objects[] = $this->createCategoryFromRow($row);
+            $objects[] = self::createCategoryFromRow($this->_db, $row);
         }
 
         return $objects;
